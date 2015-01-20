@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    # Copyright 2014 WSO2 Inc. (http://wso2.org)
+    # Copyright 2015 WSO2 Inc. (http://wso2.org)
     #
     # Licensed under the Apache License, Version 2.0 (the "License");
     # you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.metrics.impl</artifactId>
+    <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Metrics Implementation</name>
+    <name>WSO2 Carbon - Metrics JDBC Reporter</name>
     <repositories>
         <repository>
             <id>wso2-nexus</id>
@@ -43,39 +43,44 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.metrics.manager</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.logging</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
             <version>${metrics.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-api</artifactId>
-            <version>${axiom.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.10</version>
         </dependency>
         <dependency>
-            <groupId>commons-io.wso2</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.wso2.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.10</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.securevault</artifactId>
-            <version>${carbon.platform.version}</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.utils</artifactId>
-            <version>${carbon.platform.version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.185</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.1.4.RELEASE</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -88,14 +93,10 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>
-                            org.wso2.carbon.metrics.impl.internal
-                        </Private-Package>
                         <Export-Package>
-                            org.wso2.carbon.metrics.impl.*,
+                            org.wso2.carbon.metrics.reporter.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.metrics.manager.*,
                             com.codahale.metrics;
                             version="${metrics.version.range}
                         </Import-Package>
@@ -115,11 +116,41 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-test-database</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <path id="h2.classpath">
+                                    <path refid="maven.test.classpath" />
+                                </path>
+                                <echo message="** Creating Test Database **" />
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/target/repository/database/WSO2CARBON_DB"
+                                    userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue"
+                                >
+                                    <classpath>
+                                        <path refid="h2.classpath" />
+                                    </classpath>
+                                    <fileset file="${basedir}/src/test/resources/dbscripts/h2.sql" />
+                                </sql>
+                                <echo message="** Created Test Database **" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+             -->
         </plugins>
     </build>
     <properties>
-        <axiom.version>1.2.11-wso2v5</axiom.version>
-        <commons-io.wso2.version>2.0.0.wso2v1</commons-io.wso2.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
     </properties>
 </project>
