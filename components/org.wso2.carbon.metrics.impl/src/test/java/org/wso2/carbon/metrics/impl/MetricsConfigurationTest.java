@@ -28,21 +28,21 @@ public class MetricsConfigurationTest extends TestCase {
 
     private static final String LEVEL = "Level";
     private static final String CSV_REPORTING_LOCATION = "Reporting.CSV.Location";
+    private static final MetricsConfiguration CONFIGURATION = new MetricsConfiguration();
 
     protected void setUp() throws Exception {
         System.setProperty("carbon.home", "/wso2/carbon");
 
         URL file = getClass().getResource("/metrics.xml");
         String filePath = file.getPath();
-        MetricsConfiguration configuration = MetricsConfiguration.getInstance();
-        configuration.load(filePath);
+        CONFIGURATION.load(filePath);
     }
 
     public void testConfigLoad() {
-        String configLevel = MetricsConfiguration.getInstance().getFirstProperty(LEVEL);
-        assertEquals("Level should be OFF", Level.OFF.name(), configLevel);
+        String configLevel = CONFIGURATION.getFirstProperty(LEVEL);
+        assertEquals("Level should be ALL", Level.ALL.name(), configLevel);
 
-        String csvLocation = MetricsConfiguration.getInstance().getFirstProperty(CSV_REPORTING_LOCATION);
+        String csvLocation = CONFIGURATION.getFirstProperty(CSV_REPORTING_LOCATION);
         assertEquals("/wso2/carbon/repository/logs/metrics/", csvLocation);
     }
 

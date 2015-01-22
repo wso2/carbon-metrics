@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
+import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
+import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
+import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
@@ -31,6 +41,7 @@ import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.Timer;
+import org.wso2.carbon.metrics.reporter.JDBCReporter;
 
 import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.JmxReporter;
@@ -59,10 +70,19 @@ public class MetricServiceImpl extends Observable implements MetricService {
      */
     private final MetricRegistry metricRegistry;
 
+    private static final String SYSTEM_PROPERTY_METRICS_LEVEL = "metrics.level";
+    private static final String LEVEL = "Level";
+
     private static final String JMX_REPORTING_ENABLED = "Reporting.JMX.Enabled";
     private static final String CSV_REPORTING_ENABLED = "Reporting.CSV.Enabled";
     private static final String CSV_REPORTING_LOCATION = "Reporting.CSV.Location";
     private static final String CSV_REPORTING_POLLING_PERIOD = "Reporting.CSV.PollingPeriod";
+    private static final String JDBC_REPORTING_ENABLED = "Reporting.JDBC.Enabled";
+    private static final String JDBC_REPORTING_POLLING_PERIOD = "Reporting.JDBC.PollingPeriod";
+    private static final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
+    private static final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
+
+    private final MetricsConfiguration configuration;
 
     /**
      * JMX domain registered with MBean Server
@@ -74,7 +94,16 @@ public class MetricServiceImpl extends Observable implements MetricService {
     /**
      * Initialize the MetricRegistry, Level and Reporters
      */
-    public MetricServiceImpl(Level level) {
+    public MetricServiceImpl(MetricsConfiguration configuration) {
+        this.configuration = configuration;
+        // Highest priority is for the System Property
+        String configLevel = System.getProperty(SYSTEM_PROPERTY_METRICS_LEVEL);
+        if (configLevel == null || configLevel.trim().isEmpty()) {
+            configLevel = configuration.getFirstProperty(LEVEL);
+        }
+
+        Level level = Level.toLevel(configLevel, Level.OFF);
+
         metricRegistry = new MetricRegistry();
         Reporter jmxReporter = null;
         try {
@@ -96,6 +125,17 @@ public class MetricServiceImpl extends Observable implements MetricService {
 
         if (csvReporter != null) {
             reporters.add(csvReporter);
+        }
+
+        Reporter jdbcReporter = null;
+        try {
+            jdbcReporter = configureJDBCReporter();
+        } catch (Throwable e) {
+            log.error("Error when configuring JDBC reporter", e);
+        }
+
+        if (jdbcReporter != null) {
+            reporters.add(jdbcReporter);
         }
 
         // Initial level
@@ -167,96 +207,12 @@ public class MetricServiceImpl extends Observable implements MetricService {
         addObserver(gaugeImpl);
         metricRegistry.register(name, gaugeImpl);
     }
-    
+
     public <T> void createCachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
         CachedGaugeImpl<T> gaugeImpl = new CachedGaugeImpl<T>(level, timeout, timeoutUnit, gauge);
         gaugeImpl.setEnabled(getLevel());
         addObserver(gaugeImpl);
         metricRegistry.register(name, gaugeImpl);
-    }
-
-    /**
-     * Reporter interface to manage multiple reporters in this service
-     */
-    private interface Reporter {
-        void start();
-
-        boolean isRunning();
-
-        void stop();
-    }
-
-    private class JmxReporterImpl implements Reporter {
-
-        private final JmxReporter jmxReporter;
-
-        private boolean running;
-
-        public JmxReporterImpl(JmxReporter jmxReporter) {
-            this.jmxReporter = jmxReporter;
-        }
-
-        @Override
-        public void start() {
-            jmxReporter.start();
-            running = true;
-            if (log.isInfoEnabled()) {
-                log.info("Started JMX reporter for Metrics");
-            }
-        }
-
-        @Override
-        public boolean isRunning() {
-            return running;
-        }
-
-        @Override
-        public void stop() {
-            jmxReporter.stop();
-            running = false;
-            if (log.isInfoEnabled()) {
-                log.info("Stopped JMX reporter for Metrics");
-            }
-        }
-    }
-
-    private class CsvReporterImpl implements Reporter {
-
-        private final CsvReporter csvReporter;
-
-        private final long pollingPeriod;
-
-        private boolean running;
-
-        public CsvReporterImpl(CsvReporter csvReporter, long pollingPeriod) {
-            this.csvReporter = csvReporter;
-            this.pollingPeriod = pollingPeriod;
-        }
-
-        @Override
-        public void start() {
-            csvReporter.start(pollingPeriod, TimeUnit.SECONDS);
-
-            running = true;
-            if (log.isInfoEnabled()) {
-                log.info(String.format("Started CSV reporter for Metrics with %d seconds polling period.",
-                        pollingPeriod));
-            }
-        }
-
-        @Override
-        public boolean isRunning() {
-            return running;
-        }
-
-        @Override
-        public void stop() {
-            csvReporter.stop();
-            running = false;
-            if (log.isInfoEnabled()) {
-                log.info("Stopped CSV reporter for Metrics");
-            }
-        }
     }
 
     private void startReporters() {
@@ -276,10 +232,9 @@ public class MetricServiceImpl extends Observable implements MetricService {
     }
 
     private Reporter configureJMXReporter() {
-        MetricsConfiguration metricsConfiguration = MetricsConfiguration.getInstance();
-        if (!Boolean.parseBoolean(metricsConfiguration.getFirstProperty(JMX_REPORTING_ENABLED))) {
-            if (log.isDebugEnabled()) {
-                log.debug("JMX Reporting for Metrics is not enabled");
+        if (!Boolean.parseBoolean(configuration.getFirstProperty(JMX_REPORTING_ENABLED))) {
+            if (log.isTraceEnabled()) {
+                log.trace("JMX Reporting for Metrics is not enabled");
             }
             return null;
         }
@@ -289,14 +244,13 @@ public class MetricServiceImpl extends Observable implements MetricService {
     }
 
     private Reporter configureCSVReporter() {
-        MetricsConfiguration metricsConfiguration = MetricsConfiguration.getInstance();
-        if (!Boolean.parseBoolean(metricsConfiguration.getFirstProperty(CSV_REPORTING_ENABLED))) {
-            if (log.isDebugEnabled()) {
-                log.debug("CSV Reporting for Metrics is not enabled");
+        if (!Boolean.parseBoolean(configuration.getFirstProperty(CSV_REPORTING_ENABLED))) {
+            if (log.isTraceEnabled()) {
+                log.trace("CSV Reporting for Metrics is not enabled");
             }
             return null;
         }
-        String location = metricsConfiguration.getFirstProperty(CSV_REPORTING_LOCATION);
+        String location = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
         if (location == null || location.trim().isEmpty()) {
             if (log.isWarnEnabled()) {
                 log.warn("CSV Reporting location is not specified");
@@ -307,7 +261,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
         if (!file.exists()) {
             if (!file.mkdir()) {
                 if (log.isWarnEnabled()) {
-                    log.warn("CSV Reporting location was not created!");
+                    log.warn("CSV Reporting location was not created!. Location: " + location);
                 }
                 return null;
             }
@@ -318,7 +272,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
             }
             return null;
         }
-        String pollingPeriod = metricsConfiguration.getFirstProperty(CSV_REPORTING_POLLING_PERIOD);
+        String pollingPeriod = configuration.getFirstProperty(CSV_REPORTING_POLLING_PERIOD);
         // Default polling period for CSV reporter is 60 seconds
         long csvReporterPollingPeriod = 60;
         try {
@@ -330,11 +284,73 @@ public class MetricServiceImpl extends Observable implements MetricService {
             }
         }
         if (log.isInfoEnabled()) {
-            log.info(String.format("Creating CSV reporter for Metrics with location: %s", location));
+            log.info(String.format(
+                    "Creating CSV reporter for Metrics with location '%s' and %d seconds polling period", location,
+                    csvReporterPollingPeriod));
         }
 
         final CsvReporter csvReporter = CsvReporter.forRegistry(metricRegistry).formatFor(Locale.US)
                 .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build(file);
         return new CsvReporterImpl(csvReporter, csvReporterPollingPeriod);
+    }
+
+    private Reporter configureJDBCReporter() {
+        if (!Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_ENABLED))) {
+            if (log.isTraceEnabled()) {
+                log.trace("JDBC Reporting for Metrics is not enabled");
+            }
+            return null;
+        }
+        String pollingPeriod = configuration.getFirstProperty(JDBC_REPORTING_POLLING_PERIOD);
+        // Default polling period for JDBC reporter is 60 seconds
+        long jdbcReporterPollingPeriod = 60;
+        try {
+            jdbcReporterPollingPeriod = Long.parseLong(pollingPeriod);
+        } catch (NumberFormatException e) {
+            if (log.isWarnEnabled()) {
+                log.warn(String.format("Error parsing the polling period for JDBC Reporting. Using %d seconds",
+                        jdbcReporterPollingPeriod));
+            }
+        }
+
+        String source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE);
+
+        if (source == null || source.trim().length() == 0) {
+            // Generate some random string.
+            Random random = new Random(System.currentTimeMillis());
+            source = "Carbon-" + random.nextInt(10000);
+        }
+
+        String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
+
+        if (dataSourceName == null || dataSourceName.trim().length() == 0) {
+            if (log.isWarnEnabled()) {
+                log.warn("Data Source Name is not specified for JDBC Reporting. The JDBC reporting will not be enabled");
+            }
+            return null;
+        }
+
+        DataSource dataSource = null;
+        try {
+            Context ctx = new InitialContext();
+            dataSource = (DataSource) ctx.lookup(dataSourceName);
+        } catch (NamingException e) {
+            if (log.isWarnEnabled()) {
+                log.warn(String.format(
+                        "Error when looking up the Data Source: '%s'. The JDBC reporting will not be enabled",
+                        dataSourceName));
+            }
+            return null;
+        }
+
+        if (log.isInfoEnabled()) {
+            log.info(String
+                    .format("Creating JDBC reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
+                            source, dataSourceName, jdbcReporterPollingPeriod));
+        }
+
+        final JDBCReporter jdbcReporter = JDBCReporter.forRegistry(metricRegistry).convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS).build(source, dataSource);
+        return new JDBCReporterImpl(jdbcReporter, jdbcReporterPollingPeriod);
     }
 }

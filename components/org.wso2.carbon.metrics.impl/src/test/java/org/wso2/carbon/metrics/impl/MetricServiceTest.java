@@ -26,13 +26,14 @@ import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 /**
  * Test Cases for {@link MetricService}
  */
-public class MetricsServiceTest extends TestCase {
+public class MetricServiceTest extends TestCase {
 
     private static MetricService metricService;
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Level.OFF);
+        metricService = new MetricServiceImpl(Utils.getConfiguration());
+        metricService.setLevel(Level.OFF);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
