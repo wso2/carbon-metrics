@@ -30,6 +30,10 @@
     <packaging>pom</packaging>
     <name>Metrics</name>
 
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
     <modules>
         <module>components/org.wso2.carbon.metrics.jdbc.reporter</module>
         <module>components/org.wso2.carbon.metrics.manager</module>
