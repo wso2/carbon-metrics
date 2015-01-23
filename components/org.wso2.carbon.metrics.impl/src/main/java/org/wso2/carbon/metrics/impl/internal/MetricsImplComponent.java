@@ -68,6 +68,8 @@ public class MetricsImplComponent {
         metricsServiceRegistration.unregister();
     }
 
+    // This service is required to lookup data source in MetricServiceImpl.
+    // Otherwise the data source reading component will not be activated before this component.
     protected void setRegistryService(RegistryService registryService) {
         if (registryService != null && log.isDebugEnabled()) {
             log.debug("Registry service initialized");
