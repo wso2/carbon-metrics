@@ -21,22 +21,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.metrics.impl.MetricServiceImpl;
 import org.wso2.carbon.metrics.impl.MetricsConfigException;
 import org.wso2.carbon.metrics.impl.MetricsConfiguration;
-import org.wso2.carbon.metrics.impl.MetricServiceImpl;
-import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricService;
+import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.CarbonUtils;
 
 /**
  * @scr.component name="org.wso2.carbon.metrics.impl.internal.MetricsImplComponent" immediate="true"
+ * @scr.reference name="registry.service" interface="org.wso2.carbon.registry.core.service.RegistryService"
+ *                cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
  */
 public class MetricsImplComponent {
 
     private static final Log log = LogFactory.getLog(MetricsImplComponent.class);
-
-    private static final String SYSTEM_PROPERTY_METRICS_LEVEL = "metrics.level";
-    private static final String LEVEL = "Level";
 
     @SuppressWarnings("rawtypes")
     private ServiceRegistration metricsServiceRegistration;
@@ -45,7 +44,7 @@ public class MetricsImplComponent {
         if (log.isDebugEnabled()) {
             log.debug("Metrics manager component activated");
         }
-        MetricsConfiguration configuration = MetricsConfiguration.getInstance();
+        MetricsConfiguration configuration = new MetricsConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
         try {
             configuration.load(filePath);
@@ -55,16 +54,10 @@ public class MetricsImplComponent {
             }
         }
 
-        // Highest priority is for the System Property
-        String configLevel = System.getProperty(SYSTEM_PROPERTY_METRICS_LEVEL);
-        if (configLevel == null || configLevel.trim().isEmpty()) {
-            configLevel = MetricsConfiguration.getInstance().getFirstProperty(LEVEL);
-        }
+        MetricService metricService = new MetricServiceImpl(configuration);
 
-        MetricService metricService = new MetricServiceImpl(Level.toLevel(configLevel, Level.OFF));
-
-        metricsServiceRegistration = componentContext.getBundleContext().registerService(
-                MetricService.class.getName(), metricService, null);
+        metricsServiceRegistration = componentContext.getBundleContext().registerService(MetricService.class.getName(),
+                metricService, null);
 
     }
 
@@ -73,6 +66,17 @@ public class MetricsImplComponent {
             log.debug("Deactivating Metrics manager component");
         }
         metricsServiceRegistration.unregister();
+    }
+
+    // This service is required to lookup data source in MetricServiceImpl.
+    // Otherwise the data source reading component will not be activated before this component.
+    protected void setRegistryService(RegistryService registryService) {
+        if (registryService != null && log.isDebugEnabled()) {
+            log.debug("Registry service initialized");
+        }
+    }
+
+    protected void unsetRegistryService(RegistryService registryService) {
     }
 
 }

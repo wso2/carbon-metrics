@@ -68,6 +68,6 @@
         <junit.version>4.12</junit.version>
         <metrics.version>3.1.0</metrics.version>
         <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
-        <carbon.platform.version>4.3.0</carbon.platform.version>
+        <carbon.platform.version>4.2.0</carbon.platform.version>
     </properties>
 </project>

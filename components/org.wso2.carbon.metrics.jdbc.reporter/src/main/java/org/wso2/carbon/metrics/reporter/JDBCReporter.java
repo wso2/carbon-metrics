@@ -160,11 +160,21 @@ public class JDBCReporter extends ScheduledReporter {
             SortedMap<String, Histogram> histograms, SortedMap<String, Meter> meters, SortedMap<String, Timer> timers) {
         final long timestamp = TimeUnit.MILLISECONDS.toSeconds(clock.getTime());
 
-        reportGauges(timestamp, gauges);
-        reportCounters(timestamp, counters);
-        reportHistograms(timestamp, histograms);
-        reportMeters(timestamp, meters);
-        reportTimers(timestamp, timers);
+        if (!gauges.isEmpty()) {
+            reportGauges(timestamp, gauges);
+        }
+        if (!counters.isEmpty()) {
+            reportCounters(timestamp, counters);
+        }
+        if (!histograms.isEmpty()) {
+            reportHistograms(timestamp, histograms);
+        }
+        if (!meters.isEmpty()) {
+            reportMeters(timestamp, meters);
+        }
+        if (!timers.isEmpty()) {
+            reportTimers(timestamp, timers);
+        }
     }
 
     @SuppressWarnings("rawtypes")

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-    ~ Copyright 2014 WSO2 Inc. (http://wso2.org)
+    ~ Copyright 2015 WSO2 Inc. (http://wso2.org)
     ~
     ~ Licensed under the Apache License, Version 2.0 (the "License");
     ~ you may not use this file except in compliance with the License.
@@ -28,20 +28,36 @@
         TRACE (least specific, a lot of data)
         ALL (least specific, all data)
     -->
-    <Level>OFF</Level>
+    <Level>ALL</Level>
 
     <!--
         Metrics reporting configurations
     -->
     <Reporting>
         <JMX>
-            <Enabled>true</Enabled>
+            <Enabled>false</Enabled>
         </JMX>
         <CSV>
-            <Enabled>true</Enabled>
+            <Enabled>false</Enabled>
             <Location>${carbon.home}/repository/logs/metrics/</Location>
             <!-- Polling Period in seconds -->
             <PollingPeriod>60</PollingPeriod>
         </CSV>
+        <JDBC>
+            <Enabled>false</Enabled>
+            <!-- Source of Metrics, which will be used to
+                identify each metric in database -->
+            <!-- Commented to use a generated value
+                <Source>Carbon</Source>
+            -->
+            <!--
+                JNDI name of the data source to be used by the JDBC Reporter.
+                This data source should be defined in a *-datasources.xml
+                file in conf/datasources directory.
+            -->
+            <DataSourceName>jdbc/WSO2MetricsDB</DataSourceName>
+            <!-- Polling Period in seconds -->
+            <PollingPeriod>60</PollingPeriod>
+        </JDBC>
     </Reporting>
 </Metrics>

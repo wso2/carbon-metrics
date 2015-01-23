@@ -36,7 +36,7 @@ public class MeterTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Level.TRACE);
+        metricService = new MetricServiceImpl(Utils.getConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 

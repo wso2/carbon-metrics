@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.impl;
 
+import java.net.URL;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -36,7 +37,7 @@ public class CounterTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Level.TRACE);
+        metricService = new MetricServiceImpl(Utils.getConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 

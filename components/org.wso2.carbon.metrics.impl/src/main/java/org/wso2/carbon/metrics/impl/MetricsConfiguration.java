@@ -46,8 +46,6 @@ public class MetricsConfiguration {
 
     private static final Log log = LogFactory.getLog(MetricsConfiguration.class);
 
-    private static final MetricsConfiguration INSTANCE = new MetricsConfiguration();
-
     private Map<String, List<String>> configurationMap = new ConcurrentHashMap<String, List<String>>();
 
     private SecretResolver secretResolver;
@@ -66,11 +64,7 @@ public class MetricsConfiguration {
         SYSTEM_PROPERTY_PATTERN = Pattern.compile("\\$\\{([\\w\\.]*)\\}");
     }
 
-    public static MetricsConfiguration getInstance() {
-        return INSTANCE;
-    }
-
-    private MetricsConfiguration() {
+    public MetricsConfiguration() {
     }
 
     /**
