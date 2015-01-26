@@ -43,6 +43,8 @@ import com.codahale.metrics.Timer;
  */
 public class JDBCReporter extends ScheduledReporter {
 
+    // Note: This class uses small methods to be more JIT-friendly.
+
     /**
      * Returns a new {@link Builder} for {@link JDBCReporter}.
      *
@@ -189,11 +191,7 @@ public class JDBCReporter extends ScheduledReporter {
             for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
                 String name = entry.getKey();
                 Gauge gauge = entry.getValue();
-
-                ps.setString(1, source);
-                ps.setLong(2, timestamp);
-                ps.setString(3, name);
-                ps.setObject(4, gauge.getValue());
+                reportGauge(timestamp, ps, name, gauge);
                 ps.addBatch();
             }
 
@@ -209,6 +207,14 @@ public class JDBCReporter extends ScheduledReporter {
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    private void reportGauge(final long timestamp, PreparedStatement ps, String name, Gauge gauge) throws SQLException {
+        ps.setString(1, source);
+        ps.setLong(2, timestamp);
+        ps.setString(3, name);
+        ps.setObject(4, gauge.getValue());
+    }
+
     private void reportCounters(final long timestamp, final SortedMap<String, Counter> counters) {
         Connection connection = null;
         PreparedStatement ps = null;
@@ -220,11 +226,7 @@ public class JDBCReporter extends ScheduledReporter {
             for (Map.Entry<String, Counter> entry : counters.entrySet()) {
                 String name = entry.getKey();
                 Counter counter = entry.getValue();
-
-                ps.setString(1, source);
-                ps.setLong(2, timestamp);
-                ps.setString(3, name);
-                ps.setLong(4, counter.getCount());
+                reportCounter(timestamp, ps, name, counter);
                 ps.addBatch();
             }
 
@@ -240,6 +242,14 @@ public class JDBCReporter extends ScheduledReporter {
         }
     }
 
+    private void reportCounter(final long timestamp, PreparedStatement ps, String name, Counter counter)
+            throws SQLException {
+        ps.setString(1, source);
+        ps.setLong(2, timestamp);
+        ps.setString(3, name);
+        ps.setLong(4, counter.getCount());
+    }
+
     private void reportHistograms(final long timestamp, final SortedMap<String, Histogram> histograms) {
         Connection connection = null;
         PreparedStatement ps = null;
@@ -251,22 +261,7 @@ public class JDBCReporter extends ScheduledReporter {
             for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
                 String name = entry.getKey();
                 Histogram histogram = entry.getValue();
-                final Snapshot snapshot = histogram.getSnapshot();
-
-                ps.setString(1, source);
-                ps.setLong(2, timestamp);
-                ps.setString(3, name);
-                ps.setLong(4, histogram.getCount());
-                ps.setDouble(5, snapshot.getMax());
-                ps.setDouble(6, snapshot.getMean());
-                ps.setDouble(7, snapshot.getMin());
-                ps.setDouble(8, snapshot.getStdDev());
-                ps.setDouble(9, snapshot.getMedian());
-                ps.setDouble(10, snapshot.get75thPercentile());
-                ps.setDouble(11, snapshot.get95thPercentile());
-                ps.setDouble(12, snapshot.get98thPercentile());
-                ps.setDouble(13, snapshot.get99thPercentile());
-                ps.setDouble(14, snapshot.get999thPercentile());
+                reportHistogram(timestamp, ps, name, histogram);
                 ps.addBatch();
             }
 
@@ -282,6 +277,26 @@ public class JDBCReporter extends ScheduledReporter {
         }
     }
 
+    private void reportHistogram(final long timestamp, PreparedStatement ps, String name, Histogram histogram)
+            throws SQLException {
+        final Snapshot snapshot = histogram.getSnapshot();
+
+        ps.setString(1, source);
+        ps.setLong(2, timestamp);
+        ps.setString(3, name);
+        ps.setLong(4, histogram.getCount());
+        ps.setDouble(5, snapshot.getMax());
+        ps.setDouble(6, snapshot.getMean());
+        ps.setDouble(7, snapshot.getMin());
+        ps.setDouble(8, snapshot.getStdDev());
+        ps.setDouble(9, snapshot.getMedian());
+        ps.setDouble(10, snapshot.get75thPercentile());
+        ps.setDouble(11, snapshot.get95thPercentile());
+        ps.setDouble(12, snapshot.get98thPercentile());
+        ps.setDouble(13, snapshot.get99thPercentile());
+        ps.setDouble(14, snapshot.get999thPercentile());
+    }
+
     private void reportMeters(final long timestamp, final SortedMap<String, Meter> meters) {
         Connection connection = null;
         PreparedStatement ps = null;
@@ -293,16 +308,7 @@ public class JDBCReporter extends ScheduledReporter {
             for (Map.Entry<String, Meter> entry : meters.entrySet()) {
                 String name = entry.getKey();
                 Meter meter = entry.getValue();
-
-                ps.setString(1, source);
-                ps.setLong(2, timestamp);
-                ps.setString(3, name);
-                ps.setLong(4, meter.getCount());
-                ps.setDouble(5, convertRate(meter.getMeanRate()));
-                ps.setDouble(6, convertRate(meter.getOneMinuteRate()));
-                ps.setDouble(7, convertRate(meter.getFiveMinuteRate()));
-                ps.setDouble(8, convertRate(meter.getFifteenMinuteRate()));
-                ps.setString(9, String.format("events/%s", getRateUnit()));
+                reportMeter(timestamp, ps, name, meter);
                 ps.addBatch();
             }
 
@@ -318,6 +324,18 @@ public class JDBCReporter extends ScheduledReporter {
         }
     }
 
+    private void reportMeter(final long timestamp, PreparedStatement ps, String name, Meter meter) throws SQLException {
+        ps.setString(1, source);
+        ps.setLong(2, timestamp);
+        ps.setString(3, name);
+        ps.setLong(4, meter.getCount());
+        ps.setDouble(5, convertRate(meter.getMeanRate()));
+        ps.setDouble(6, convertRate(meter.getOneMinuteRate()));
+        ps.setDouble(7, convertRate(meter.getFiveMinuteRate()));
+        ps.setDouble(8, convertRate(meter.getFifteenMinuteRate()));
+        ps.setString(9, String.format("events/%s", getRateUnit()));
+    }
+
     private void reportTimers(final long timestamp, final SortedMap<String, Timer> timers) {
         Connection connection = null;
         PreparedStatement ps = null;
@@ -329,28 +347,7 @@ public class JDBCReporter extends ScheduledReporter {
             for (Map.Entry<String, Timer> entry : timers.entrySet()) {
                 String name = entry.getKey();
                 Timer timer = entry.getValue();
-                final Snapshot snapshot = timer.getSnapshot();
-
-                ps.setString(1, source);
-                ps.setLong(2, timestamp);
-                ps.setString(3, name);
-                ps.setLong(4, timer.getCount());
-                ps.setDouble(5, convertDuration(snapshot.getMax()));
-                ps.setDouble(6, convertDuration(snapshot.getMean()));
-                ps.setDouble(7, convertDuration(snapshot.getMin()));
-                ps.setDouble(8, convertDuration(snapshot.getStdDev()));
-                ps.setDouble(9, convertDuration(snapshot.getMedian()));
-                ps.setDouble(10, convertDuration(snapshot.get75thPercentile()));
-                ps.setDouble(11, convertDuration(snapshot.get95thPercentile()));
-                ps.setDouble(12, convertDuration(snapshot.get98thPercentile()));
-                ps.setDouble(13, convertDuration(snapshot.get99thPercentile()));
-                ps.setDouble(14, convertDuration(snapshot.get999thPercentile()));
-                ps.setDouble(15, convertRate(timer.getMeanRate()));
-                ps.setDouble(16, convertRate(timer.getOneMinuteRate()));
-                ps.setDouble(17, convertRate(timer.getFiveMinuteRate()));
-                ps.setDouble(18, convertRate(timer.getFifteenMinuteRate()));
-                ps.setString(19, String.format("calls/%s", getRateUnit()));
-                ps.setString(20, getDurationUnit());
+                reportTimer(timestamp, ps, name, timer);
                 ps.addBatch();
             }
 
@@ -366,17 +363,42 @@ public class JDBCReporter extends ScheduledReporter {
         }
     }
 
+    private void reportTimer(final long timestamp, PreparedStatement ps, String name, Timer timer) throws SQLException {
+        final Snapshot snapshot = timer.getSnapshot();
+
+        ps.setString(1, source);
+        ps.setLong(2, timestamp);
+        ps.setString(3, name);
+        ps.setLong(4, timer.getCount());
+        ps.setDouble(5, convertDuration(snapshot.getMax()));
+        ps.setDouble(6, convertDuration(snapshot.getMean()));
+        ps.setDouble(7, convertDuration(snapshot.getMin()));
+        ps.setDouble(8, convertDuration(snapshot.getStdDev()));
+        ps.setDouble(9, convertDuration(snapshot.getMedian()));
+        ps.setDouble(10, convertDuration(snapshot.get75thPercentile()));
+        ps.setDouble(11, convertDuration(snapshot.get95thPercentile()));
+        ps.setDouble(12, convertDuration(snapshot.get98thPercentile()));
+        ps.setDouble(13, convertDuration(snapshot.get99thPercentile()));
+        ps.setDouble(14, convertDuration(snapshot.get999thPercentile()));
+        ps.setDouble(15, convertRate(timer.getMeanRate()));
+        ps.setDouble(16, convertRate(timer.getOneMinuteRate()));
+        ps.setDouble(17, convertRate(timer.getFiveMinuteRate()));
+        ps.setDouble(18, convertRate(timer.getFifteenMinuteRate()));
+        ps.setString(19, String.format("calls/%s", getRateUnit()));
+        ps.setString(20, getDurationUnit());
+    }
+
     private void closeQuietly(Connection connection, PreparedStatement ps) {
-        if (connection != null) {
+        if (ps != null) {
             try {
-                connection.close();
+                ps.close();
             } catch (SQLException e) {
                 // Ignore
             }
         }
-        if (ps != null) {
+        if (connection != null) {
             try {
-                ps.close();
+                connection.close();
             } catch (SQLException e) {
                 // Ignore
             }
