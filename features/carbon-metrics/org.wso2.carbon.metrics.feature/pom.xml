@@ -35,7 +35,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.server.feature</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
@@ -60,7 +60,7 @@
                             <propertiesFile>../../../etc/feature.properties</propertiesFile>
 
                             <includedFeatures>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.metrics.server.feature</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.server.feature</includedFeatureDef>
                             </includedFeatures>
                         </configuration>
                     </execution>
