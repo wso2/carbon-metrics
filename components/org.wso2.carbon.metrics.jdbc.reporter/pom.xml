@@ -29,23 +29,11 @@
     <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Metrics JDBC Reporter</name>
-    <repositories>
-        <repository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </releases>
-        </repository>
-    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -150,7 +138,4 @@
              -->
         </plugins>
     </build>
-    <properties>
-        <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
-    </properties>
 </project>

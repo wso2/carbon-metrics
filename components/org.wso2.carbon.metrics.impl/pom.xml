@@ -29,33 +29,21 @@
     <artifactId>org.wso2.carbon.metrics.impl</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Metrics Implementation</name>
-    <repositories>
-        <repository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </releases>
-        </repository>
-    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
@@ -143,6 +131,5 @@
     <properties>
         <axiom.version>1.2.11-wso2v5</axiom.version>
         <commons-io.wso2.version>2.0.0.wso2v2</commons-io.wso2.version>
-        <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
     </properties>
 </project>

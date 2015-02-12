@@ -36,22 +36,21 @@
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.impl</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
         </dependency>
     </dependencies>
 
