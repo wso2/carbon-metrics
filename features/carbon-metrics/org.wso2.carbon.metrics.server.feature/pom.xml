@@ -34,17 +34,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.impl</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -78,9 +78,9 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.metrics.manager</bundleDef>
-                                 <bundleDef>org.wso2.carbon:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.metrics.impl</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.manager</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.impl</bundleDef>
                                 <bundleDef>io.dropwizard.metrics:metrics-core</bundleDef>
                             </bundles>
                             <importFeatures>
