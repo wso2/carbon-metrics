@@ -43,3 +43,6 @@ local.properties
 .target
 # TeXlipse plugin
 .texlipse
+
+#H2 database
+.h2.db

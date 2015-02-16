@@ -36,20 +36,4 @@
         <module>org.wso2.carbon.metrics.feature</module>
     </modules>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <properties>
-        <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
-    </properties>
 </project>

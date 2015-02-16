@@ -36,27 +36,105 @@
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.impl</artifactId>
-            <version>${project.version}</version>
+            <version>${carbon.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- Cannot use a latest version. We need to use a compatible version with Carbon's H2 library -->
+            <version>1.2.140</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-metrics-h2-database</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete file="src/main/resources/repository/database/WSO2METRICS_DB.h2.db" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-carbon-metrics-database</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <path id="h2.classpath">
+                                    <path refid="maven.compile.classpath" />
+                                </path>
+                                <echo message="########### Creating Carbon Metrics Database ##############" />
+                                <sql driver="org.h2.Driver"
+                                    url="jdbc:h2:${basedir}/src/main/resources/repository/database/WSO2METRICS_DB;create=true"
+                                    userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue"
+                                >
+                                    <classpath>
+                                        <path refid="h2.classpath" />
+                                    </classpath>
+                                    <fileset file="${basedir}/src/main/resources/sql/h2.sql" />
+                                </sql>
+                                <echo message="##################### END ########################" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+                <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                <execution>
+                <id>copy-resources</id>
+                <phase>package</phase>
+                <goals>
+                <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                <outputDirectory>src/main/resources</outputDirectory>
+                <resources>
+                <resource>
+                <directory>resources</directory>
+                <includes>
+                <include>conf/metrics.xml</include>
+                <include>conf/metrics-datasources.xml</include>
+                <include>conf/WSO2METRICS_DB.h2.db</include>
+                <include>**/*.sql</include>
+                <include>p2.inf</include>
+                <include>build.properties</include>
+                </includes>
+                </resource>
+                </resources>
+                </configuration>
+                </execution>
+                </executions>
+                </plugin>
+            -->
             <plugin>
                 <groupId>org.wso2.maven</groupId>
                 <artifactId>carbon-p2-plugin</artifactId>
@@ -90,27 +168,29 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--
+                <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
-                    <execution>
-                        <id>clean_target</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <tasks>
-                                <delete dir="src/main/resources" />
-                                <delete dir="src/main" />
-                                <delete dir="src" />
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
+                <execution>
+                <id>clean_target</id>
+                <phase>install</phase>
+                <configuration>
+                <tasks>
+                <delete dir="src/main/resources" />
+                <delete dir="src/main" />
+                <delete dir="src" />
+                </tasks>
+                </configuration>
+                <goals>
+                <goal>run</goal>
+                </goals>
+                </execution>
                 </executions>
-            </plugin>
+                </plugin>
+            -->
         </plugins>
     </build>
 </project>
