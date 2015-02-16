@@ -58,7 +58,12 @@
                         <configuration>
                             <id>org.wso2.carbon.metrics</id>
                             <propertiesFile>../../../etc/feature.properties</propertiesFile>
-
+                            <adviceFile>
+                                <properties>
+                                    <propertyDef>org.eclipse.equinox.p2.type.group:true
+                                    </propertyDef>
+                                </properties>
+                            </adviceFile>
                             <includedFeatures>
                                 <includedFeatureDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.server.feature</includedFeatureDef>
                             </includedFeatures>
