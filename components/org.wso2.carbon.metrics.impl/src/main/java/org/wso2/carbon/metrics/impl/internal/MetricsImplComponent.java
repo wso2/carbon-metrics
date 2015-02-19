@@ -24,6 +24,7 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.metrics.impl.MetricServiceImpl;
 import org.wso2.carbon.metrics.impl.MetricsConfigException;
 import org.wso2.carbon.metrics.impl.MetricsConfiguration;
+import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -39,6 +40,8 @@ public class MetricsImplComponent {
 
     @SuppressWarnings("rawtypes")
     private ServiceRegistration metricsServiceRegistration;
+    
+    private MetricService metricService;
 
     protected void activate(ComponentContext componentContext) {
         if (log.isDebugEnabled()) {
@@ -54,7 +57,7 @@ public class MetricsImplComponent {
             }
         }
 
-        MetricService metricService = new MetricServiceImpl(configuration);
+        metricService = new MetricServiceImpl(configuration);
 
         metricsServiceRegistration = componentContext.getBundleContext().registerService(MetricService.class.getName(),
                 metricService, null);
@@ -65,6 +68,8 @@ public class MetricsImplComponent {
         if (log.isDebugEnabled()) {
             log.debug("Deactivating Metrics manager component");
         }
+        // Set Level to OFF to stop reporters etc.
+        metricService.setLevel(Level.OFF);
         metricsServiceRegistration.unregister();
     }
 

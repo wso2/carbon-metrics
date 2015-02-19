@@ -18,6 +18,7 @@ package org.wso2.carbon.metrics.impl.reporter;
 import java.util.concurrent.TimeUnit;
 
 import org.wso2.carbon.metrics.reporter.JDBCReporter;
+import org.wso2.carbon.metrics.reporter.ScheduledJDBCMetricsCleanupTask;
 
 public class JDBCReporterImpl extends AbstractReporter {
 
@@ -25,19 +26,33 @@ public class JDBCReporterImpl extends AbstractReporter {
 
     private final long pollingPeriod;
 
-    public JDBCReporterImpl(JDBCReporter jdbcReporter, long pollingPeriod) {
+    // This task can be null
+    private final ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask;
+
+    private final long cleanupPeriod;
+
+    public JDBCReporterImpl(JDBCReporter jdbcReporter, long pollingPeriod,
+            ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask, long cleanupPeriod) {
         super("JDBC");
         this.jdbcReporter = jdbcReporter;
         this.pollingPeriod = pollingPeriod;
+        this.scheduledJDBCMetricsCleanupTask = scheduledJDBCMetricsCleanupTask;
+        this.cleanupPeriod = cleanupPeriod;
     }
 
     @Override
     public void startReporter() {
         jdbcReporter.start(pollingPeriod, TimeUnit.SECONDS);
+        if (scheduledJDBCMetricsCleanupTask != null) {
+            scheduledJDBCMetricsCleanupTask.start(cleanupPeriod, TimeUnit.SECONDS);
+        }
     }
 
     @Override
     public void stopReporter() {
         jdbcReporter.stop();
+        if (scheduledJDBCMetricsCleanupTask != null) {
+            scheduledJDBCMetricsCleanupTask.stop();
+        }
     }
 }

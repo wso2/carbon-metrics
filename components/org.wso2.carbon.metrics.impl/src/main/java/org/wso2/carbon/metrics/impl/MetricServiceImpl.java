@@ -42,6 +42,7 @@ import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.Timer;
 import org.wso2.carbon.metrics.reporter.JDBCReporter;
+import org.wso2.carbon.metrics.reporter.ScheduledJDBCMetricsCleanupTask;
 
 import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.JmxReporter;
@@ -81,6 +82,10 @@ public class MetricServiceImpl extends Observable implements MetricService {
     private static final String JDBC_REPORTING_POLLING_PERIOD = "Reporting.JDBC.PollingPeriod";
     private static final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
     private static final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
+
+    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED = "Reporting.JDBC.ScheduledCleanup.Enabled";
+    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD = "Reporting.JDBC.ScheduledCleanup.ScheduledCleanupPeriod";
+    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP = "Reporting.JDBC.ScheduledCleanup.DaysToKeep";
 
     private final MetricsConfiguration configuration;
 
@@ -349,8 +354,39 @@ public class MetricServiceImpl extends Observable implements MetricService {
                             source, dataSourceName, jdbcReporterPollingPeriod));
         }
 
+        ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask = null;
+        // Default cleanup period for JDBC is 86400 seconds
+        long jdbcScheduledCleanupPeriod = 86400;
+        if (Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED))) {
+            String cleanupPeriod = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD);
+            try {
+                jdbcScheduledCleanupPeriod = Long.parseLong(cleanupPeriod);
+            } catch (NumberFormatException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
+                            jdbcReporterPollingPeriod));
+                }
+            }
+
+            String daysToKeepValue = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP);
+            // Default days to keep is 7 days
+            int daysToKeep = 7;
+            try {
+                daysToKeep = Integer.parseInt(daysToKeepValue);
+            } catch (NumberFormatException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
+                            jdbcReporterPollingPeriod));
+                }
+            }
+
+            scheduledJDBCMetricsCleanupTask = new ScheduledJDBCMetricsCleanupTask(dataSource, daysToKeep);
+        }
+
         final JDBCReporter jdbcReporter = JDBCReporter.forRegistry(metricRegistry).convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS).build(source, dataSource);
-        return new JDBCReporterImpl(jdbcReporter, jdbcReporterPollingPeriod);
+        return new JDBCReporterImpl(jdbcReporter, jdbcReporterPollingPeriod, scheduledJDBCMetricsCleanupTask,
+                jdbcScheduledCleanupPeriod);
     }
+
 }

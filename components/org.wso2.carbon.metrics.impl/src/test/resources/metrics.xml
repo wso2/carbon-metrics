@@ -58,6 +58,19 @@
             <DataSourceName>jdbc/WSO2MetricsDB</DataSourceName>
             <!-- Polling Period in seconds -->
             <PollingPeriod>60</PollingPeriod>
+            <ScheduledCleanup>
+                <!--
+                    Schedule regular deletion of metrics data older than a set number of days.
+
+                    It is strongly recommended that you enable this job to ensure your metrics tables do not get extremely
+                    large. Deleting data older than seven days should be sufficient.
+                -->
+                <Enabled>true</Enabled>
+                <!-- This is the period for each cleanup operation in seconds -->
+                <ScheduledCleanupPeriod>86400</ScheduledCleanupPeriod>
+                <!-- The scheduled job will cleanup all data older than the specified days -->
+                <DaysToKeep>7</DaysToKeep>
+            </ScheduledCleanup>
         </JDBC>
     </Reporting>
 </Metrics>
