@@ -52,4 +52,19 @@ public class GaugeTest extends TestCase {
         MetricManager.gauge(Level.INFO, name, gauge);
     }
 
+    public void testSameCachedMetric() {
+        String name = MetricManager.name(this.getClass(), "test-same-cached-guage");
+
+        Gauge<Integer> gauge = new Gauge<Integer>() {
+            @Override
+            public Integer getValue() {
+                return 1;
+            }
+        };
+
+        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+
+        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+    }
+
 }
