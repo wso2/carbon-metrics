@@ -38,6 +38,9 @@ public class ServiceReferenceHolder {
     }
 
     public MetricService getMetricService() {
+        if (metricService == null) {
+            throw new IllegalStateException("Metric Service is not available!");
+        }
         return metricService;
     }
 
