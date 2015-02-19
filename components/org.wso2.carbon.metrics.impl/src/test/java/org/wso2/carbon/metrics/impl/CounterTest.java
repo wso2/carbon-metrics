@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import java.net.URL;
 import java.util.Random;
 
 import junit.framework.TestCase;
