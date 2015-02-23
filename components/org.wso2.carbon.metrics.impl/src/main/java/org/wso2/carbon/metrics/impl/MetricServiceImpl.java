@@ -28,8 +28,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
@@ -54,7 +54,7 @@ import com.codahale.metrics.MetricRegistry;
  */
 public class MetricServiceImpl extends Observable implements MetricService {
 
-    private static final Log log = LogFactory.getLog(MetricServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetricServiceImpl.class);
 
     /**
      * The level configured for Metrics collection
@@ -114,7 +114,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
         try {
             jmxReporter = configureJMXReporter();
         } catch (Throwable e) {
-            log.error("Error when configuring JMX reporter", e);
+            logger.error("Error when configuring JMX reporter", e);
         }
 
         if (jmxReporter != null) {
@@ -125,7 +125,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
         try {
             csvReporter = configureCSVReporter();
         } catch (Throwable e) {
-            log.error("Error when configuring CSV reporter", e);
+            logger.error("Error when configuring CSV reporter", e);
         }
 
         if (csvReporter != null) {
@@ -136,7 +136,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
         try {
             jdbcReporter = configureJDBCReporter();
         } catch (Throwable e) {
-            log.error("Error when configuring JDBC reporter", e);
+            logger.error("Error when configuring JDBC reporter", e);
         }
 
         if (jdbcReporter != null) {
@@ -238,8 +238,8 @@ public class MetricServiceImpl extends Observable implements MetricService {
 
     private Reporter configureJMXReporter() {
         if (!Boolean.parseBoolean(configuration.getFirstProperty(JMX_REPORTING_ENABLED))) {
-            if (log.isTraceEnabled()) {
-                log.trace("JMX Reporting for Metrics is not enabled");
+            if (logger.isTraceEnabled()) {
+                logger.trace("JMX Reporting for Metrics is not enabled");
             }
             return null;
         }
@@ -250,30 +250,30 @@ public class MetricServiceImpl extends Observable implements MetricService {
 
     private Reporter configureCSVReporter() {
         if (!Boolean.parseBoolean(configuration.getFirstProperty(CSV_REPORTING_ENABLED))) {
-            if (log.isTraceEnabled()) {
-                log.trace("CSV Reporting for Metrics is not enabled");
+            if (logger.isTraceEnabled()) {
+                logger.trace("CSV Reporting for Metrics is not enabled");
             }
             return null;
         }
         String location = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
         if (location == null || location.trim().isEmpty()) {
-            if (log.isWarnEnabled()) {
-                log.warn("CSV Reporting location is not specified");
+            if (logger.isWarnEnabled()) {
+                logger.warn("CSV Reporting location is not specified");
             }
             return null;
         }
         File file = new File(location);
         if (!file.exists()) {
             if (!file.mkdir()) {
-                if (log.isWarnEnabled()) {
-                    log.warn("CSV Reporting location was not created!. Location: " + location);
+                if (logger.isWarnEnabled()) {
+                    logger.warn("CSV Reporting location was not created!. Location: " + location);
                 }
                 return null;
             }
         }
         if (!file.isDirectory()) {
-            if (log.isWarnEnabled()) {
-                log.warn("CSV Reporting location is not a directory");
+            if (logger.isWarnEnabled()) {
+                logger.warn("CSV Reporting location is not a directory");
             }
             return null;
         }
@@ -283,13 +283,13 @@ public class MetricServiceImpl extends Observable implements MetricService {
         try {
             csvReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
-            if (log.isWarnEnabled()) {
-                log.warn(String.format("Error parsing the polling period for CSV Reporting. Using %d seconds",
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format("Error parsing the polling period for CSV Reporting. Using %d seconds",
                         csvReporterPollingPeriod));
             }
         }
-        if (log.isInfoEnabled()) {
-            log.info(String.format(
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format(
                     "Creating CSV reporter for Metrics with location '%s' and %d seconds polling period", location,
                     csvReporterPollingPeriod));
         }
@@ -301,8 +301,8 @@ public class MetricServiceImpl extends Observable implements MetricService {
 
     private Reporter configureJDBCReporter() {
         if (!Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_ENABLED))) {
-            if (log.isTraceEnabled()) {
-                log.trace("JDBC Reporting for Metrics is not enabled");
+            if (logger.isTraceEnabled()) {
+                logger.trace("JDBC Reporting for Metrics is not enabled");
             }
             return null;
         }
@@ -312,8 +312,8 @@ public class MetricServiceImpl extends Observable implements MetricService {
         try {
             jdbcReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
-            if (log.isWarnEnabled()) {
-                log.warn(String.format("Error parsing the polling period for JDBC Reporting. Using %d seconds",
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format("Error parsing the polling period for JDBC Reporting. Using %d seconds",
                         jdbcReporterPollingPeriod));
             }
         }
@@ -329,8 +329,8 @@ public class MetricServiceImpl extends Observable implements MetricService {
         String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
 
         if (dataSourceName == null || dataSourceName.trim().length() == 0) {
-            if (log.isWarnEnabled()) {
-                log.warn("Data Source Name is not specified for JDBC Reporting. The JDBC reporting will not be enabled");
+            if (logger.isWarnEnabled()) {
+                logger.warn("Data Source Name is not specified for JDBC Reporting. The JDBC reporting will not be enabled");
             }
             return null;
         }
@@ -340,16 +340,16 @@ public class MetricServiceImpl extends Observable implements MetricService {
             Context ctx = new InitialContext();
             dataSource = (DataSource) ctx.lookup(dataSourceName);
         } catch (NamingException e) {
-            if (log.isWarnEnabled()) {
-                log.warn(String.format(
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format(
                         "Error when looking up the Data Source: '%s'. The JDBC reporting will not be enabled",
                         dataSourceName));
             }
             return null;
         }
 
-        if (log.isInfoEnabled()) {
-            log.info(String
+        if (logger.isInfoEnabled()) {
+            logger.info(String
                     .format("Creating JDBC reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
                             source, dataSourceName, jdbcReporterPollingPeriod));
         }
@@ -362,8 +362,8 @@ public class MetricServiceImpl extends Observable implements MetricService {
             try {
                 jdbcScheduledCleanupPeriod = Long.parseLong(cleanupPeriod);
             } catch (NumberFormatException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
+                if (logger.isWarnEnabled()) {
+                    logger.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
                             jdbcReporterPollingPeriod));
                 }
             }
@@ -374,8 +374,8 @@ public class MetricServiceImpl extends Observable implements MetricService {
             try {
                 daysToKeep = Integer.parseInt(daysToKeepValue);
             } catch (NumberFormatException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
+                if (logger.isWarnEnabled()) {
+                    logger.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
                             jdbcReporterPollingPeriod));
                 }
             }

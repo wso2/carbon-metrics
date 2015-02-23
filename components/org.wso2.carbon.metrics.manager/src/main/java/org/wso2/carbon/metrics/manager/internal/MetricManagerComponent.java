@@ -21,8 +21,8 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
@@ -35,7 +35,7 @@ import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
  */
 public class MetricManagerComponent {
 
-    private static final Log log = LogFactory.getLog(MetricManagerComponent.class);
+    private static final Logger log = LoggerFactory.getLogger(MetricManagerComponent.class);
 
     private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 

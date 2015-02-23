@@ -34,8 +34,8 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.securevault.SecretResolver;
 import org.wso2.securevault.SecretResolverFactory;
 
@@ -44,7 +44,7 @@ import org.wso2.securevault.SecretResolverFactory;
  */
 public class MetricsConfiguration {
 
-    private static final Log log = LogFactory.getLog(MetricsConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetricsConfiguration.class);
 
     private Map<String, List<String>> configurationMap = new ConcurrentHashMap<String, List<String>>();
 
@@ -79,8 +79,8 @@ public class MetricsConfiguration {
         }
         InputStream in = null;
         try {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Loading Metrics Configuration from %s", filePath));
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Loading Metrics Configuration from %s", filePath));
             }
             in = FileUtils.openInputStream(new File(filePath));
             StAXOMBuilder builder = new StAXOMBuilder(in);
@@ -147,8 +147,8 @@ public class MetricsConfiguration {
     }
 
     private void addToConfiguration(String key, String value) {
-        if (log.isTraceEnabled()) {
-            log.trace(String.format("Adding configuration '%s' with value '%s'", key, value));
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("Adding configuration '%s' with value '%s'", key, value));
         }
         List<String> list = configurationMap.get(key);
         if (list == null) {
@@ -176,8 +176,8 @@ public class MetricsConfiguration {
         } while (matcher.find());
         matcher.appendTail(sb);
         String replaced = sb.toString();
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("Replaced. Old: '%s', New: '%s'", text, replaced));
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Replaced. Old: '%s', New: '%s'", text, replaced));
         }
         return replaced;
     }
