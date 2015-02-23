@@ -124,6 +124,8 @@
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.impl</bundleDef>
                                 <bundleDef>io.dropwizard.metrics:metrics-core</bundleDef>
+                                <bundleDef>org.slf4j:slf4j-api</bundleDef>
+                                <bundleDef>org.slf4j:slf4j-log4j12</bundleDef>
                             </bundles>
                             <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}</importFeatureDef>
