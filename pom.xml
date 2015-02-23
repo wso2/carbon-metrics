@@ -39,6 +39,7 @@
         <module>components/org.wso2.carbon.metrics.manager</module>
         <module>components/org.wso2.carbon.metrics.impl</module>
         <module>features/carbon-metrics</module>
+        <module>features/repository</module>
     </modules>
 
     <dependencyManagement>
