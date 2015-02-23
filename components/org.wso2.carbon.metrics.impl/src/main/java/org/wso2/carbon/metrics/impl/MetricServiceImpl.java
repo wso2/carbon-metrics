@@ -16,11 +16,12 @@
 package org.wso2.carbon.metrics.impl;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
@@ -321,9 +322,18 @@ public class MetricServiceImpl extends Observable implements MetricService {
         String source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE);
 
         if (source == null || source.trim().length() == 0) {
-            // Generate some random string.
-            Random random = new Random(System.currentTimeMillis());
-            source = "Carbon-" + random.nextInt(10000);
+            // Use host name if available
+            String hostname = null;
+            try {
+                hostname = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                // Ignore exception
+            }
+            if (hostname == null || hostname.trim().length() == 0) {
+                source = "Carbon";
+            } else {
+                source = hostname;
+            }
         }
 
         String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
