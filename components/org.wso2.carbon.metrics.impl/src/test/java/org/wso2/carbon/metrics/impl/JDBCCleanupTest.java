@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.reporter;
+package org.wso2.carbon.metrics.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -36,6 +36,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.datasource.init.ScriptException;
+import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
+import org.wso2.carbon.metrics.reporter.JDBCReporter;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;

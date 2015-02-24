@@ -35,6 +35,7 @@ import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
+import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
@@ -43,7 +44,6 @@ import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.Timer;
 import org.wso2.carbon.metrics.reporter.JDBCReporter;
-import org.wso2.carbon.metrics.reporter.ScheduledJDBCMetricsCleanupTask;
 
 import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.JmxReporter;

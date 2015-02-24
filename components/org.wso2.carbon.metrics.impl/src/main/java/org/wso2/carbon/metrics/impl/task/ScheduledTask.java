@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.reporter;
+package org.wso2.carbon.metrics.impl.task;
 
 import java.io.Closeable;
 import java.util.concurrent.Executors;
