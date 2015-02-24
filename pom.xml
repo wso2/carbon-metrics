@@ -29,10 +29,27 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <name>Metrics</name>
+    <description>WSO2 Carbon Metrics is an API for WSO2 Carbon Components to use Coda Hale's Metrics library</description>
+    <inceptionYear>2014</inceptionYear>
 
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/wso2/carbon-metrics.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/carbon-metrics.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/carbon-metrics.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>components/org.wso2.carbon.metrics.jdbc.reporter</module>
@@ -189,6 +206,33 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <preparationGoals>clean install</preparationGoals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -226,6 +270,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/README.md</exclude>
+                                <exclude>.travis.yml</exclude>
                             </excludes>
                         </configuration>
                         <executions>
@@ -241,32 +286,6 @@
             </build>
         </profile>
     </profiles>
-
-    <repositories>
-        <repository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
-            </releases>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>wso2-nexus</id>
-            <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
