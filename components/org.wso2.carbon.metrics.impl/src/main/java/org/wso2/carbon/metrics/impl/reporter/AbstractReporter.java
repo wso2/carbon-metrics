@@ -15,12 +15,12 @@
  */
 package org.wso2.carbon.metrics.impl.reporter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractReporter implements Reporter {
 
-    private static final Log log = LogFactory.getLog(AbstractReporter.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractReporter.class);
 
     private volatile boolean running;
 
@@ -34,8 +34,8 @@ public abstract class AbstractReporter implements Reporter {
     public final void start() {
         startReporter();
         running = true;
-        if (log.isInfoEnabled()) {
-            log.info(String.format("Started %s reporter for Metrics", name));
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("Started %s reporter for Metrics", name));
         }
     }
 
@@ -50,8 +50,8 @@ public abstract class AbstractReporter implements Reporter {
     public final void stop() {
         stopReporter();
         running = false;
-        if (log.isInfoEnabled()) {
-            log.info(String.format("Stopped %s reporter for Metrics", name));
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("Stopped %s reporter for Metrics", name));
         }
     }
 

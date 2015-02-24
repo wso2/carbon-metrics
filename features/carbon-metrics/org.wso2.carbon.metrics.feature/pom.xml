@@ -29,7 +29,7 @@
     <artifactId>org.wso2.carbon.metrics.feature</artifactId>
 
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - Metrics Feature</name>
+    <name>WSO2 Carbon - Metrics Group Feature</name>
     <url>http://wso2.org</url>
     <description>This feature contains the bundles required for Metrics</description>
 

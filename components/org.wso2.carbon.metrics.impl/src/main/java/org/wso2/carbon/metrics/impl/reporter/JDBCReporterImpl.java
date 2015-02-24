@@ -17,8 +17,8 @@ package org.wso2.carbon.metrics.impl.reporter;
 
 import java.util.concurrent.TimeUnit;
 
+import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
 import org.wso2.carbon.metrics.reporter.JDBCReporter;
-import org.wso2.carbon.metrics.reporter.ScheduledJDBCMetricsCleanupTask;
 
 public class JDBCReporterImpl extends AbstractReporter {
 

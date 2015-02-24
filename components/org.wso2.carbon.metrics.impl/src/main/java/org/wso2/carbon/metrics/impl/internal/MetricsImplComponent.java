@@ -17,8 +17,8 @@ package org.wso2.carbon.metrics.impl.internal;
 
 import java.io.File;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.metrics.impl.MetricServiceImpl;
@@ -36,7 +36,7 @@ import org.wso2.carbon.utils.CarbonUtils;
  */
 public class MetricsImplComponent {
 
-    private static final Log log = LogFactory.getLog(MetricsImplComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetricsImplComponent.class);
 
     @SuppressWarnings("rawtypes")
     private ServiceRegistration metricsServiceRegistration;
@@ -44,16 +44,16 @@ public class MetricsImplComponent {
     private MetricService metricService;
 
     protected void activate(ComponentContext componentContext) {
-        if (log.isDebugEnabled()) {
-            log.debug("Metrics manager component activated");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Metrics manager component activated");
         }
         MetricsConfiguration configuration = new MetricsConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
         try {
             configuration.load(filePath);
         } catch (MetricsConfigException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Error reading configuration from " + filePath, e);
+            if (logger.isErrorEnabled()) {
+                logger.error("Error reading configuration from " + filePath, e);
             }
         }
 
@@ -65,8 +65,8 @@ public class MetricsImplComponent {
     }
 
     protected void deactivate(ComponentContext componentContext) {
-        if (log.isDebugEnabled()) {
-            log.debug("Deactivating Metrics manager component");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Deactivating Metrics manager component");
         }
         // Set Level to OFF to stop reporters etc.
         metricService.setLevel(Level.OFF);
@@ -76,8 +76,8 @@ public class MetricsImplComponent {
     // This service is required to lookup data source in MetricServiceImpl.
     // Otherwise the data source reading component will not be activated before this component.
     protected void setRegistryService(RegistryService registryService) {
-        if (registryService != null && log.isDebugEnabled()) {
-            log.debug("Registry service initialized");
+        if (registryService != null && logger.isDebugEnabled()) {
+            logger.debug("Registry service initialized");
         }
     }
 

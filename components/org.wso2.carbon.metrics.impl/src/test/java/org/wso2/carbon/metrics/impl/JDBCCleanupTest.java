@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.reporter;
+package org.wso2.carbon.metrics.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -34,6 +35,9 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.init.ScriptException;
+import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
+import org.wso2.carbon.metrics.reporter.JDBCReporter;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;
@@ -68,7 +72,7 @@ public class JDBCCleanupTest {
     private final int SUBSTRACT_MILLIS = (DAYS * 86400 * 1000) + 1000;
 
     @BeforeClass
-    public static void setupDatasource() throws Exception {
+    public static void setupDatasource() throws ScriptException, SQLException  {
         dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test-cleanup;DB_CLOSE_DELAY=-1", "sa", "");
         template = new JdbcTemplate(dataSource);
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
@@ -106,7 +110,7 @@ public class JDBCCleanupTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void cleanGaugeValues() {
+    public void cleansGaugeValues() {
         final Gauge gauge = mock(Gauge.class);
         when(gauge.getValue()).thenReturn(1);
 
@@ -123,7 +127,7 @@ public class JDBCCleanupTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void reportsCounterValues() throws Exception {
+    public void cleansCounterValues() throws Exception {
         final Counter counter = mock(Counter.class);
         when(counter.getCount()).thenReturn(100L);
 
@@ -140,7 +144,7 @@ public class JDBCCleanupTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void reportsHistogramValues() throws Exception {
+    public void cleansHistogramValues() throws Exception {
         final Histogram histogram = mock(Histogram.class);
         when(histogram.getCount()).thenReturn(1L);
 
@@ -171,7 +175,7 @@ public class JDBCCleanupTest {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void reportsMeterValues() throws Exception {
+    public void cleansMeterValues() throws Exception {
         final Meter meter = mock(Meter.class);
         when(meter.getCount()).thenReturn(1L);
         when(meter.getMeanRate()).thenReturn(2.0);
