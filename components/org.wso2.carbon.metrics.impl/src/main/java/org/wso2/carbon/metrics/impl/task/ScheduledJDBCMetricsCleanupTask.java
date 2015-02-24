@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ScheduledJDBCMetricsCleanupTask extends ScheduledTask {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledJDBCMetricsCleanupTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledJDBCMetricsCleanupTask.class);
 
     private final DataSource dataSource;
 
@@ -70,16 +70,16 @@ public class ScheduledJDBCMetricsCleanupTask extends ScheduledTask {
 
             long timestamp = (System.currentTimeMillis() / 1000) - (daysToKeep * 86400);
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Executing SQL Query [%s]. Parameter: %s", query, timestamp));
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Executing SQL Query [%s]. Parameter: %s", query, timestamp));
             }
 
             ps.setLong(1, timestamp);
 
             ps.execute();
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Executed SQL Query [%s]. Update Count: %s", query, ps.getUpdateCount()));
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Executed SQL Query [%s]. Update Count: %s", query, ps.getUpdateCount()));
             }
 
             ps.close();
@@ -87,7 +87,7 @@ public class ScheduledJDBCMetricsCleanupTask extends ScheduledTask {
             ps = null;
             connection = null;
         } catch (SQLException e) {
-            LOGGER.error("Error when deleting metrics in " + tableName, e);
+            logger.error("Error when deleting metrics in " + tableName, e);
         } finally {
             closeQuietly(connection, ps);
         }

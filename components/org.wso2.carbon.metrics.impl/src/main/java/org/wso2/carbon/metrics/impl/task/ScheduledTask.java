@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ScheduledTask implements Closeable, Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledTask.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
 
     /**
      * A simple named thread factory.
@@ -102,7 +102,7 @@ public abstract class ScheduledTask implements Closeable, Runnable {
                 executor.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
-                    LOGGER.error(getClass().getSimpleName() + ": ScheduledExecutorService did not terminate");
+                    logger.error(getClass().getSimpleName() + ": ScheduledExecutorService did not terminate");
                 }
             }
         } catch (InterruptedException ie) {
