@@ -290,7 +290,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <carbon.metrics.version>1.0.1-SNAPSHOT</carbon.metrics.version>
         <junit.version>4.12</junit.version>
-        <metrics.version>3.1.0</metrics.version>
+        <metrics.version>3.1.1</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <eclipse.osgi.version>3.8.1.v20120830-144521</eclipse.osgi.version>
         <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
