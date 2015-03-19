@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;

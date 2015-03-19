@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.impl;
-
-import java.net.URL;
+package org.wso2.carbon.metrics.common;
 
 import junit.framework.TestCase;
-
-import org.wso2.carbon.metrics.manager.Level;
 
 /**
  * Test Cases for {@link MetricsConfiguration}
@@ -28,21 +24,18 @@ public class MetricsConfigurationTest extends TestCase {
 
     private static final String LEVEL = "Level";
     private static final String CSV_REPORTING_LOCATION = "Reporting.CSV.Location";
-    private static final MetricsConfiguration CONFIGURATION = new MetricsConfiguration();
+    private static MetricsConfiguration configuration;
 
     protected void setUp() throws Exception {
         System.setProperty("carbon.home", "/wso2/carbon");
-
-        URL file = getClass().getResource("/metrics.xml");
-        String filePath = file.getPath();
-        CONFIGURATION.load(filePath);
+        configuration = Utils.getConfiguration();
     }
 
     public void testConfigLoad() {
-        String configLevel = CONFIGURATION.getFirstProperty(LEVEL);
-        assertEquals("Level should be ALL", Level.ALL.name(), configLevel);
+        String configLevel = configuration.getFirstProperty(LEVEL);
+        assertEquals("Level should be ALL", "ALL", configLevel);
 
-        String csvLocation = CONFIGURATION.getFirstProperty(CSV_REPORTING_LOCATION);
+        String csvLocation = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
         assertEquals("/wso2/carbon/repository/logs/metrics/", csvLocation);
     }
 
