@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
@@ -42,6 +44,7 @@ import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
+import org.wso2.carbon.metrics.manager.Metric;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.Timer;
 import org.wso2.carbon.metrics.reporter.JDBCReporter;
@@ -57,6 +60,8 @@ import com.codahale.metrics.MetricRegistry;
 public class MetricServiceImpl extends Observable implements MetricService {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricServiceImpl.class);
+
+    private static final ConcurrentMap<String, MetricWrapper<? extends Metric>> metrics = new ConcurrentHashMap<String, MetricWrapper<? extends Metric>>();
 
     /**
      * The level configured for Metrics collection
@@ -97,6 +102,21 @@ public class MetricServiceImpl extends Observable implements MetricService {
     private static final String JMX_REPORTING_DOMAIN = "org.wso2.carbon.metrics";
 
     private final List<Reporter> reporters = new ArrayList<Reporter>();
+
+    /**
+     * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} with metric
+     */
+    private static class MetricWrapper<T extends Metric> {
+
+        private final Level level;
+        private final T metric;
+
+        private MetricWrapper(Level level, T metric) {
+            super();
+            this.level = level;
+            this.metric = metric;
+        }
+    }
 
     /**
      * Initialize the MetricRegistry, Level and Reporters
@@ -169,6 +189,157 @@ public class MetricServiceImpl extends Observable implements MetricService {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private <T extends Metric> T getOrCreateMetric(Level level, String name, MetricBuilder<T> metricBuilder) {
+        MetricWrapper<? extends Metric> metricWrapper = metrics.get(name);
+        if (metricWrapper != null && metricWrapper.metric != null) {
+            Metric metric = metricWrapper.metric;
+            if (metricBuilder.isInstance(metric)) {
+                if (level.equals(metricWrapper.level)) {
+                    return (T) metric;
+                } else {
+                    throw new IllegalArgumentException(name + " is already used with a different level");
+                }
+            } else {
+                throw new IllegalArgumentException(name + " is already used for a different type of metric");
+            }
+        } else {
+            T newMetric = metricBuilder.createMetric(level, name);
+            metricWrapper = new MetricWrapper<T>(level, newMetric);
+            metrics.put(name, metricWrapper);
+            return newMetric;
+        }
+    }
+
+    /**
+     * An interface for creating a new metric from MetricService
+     */
+    private interface MetricBuilder<T extends Metric> {
+        T createMetric(Level level, String name);
+
+        boolean isInstance(Metric metric);
+    }
+
+    private final MetricBuilder<Meter> METER_BUILDER = new MetricBuilder<Meter>() {
+        @Override
+        public Meter createMetric(Level level, String name) {
+            return createMeter(level, name);
+        }
+
+        @Override
+        public boolean isInstance(Metric metric) {
+            return Meter.class.isInstance(metric);
+        }
+    };
+
+    private final MetricBuilder<Counter> COUNTER_BUILDER = new MetricBuilder<Counter>() {
+        @Override
+        public Counter createMetric(Level level, String name) {
+            return createCounter(level, name);
+        }
+
+        @Override
+        public boolean isInstance(Metric metric) {
+            return Counter.class.isInstance(metric);
+        }
+    };
+
+    private final MetricBuilder<Timer> TIMER_BUILDER = new MetricBuilder<Timer>() {
+        @Override
+        public Timer createMetric(Level level, String name) {
+            return createTimer(level, name);
+        }
+
+        @Override
+        public boolean isInstance(Metric metric) {
+            return Timer.class.isInstance(metric);
+        }
+    };
+
+    private final MetricBuilder<Histogram> HISTOGRAM_BUILDER = new MetricBuilder<Histogram>() {
+        @Override
+        public Histogram createMetric(Level level, String name) {
+            return createHistogram(level, name);
+        }
+
+        @Override
+        public boolean isInstance(Metric metric) {
+            return Histogram.class.isInstance(metric);
+        }
+    };
+
+    private class GaugeBuilder<T> implements MetricBuilder<Gauge<T>> {
+
+        private final Gauge<T> gauge;
+
+        public GaugeBuilder(Gauge<T> gauge) {
+            super();
+            this.gauge = gauge;
+        }
+
+        @Override
+        public Gauge<T> createMetric(Level level, String name) {
+            createGauge(level, name, gauge);
+            return gauge;
+        }
+
+        @Override
+        public boolean isInstance(Metric metric) {
+            return Gauge.class.isInstance(metric);
+        }
+    };
+
+    private class CachedGaugeBuilder<T> extends GaugeBuilder<T> implements MetricBuilder<Gauge<T>> {
+
+        private final Gauge<T> gauge;
+        private final long timeout;
+        private final TimeUnit timeoutUnit;
+
+        public CachedGaugeBuilder(Gauge<T> gauge, long timeout, TimeUnit timeoutUnit) {
+            super(gauge);
+            this.gauge = gauge;
+            this.timeout = timeout;
+            this.timeoutUnit = timeoutUnit;
+        }
+
+        @Override
+        public Gauge<T> createMetric(Level level, String name) {
+            createCachedGauge(level, name, timeout, timeoutUnit, gauge);
+            return gauge;
+        }
+
+    };
+
+    @Override
+    public Meter meter(Level level, String name) {
+        return getOrCreateMetric(level, name, METER_BUILDER);
+    }
+
+    @Override
+    public Counter counter(Level level, String name) {
+        return getOrCreateMetric(level, name, COUNTER_BUILDER);
+    }
+
+    @Override
+    public Timer timer(Level level, String name) {
+        return getOrCreateMetric(level, name, TIMER_BUILDER);
+    }
+
+    @Override
+    public Histogram histogram(Level level, String name) {
+        return getOrCreateMetric(level, name, HISTOGRAM_BUILDER);
+    }
+
+    @Override
+    public <T> void gauge(Level level, String name, Gauge<T> gauge) {
+        getOrCreateMetric(level, name, new GaugeBuilder<T>(gauge));
+    }
+
+    @Override
+    public <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
+        getOrCreateMetric(level, name, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
+    }
+
     public int getObserverCount() {
         // This count may not be always equal to the actual number of metrics used in the system. The Metrics
         // implementation keeps a map based on the metric name. Hence if a user retrieves the same metric type with
@@ -180,42 +351,42 @@ public class MetricServiceImpl extends Observable implements MetricService {
         return metricRegistry.getMetrics().size();
     }
 
-    public Meter createMeter(Level level, String name) {
+    private Meter createMeter(Level level, String name) {
         MeterImpl meter = new MeterImpl(level, metricRegistry.meter(name));
         meter.setEnabled(getLevel());
         addObserver(meter);
         return meter;
     }
 
-    public Counter createCounter(Level level, String name) {
+    private Counter createCounter(Level level, String name) {
         CounterImpl counter = new CounterImpl(level, metricRegistry.counter(name));
         counter.setEnabled(getLevel());
         addObserver(counter);
         return counter;
     }
 
-    public Timer createTimer(Level level, String name) {
+    private Timer createTimer(Level level, String name) {
         TimerImpl timer = new TimerImpl(level, metricRegistry.timer(name));
         timer.setEnabled(getLevel());
         addObserver(timer);
         return timer;
     }
 
-    public Histogram createHistogram(Level level, String name) {
+    private Histogram createHistogram(Level level, String name) {
         HistogramImpl histogram = new HistogramImpl(level, metricRegistry.histogram(name));
         histogram.setEnabled(getLevel());
         addObserver(histogram);
         return histogram;
     }
 
-    public <T> void createGauge(Level level, String name, Gauge<T> gauge) {
+    private <T> void createGauge(Level level, String name, Gauge<T> gauge) {
         GaugeImpl<T> gaugeImpl = new GaugeImpl<T>(level, gauge);
         gaugeImpl.setEnabled(getLevel());
         addObserver(gaugeImpl);
         metricRegistry.register(name, gaugeImpl);
     }
 
-    public <T> void createCachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
+    private <T> void createCachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
         CachedGaugeImpl<T> gaugeImpl = new CachedGaugeImpl<T>(level, timeout, timeoutUnit, gauge);
         gaugeImpl.setEnabled(getLevel());
         addObserver(gaugeImpl);

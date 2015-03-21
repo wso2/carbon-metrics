@@ -42,52 +42,52 @@ public interface MetricService {
     int getMetricsCount();
 
     /**
-     * Create a {@link Meter} instance for the given name
+     * Get or create a {@link Meter} instance for the given name
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @return a {@link Meter} instance
      */
-    Meter createMeter(Level level, String name);
+    Meter meter(Level level, String name);
 
     /**
-     * Create a {@link Counter} instance for the given name
+     * Get or create a {@link Counter} instance for the given name
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @return a {@link Counter} instance
      */
-    Counter createCounter(Level level, String name);
+    Counter counter(Level level, String name);
 
     /**
-     * Create a {@link Timer} instance for the given name
+     * Get or create a {@link Timer} instance for the given name
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @return a {@link Timer} instance
      */
-    Timer createTimer(Level level, String name);
+    Timer timer(Level level, String name);
 
     /**
-     * Create a {@link Histogram} instance for the given name
+     * Get or create a {@link Histogram} instance for the given name
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @return a {@link Histogram} instance
      */
-    Histogram createHistogram(Level level, String name);
+    Histogram histogram(Level level, String name);
 
     /**
-     * Register a {@link Gauge} for the given name
+     * Get or create a {@link Gauge} for the given name
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param gauge An implementation of {@link Gauge}
      */
-    <T> void createGauge(Level level, String name, Gauge<T> gauge);
+    <T> void gauge(Level level, String name, Gauge<T> gauge);
 
     /**
-     * Register a cached {@link Gauge} for the given name
+     * Get or create a cached {@link Gauge} for the given name
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
@@ -95,6 +95,6 @@ public interface MetricService {
      * @param timeoutUnit the unit of {@code timeout}
      * @param gauge An implementation of {@link Gauge}
      */
-    <T> void createCachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
+    <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
 
 }
