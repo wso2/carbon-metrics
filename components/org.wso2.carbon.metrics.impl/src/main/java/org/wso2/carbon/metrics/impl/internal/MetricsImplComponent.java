@@ -45,7 +45,7 @@ public class MetricsImplComponent {
 
     protected void activate(ComponentContext componentContext) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Metrics manager component activated");
+            logger.debug("Metrics Service component activated");
         }
         MetricsConfiguration configuration = new MetricsConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
@@ -66,7 +66,7 @@ public class MetricsImplComponent {
 
     protected void deactivate(ComponentContext componentContext) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Deactivating Metrics manager component");
+            logger.debug("Deactivating Metrics Service component");
         }
         // Set Level to OFF to stop reporters etc.
         metricService.setLevel(Level.OFF);
