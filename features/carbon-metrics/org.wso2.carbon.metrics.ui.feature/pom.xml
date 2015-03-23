@@ -26,20 +26,21 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.metrics.server.feature</artifactId>
+    <artifactId>org.wso2.carbon.metrics.ui.feature</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Carbon - Metrics Server Feature</name>
+    <name>WSO2 Carbon - Metrics UI Feature</name>
     <url>http://wso2.org</url>
-    <description>This feature contains the core bundles required for Metrics</description>
+    <description>This feature contains the core bundles required for Metrics UI</description>
 
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
+        </dependency>
+                <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.logging.view.ui</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
@@ -48,10 +49,6 @@
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.data.service</artifactId>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -70,49 +67,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>clean-metrics-h2-database</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <delete file="src/main/resources/repository/database/WSO2METRICS_DB.h2.db" />
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>create-carbon-metrics-database</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <path id="h2.classpath">
-                                    <path refid="maven.compile.classpath" />
-                                </path>
-                                <echo message="########### Creating Carbon Metrics Database ##############" />
-                                <sql driver="org.h2.Driver"
-                                    url="jdbc:h2:${basedir}/src/main/resources/repository/database/WSO2METRICS_DB;create=true"
-                                    userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue"
-                                >
-                                    <classpath>
-                                        <path refid="h2.classpath" />
-                                    </classpath>
-                                    <fileset file="${basedir}/src/main/resources/sql/h2.sql" />
-                                </sql>
-                                <echo message="##################### END ########################" />
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.wso2.maven</groupId>
                 <artifactId>carbon-p2-plugin</artifactId>
                 <executions>
@@ -123,22 +77,16 @@
                             <goal>p2-feature-gen</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.metrics.server</id>
+                            <id>org.wso2.carbon.metrics.ui</id>
                             <propertiesFile>../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:server</propertyDef>
+                                    <propertyDef>org.wso2.carbon.p2.category.type:console</propertyDef>
                                     <propertyDef>org.eclipse.equinox.p2.type.group:false</propertyDef>
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.common</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.manager</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.impl</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service</bundleDef>                  
-                                <bundleDef>io.dropwizard.metrics:metrics-core</bundleDef>
-                                <bundleDef>io.dropwizard.metrics:metrics-jvm</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.logging.view.ui</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-api</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-log4j12</bundleDef>
                             </bundles>
