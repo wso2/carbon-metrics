@@ -47,7 +47,7 @@
             <Enabled>true</Enabled>
             <!-- Source of Metrics, which will be used to
                 identify each metric in database -->
-            <!-- Commented to use a generated value
+            <!-- Commented to use the hostname
                 <Source>Carbon</Source>
             -->
             <!--
