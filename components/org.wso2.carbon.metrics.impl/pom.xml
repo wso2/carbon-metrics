@@ -97,9 +97,11 @@
                             org.wso2.carbon.metrics.impl.internal
                         </Private-Package>
                         <Export-Package>
+                            !org.wso2.carbon.metrics.impl.internal.*,
                             org.wso2.carbon.metrics.impl.*,
                         </Export-Package>
                         <Import-Package>
+                            org.wso2.carbon.metrics.common.*,
                             org.wso2.carbon.metrics.manager.*,
                             org.wso2.carbon.metrics.reporter.*,
                             com.codahale.metrics;
