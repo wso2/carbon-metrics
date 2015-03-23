@@ -99,6 +99,11 @@
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-jvm</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-stax-api_1.0_spec</artifactId>
                 <version>${stax.api.version}</version>
