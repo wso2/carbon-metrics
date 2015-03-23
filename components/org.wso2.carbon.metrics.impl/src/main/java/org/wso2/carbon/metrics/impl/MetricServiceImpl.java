@@ -61,7 +61,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricServiceImpl.class);
 
-    private static final ConcurrentMap<String, MetricWrapper<? extends Metric>> metrics = new ConcurrentHashMap<String, MetricWrapper<? extends Metric>>();
+    private final ConcurrentMap<String, MetricWrapper<? extends Metric>> metrics = new ConcurrentHashMap<String, MetricWrapper<? extends Metric>>();
 
     /**
      * The level configured for Metrics collection
@@ -106,7 +106,7 @@ public class MetricServiceImpl extends Observable implements MetricService {
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} with metric
      */
-    private static class MetricWrapper<T extends Metric> {
+    private class MetricWrapper<T extends Metric> {
 
         private final Level level;
         private final T metric;
