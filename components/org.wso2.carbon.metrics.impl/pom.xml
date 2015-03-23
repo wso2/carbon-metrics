@@ -105,7 +105,7 @@
                             org.wso2.carbon.metrics.manager.*,
                             org.wso2.carbon.metrics.reporter.*,
                             com.codahale.metrics;
-                            version="${metrics.version.range}
+                            version="${metrics.version.range}"
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
