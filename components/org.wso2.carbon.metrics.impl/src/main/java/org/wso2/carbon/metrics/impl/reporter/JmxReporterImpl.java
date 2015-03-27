@@ -27,6 +27,11 @@ public class JmxReporterImpl extends AbstractReporter {
     }
 
     @Override
+    public void report() {
+        // Nothing to report
+    }
+
+    @Override
     public void startReporter() {
         jmxReporter.start();
     }

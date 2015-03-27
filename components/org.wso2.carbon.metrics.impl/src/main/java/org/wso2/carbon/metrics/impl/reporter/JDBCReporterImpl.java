@@ -41,6 +41,11 @@ public class JDBCReporterImpl extends AbstractReporter {
     }
 
     @Override
+    public void report() {
+        jdbcReporter.report();
+    }
+
+    @Override
     public void startReporter() {
         jdbcReporter.start(pollingPeriod, TimeUnit.SECONDS);
         if (scheduledJDBCMetricsCleanupTask != null) {
