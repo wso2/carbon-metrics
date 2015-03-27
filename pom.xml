@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    # Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org)
+    # Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org)
     #
     # Licensed under the Apache License, Version 2.0 (the "License");
     # you may not use this file except in compliance with the License.
@@ -195,8 +195,48 @@
                 <version>${spring.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>${tomcat.version}</version>
+                <scope>test</scope>
+            </dependency>
 
-            <!-- Features -->
+
+            <!-- Service Stubs - Start -->
+            <dependency>
+                <groupId>org.apache.axis2.wso2</groupId>
+                <artifactId>axis2</artifactId>
+                <version>${axis2.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>wsdl4j.wso2</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>${wsdl4j.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons.logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.schema.wso2</groupId>
+                <artifactId>XmlSchema</artifactId>
+                <version>${xmlschema.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom.wso2</groupId>
+                <artifactId>axiom</artifactId>
+                <version>${axiom.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.neethi.wso2</groupId>
+                <artifactId>neethi</artifactId>
+                <version>${neethi.wso2.version}</version>
+            </dependency>
+            <!-- Service Stubs - End -->
+
+            <!-- Features - Start -->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.server.feature</artifactId>
@@ -209,6 +249,7 @@
                 <version>${carbon.metrics.version}</version>
                 <type>zip</type>
             </dependency>
+            <!-- Features - End -->
         </dependencies>
     </dependencyManagement>
 
@@ -252,6 +293,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -319,13 +368,13 @@
         <junit.version>4.12</junit.version>
         <metrics.version>3.1.1</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
-        <eclipse.osgi.version>3.8.1.v20120830-144521</eclipse.osgi.version>
+        <eclipse.osgi.version>3.9.1.v20140110-1610</eclipse.osgi.version>
         <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
         <carbon.kernel.version>4.3.0</carbon.kernel.version>
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
         <stax.api.version>1.0.1</stax.api.version>
-        <axiom.version>1.2.11-wso2v5</axiom.version>
+        <axiom.version>1.2.14</axiom.version>
         <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
         <commons-io.wso2.version.range>[2.0.0, 3.0.0)</commons-io.wso2.version.range>
         <slf4j.version>1.7.10</slf4j.version>
@@ -340,5 +389,15 @@
         <maven.bundle.plugin.version>2.5.3</maven.bundle.plugin.version>
         <maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
         <maven.war.plugin.version>2.6</maven.war.plugin.version>
+        <tomcat.version>8.0.21</tomcat.version>
+
+        <!-- Service Stubs - Start -->
+        <commons.logging.version>1.2</commons.logging.version>
+        <axis2.wso2.version>1.6.1.wso2v12</axis2.wso2.version>
+        <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
+        <xmlschema.wso2.version>1.4.7.wso2v3</xmlschema.wso2.version>
+        <axiom.wso2.version>1.2.11.wso2v6</axiom.wso2.version>
+        <neethi.wso2.version>2.0.4.wso2v4</neethi.wso2.version>
+        <!-- Service Stubs - End -->
     </properties>
 </project>

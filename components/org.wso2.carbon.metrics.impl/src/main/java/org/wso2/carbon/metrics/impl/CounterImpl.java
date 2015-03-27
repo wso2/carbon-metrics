@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
 
     private Counter counter;
 
-    public CounterImpl(Level level, Counter counter) {
-        super(level);
+    public CounterImpl(Level level, String name, Counter counter) {
+        super(level, name);
         this.counter = counter;
     }
 

@@ -26,14 +26,14 @@
             <Enabled>true</Enabled>
         </JMX>
         <CSV>
-            <Enabled>false</Enabled>
-            <Location>${carbon.home}/repository/logs/metrics/</Location>
-            <PollingPeriod>60</PollingPeriod>
+            <Enabled>true</Enabled>
+            <Location>target/metrics-logs</Location>
+            <PollingPeriod>1</PollingPeriod>
         </CSV>
         <JDBC>
-            <Enabled>false</Enabled>
+            <Enabled>true</Enabled>
             <DataSourceName>jdbc/WSO2MetricsDB</DataSourceName>
-            <PollingPeriod>60</PollingPeriod>
+            <PollingPeriod>1</PollingPeriod>
             <ScheduledCleanup>
                 <Enabled>true</Enabled>
                 <ScheduledCleanupPeriod>86400</ScheduledCleanupPeriod>

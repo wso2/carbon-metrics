@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ public class GaugeImpl<T> extends AbstractMetric implements com.codahale.metrics
 
     private Gauge<T> gauge;
 
-    public GaugeImpl(Level level, Gauge<T> gauge) {
-        super(level);
+    public GaugeImpl(Level level, String name, Gauge<T> gauge) {
+        super(level, name);
         this.gauge = gauge;
     }
 

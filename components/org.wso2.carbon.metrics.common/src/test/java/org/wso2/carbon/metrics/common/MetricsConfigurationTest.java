@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class MetricsConfigurationTest extends TestCase {
 
-    private static final String LEVEL = "Level";
+    private static final String ENABLED = "Enabled";
     private static final String CSV_REPORTING_LOCATION = "Reporting.CSV.Location";
     private static MetricsConfiguration configuration;
 
@@ -32,8 +32,8 @@ public class MetricsConfigurationTest extends TestCase {
     }
 
     public void testConfigLoad() {
-        String configLevel = configuration.getFirstProperty(LEVEL);
-        assertEquals("Level should be ALL", "ALL", configLevel);
+        String enabled = configuration.getFirstProperty(ENABLED);
+        assertEquals("Enabled should be true", "true", enabled);
 
         String csvLocation = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
         assertEquals("/wso2/carbon/repository/logs/metrics/", csvLocation);

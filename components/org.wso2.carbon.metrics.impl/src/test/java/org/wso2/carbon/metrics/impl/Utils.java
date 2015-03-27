@@ -26,10 +26,26 @@ import org.wso2.carbon.metrics.common.MetricsConfiguration;
 public class Utils {
 
     public static MetricsConfiguration getConfiguration() throws MetricsConfigException {
+        return getConfiguration("/metrics.xml");
+    }
+
+    public static MetricsConfiguration getConfigurationWithReporters() throws MetricsConfigException {
+        return getConfiguration("/metrics-reporters.xml");
+    }
+
+    private static MetricsConfiguration getConfiguration(String resource) throws MetricsConfigException {
         MetricsConfiguration metricsConfiguration = new MetricsConfiguration();
-        URL file = Utils.class.getResource("/metrics.xml");
+        URL file = Utils.class.getResource(resource);
         String filePath = file.getPath();
         metricsConfiguration.load(filePath);
         return metricsConfiguration;
+    }
+
+    public static MetricsLevelConfiguration getLevelConfiguration() throws MetricsLevelConfigException {
+        MetricsLevelConfiguration levelConfiguration = new MetricsLevelConfiguration();
+        URL file = Utils.class.getResource("/metrics.properties");
+        String filePath = file.getPath();
+        levelConfiguration.load(filePath);
+        return levelConfiguration;
     }
 }

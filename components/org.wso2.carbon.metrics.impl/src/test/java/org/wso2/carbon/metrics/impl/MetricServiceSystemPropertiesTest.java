@@ -17,54 +17,31 @@ package org.wso2.carbon.metrics.impl;
 
 import junit.framework.TestCase;
 
-import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 /**
- * Test Cases for {@link Gauge}
+ * Test Cases for {@link MetricService}
  */
-public class GaugeTest extends TestCase {
+public class MetricServiceSystemPropertiesTest extends TestCase {
 
-    private MetricService metricService;
+    private static MetricService metricService;
 
     protected void setUp() throws Exception {
         super.setUp();
+        System.setProperty("metrics.enabled", "true");
+        System.setProperty("metrics.rootLevel", "INFO");
         metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
-    public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-guage");
-
-        Gauge<Integer> gauge = new Gauge<Integer>() {
-            @Override
-            public Integer getValue() {
-                return 1;
-            }
-        };
-
-        MetricManager.gauge(Level.INFO, name, gauge);
-
-        // This call also should be successful as we are getting the same gauge
-        MetricManager.gauge(Level.INFO, name, gauge);
-    }
-
-    public void testSameCachedMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-cached-guage");
-
-        Gauge<Integer> gauge = new Gauge<Integer>() {
-            @Override
-            public Integer getValue() {
-                return 1;
-            }
-        };
-
-        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
-
-        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+    public void testMetricServiceLevels() {
+        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-levels"));
+        meter.mark();
+        assertEquals("Count should be one", 1, meter.getCount());
     }
 
 }

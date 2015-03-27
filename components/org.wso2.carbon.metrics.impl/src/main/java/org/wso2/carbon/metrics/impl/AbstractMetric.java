@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,52 +15,44 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Metric;
 
 /**
- * An abstract class to keep generic behavior for metric instances. This class implements {@link Observer} interface and
- * takes part in observer pattern to update the enabled flag
+ * An abstract class to keep generic behavior for metric instances. This class implements a metric hierarchy
  */
-public abstract class AbstractMetric implements Observer, Metric {
+public abstract class AbstractMetric implements Metric {
 
     /**
      * A flag to indicate whether the metric is enabled
      */
-    private boolean enabled;
+    private volatile boolean enabled;
 
     /**
      * The level used when creating the metric
      */
     private final Level level;
 
-    public AbstractMetric(Level level) {
+    private final String name;
+
+    public AbstractMetric(Level level, String name) {
         this.level = level;
+        this.name = name;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public String getName() {
+        return name;
     }
 
     protected final boolean isEnabled() {
         return enabled;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-     */
-    @Override
-    public void update(Observable o, Object arg) {
-        Level newLevel = (Level) arg;
-        setEnabled(newLevel);
+    final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
-
-    public void setEnabled(Level newLevel) {
-        // Enable if the new threshold level is greater than or equal to current level.
-        // This should be done only if the new level is not equal to OFF.
-        // Otherwise the condition would fail when comparing two "OFF" levels
-        enabled = newLevel.intLevel() >= level.intLevel() && newLevel.intLevel() > Level.OFF.intLevel();
-    }
-
 }

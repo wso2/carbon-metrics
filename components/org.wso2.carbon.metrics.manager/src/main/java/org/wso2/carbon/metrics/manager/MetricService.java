@@ -23,16 +23,33 @@ import java.util.concurrent.TimeUnit;
 public interface MetricService {
 
     /**
-     * @return The current {@link Level}
+     * Enables the Metrics Feature
      */
-    Level getLevel();
+    void enable();
 
     /**
-     * Set a new level to the Metrics Service
-     * 
-     * @param level New {@link Level}
+     * Disables the Metrics Feature
      */
-    void setLevel(Level level);
+    void disable();
+
+    /**
+     * Get the current status of Metrics (Enabled/Disabled)
+     * 
+     * @return {@code true} if the Metrics feature is enabled
+     */
+    boolean isEnabled();
+
+    /**
+     * @return The current root {@link Level}
+     */
+    Level getRootLevel();
+
+    /**
+     * Set a new root level to the Metrics Service
+     * 
+     * @param level New Root {@link Level}
+     */
+    void setRootLevel(Level level);
 
     /**
      * Return the number of metrics used

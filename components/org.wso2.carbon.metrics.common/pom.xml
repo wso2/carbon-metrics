@@ -36,8 +36,8 @@
             <artifactId>geronimo-stax-api_1.0_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-api</artifactId>
+            <groupId>org.apache.ws.commons.axiom.wso2</groupId>
+            <artifactId>axiom</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io.wso2</groupId>

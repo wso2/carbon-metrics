@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ public class CachedGaugeImpl<T> extends AbstractMetric implements com.codahale.m
 
     private CachedGauge<T> gauge;
 
-    public CachedGaugeImpl(Level level, long timeout, TimeUnit timeoutUnit, final Gauge<T> gauge) {
-        super(level);
+    public CachedGaugeImpl(Level level, String name, long timeout, TimeUnit timeoutUnit, final Gauge<T> gauge) {
+        super(level, name);
         this.gauge = new CachedGauge<T>(timeout, timeoutUnit) {
             @Override
             protected T loadValue() {

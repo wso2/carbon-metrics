@@ -16,7 +16,7 @@
 -->
 <Metrics xmlns="http://wso2.org/projects/carbon/metrics.xml">
 
-    <Level>ALL</Level>
+    <Enabled>true</Enabled>
 
     <Reporting>
         <CSV>
