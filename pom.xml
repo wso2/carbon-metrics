@@ -119,9 +119,9 @@
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-io.wso2</groupId>
+                <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>${commons-io.wso2.version}</version>
+                <version>${commons-io.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -129,9 +129,9 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.securevault</artifactId>
-                <version>${carbon.kernel.version}</version>
+                <groupId>org.wso2.securevault</groupId>
+                <artifactId>org.wso2.securevault</artifactId>
+                <version>${securevault.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -142,6 +142,12 @@
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.registry.core</artifactId>
                 <version>${carbon.kernel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-io.wso2</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -205,7 +211,7 @@
 
             <!-- Service Stubs - Start -->
             <dependency>
-                <groupId>org.apache.axis2.wso2</groupId>
+                <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2</artifactId>
                 <version>${axis2.wso2.version}</version>
             </dependency>
@@ -298,8 +304,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -329,6 +335,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>${maven.war.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.axis2</groupId>
+                    <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
+                    <version>${axis2.wso2.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -373,9 +384,10 @@
         <carbon.kernel.version>4.3.0</carbon.kernel.version>
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
+        <securevault.version>1.0.0-wso2v2</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>
         <axiom.version>1.2.14</axiom.version>
-        <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
+        <commons-io.version>2.4</commons-io.version>
         <commons-io.wso2.version.range>[2.0.0, 3.0.0)</commons-io.wso2.version.range>
         <slf4j.version>1.7.10</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
@@ -393,7 +405,7 @@
 
         <!-- Service Stubs - Start -->
         <commons.logging.version>1.2</commons.logging.version>
-        <axis2.wso2.version>1.6.1.wso2v12</axis2.wso2.version>
+        <axis2.wso2.version>1.6.1-wso2v12</axis2.wso2.version>
         <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
         <xmlschema.wso2.version>1.4.7.wso2v3</xmlschema.wso2.version>
         <axiom.wso2.version>1.2.11.wso2v6</axiom.wso2.version>
