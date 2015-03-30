@@ -33,7 +33,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import junit.extensions.TestSetup;
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.core.io.ClassPathResource;
@@ -55,27 +58,40 @@ public class ReporterTest extends TestCase {
 
     private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
-    private JdbcTemplate template;
+    private static JdbcTemplate template;
 
     private String meterName = MetricManager.name(this.getClass(), "test-meter");
 
     private String gaugeName = MetricManager.name(this.getClass(), "test-gauge");
 
+    public static Test suite() {
+        return new TestSetup(new TestSuite(ReporterTest.class)) {
+
+            protected void setUp() throws Exception {
+                DataSource dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "");
+                template = new JdbcTemplate(dataSource);
+                ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+                populator.addScript(new ClassPathResource("dbscripts/h2.sql"));
+                populator.populate(dataSource.getConnection());
+
+                // Create initial context
+                System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
+                System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
+                InitialContext ic = new InitialContext();
+                ic.createSubcontext("jdbc");
+                ic.bind("jdbc/WSO2MetricsDB", dataSource);
+            }
+
+            protected void tearDown() throws Exception {
+                InitialContext ic = new InitialContext();
+                ic.unbind("jdbc/WSO2MetricsDB");
+                ic.unbind("jdbc");
+            }
+        };
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
-
-        DataSource dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "");
-        template = new JdbcTemplate(dataSource);
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("dbscripts/h2.sql"));
-        populator.populate(dataSource.getConnection());
-
-        // Create initial context
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-        System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
-        InitialContext ic = new InitialContext();
-        ic.createSubcontext("jdbc");
-        ic.bind("jdbc/WSO2MetricsDB", dataSource);
 
         metricService = new MetricServiceImpl(Utils.getConfigurationWithReporters(), Utils.getLevelConfiguration());
         metricService.setRootLevel(Level.ALL);
@@ -97,10 +113,6 @@ public class ReporterTest extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        InitialContext ic = new InitialContext();
-        ic.unbind("jdbc/WSO2MetricsDB");
-        ic.unbind("jdbc");
-
         // Disable to stop reporters
         metricService.disable();
     }
