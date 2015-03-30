@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.data.metrics.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax21="http://service.data.metrics.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.data.metrics.carbon.wso2.org">
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org/xsd">
+            <xs:complexType name="MetricNameSearchResult">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MetricData">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="data" nillable="true" type="ax21:ArrayOfBigDecimal"/>
+                    <xs:element minOccurs="0" name="metadata" nillable="true" type="ax21:Metadata"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ArrayOfBigDecimal">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="array" nillable="true" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Metadata">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="names" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="types" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax22="http://service.data.metrics.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org">
+            <xs:import namespace="http://service.data.metrics.carbon.wso2.org/xsd"/>
+            <xs:element name="searchMetricNames">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="metricType" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="searchName" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="searchMetricNamesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax21:MetricNameSearchResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="searchJMXMemory">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="searchJMXMemoryResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="searchMetricNamesRequest">
+        <wsdl:part name="parameters" element="ns:searchMetricNames"/>
+    </wsdl:message>
+    <wsdl:message name="searchMetricNamesResponse">
+        <wsdl:part name="parameters" element="ns:searchMetricNamesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="searchJMXMemoryRequest">
+        <wsdl:part name="parameters" element="ns:searchJMXMemory"/>
+    </wsdl:message>
+    <wsdl:message name="searchJMXMemoryResponse">
+        <wsdl:part name="parameters" element="ns:searchJMXMemoryResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="MetricsDataServicePortType">
+        <wsdl:operation name="searchMetricNames">
+            <wsdl:input message="ns:searchMetricNamesRequest" wsaw:Action="urn:searchMetricNames"/>
+            <wsdl:output message="ns:searchMetricNamesResponse" wsaw:Action="urn:searchMetricNamesResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="searchJMXMemory">
+            <wsdl:input message="ns:searchJMXMemoryRequest" wsaw:Action="urn:searchJMXMemory"/>
+            <wsdl:output message="ns:searchJMXMemoryResponse" wsaw:Action="urn:searchJMXMemoryResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MetricsDataServiceSoap11Binding" type="ns:MetricsDataServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="searchMetricNames">
+            <soap:operation soapAction="urn:searchMetricNames" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="searchJMXMemory">
+            <soap:operation soapAction="urn:searchJMXMemory" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MetricsDataServiceSoap12Binding" type="ns:MetricsDataServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="searchMetricNames">
+            <soap12:operation soapAction="urn:searchMetricNames" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="searchJMXMemory">
+            <soap12:operation soapAction="urn:searchJMXMemory" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MetricsDataServiceHttpBinding" type="ns:MetricsDataServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="searchMetricNames">
+            <http:operation location="searchMetricNames"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="searchJMXMemory">
+            <http:operation location="searchJMXMemory"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="MetricsDataService">
+        <wsdl:port name="MetricsDataServiceHttpSoap11Endpoint" binding="ns:MetricsDataServiceSoap11Binding">
+            <soap:address location="http://localhost:8080/axis2/services/MetricsDataService"/>
+        </wsdl:port>
+        <wsdl:port name="MetricsDataServiceHttpSoap12Endpoint" binding="ns:MetricsDataServiceSoap12Binding">
+            <soap12:address location="http://localhost:8080/axis2/services/MetricsDataService"/>
+        </wsdl:port>
+        <wsdl:port name="MetricsDataServiceHttpEndpoint" binding="ns:MetricsDataServiceHttpBinding">
+            <http:address location="http://localhost:8080/axis2/services/MetricsDataService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
