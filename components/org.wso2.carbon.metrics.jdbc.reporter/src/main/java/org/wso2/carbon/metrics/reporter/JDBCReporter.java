@@ -65,6 +65,7 @@ public class JDBCReporter extends ScheduledReporter {
         private TimeUnit durationUnit;
         private Clock clock;
         private MetricFilter filter;
+        private TimeUnit timestampUnit;
 
         private Builder(MetricRegistry registry) {
             this.registry = registry;
@@ -72,6 +73,7 @@ public class JDBCReporter extends ScheduledReporter {
             this.durationUnit = TimeUnit.MILLISECONDS;
             this.clock = Clock.defaultClock();
             this.filter = MetricFilter.ALL;
+            this.timestampUnit = TimeUnit.SECONDS;
         }
 
         /**
@@ -119,6 +121,17 @@ public class JDBCReporter extends ScheduledReporter {
         }
 
         /**
+         * Convert reporting timestamp to the given time unit.
+         *
+         * @param timestampUnit a unit of time
+         * @return {@code this}
+         */
+        public Builder convertTimestampTo(TimeUnit timestampUnit) {
+            this.timestampUnit = timestampUnit;
+            return this;
+        }
+
+        /**
          * Builds a {@link JDBCReporter} with the given properties to report metrics to a database
          *
          * @param source A value to identify the source of each metrics in database
@@ -126,7 +139,7 @@ public class JDBCReporter extends ScheduledReporter {
          * @return a {@link JDBCReporter}
          */
         public JDBCReporter build(String source, DataSource dataSource) {
-            return new JDBCReporter(registry, source, dataSource, rateUnit, durationUnit, clock, filter);
+            return new JDBCReporter(registry, source, dataSource, rateUnit, durationUnit, timestampUnit, clock, filter);
         }
     }
 
@@ -135,6 +148,7 @@ public class JDBCReporter extends ScheduledReporter {
     private final Clock clock;
     private final String source;
     private final DataSource dataSource;
+    private final TimeUnit timestampUnit;
 
     private static final String INSERT_GAUGE_QUERY = "INSERT INTO METRIC_GAUGE (SOURCE, TIMESTAMP, NAME, VALUE) VALUES (?,?,?,?);";
     private static final String INSERT_COUNTER_QUERY = "INSERT INTO METRIC_COUNTER (SOURCE, TIMESTAMP, NAME, COUNT) VALUES (?,?,?,?);";
@@ -143,10 +157,11 @@ public class JDBCReporter extends ScheduledReporter {
     private static final String INSERT_TIMER_QUERY = "INSERT INTO METRIC_TIMER (SOURCE,TIMESTAMP,NAME,COUNT,MAX,MEAN,MIN,STDDEV,P50,P75,P95,P98,P99,P999,MEAN_RATE,M1_RATE,M5_RATE,M15_RATE,RATE_UNIT,DURATION_UNIT) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
     private JDBCReporter(MetricRegistry registry, String source, DataSource dataSource, TimeUnit rateUnit,
-            TimeUnit durationUnit, Clock clock, MetricFilter filter) {
+            TimeUnit durationUnit, TimeUnit timestampUnit, Clock clock, MetricFilter filter) {
         super(registry, "jdbc-reporter", filter, rateUnit, durationUnit);
         this.source = source;
         this.dataSource = dataSource;
+        this.timestampUnit = timestampUnit;
         this.clock = clock;
         if (source == null) {
             throw new IllegalArgumentException("Source cannot be null");
@@ -160,7 +175,7 @@ public class JDBCReporter extends ScheduledReporter {
     @Override
     public void report(SortedMap<String, Gauge> gauges, SortedMap<String, Counter> counters,
             SortedMap<String, Histogram> histograms, SortedMap<String, Meter> meters, SortedMap<String, Timer> timers) {
-        final long timestamp = TimeUnit.MILLISECONDS.toSeconds(clock.getTime());
+        final long timestamp = timestampUnit.convert(clock.getTime(), TimeUnit.MILLISECONDS);
 
         if (!gauges.isEmpty()) {
             reportGauges(timestamp, gauges);
