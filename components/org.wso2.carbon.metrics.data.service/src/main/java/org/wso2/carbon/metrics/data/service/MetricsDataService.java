@@ -17,6 +17,7 @@ package org.wso2.carbon.metrics.data.service;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -130,13 +131,21 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         private final Map<Long, BigDecimal[]> dataMap = new HashMap<Long, BigDecimal[]>();
 
+        /**
+         * Timestamp data must be kept in order
+         */
+        private final List<BigDecimal[]> orderedList = new ArrayList<BigDecimal[]>();
+
         private final String[] names;
 
         private final String[] displayNames;
 
-        private JVMMetricDataProcessor(String[] names, String[] displayNames) {
+        private final ValueConverter valueConverter;
+
+        private JVMMetricDataProcessor(String[] names, String[] displayNames, ValueConverter valueConverter) {
             this.names = names;
             this.displayNames = displayNames;
+            this.valueConverter = valueConverter;
         }
 
         @Override
@@ -148,6 +157,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             if (data == null) {
                 data = new BigDecimal[names.length + 1];
                 dataMap.put(timestamp, data);
+                orderedList.add(data);
                 // First element is the timestamp
                 data[0] = BigDecimal.valueOf(timestamp);
             }
@@ -155,7 +165,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             int index = indexOf(name);
 
             if (index >= 0) {
-                data[index + 1] = value;
+                data[index + 1] = valueConverter.convert(value);
             }
         }
 
@@ -177,14 +187,30 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             }
 
             List<String> names = new ArrayList<String>(displayNames.length + 1);
-            names.add("Timestamp");
+            names.add("Time");
             names.addAll(Arrays.asList(displayNames));
 
-            return new MetricData(new Metadata(names.toArray(new String[names.size()]), types), dataMap.values()
-                    .toArray(new BigDecimal[dataMap.size()][]));
+            return new MetricData(new Metadata(names.toArray(new String[names.size()]), types),
+                    orderedList.toArray(new BigDecimal[orderedList.size()][]));
         }
-
     }
+
+    /**
+     * Convert value
+     */
+    private interface ValueConverter {
+        BigDecimal convert(BigDecimal value);
+    }
+
+    private static final ValueConverter MEMORY_VALUE_CONVERTER = new ValueConverter() {
+
+        private final BigDecimal BYTES_IN_ONE_MEGABYTE = BigDecimal.valueOf(1024 * 1024);
+
+        @Override
+        public BigDecimal convert(BigDecimal value) {
+            return value.divide(BYTES_IN_ONE_MEGABYTE, 2, RoundingMode.CEILING);
+        }
+    };
 
     public MetricData searchJMXMemory() {
         List<String> metrics = new ArrayList<String>();
@@ -193,13 +219,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         addMemoryMetrics(metrics, displayNames, "non-heap", "Non-Heap");
         String[] names = metrics.toArray(new String[metrics.size()]);
 
-        long currentTimeSeconds = System.currentTimeMillis() / 1000;
+        long currentTimeMillis = System.currentTimeMillis();
 
-        long startTime = currentTimeSeconds - (7 * 24 * 60 * 60);
-        long endTime = currentTimeSeconds;
+        long startTime = currentTimeMillis - (7 * 24 * 60 * 60 * 1000);
+        long endTime = currentTimeMillis;
 
         JVMMetricDataProcessor processor = new JVMMetricDataProcessor(names,
-                displayNames.toArray(new String[displayNames.size()]));
+                displayNames.toArray(new String[displayNames.size()]), MEMORY_VALUE_CONVERTER);
         reporterDAO.queryMetrics(MetricType.GAUGE, names, MetricAttribute.VALUE, startTime, endTime, processor);
         return processor.getResult();
     }
