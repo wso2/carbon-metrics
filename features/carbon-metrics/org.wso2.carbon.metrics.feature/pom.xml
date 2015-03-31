@@ -37,6 +37,11 @@
             <artifactId>org.wso2.carbon.metrics.server.feature</artifactId>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.ui.feature</artifactId>
+            <type>zip</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -62,6 +67,7 @@
                             </adviceFile>
                             <includedFeatures>
                                 <includedFeatureDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.server.feature</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.ui.feature</includedFeatureDef>
                             </includedFeatures>
                         </configuration>
                     </execution>
