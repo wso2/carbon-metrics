@@ -87,7 +87,7 @@ public class MetricsDataServiceTest extends TestCase {
     }
 
     public void testSearchJVMMetrics() {
-        MetricData metricData = metricsDataService.searchJMXMemory();
+        MetricData metricData = metricsDataService.searchJMXMemory(1427714860L, 1427714920L);
         assertEquals("There are two results", 2, metricData.getData().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are nine values", 9, metricData.getData()[i].length);

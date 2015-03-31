@@ -213,16 +213,20 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     };
 
     public MetricData searchJMXMemory() {
+        long currentTimeMillis = System.currentTimeMillis();
+
+        long startTime = currentTimeMillis - (7 * 24 * 60 * 60 * 1000);
+        long endTime = currentTimeMillis;
+
+        return searchJMXMemory(startTime, endTime);
+    }
+
+    public MetricData searchJMXMemory(long startTime, long endTime) {
         List<String> metrics = new ArrayList<String>();
         List<String> displayNames = new ArrayList<String>();
         addMemoryMetrics(metrics, displayNames, "heap", "Heap");
         addMemoryMetrics(metrics, displayNames, "non-heap", "Non-Heap");
         String[] names = metrics.toArray(new String[metrics.size()]);
-
-        long currentTimeMillis = System.currentTimeMillis();
-
-        long startTime = currentTimeMillis - (7 * 24 * 60 * 60 * 1000);
-        long endTime = currentTimeMillis;
 
         JVMMetricDataProcessor processor = new JVMMetricDataProcessor(names,
                 displayNames.toArray(new String[displayNames.size()]), MEMORY_VALUE_CONVERTER);
