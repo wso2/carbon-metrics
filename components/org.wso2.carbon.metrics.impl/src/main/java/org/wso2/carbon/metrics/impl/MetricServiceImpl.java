@@ -807,7 +807,8 @@ public class MetricServiceImpl implements MetricService {
         }
 
         final JDBCReporter jdbcReporter = JDBCReporter.forRegistry(metricRegistry).filter(new EnabledMetricFilter())
-                .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build(source, dataSource);
+                .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS)
+                .convertTimestampTo(TimeUnit.MILLISECONDS).build(source, dataSource);
         return new JDBCReporterImpl(jdbcReporter, jdbcReporterPollingPeriod, scheduledJDBCMetricsCleanupTask,
                 jdbcScheduledCleanupPeriod);
     }
