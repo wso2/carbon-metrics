@@ -44,7 +44,7 @@ public class MetricServiceTest extends TestCase {
     }
     
     public void testDuplicateMetric() {
-        String name = "test-gaugeName";
+        String name = "test-name";
         MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), name));
 
         try {

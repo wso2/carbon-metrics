@@ -96,7 +96,7 @@ public class MetricServiceImpl implements MetricService {
     private static final String ROOT_METRIC_NAME = "";
 
     /**
-     * Hierarchy delimiter in Metric gaugeName
+     * Hierarchy delimiter in Metric name
      */
     private static final String HIERARCHY_DELIMITER = ".";
 
@@ -305,7 +305,7 @@ public class MetricServiceImpl implements MetricService {
     /**
      * Recursive method to check enabled status based on level hierarchy
      * 
-     * @param gaugeName Metric Name
+     * @param name Metric Name
      * @param metricLevel The {@code Level} associated with metric
      * @param configLevel The configured {@code Level} for the given metric
      * @return {@code true} if enabled
@@ -336,7 +336,7 @@ public class MetricServiceImpl implements MetricService {
      * Get or create a metric
      * 
      * @param level The {@code Level} of Metric
-     * @param gaugeName The gaugeName of the metric
+     * @param name The name of the metric
      * @param metricBuilder A {@code MetricBuilder} instance used to create the relevant metric
      * @return The created {@code AbstractMetric}
      */
@@ -735,7 +735,7 @@ public class MetricServiceImpl implements MetricService {
         String source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE);
 
         if (source == null || source.trim().length() == 0) {
-            // Use host gaugeName if available
+            // Use host name if available
             String hostname = null;
             try {
                 hostname = InetAddress.getLocalHost().getHostName();
