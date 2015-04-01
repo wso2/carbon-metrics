@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.data.service;
 
 /**
- * Description about Metadata
+ * Meta data related to Metrics
  */
 public class Metadata {
 
@@ -37,16 +37,8 @@ public class Metadata {
         return names;
     }
 
-    public void setNames(String[] names) {
-        this.names = names;
-    }
-
     public String[] getTypes() {
         return types;
-    }
-
-    public void setTypes(String[] types) {
-        this.types = types;
     }
 
 }

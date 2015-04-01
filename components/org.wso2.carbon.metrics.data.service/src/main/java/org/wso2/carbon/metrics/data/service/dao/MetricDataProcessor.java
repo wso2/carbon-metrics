@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.data.service.dao;
 import java.math.BigDecimal;
 
 /**
- * Description about MetricDataProcessor
+ * Implementing class should process metric data and return the final result.
  */
 public interface MetricDataProcessor<T> {
 

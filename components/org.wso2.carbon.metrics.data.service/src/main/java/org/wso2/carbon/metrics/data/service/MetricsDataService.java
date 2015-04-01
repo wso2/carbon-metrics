@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -47,6 +49,8 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
     private ReporterDAO reporterDAO;
 
+    private final Pattern fromPattern = Pattern.compile("(\\-?\\d+)([hdm])");
+
     public MetricsDataService() {
     }
 
@@ -68,7 +72,6 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
 
         init(configuration);
-
     }
 
     /*
@@ -78,12 +81,12 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
      */
     @Override
     public void destroy(ServiceContext serviceContext) {
-        // TODO Auto-generated method stub
-
     }
 
     void init(MetricsConfiguration configuration) {
         final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
+        // final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
+
         String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
 
         if (dataSourceName == null || dataSourceName.trim().length() == 0) {
@@ -111,20 +114,40 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         if (logger.isInfoEnabled()) {
             logger.info(String.format("Creating Metrics Data Service with data source '%s'", dataSourceName));
         }
+
         reporterDAO = new ReporterDAO(dataSource);
     }
 
-    private MetricType toMetricType(String metricType) {
-        metricType = metricType.toUpperCase();
-        if ("GAUGE".equals(metricType) || "COUNTER".equals(metricType) || "METER".equals(metricType)
-                || "HISTOGRAM".equals(metricType) || "TIMER".equals(metricType)) {
-            return MetricType.valueOf(metricType);
+    private long getStartTime(String from) {
+        if (from == null || from.isEmpty()) {
+            return -1;
         }
-        throw new IllegalArgumentException("Invalid Metric Type: " + metricType);
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        Matcher matcher = fromPattern.matcher(from);
+
+        long startTime = -1;
+
+        if (matcher.find()) {
+            int count = Integer.parseInt(matcher.group(1));
+            String unit = matcher.group(2);
+            if ("m".equals(unit)) {
+                startTime = currentTimeMillis + (count * 1000 * 60);
+            } else if ("h".equals(unit)) {
+                startTime = currentTimeMillis + (count * 1000 * 60 * 60);
+            } else if ("d".equals(unit)) {
+                startTime = currentTimeMillis + (count * 1000 * 60 * 60 * 24);
+            }
+        } else if (from.matches("\\d+")) {
+            startTime = Integer.parseInt(from);
+        }
+
+        return startTime;
     }
 
-    public List<MetricNameSearchResult> searchMetricNames(String metricType, String searchName) {
-        return reporterDAO.searchMetricNames(toMetricType(metricType), searchName);
+    public List<String> getAllSources() {
+        return reporterDAO.queryAllSources();
     }
 
     private class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
@@ -140,19 +163,16 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         private final String[] displayNames;
 
-        private final ValueConverter valueConverter;
+        private final ValueConverter[] valueConverters;
 
-        private JVMMetricDataProcessor(String[] names, String[] displayNames, ValueConverter valueConverter) {
+        private JVMMetricDataProcessor(String[] names, String[] displayNames, ValueConverter[] valueConverters) {
             this.names = names;
             this.displayNames = displayNames;
-            this.valueConverter = valueConverter;
+            this.valueConverters = valueConverters;
         }
 
         @Override
         public void process(String source, String name, long timestamp, BigDecimal value) {
-            // BigDecimal[][] data = new BigDecimal[2][1];
-            // data[0] = new BigDecimal[] { BigDecimal.ZERO };
-            // data[1] = new BigDecimal[] { BigDecimal.ONE };
             BigDecimal[] data = dataMap.get(timestamp);
             if (data == null) {
                 data = new BigDecimal[names.length + 1];
@@ -165,7 +185,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             int index = indexOf(name);
 
             if (index >= 0) {
-                data[index + 1] = valueConverter.convert(value);
+                data[index + 1] = valueConverters[index].convert(value);
             }
         }
 
@@ -212,33 +232,64 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
     };
 
-    public MetricData searchJMXMemory() {
-        long currentTimeMillis = System.currentTimeMillis();
+    private static final ValueConverter PERCENTAGE_VALUE_CONVERTER = new ValueConverter() {
 
-        long startTime = currentTimeMillis - (7 * 24 * 60 * 60 * 1000);
-        long endTime = currentTimeMillis;
+        private final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
-        return searchJMXMemory(startTime, endTime);
-    }
+        @Override
+        public BigDecimal convert(BigDecimal value) {
+            return value.multiply(HUNDRED).setScale(2, RoundingMode.CEILING);
+        }
+    };
 
-    public MetricData searchJMXMemory(long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        addMemoryMetrics(metrics, displayNames, "heap", "Heap");
-        addMemoryMetrics(metrics, displayNames, "non-heap", "Non-Heap");
+    private static final ValueConverter DUMB_VALUE_CONVERTER = new ValueConverter() {
+
+        @Override
+        public BigDecimal convert(BigDecimal value) {
+            return value;
+        }
+    };
+
+    private MetricData getResults(List<String> metrics, List<String> displayNames,
+            List<ValueConverter> valueConverters, String source, long startTime, long endTime) {
         String[] names = metrics.toArray(new String[metrics.size()]);
-
         JVMMetricDataProcessor processor = new JVMMetricDataProcessor(names,
-                displayNames.toArray(new String[displayNames.size()]), MEMORY_VALUE_CONVERTER);
-        reporterDAO.queryMetrics(MetricType.GAUGE, names, MetricAttribute.VALUE, startTime, endTime, processor);
+                displayNames.toArray(new String[displayNames.size()]),
+                valueConverters.toArray(new ValueConverter[valueConverters.size()]));
+        reporterDAO.queryMetrics(MetricType.GAUGE, names, MetricAttribute.VALUE, source, startTime, endTime, processor);
         return processor.getResult();
     }
 
-    private void addMemoryMetrics(List<String> metrics, List<String> displayNames, String type, String displayType) {
+    // Method overloading doesn't support in Axis2.
+    public MetricData findLastJMXMemoryMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXMemoryMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXMemoryMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+        addMemoryMetrics(metrics, displayNames, valueConverters, "heap", "Heap");
+        addMemoryMetrics(metrics, displayNames, valueConverters, "non-heap", "Non-Heap");
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
+
+    private void addMemoryMetrics(List<String> metrics, List<String> displayNames,
+            List<ValueConverter> valueConverters, String type, String displayType) {
         metrics.add(String.format("jvm.memory.%s.init", type));
         metrics.add(String.format("jvm.memory.%s.used", type));
         metrics.add(String.format("jvm.memory.%s.committed", type));
         metrics.add(String.format("jvm.memory.%s.max", type));
+
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
 
         displayNames.add(String.format("%s Init", displayType));
         displayNames.add(String.format("%s Used", displayType));
@@ -246,4 +297,52 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         displayNames.add(String.format("%s Max", displayType));
     }
 
+    public MetricData findLastJMXCPULoadMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXCPULoadMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXCPULoadMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+
+        metrics.add("jvm.os.cpu.load.process");
+        metrics.add("jvm.os.cpu.load.system");
+
+        displayNames.add("Process CPU Load");
+        displayNames.add("System CPU Load");
+
+        valueConverters.add(PERCENTAGE_VALUE_CONVERTER);
+        valueConverters.add(PERCENTAGE_VALUE_CONVERTER);
+
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
+
+    public MetricData findLastJMXLoadAverageMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXLoadAverageMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXLoadAverageMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+
+        metrics.add("jvm.os.system.load.average");
+
+        displayNames.add("System Load Average");
+
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
 }

@@ -22,7 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,17 +34,14 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.data.service.MetricAttribute;
-import org.wso2.carbon.metrics.data.service.MetricNameSearchResult;
 import org.wso2.carbon.metrics.data.service.MetricType;
 
 /**
- * Description about ReporterDAO
+ * Querying Metric Data via JDBC
  */
 public class ReporterDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ReporterDAO.class);
-
-    // TODO Optimize code
 
     private final DataSource dataSource;
 
@@ -117,143 +114,67 @@ public class ReporterDAO {
         }
     }
 
-    public List<String> queryMetricNames(MetricType metricType) {
-        List<String> names = new ArrayList<String>();
-        StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT NAME FROM ");
-        queryBuilder.append(getTableName(metricType));
-        queryBuilder.append(" ORDER BY NAME");
+    public List<String> queryAllSources() {
+        List<String> results = new ArrayList<String>();
 
         Connection connection = null;
-        Statement statement = null;
 
         try {
             connection = dataSource.getConnection();
 
-            statement = connection.createStatement();
-
-            ResultSet rs = statement.executeQuery(queryBuilder.toString());
-
-            while (rs.next()) {
-                String name = rs.getString("NAME");
-                names.add(name);
-            }
-
-            statement.close();
-            connection.close();
-            statement = null;
-            connection = null;
-        } catch (SQLException e) {
-        } finally {
-            closeQuietly(connection, statement);
-        }
-
-        return names;
-    }
-
-    public List<MetricNameSearchResult> searchMetricNames(MetricType metricType, String searchName) {
-        List<MetricNameSearchResult> results = new ArrayList<MetricNameSearchResult>();
-        StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT NAME, SOURCE FROM ");
-        queryBuilder.append(getTableName(metricType));
-        if (searchName != null && searchName.trim().length() > 0) {
-            queryBuilder.append(" WHERE NAME LIKE ?");
-        }
-        queryBuilder.append(" ORDER BY NAME");
-
-        Connection connection = null;
-        PreparedStatement ps = null;
-
-        try {
-            connection = dataSource.getConnection();
-
-            ps = connection.prepareStatement(queryBuilder.toString());
-
-            if (searchName != null && searchName.trim().length() > 0) {
-                ps.setString(1, searchName);
-            }
-
-            ResultSet rs = ps.executeQuery();
-
-            Map<String, MetricNameSearchResult> map = new HashMap<String, MetricNameSearchResult>();
-
-            while (rs.next()) {
-                String name = rs.getString("NAME");
-                String source = rs.getString("SOURCE");
-                MetricNameSearchResult result = map.get(name);
-                if (result != null) {
-                    List<String> sources = new ArrayList<String>(Arrays.asList(result.getSource()));
-                    sources.add(source);
-                    result.setSource(sources.toArray(new String[sources.size()]));
-                } else {
-                    result = new MetricNameSearchResult();
-                    result.setName(name);
-                    result.setSource(new String[] { source });
-                    map.put(name, result);
-                    results.add(result);
+            for (MetricType metricType : MetricType.values()) {
+                List<String> list = querySources(connection, metricType);
+                if (!list.isEmpty()) {
+                    results.addAll(list);
                 }
             }
-            ps.close();
+
+            // Sort source names
+            Collections.sort(results);
+
             connection.close();
-            ps = null;
             connection = null;
         } catch (SQLException e) {
-            logger.error("Error when searching metric names", e);
+            logger.error("Error when querying sources.", e);
         } finally {
-            closeQuietly(connection, ps);
+            closeQuietly(connection, null);
         }
 
         return results;
     }
 
-    public <T> void queryMetrics(MetricType metricType, String name, MetricAttribute metricAttribute, long startTime,
-            long endTime, MetricDataProcessor<T> processor) {
-        validateMetricAttribute(metricType, metricAttribute);
-        StringBuilder queryBuilder = new StringBuilder("SELECT SOURCE, TIMESTAMP, ");
-        queryBuilder.append(getColumnName(metricAttribute));
-        queryBuilder.append(" FROM ");
+    private List<String> querySources(Connection connection, MetricType metricType) {
+        List<String> results = new ArrayList<String>();
+        StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT SOURCE FROM ");
         queryBuilder.append(getTableName(metricType));
-        queryBuilder.append(" WHERE NAME = ? AND TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP");
 
-        Connection connection = null;
-        PreparedStatement ps = null;
+        Statement statement = null;
 
         try {
-            connection = dataSource.getConnection();
+            statement = connection.createStatement();
 
-            ps = connection.prepareStatement(queryBuilder.toString());
-            ps.setString(1, name);
-            ps.setLong(2, startTime);
-            ps.setLong(3, endTime);
-
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = statement.executeQuery(queryBuilder.toString());
 
             while (rs.next()) {
-                String source = rs.getString(1);
-                long timestamp = rs.getLong(2);
-                BigDecimal value;
-                try {
-                    value = rs.getBigDecimal(3);
-                } catch (NumberFormatException e) {
-                    value = BigDecimal.ZERO;
-                    // throw?
-                }
-                processor.process(source, name, timestamp, value);
+                String source = rs.getString("SOURCE");
+                results.add(source);
             }
 
-            ps.close();
-            connection.close();
-            ps = null;
-            connection = null;
+            statement.close();
+            statement = null;
         } catch (SQLException e) {
-            logger.error(String.format("Error when querying metrics. SQL %s", queryBuilder.toString()), e);
+            logger.error("Error when querying sources. Metric Type: " + metricType, e);
         } finally {
-            closeQuietly(connection, ps);
+            closeQuietly(null, statement);
         }
+
+        return results;
     }
 
-    public <T> void queryMetrics(MetricType metricType, String[] names, MetricAttribute metricAttribute,
+    public <T> void queryMetrics(MetricType metricType, String[] names, MetricAttribute metricAttribute, String source,
             long startTime, long endTime, MetricDataProcessor<T> processor) {
         validateMetricAttribute(metricType, metricAttribute);
-        StringBuilder queryBuilder = new StringBuilder("SELECT NAME, SOURCE, TIMESTAMP, ");
+        StringBuilder queryBuilder = new StringBuilder("SELECT NAME, TIMESTAMP, ");
         queryBuilder.append(getColumnName(metricAttribute));
         queryBuilder.append(" FROM ");
         queryBuilder.append(getTableName(metricType));
@@ -264,7 +185,9 @@ public class ReporterDAO {
             }
             queryBuilder.append("?");
         }
-        queryBuilder.append(") AND TIMESTAMP >= ? AND TIMESTAMP <= ? ORDER BY TIMESTAMP");
+        queryBuilder.append(") AND TIMESTAMP >= ? AND TIMESTAMP <= ?");
+        queryBuilder.append(" AND SOURCE = ?");
+        queryBuilder.append(" ORDER BY TIMESTAMP");
 
         Connection connection = null;
         PreparedStatement ps = null;
@@ -279,16 +202,16 @@ public class ReporterDAO {
             }
             ps.setLong(++i, startTime);
             ps.setLong(++i, endTime);
+            ps.setString(++i, source);
 
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 String name = rs.getString(1);
-                String source = rs.getString(2);
-                long timestamp = rs.getLong(3);
+                long timestamp = rs.getLong(2);
                 BigDecimal value;
                 try {
-                    value = rs.getBigDecimal(4);
+                    value = rs.getBigDecimal(3);
                 } catch (NumberFormatException e) {
                     value = BigDecimal.ZERO;
                     // throw?

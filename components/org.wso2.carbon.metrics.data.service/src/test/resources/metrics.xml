@@ -27,6 +27,7 @@
         </JMX>
         <JDBC>
             <Enabled>true</Enabled>
+            <Source>carbon-server</Source>
             <DataSourceName>jdbc/WSO2MetricsDB</DataSourceName>
             <PollingPeriod>1</PollingPeriod>
             <ScheduledCleanup>

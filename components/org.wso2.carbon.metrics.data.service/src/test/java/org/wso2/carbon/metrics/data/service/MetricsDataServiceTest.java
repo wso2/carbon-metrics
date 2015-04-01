@@ -41,6 +41,12 @@ public class MetricsDataServiceTest extends TestCase {
 
     private static JdbcTemplate template;
 
+    private static final String SOURCE = "carbon-server";
+
+    private static final long START_TIME = 1427714860L;
+
+    private static final long END_TIME = 1427714920L;
+
     public static Test suite() {
         return new TestSetup(new TestSuite(MetricsDataServiceTest.class)) {
 
@@ -86,12 +92,60 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are two results", 2, gaugeResult.size());
     }
 
-    public void testSearchJVMMetrics() {
-        MetricData metricData = metricsDataService.searchJMXMemory(1427714860L, 1427714920L);
+    public void testSources() {
+        List<String> sources = metricsDataService.getAllSources();
+        assertEquals("There is one source", 1, sources.size());
+        assertEquals("The source is " + SOURCE, SOURCE, sources.get(0));
+    }
+
+    public void testLast1MinuteJMXMemoryMetrics() {
+        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1m");
+        assertNotNull("Metric Data is not null", metricData);
+
+    }
+
+    public void testLast1HourJMXMemoryMetrics() {
+        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1h");
+        assertNotNull("Metric Data is not null", metricData);
+    }
+
+    public void testLast1DayJMXMemoryMetrics() {
+        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1d");
+        assertNotNull("Metric Data is not null", metricData);
+    }
+    
+    public void testLastJMXMemoryMetrics() {
+        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, String.valueOf(START_TIME));
         assertEquals("There are two results", 2, metricData.getData().length);
+    }
+
+    public void testJMXMemoryMetrics() {
+        MetricData metricData = metricsDataService.findJMXMemoryMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are nine names", 9, metricData.getMetadata().getNames().length);
+        assertEquals("There are nine types", 9, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are nine values", 9, metricData.getData()[i].length);
         }
     }
 
+    public void testJMXCPULoadMetrics() {
+        MetricData metricData = metricsDataService.findJMXCPULoadMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
+        assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are three values", 3, metricData.getData()[i].length);
+        }
+    }
+
+    public void testJMXLoadAverageMetrics() {
+        MetricData metricData = metricsDataService.findJMXLoadAverageMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are two names", 2, metricData.getMetadata().getNames().length);
+        assertEquals("There are two types", 2, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are two values", 2, metricData.getData()[i].length);
+        }
+    }
 }

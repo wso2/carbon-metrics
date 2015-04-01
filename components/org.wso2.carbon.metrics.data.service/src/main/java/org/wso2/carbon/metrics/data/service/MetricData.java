@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.data.service;
 import java.math.BigDecimal;
 
 /**
- * Description about MetricData
+ * Metric Data values with meta data
  */
 public class MetricData {
 
@@ -39,16 +39,8 @@ public class MetricData {
         return metadata;
     }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
-
     public BigDecimal[][] getData() {
         return data;
-    }
-
-    public void setData(BigDecimal[][] data) {
-        this.data = data;
     }
 
 }
