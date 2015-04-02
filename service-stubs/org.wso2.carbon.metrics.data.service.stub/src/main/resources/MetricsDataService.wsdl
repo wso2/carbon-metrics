@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.data.metrics.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax21="http://service.data.metrics.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.data.metrics.carbon.wso2.org">
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org/xsd">
-            <xs:complexType name="MetricNameSearchResult">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="source" nillable="true" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
             <xs:complexType name="MetricData">
                 <xs:sequence>
                     <xs:element maxOccurs="unbounded" minOccurs="0" name="data" nillable="true" type="ax21:ArrayOfBigDecimal"/>
@@ -27,27 +21,105 @@
         </xs:schema>
         <xs:schema xmlns:ax22="http://service.data.metrics.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org">
             <xs:import namespace="http://service.data.metrics.carbon.wso2.org/xsd"/>
-            <xs:element name="searchMetricNames">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="metricType" nillable="true" type="xs:string"/>
-                        <xs:element minOccurs="0" name="searchName" nillable="true" type="xs:string"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="searchMetricNamesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="ax21:MetricNameSearchResult"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="searchJMXMemory">
+            <xs:element name="getAllSources">
                 <xs:complexType>
                     <xs:sequence/>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="searchJMXMemoryResponse">
+            <xs:element name="getAllSourcesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXMemoryMetrics">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXMemoryMetricsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXMemoryMetricsByTimePeriod">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startTime" type="xs:long"/>
+                        <xs:element minOccurs="0" name="endTime" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXMemoryMetricsByTimePeriodResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXCPULoadMetrics">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXCPULoadMetricsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXCPULoadMetricsByTimePeriod">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startTime" type="xs:long"/>
+                        <xs:element minOccurs="0" name="endTime" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXCPULoadMetricsByTimePeriodResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXLoadAverageMetrics">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXLoadAverageMetricsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXLoadAverageMetricsByTimePeriod">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startTime" type="xs:long"/>
+                        <xs:element minOccurs="0" name="endTime" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXLoadAverageMetricsByTimePeriodResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
@@ -56,32 +128,82 @@
             </xs:element>
         </xs:schema>
     </wsdl:types>
-    <wsdl:message name="searchMetricNamesRequest">
-        <wsdl:part name="parameters" element="ns:searchMetricNames"/>
+    <wsdl:message name="findJMXMemoryMetricsByTimePeriodRequest">
+        <wsdl:part name="parameters" element="ns:findJMXMemoryMetricsByTimePeriod"/>
     </wsdl:message>
-    <wsdl:message name="searchMetricNamesResponse">
-        <wsdl:part name="parameters" element="ns:searchMetricNamesResponse"/>
+    <wsdl:message name="findJMXMemoryMetricsByTimePeriodResponse">
+        <wsdl:part name="parameters" element="ns:findJMXMemoryMetricsByTimePeriodResponse"/>
     </wsdl:message>
-    <wsdl:message name="searchJMXMemoryRequest">
-        <wsdl:part name="parameters" element="ns:searchJMXMemory"/>
+    <wsdl:message name="getAllSourcesRequest">
+        <wsdl:part name="parameters" element="ns:getAllSources"/>
     </wsdl:message>
-    <wsdl:message name="searchJMXMemoryResponse">
-        <wsdl:part name="parameters" element="ns:searchJMXMemoryResponse"/>
+    <wsdl:message name="getAllSourcesResponse">
+        <wsdl:part name="parameters" element="ns:getAllSourcesResponse"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXCPULoadMetricsRequest">
+        <wsdl:part name="parameters" element="ns:findLastJMXCPULoadMetrics"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXCPULoadMetricsResponse">
+        <wsdl:part name="parameters" element="ns:findLastJMXCPULoadMetricsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXLoadAverageMetricsByTimePeriodRequest">
+        <wsdl:part name="parameters" element="ns:findJMXLoadAverageMetricsByTimePeriod"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXLoadAverageMetricsByTimePeriodResponse">
+        <wsdl:part name="parameters" element="ns:findJMXLoadAverageMetricsByTimePeriodResponse"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXLoadAverageMetricsRequest">
+        <wsdl:part name="parameters" element="ns:findLastJMXLoadAverageMetrics"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXLoadAverageMetricsResponse">
+        <wsdl:part name="parameters" element="ns:findLastJMXLoadAverageMetricsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXMemoryMetricsRequest">
+        <wsdl:part name="parameters" element="ns:findLastJMXMemoryMetrics"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXMemoryMetricsResponse">
+        <wsdl:part name="parameters" element="ns:findLastJMXMemoryMetricsResponse"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXCPULoadMetricsByTimePeriodRequest">
+        <wsdl:part name="parameters" element="ns:findJMXCPULoadMetricsByTimePeriod"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXCPULoadMetricsByTimePeriodResponse">
+        <wsdl:part name="parameters" element="ns:findJMXCPULoadMetricsByTimePeriodResponse"/>
     </wsdl:message>
     <wsdl:portType name="MetricsDataServicePortType">
-        <wsdl:operation name="searchMetricNames">
-            <wsdl:input message="ns:searchMetricNamesRequest" wsaw:Action="urn:searchMetricNames"/>
-            <wsdl:output message="ns:searchMetricNamesResponse" wsaw:Action="urn:searchMetricNamesResponse"/>
+        <wsdl:operation name="findJMXMemoryMetricsByTimePeriod">
+            <wsdl:input message="ns:findJMXMemoryMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXMemoryMetricsByTimePeriod"/>
+            <wsdl:output message="ns:findJMXMemoryMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXMemoryMetricsByTimePeriodResponse"/>
         </wsdl:operation>
-        <wsdl:operation name="searchJMXMemory">
-            <wsdl:input message="ns:searchJMXMemoryRequest" wsaw:Action="urn:searchJMXMemory"/>
-            <wsdl:output message="ns:searchJMXMemoryResponse" wsaw:Action="urn:searchJMXMemoryResponse"/>
+        <wsdl:operation name="getAllSources">
+            <wsdl:input message="ns:getAllSourcesRequest" wsaw:Action="urn:getAllSources"/>
+            <wsdl:output message="ns:getAllSourcesResponse" wsaw:Action="urn:getAllSourcesResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXCPULoadMetrics">
+            <wsdl:input message="ns:findLastJMXCPULoadMetricsRequest" wsaw:Action="urn:findLastJMXCPULoadMetrics"/>
+            <wsdl:output message="ns:findLastJMXCPULoadMetricsResponse" wsaw:Action="urn:findLastJMXCPULoadMetricsResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXLoadAverageMetricsByTimePeriod">
+            <wsdl:input message="ns:findJMXLoadAverageMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXLoadAverageMetricsByTimePeriod"/>
+            <wsdl:output message="ns:findJMXLoadAverageMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXLoadAverageMetricsByTimePeriodResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXLoadAverageMetrics">
+            <wsdl:input message="ns:findLastJMXLoadAverageMetricsRequest" wsaw:Action="urn:findLastJMXLoadAverageMetrics"/>
+            <wsdl:output message="ns:findLastJMXLoadAverageMetricsResponse" wsaw:Action="urn:findLastJMXLoadAverageMetricsResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXMemoryMetrics">
+            <wsdl:input message="ns:findLastJMXMemoryMetricsRequest" wsaw:Action="urn:findLastJMXMemoryMetrics"/>
+            <wsdl:output message="ns:findLastJMXMemoryMetricsResponse" wsaw:Action="urn:findLastJMXMemoryMetricsResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXCPULoadMetricsByTimePeriod">
+            <wsdl:input message="ns:findJMXCPULoadMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXCPULoadMetricsByTimePeriod"/>
+            <wsdl:output message="ns:findJMXCPULoadMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXCPULoadMetricsByTimePeriodResponse"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="MetricsDataServiceSoap11Binding" type="ns:MetricsDataServicePortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        <wsdl:operation name="searchMetricNames">
-            <soap:operation soapAction="urn:searchMetricNames" style="document"/>
+        <wsdl:operation name="findJMXMemoryMetricsByTimePeriod">
+            <soap:operation soapAction="urn:findJMXMemoryMetricsByTimePeriod" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -89,8 +211,53 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="searchJMXMemory">
-            <soap:operation soapAction="urn:searchJMXMemory" style="document"/>
+        <wsdl:operation name="getAllSources">
+            <soap:operation soapAction="urn:getAllSources" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXCPULoadMetrics">
+            <soap:operation soapAction="urn:findLastJMXCPULoadMetrics" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXLoadAverageMetrics">
+            <soap:operation soapAction="urn:findLastJMXLoadAverageMetrics" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXLoadAverageMetricsByTimePeriod">
+            <soap:operation soapAction="urn:findJMXLoadAverageMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXMemoryMetrics">
+            <soap:operation soapAction="urn:findLastJMXMemoryMetrics" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXCPULoadMetricsByTimePeriod">
+            <soap:operation soapAction="urn:findJMXCPULoadMetricsByTimePeriod" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -101,8 +268,8 @@
     </wsdl:binding>
     <wsdl:binding name="MetricsDataServiceSoap12Binding" type="ns:MetricsDataServicePortType">
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-        <wsdl:operation name="searchMetricNames">
-            <soap12:operation soapAction="urn:searchMetricNames" style="document"/>
+        <wsdl:operation name="findJMXMemoryMetricsByTimePeriod">
+            <soap12:operation soapAction="urn:findJMXMemoryMetricsByTimePeriod" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -110,8 +277,53 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="searchJMXMemory">
-            <soap12:operation soapAction="urn:searchJMXMemory" style="document"/>
+        <wsdl:operation name="getAllSources">
+            <soap12:operation soapAction="urn:getAllSources" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXCPULoadMetrics">
+            <soap12:operation soapAction="urn:findLastJMXCPULoadMetrics" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXLoadAverageMetrics">
+            <soap12:operation soapAction="urn:findLastJMXLoadAverageMetrics" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXLoadAverageMetricsByTimePeriod">
+            <soap12:operation soapAction="urn:findJMXLoadAverageMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXMemoryMetrics">
+            <soap12:operation soapAction="urn:findLastJMXMemoryMetrics" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXCPULoadMetricsByTimePeriod">
+            <soap12:operation soapAction="urn:findJMXCPULoadMetricsByTimePeriod" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -122,8 +334,8 @@
     </wsdl:binding>
     <wsdl:binding name="MetricsDataServiceHttpBinding" type="ns:MetricsDataServicePortType">
         <http:binding verb="POST"/>
-        <wsdl:operation name="searchMetricNames">
-            <http:operation location="searchMetricNames"/>
+        <wsdl:operation name="findJMXMemoryMetricsByTimePeriod">
+            <http:operation location="findJMXMemoryMetricsByTimePeriod"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -131,8 +343,53 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="searchJMXMemory">
-            <http:operation location="searchJMXMemory"/>
+        <wsdl:operation name="getAllSources">
+            <http:operation location="getAllSources"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXCPULoadMetrics">
+            <http:operation location="findLastJMXCPULoadMetrics"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXLoadAverageMetrics">
+            <http:operation location="findLastJMXLoadAverageMetrics"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXLoadAverageMetricsByTimePeriod">
+            <http:operation location="findJMXLoadAverageMetricsByTimePeriod"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXMemoryMetrics">
+            <http:operation location="findLastJMXMemoryMetrics"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXCPULoadMetricsByTimePeriod">
+            <http:operation location="findJMXCPULoadMetricsByTimePeriod"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>

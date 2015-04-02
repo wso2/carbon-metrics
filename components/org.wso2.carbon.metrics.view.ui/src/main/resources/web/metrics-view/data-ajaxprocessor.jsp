@@ -20,6 +20,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon"%>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient"%>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricDataWrapper"%>
 <%@ page import="com.google.gson.Gson"%>
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
 <%@ page import="org.wso2.carbon.CarbonConstants"%>
@@ -29,7 +30,9 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage"%>
 
 <%
-    response.setContentType("application/json");
+    String source = request.getParameter("source");
+    String from = request.getParameter("from");
+    String type = request.getParameter("type");
 
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
@@ -39,9 +42,21 @@
     try {
         metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
         Gson gson = new Gson();
-        response.getWriter().write(gson.toJson(metricsViewClient.searchJMXMemory()));
+        MetricDataWrapper metricData = null;
+        if ("Memory".equals(type)) {
+            metricData = metricsViewClient.findLastJMXMemoryMetrics(source, from);
+        } else if ("CPU".equals(type)) {
+            metricData = metricsViewClient.findLastJMXCPULoadMetrics(source, from);
+        } else if ("LoadAverage".equals(type)) {
+            metricData = metricsViewClient.findLastJMXLoadAverageMetrics(source, from);
+        }
+
+        if (metricData != null) {
+            response.getWriter().write(gson.toJson(metricData));
+        }
     } catch (Exception e) {
-        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
         return;
     }
+
+    response.setContentType("application/json");
 %>

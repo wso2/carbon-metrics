@@ -40,9 +40,39 @@ public class MetricsViewClient {
         option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
     }
 
-    public MetricDataWrapper searchJMXMemory() throws RemoteException {
+    public String[] getAllSources() throws RemoteException {
         try {
-            return new MetricDataWrapper(stub.searchJMXMemory());
+            return stub.getAllSources();
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastJMXMemoryMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXMemoryMetrics(source, from));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastJMXCPULoadMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXCPULoadMetrics(source, from));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastJMXLoadAverageMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXLoadAverageMetrics(source, from));
         } catch (RemoteException e) {
             String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
             logger.error(msg, e);

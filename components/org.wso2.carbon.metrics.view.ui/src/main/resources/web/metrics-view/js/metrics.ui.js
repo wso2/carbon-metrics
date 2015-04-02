@@ -13,42 +13,131 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var newJQuery = jQuery.noConflict();
+var metricsJQuery = jQuery.noConflict();
 
-newJQuery(function($) {
-    $.ajax({
-            type     : "GET",
-            cache    : false,
-            url      : 'data-ajaxprocessor.jsp',
-            data     : $(this).serialize(),
-            success  : function(data) {
-                igvizPlot(data);
-            }
-        });
+var charts = [ "Memory", "CPU", "LoadAverage" ]
+
+metricsJQuery(function($) {
+	plotCharts();
+	metricsJQuery(window).on('resize', resizeCharts);
+	metricsJQuery("#source").change(plotCharts);
+	metricsJQuery("#from").change(plotCharts);
 });
 
-function igvizPlot(data) {
 
-    var width = document.getElementById("igviz-metrics").offsetWidth - 100; //canvas width
-	var height = 350; //canvas height
+function plotCharts() {
+	metricsJQuery.map(charts, plotChart);
+}
+
+function plotChart(chart) {
+	var url = "data-ajaxprocessor.jsp";
+
+	var data = metricsJQuery("#formInput").serializeArray();
+	data.push({
+		name : "type",
+		value : chart
+	});
+
+	metricsJQuery.getJSON(url, data).done(function(data) {
+		igvizPlot(chart, data);
+	});
+}
+
+function igvizPlot(chart, data) {
+
+	var toggleId = "#toggle".concat(chart);
+	var igvizId = "#igviz".concat(chart);
+
+	var indices = [];
+
+	var container = metricsJQuery(toggleId);
+	// Remove all child nodes
+	container.empty();
+
+	if (data.metadata.names.length > 2) {
+		metricsJQuery.each(data.metadata.names, function(index, value) {
+			if (index > 0) {
+				var checkboxId = "cb".concat(chart).concat(index);
+				metricsJQuery('<input />', {
+					type : 'checkbox',
+					id : checkboxId,
+					value : index,
+					checked : true
+				}).appendTo(container);
+				metricsJQuery('<label />', {
+					'for' : checkboxId,
+					text : value,
+					class : 'toggleLabel'
+				}).appendTo(container);
+				indices.push(index);
+			}
+		});
+
+		metricsJQuery(toggleId).on("click", "input:checkbox", {
+			chart : chart
+		}, redrawChart);
+	} else {
+		indices = [ 1 ];
+	}
+
+	var width = metricsJQuery(igvizId).outerWidth() - 100; // canvas width
+	var height = 300; // canvas height
 
 	var chartConfig = {
 		"xAxis" : 0,
-		"yAxis" : [ 1, 2, 3, 4 ],
-		"padding" : 120,
+		"yAxis" : indices,
+		"padding" : 520,
 		"width" : width,
 		"height" : height,
-		"chartType" : "line"
+		"chartType" : "line",
+		"pointVisible" : false,
+		"interpolationMode" : "linear"
 	}
 
-	var chart = igviz.setUp("#igviz-metrics", chartConfig, data);
+	var chart = igviz.setUp(igvizId, chartConfig, data);
 
-	chart.setXAxis({
-		zero : false
-	});
+	metricsJQuery(toggleId).data("chartConfig", chartConfig);
+	metricsJQuery(toggleId).data("data", data);
+	metricsJQuery(toggleId).data("chart", chart);
 
 	chart.plot(data.data);
-	window.onresize=function(){chart.resize()};
+
 }
 
+function resizeCharts() {
+	metricsJQuery.map(charts, resizeChart);
+}
 
+function resizeChart(chart) {
+	var toggleId = "#toggle".concat(chart);
+	var igvizChart = metricsJQuery(toggleId).data("chart");
+	if (igvizChart) {
+		igvizChart.resize();
+	}
+}
+
+function redrawChart(event) {
+
+	var chart = event.data.chart;
+
+	var toggleId = "#toggle".concat(chart);
+	var igvizId = "#igviz".concat(chart);
+
+	var indices = metricsJQuery.map(metricsJQuery(toggleId
+			.concat(' input:checkbox:checked')), function(e, i) {
+		return +e.value;
+	});
+
+	if (indices.length == 0) {
+		event.preventDefault();
+		return;
+	}
+
+	var chartConfig = metricsJQuery(toggleId).data("chartConfig");
+	chartConfig.yAxis = indices;
+
+	var data = metricsJQuery(toggleId).data("data");
+
+	chart = igviz.setUp(igvizId, chartConfig, data);
+	chart.plot(data.data);
+}
