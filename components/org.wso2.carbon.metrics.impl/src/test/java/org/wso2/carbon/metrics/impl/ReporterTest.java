@@ -80,6 +80,9 @@ public class ReporterTest extends TestCase {
                 InitialContext ic = new InitialContext();
                 ic.createSubcontext("jdbc");
                 ic.bind("jdbc/WSO2MetricsDB", dataSource);
+
+                // Set setup system property to cover database creator logic
+                System.setProperty("setup", "");
             }
 
             protected void tearDown() throws Exception {

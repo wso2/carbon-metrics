@@ -35,6 +35,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.impl.internal.LocalDatabaseCreator;
 import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
@@ -120,6 +121,11 @@ public class MetricServiceImpl implements MetricService {
      * JMX domain registered with MBean Server
      */
     private static final String JMX_REPORTING_DOMAIN = "org.wso2.carbon.metrics";
+
+    /**
+     * Select query to check whether database tables are created
+     */
+    private static final String DB_CHECK_SQL = "SELECT NAME FROM METRIC_GAUGE";
 
     private final List<Reporter> reporters = new ArrayList<Reporter>();
 
@@ -777,6 +783,18 @@ public class MetricServiceImpl implements MetricService {
                             source, dataSourceName, jdbcReporterPollingPeriod));
         }
 
+        // Setup Database if required
+        try {
+            setupMetricsDatabase(dataSource);
+        } catch (Exception e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format(
+                        "Error when looking up the Data Source: '%s'. The JDBC reporting will not be enabled",
+                        dataSourceName));
+            }
+            return null;
+        }
+
         ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask = null;
         // Default cleanup period for JDBC is 86400 seconds
         long jdbcScheduledCleanupPeriod = 86400;
@@ -811,6 +829,25 @@ public class MetricServiceImpl implements MetricService {
                 .convertTimestampTo(TimeUnit.MILLISECONDS).build(source, dataSource);
         return new JDBCReporterImpl(jdbcReporter, jdbcReporterPollingPeriod, scheduledJDBCMetricsCleanupTask,
                 jdbcScheduledCleanupPeriod);
+    }
+
+    /**
+     * Create Metrics Database Tables
+     *
+     * @throws Exception if an error occurred while creating the Metrics Tables.
+     */
+    private static void setupMetricsDatabase(DataSource dataSource) throws Exception {
+        String value = System.getProperty("setup");
+        if (value != null) {
+            LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
+            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
+                databaseCreator.createRegistryDatabase();
+            } else {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Metrics tables exist. Skipping the Metrics Database setup process.");
+                }
+            }
+        }
     }
 
 }
