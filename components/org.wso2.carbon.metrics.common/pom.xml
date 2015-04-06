@@ -36,8 +36,8 @@
             <artifactId>geronimo-stax-api_1.0_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.axiom.wso2</groupId>
-            <artifactId>axiom</artifactId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-api</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -46,6 +46,11 @@
         <dependency>
             <groupId>org.wso2.securevault</groupId>
             <artifactId>org.wso2.securevault</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom</groupId>
+            <artifactId>axiom-impl</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
