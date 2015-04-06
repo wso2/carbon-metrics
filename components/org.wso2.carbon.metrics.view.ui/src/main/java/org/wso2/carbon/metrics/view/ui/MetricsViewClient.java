@@ -80,4 +80,24 @@ public class MetricsViewClient {
         }
     }
 
+    public MetricDataWrapper findLastJMXFileDescriptorMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXFileDescriptorMetrics(source, from));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastJMXPhysicalMemoryMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXPhysicalMemoryMetrics(source, from));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
 }

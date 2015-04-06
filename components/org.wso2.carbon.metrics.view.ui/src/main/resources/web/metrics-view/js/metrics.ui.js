@@ -15,7 +15,7 @@
  */
 var metricsJQuery = jQuery.noConflict();
 
-var charts = [ "Memory", "CPU", "LoadAverage" ]
+var charts = [ "Memory", "CPU", "LoadAverage", "PhysicalMemory", "FileDescriptor" ]
 
 metricsJQuery(function($) {
 	plotCharts();

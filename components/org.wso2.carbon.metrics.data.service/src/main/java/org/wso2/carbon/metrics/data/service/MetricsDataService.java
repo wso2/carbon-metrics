@@ -345,4 +345,65 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
     }
+
+    public MetricData findLastJMXFileDescriptorMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXFileDescriptorMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXFileDescriptorMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+
+        metrics.add("jvm.os.file.descriptor.open.count");
+        metrics.add("jvm.os.file.descriptor.max.count");
+
+        displayNames.add("Open File Descriptor Count");
+        displayNames.add("Max File Descriptor Count");
+
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
+
+    public MetricData findLastJMXPhysicalMemoryMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXPhysicalMemoryMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXPhysicalMemoryMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+
+        metrics.add("jvm.os.physical.memory.free.size");
+        metrics.add("jvm.os.physical.memory.total.size");
+        metrics.add("jvm.os.swap.space.free.size");
+        metrics.add("jvm.os.swap.space.total.size");
+        metrics.add("jvm.os.virtual.memory.committed.size");
+
+        displayNames.add("Free Physical Memory Size");
+        displayNames.add("Total Physical Memory Size");
+        displayNames.add("Free Swap Space Size");
+        displayNames.add("Total Swap Space Size");
+        displayNames.add("Committed Virtual Memory Size");
+
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+        valueConverters.add(MEMORY_VALUE_CONVERTER);
+
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
 }

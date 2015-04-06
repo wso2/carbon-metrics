@@ -148,6 +148,32 @@
 						</tr>
 					</tbody>
 				</table>
+				
+                <br/>
+
+                <table border="1" class="styledLeft">
+                    <tbody>
+                        <tr>
+                            <td class="formRow">
+                                <div id="togglePhysicalMemory"></div>
+                                <div id="igvizPhysicalMemory" class="igvizChart"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+				
+                <br/>
+
+                <table border="1" class="styledLeft">
+                    <tbody>
+                        <tr>
+                            <td class="formRow">
+                                <div id="toggleFileDescriptor"></div>
+                                <div id="igvizFileDescriptor" class="igvizChart"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 			</div>
 		</div>
 	</fmt:bundle>

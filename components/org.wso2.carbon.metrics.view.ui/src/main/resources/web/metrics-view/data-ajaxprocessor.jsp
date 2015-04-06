@@ -49,6 +49,10 @@
             metricData = metricsViewClient.findLastJMXCPULoadMetrics(source, from);
         } else if ("LoadAverage".equals(type)) {
             metricData = metricsViewClient.findLastJMXLoadAverageMetrics(source, from);
+        } else if ("FileDescriptor".equals(type)) {
+            metricData = metricsViewClient.findLastJMXFileDescriptorMetrics(source, from);
+        } else if ("PhysicalMemory".equals(type)) {
+            metricData = metricsViewClient.findLastJMXPhysicalMemoryMetrics(source, from);
         }
 
         if (metricData != null) {
