@@ -91,13 +91,13 @@
 											<td style="width: 25px; padding-right: 2px !important;"><a id="refreshButton" class="icon-link"
 												style="background-image: url(images/refresh.png);" href="javascript:plotCharts()"></a></td>
 											<td style="width: 10%;"><select name="from" id="from">
-													<option value="-5m" selected="selected">Last 5 minutes</option>
+													<option value="-5m">Last 5 minutes</option>
 													<option value="-15m">Last 15 minutes</option>
 													<option value="-1h">Last 1 hour</option>
 													<option value="-2h">Last 2 hours</option>
 													<option value="-6h">Last 6 hours</option>
 													<option value="-12h">Last 12 hours</option>
-													<option value="-24h">Last 24 hours</option>
+													<option value="-24h" selected="selected">Last 24 hours</option>
 													<option value="-2d">Last 2 days</option>
 													<option value="-7d">Last 7 days</option>
 													<option value="-30d">Last 30 days</option>
