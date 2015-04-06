@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricSet;
@@ -31,6 +34,8 @@ import com.codahale.metrics.MetricSet;
  * A set of gauges for Operating System usage, including stats on load average, cpu load, file descriptors etc
  */
 public class OperatingSystemMetricSet implements MetricSet {
+
+    private static final Logger logger = LoggerFactory.getLogger(OperatingSystemMetricSet.class);
 
     private final OperatingSystemMXBean mxBean;
 
@@ -46,84 +51,124 @@ public class OperatingSystemMetricSet implements MetricSet {
     public Map<String, Metric> getMetrics() {
         final Map<String, Metric> gauges = new HashMap<String, Metric>();
 
-        gauges.put("system.load.average", new Gauge<Double>() {
-            @Override
-            public Double getValue() {
-                return mxBean.getSystemLoadAverage();
+        Double loadAverage = mxBean.getSystemLoadAverage();
+        if (loadAverage != null && loadAverage.compareTo(0.0d) >= 0) {
+            gauges.put("system.load.average", new Gauge<Double>() {
+                @Override
+                public Double getValue() {
+                    return mxBean.getSystemLoadAverage();
+                }
+            });
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("System Load Average is not available as an Operating System Metric");
             }
-        });
+        }
 
-        gauges.put("file.descriptor.open.count", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getOpenFileDescriptorCount");
-            }
-        });
+        Gauge<Long> openFileDescriptorCountGauge = getLongGauge("getOpenFileDescriptorCount");
+        if (openFileDescriptorCountGauge != null) {
+            gauges.put("file.descriptor.open.count", openFileDescriptorCountGauge);
+        }
 
-        gauges.put("file.descriptor.max.count", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getMaxFileDescriptorCount");
-            }
-        });
+        Gauge<Long> maxFileDescriptorCountGauge = getLongGauge("getMaxFileDescriptorCount");
+        if (maxFileDescriptorCountGauge != null) {
+            gauges.put("file.descriptor.max.count", maxFileDescriptorCountGauge);
+        }
 
-        gauges.put("cpu.load.process", new Gauge<Double>() {
-            @Override
-            public Double getValue() {
-                return invokeDouble("getProcessCpuLoad");
-            }
-        });
+        Gauge<Double> processCpuLoadGauge = getDoubleGauge("getProcessCpuLoad");
+        if (processCpuLoadGauge != null) {
+            gauges.put("cpu.load.process", processCpuLoadGauge);
+        }
 
-        gauges.put("cpu.load.system", new Gauge<Double>() {
-            @Override
-            public Double getValue() {
-                return invokeDouble("getSystemCpuLoad");
-            }
-        });
+        Gauge<Double> systemCpuLoadGauge = getDoubleGauge("getSystemCpuLoad");
+        if (systemCpuLoadGauge != null) {
+            gauges.put("cpu.load.system", systemCpuLoadGauge);
+        }
 
-        gauges.put("physical.memory.free.size", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getFreePhysicalMemorySize");
-            }
-        });
+        Gauge<Long> freePhysicalMemorySizeGauge = getLongGauge("getFreePhysicalMemorySize");
+        if (freePhysicalMemorySizeGauge != null) {
+            gauges.put("physical.memory.free.size", freePhysicalMemorySizeGauge);
+        }
 
-        gauges.put("physical.memory.total.size", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getTotalPhysicalMemorySize");
-            }
-        });
+        Gauge<Long> totalPhysicalMemorySizeGauge = getLongGauge("getTotalPhysicalMemorySize");
+        if (totalPhysicalMemorySizeGauge != null) {
+            gauges.put("physical.memory.total.size", totalPhysicalMemorySizeGauge);
+        }
 
-        gauges.put("swap.space.free.size", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getFreeSwapSpaceSize");
-            }
-        });
+        Gauge<Long> freeSwapSpaceSizeGauge = getLongGauge("getFreeSwapSpaceSize");
+        if (freeSwapSpaceSizeGauge != null) {
+            gauges.put("swap.space.free.size", freeSwapSpaceSizeGauge);
+        }
 
-        gauges.put("swap.space.total.size", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getTotalSwapSpaceSize");
-            }
-        });
+        Gauge<Long> totalSwapSpaceSizeGauge = getLongGauge("getTotalSwapSpaceSize");
+        if (totalSwapSpaceSizeGauge != null) {
+            gauges.put("swap.space.total.size", totalSwapSpaceSizeGauge);
+        }
 
-        gauges.put("virtual.memory.committed.size", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return invokeLong("getCommittedVirtualMemorySize");
-            }
-        });
+        Gauge<Long> committedVirtualMemorySizeGauge = getLongGauge("getCommittedVirtualMemorySize");
+        if (committedVirtualMemorySizeGauge != null) {
+            gauges.put("virtual.memory.committed.size", committedVirtualMemorySizeGauge);
+        }
 
         return Collections.unmodifiableMap(gauges);
     }
 
-    private long invokeLong(String name) {
+    private Gauge<Long> getLongGauge(final String methodName) {
+        Object value = null;
         try {
-            final Method method = mxBean.getClass().getDeclaredMethod(name);
-            method.setAccessible(true);
-            return (Long) method.invoke(mxBean);
+            value = invokeMethod(methodName);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            // Ignore
+            if (logger.isTraceEnabled()) {
+                logger.trace(String.format("Error when invoking %s", methodName), e);
+            }
+        }
+        if (value != null) {
+            // Method is working
+            return new Gauge<Long>() {
+                @Override
+                public Long getValue() {
+                    return invokeLong(methodName);
+                }
+            };
+        }
+        return null;
+    }
+
+    private Gauge<Double> getDoubleGauge(final String methodName) {
+        Object value = null;
+        try {
+            value = invokeMethod(methodName);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            // Ignore
+            if (logger.isTraceEnabled()) {
+                logger.trace(String.format("Error when invoking %s", methodName), e);
+            }
+        }
+        if (value != null) {
+            // Method is working
+            return new Gauge<Double>() {
+                @Override
+                public Double getValue() {
+                    return invokeDouble(methodName);
+                }
+            };
+        }
+        return null;
+    }
+
+    private Object invokeMethod(String methodName) throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final Method method = mxBean.getClass().getDeclaredMethod(methodName);
+        method.setAccessible(true);
+        return method.invoke(mxBean);
+    }
+
+    private long invokeLong(String methodName) {
+        try {
+            return (Long) invokeMethod(methodName);
         } catch (NoSuchMethodException e) {
             return 0L;
         } catch (IllegalAccessException e) {
@@ -133,11 +178,9 @@ public class OperatingSystemMetricSet implements MetricSet {
         }
     }
 
-    private double invokeDouble(String name) {
+    private double invokeDouble(String methodName) {
         try {
-            final Method method = mxBean.getClass().getDeclaredMethod(name);
-            method.setAccessible(true);
-            return (Double) method.invoke(mxBean);
+            return (Double) invokeMethod(methodName);
         } catch (NoSuchMethodException e) {
             return -1.0;
         } catch (IllegalAccessException e) {
