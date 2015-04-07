@@ -30,6 +30,13 @@
     };
 
     igviz.setUp = function (canvas, config, dataTable) {
+        if(!dataTable.hasOwnProperty("metadata")){
+            newDataTable={metadata:dataTable,data:[]}
+            dataTable=newDataTable;
+            console.log(dataTable);
+        }
+
+
           var         chartObject = new Chart(canvas, config, dataTable);
 
         if (config.chartType == "bar") {
@@ -318,6 +325,8 @@
             ]
         }
 
+        if(chartConfig.markerSize==undefined)
+        chartConfig.markerSize=30;
         for(i=0;i<chartConfig.yAxis.length;i++) {
            var markObj = {
                 "type": "line",
@@ -354,6 +363,8 @@
                             "scale": "color", "value": dataTable.metadata.names[chartConfig.yAxis[i]]
                             //"fillOpacity": {"value": 0.5}
                         }
+
+                    ,"size":{"value":chartConfig.markerSize}
                         },
                         "update": {
                             "x": {"scale": "x", "field": xString},
@@ -545,6 +556,10 @@
         }
 
 
+        if(chartConfig.markerSize==undefined){
+            chartConfig.markerSize=30;
+        }
+
 
         for(i=0;i<chartConfig.yAxis.length;i++) {
             var markObj = {
@@ -582,6 +597,7 @@
                             "scale": "color", "value": dataTable.metadata.names[chartConfig.yAxis[i]]
                             //"fillOpacity": {"value": 0.5}
                         }
+                        ,"size":{"value":chartConfig.markerSize}
                     },
                     "update": {
                         "x": {"scale": "x", "field": xString},
@@ -1761,6 +1777,9 @@
             ]
         }
 
+        if(chartConfig.markerSize==undefined){
+            chartConfig.markerSize=30;
+        }
 
 
         for(i=0;i<chartConfig.yAxis.length;i++) {
@@ -1819,6 +1838,8 @@
                         "y": {"scale": "y", "field": transFormedYStrings[i]} }
                 }
             };
+
+
             var pointObj={
                 "type": "symbol",
 
@@ -1832,7 +1853,11 @@
                         "fill": {
                             "scale": "color", "value": dataTable.metadata.names[chartConfig.yAxis[i]]
                             //"fillOpacity": {"value": 0.5}
-                        }
+
+                        },
+                        "size":{"value":chartConfig.markerSize}
+
+
                     },
                     "update": {
                         "x": {"scale": "x", "field": xString},
@@ -2058,6 +2083,10 @@
 
         if(chartConfig.pointVisible)
         {
+            if(chartConfig.markerSize==undefined){
+                chartConfig.markerSize=30;
+            }
+
             spec.marks.push(
                 {
                     "type": "symbol",
@@ -2067,7 +2096,7 @@
                             "x": {"value":chartConfig.width-tempMargin},
                             "y": {"scale": "y:prev", "field": yStrings},
                             "fill": {"scale":"color","value" :2},
-                            "size":{"value":50}
+                            "size":{"value":chartConfig.markerSize}
                             //"fillOpacity": {"value": 0.5}
                         },
                         "update": {
@@ -2083,7 +2112,7 @@
                             "y": {"scale": "y", "field": yStrings}
                         },
                         "hover": {
-                            "size": {"value": 100},
+                            "size": {"value": chartConfig.markerSize},
                             "stroke": {"value": "white"}
                         }
                     }
@@ -2226,6 +2255,9 @@
             ]
         }
 
+        if(chartConfig.markerSize==undefined){
+            chartConfig.markerSize=30;
+        }
         for(i=0;i<chartConfig.yAxis.length;i++) {
             var areaObj =  {
                 "type": "area",
@@ -2291,7 +2323,7 @@
                         "x": {"scale": "x", "field": xString},
                         "y": {"scale": "y:prev", "field": yStrings[i]},
                         "fill": {"scale":"color","value" :dataTable.metadata.names[chartConfig.yAxis[i]]},
-                            "size":{"value":50}
+                            "size":{"value":chartConfig.markerSize}
                             //"fillOpacity": {"value": 0.5}
                         },
                                        "update": {
@@ -2303,7 +2335,7 @@
                         "y": {"scale": "y", "field": yStrings[i]}
                     },
                         "hover": {
-                            "size": {"value": 100},
+                            "size": {"value": chartConfig.markerSize*1.5},
                             "stroke": {"value": "white"}
                         }
                     }
@@ -4591,6 +4623,9 @@
     function sortDataTable(dataTable,xAxis){
         dataTable.data.sort(function(a,b){
 
+            if(a[xAxis] instanceof Date)
+            return a[xAxis].getTime()-b[xAxis].getTime();
+            else
             return a[xAxis]-b[xAxis];
         })
 
@@ -4617,8 +4652,9 @@
 
 
 
+        this.dataTable.data=dataset;
 
-        sortDataTable(this.dataTable,this.config.xAxis);
+       sortDataTable(this.dataTable,this.config.xAxis);
 
 
         var table=  setData(dataset,this.config ,this.dataTable.metadata);
