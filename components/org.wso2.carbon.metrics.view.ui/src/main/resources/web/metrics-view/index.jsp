@@ -34,8 +34,6 @@
 <link href="plugins/igviz/igviz.css" rel="stylesheet" />
 <link href="css/metrics.css" rel="stylesheet">
 
-<title>View Metrics</title>
-
 </head>
 <body>
 
@@ -112,78 +110,54 @@
 
  				<br/>
  
-				<table border="1" class="styledLeft">
-					<tbody>
-						<tr>
-							<td class="formRow">
-								<div id="toggleMemory"></div>
-								<div id="igvizMemory" class="igvizChart"></div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
- 				<br/>
-
-				<table border="1" class="styledLeft">
-					<tbody>
-						<tr>
-							<td class="formRow">
-								<div id="toggleCPU"></div>
-								<div id="igvizCPU" class="igvizChart"></div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
- 				<br/>
-
-				<table border="1" class="styledLeft">
-					<tbody>
-						<tr>
-							<td class="formRow">
-								<div id="toggleLoadAverage"></div>
-								<div id="igvizLoadAverage" class="igvizChart"></div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+                <div id="chartHolder"></div>
 				
-                <br/>
-
-                <table border="1" class="styledLeft">
-                    <tbody>
-                        <tr>
-                            <td class="formRow">
-                                <div id="togglePhysicalMemory"></div>
-                                <div id="igvizPhysicalMemory" class="igvizChart"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-				
-                <br/>
-
-                <table border="1" class="styledLeft">
-                    <tbody>
-                        <tr>
-                            <td class="formRow">
-                                <div id="toggleFileDescriptor"></div>
-                                <div id="igvizFileDescriptor" class="igvizChart"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
 			</div>
 		</div>
-	</fmt:bundle>
 
+        <script id="initialSetup" type="text/javascript">
+            var charts = [];
+            var titles = [];
+            <%
+            String[] charts = new String[]{"CPU", "LoadAverage", "Memory", "PhysicalMemory", "FileDescriptor"};
+            for (String chart : charts) {
+            %>
+            charts.push("<%=chart%>");
+            titles.push("<fmt:message key="<%="metrics.chart." + chart%>"/>");
+            <%
+            }
+            %>
+        </script>
+
+	</fmt:bundle>
 
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/vega/vega.js"></script>
 	<script src="plugins/igviz/igviz.js"></script>
+	<script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
 	<script src="plugins/jquery/jquery-2.1.3.min.js"></script>
 	<script src="js/metrics.ui.js"></script>
+
+    <script id="chartTemplate" type="text/x-handlebars-template">
+        <div id="chart{{type}}">
+            <table border="1" class="styledLeft">
+                <thead>
+                <tr>
+                    <th>{{title}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="formRow">
+                            <div id="toggle{{type}}"></div>
+                            <div id="igviz{{type}}" class="igvizChart"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br></br>
+    </script>
 </body>
 </html>
 

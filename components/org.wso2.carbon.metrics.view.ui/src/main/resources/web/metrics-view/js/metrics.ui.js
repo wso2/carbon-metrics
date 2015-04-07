@@ -15,15 +15,24 @@
  */
 var metricsJQuery = jQuery.noConflict();
 
-var charts = [ "Memory", "CPU", "LoadAverage", "PhysicalMemory", "FileDescriptor" ]
-
 metricsJQuery(function($) {
+	// Create Chart Holders from the template
+	metricsJQuery.map(charts, createChartHolder);
 	plotCharts();
 	metricsJQuery(window).on('resize', resizeCharts);
 	metricsJQuery("#source").change(plotCharts);
 	metricsJQuery("#from").change(plotCharts);
 });
 
+function createChartHolder(chart, i) {
+    // Get the template, compile and append to main chart holder
+    var source   = $("#chartTemplate").html();
+    var template = Handlebars.compile(source);
+    var context = {type: chart, title: titles[i]};
+    var html    = template(context);
+
+    metricsJQuery("#chartHolder").append(html);
+};
 
 function plotCharts() {
 	metricsJQuery.map(charts, plotChart);
@@ -80,7 +89,7 @@ function igvizPlot(chart, data) {
 		indices = [ 1 ];
 	}
 
-	var width = metricsJQuery(igvizId).outerWidth() - 100; // canvas width
+	var width = metricsJQuery("#chartHolder").outerWidth() - 150; // canvas width
 	var height = 300; // canvas height
 
 	var chartConfig = {
@@ -90,7 +99,8 @@ function igvizPlot(chart, data) {
 		"width" : width,
 		"height" : height,
 		"chartType" : "line",
-		"pointVisible" : false,
+		"pointVisible": true,
+		"markerSize": 2,
 		"interpolationMode" : "linear"
 	}
 
