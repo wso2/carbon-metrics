@@ -133,6 +133,7 @@
 	<script src="plugins/igviz/igviz.js"></script>
 	<script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
 	<script src="plugins/jquery/jquery-2.1.3.min.js"></script>
+	<script src="plugins/jquery-plugins/jquery.cookie.js"></script>
 	<script src="js/metrics.ui.js"></script>
 
     <script id="chartTemplate" type="text/x-handlebars-template">

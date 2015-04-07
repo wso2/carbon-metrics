@@ -67,18 +67,29 @@ function igvizPlot(chart, data) {
 		metricsJQuery.each(data.metadata.names, function(index, value) {
 			if (index > 0) {
 				var checkboxId = "cb".concat(chart).concat(index);
+
+                // Check whether the value is stored as a cookie
+                var checkedCookieValue = metricsJQuery.cookie(checkboxId);
+                var checked = true;
+                if (checkedCookieValue != null && checkedCookieValue === "false") {
+                    checked = false;
+                }
+
 				metricsJQuery('<input />', {
 					type : 'checkbox',
 					id : checkboxId,
 					value : index,
-					checked : true
+					checked : checked
 				}).appendTo(container);
 				metricsJQuery('<label />', {
 					'for' : checkboxId,
 					text : value,
 					class : 'toggleLabel'
 				}).appendTo(container);
-				indices.push(index);
+
+				if (checked) {
+				    indices.push(index);
+				}
 			}
 		});
 
@@ -142,6 +153,12 @@ function redrawChart(event) {
 		event.preventDefault();
 		return;
 	}
+
+    // Save checked value in a cookie
+    var inputCheckbox = metricsJQuery(this);
+    var inputId = inputCheckbox.attr("id");
+    var checked = inputCheckbox.prop("checked");
+    metricsJQuery.cookie(inputId, checked);
 
 	var chartConfig = metricsJQuery(toggleId).data("chartConfig");
 	chartConfig.yAxis = indices;
