@@ -25,17 +25,14 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage"%>
 <%@ page import="org.wso2.carbon.ui.util.CharacterEncoder"%>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<div>
+
+<!-- Removed head tag. This page is rendered within the body tag in Management Console -->
 
 <!-- igviz styles -->
-<link href="plugins/igviz/igviz.css" rel="stylesheet" />
-<link href="css/metrics.css" rel="stylesheet">
+<link href="plugins/igviz/igviz.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<link href="css/metrics.css" type="text/css" rel="stylesheet" property="stylesheet" />
 
-</head>
-<body>
 
 	<%
 	    String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
@@ -158,6 +155,4 @@
         </div>
         <br></br>
     </script>
-</body>
-</html>
-
+</div>
