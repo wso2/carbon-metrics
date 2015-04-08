@@ -1,13 +1,48 @@
 WSO2 Carbon Metrics
 ===================
 
-This is an API for WSO2 Carbon to use [Metrics library](https://dropwizard.github.io/metrics/).
+"WSO2 Carbon Metrics" provides an API for WSO2 Carbon Components to use [Metrics library](https://dropwizard.github.io/metrics/).
 
 For more information see JIRA [CARBON-15115](https://wso2.org/jira/browse/CARBON-15115)
 
+## Enabling Metrics
+
+The metrics feature can be enabled from `$CARBON_HOME/repository/conf/metrics.xml` and the reporters can also be configured from the same configuration file. 
+
+The System Property `metrics.enabled` can be used to set the enabled status at startup. For example, use `-Dmetrics.enabled=true` to enable Metrics feature without editing the `metrics.xml` configuration file.
+
+
+## Metric Levels
+
+The WSO2 Carbon Metrics APIs associate a Level with each Metric. These levels are similar to the Levels used in Logging Libraries. 
+
+Metrics Levels are organized from most specific to least:
+
+  - OFF (most specific, no metrics)
+  - INFO
+  - DEBUG
+  - TRACE (least specific, a lot of data)
+  - ALL (least specific, all data)
+
+The levels are configured in `$CARBON_HOME/repository/conf/metrics.properties` file.
+
+Similar to [Apache Log4j](https://logging.apache.org/log4j/1.2/), the WSO2 Carbon Metrics implementation uses a Metric Hierarchy. The hierarchy is maintained via the Metric names.
+
+The levels in `metrics.properties` can be configured to any hierarchy. For example, if we use `metric.level.jvm.memory.heap=INFO` in  `metrics.properties`, all metrics under `jvm.memory.heap` memory will have `INFO` as the configured level.
+
+If there is no configured level for specific metric name hierarachy, the level in "`metrics.rootLevel`" will be used. The  System Property `metrics.rootLevel` can be used to override the configured root level in `metrics.properties` file. For example, use `-Dmetrics.rootLevel=INFO` to change the root level to `INFO`.
+
+
 ## Components
 
-There are two components. The `org.wso2.carbon.metrics.manager` component has the public API for WSO2 Metrics. The `org.wso2.carbon.metrics.impl` component has the implementation, which uses the Metrics library.
+This repository has multiple components.
+
+  - org.wso2.carbon.metrics.manager - The public API for WSO2 Metrics. See Usage.
+  - org.wso2.carbon.metrics.impl - Main implementation of Metric Service, which uses the [Metrics library](https://dropwizard.github.io/metrics/).
+  - org.wso2.carbon.metrics.jdbc.reporter - A JDBC Reporter for Metrics Library.
+  - org.wso2.carbon.metrics.common - A common component to read configurations.
+  - org.wso2.carbon.metrics.data.service - A Web Service to get data reported by the JDBC Reporter.
+  - org.wso2.carbon.metrics.view.ui - A Carbon UI component to display JMX Stats.
 
 ## Usage
 
@@ -94,6 +129,11 @@ For example:
         <filtered>false</filtered>
     </file>
     <file>
+        <source>../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/metrics.properties</source>
+        <outputDirectory>${project.artifactId}-${project.version}/repository/conf/</outputDirectory>
+        <filtered>false</filtered>
+    </file>
+    <file>
         <source>../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/datasources/metrics-datasources.xml</source>
         <outputDirectory>${project.artifactId}-${project.version}/repository/conf/datasources/</outputDirectory>
         <fileMode>644</fileMode>
@@ -108,6 +148,6 @@ For example:
 
 ## License
 
-Copyright (C) 2015 WSO2 Inc
+Copyright (C) 2014-2015 WSO2 Inc
 
 Licensed under the Apache License, Version 2.0
