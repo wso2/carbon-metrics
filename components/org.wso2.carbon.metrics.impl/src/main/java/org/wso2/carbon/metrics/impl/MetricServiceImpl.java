@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.internal.LocalDatabaseCreator;
+import org.wso2.carbon.metrics.impl.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
@@ -58,7 +59,6 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
-import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
@@ -566,10 +566,10 @@ public class MetricServiceImpl implements MetricService {
     private void registerJVMMetrics() {
         registerAll(Level.INFO, "jvm.memory", new MemoryUsageGaugeSet());
         registerAll(Level.INFO, "jvm.os", new OperatingSystemMetricSet());
+        registerAll(Level.INFO, "jvm.class-loading", new ClassLoadingGaugeSet());
         registerAll(Level.DEBUG, "jvm.gc", new GarbageCollectorMetricSet());
-        registerAll(Level.DEBUG, "jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
-        registerAll(Level.DEBUG, "jvm.class-loading", new ClassLoadingGaugeSet());
-        registerAll(Level.TRACE, "jvm.threads", new ThreadStatesGaugeSet());
+        registerAll(Level.DEBUG, "jvm.threads", new ThreadStatesGaugeSet());
+        registerAll(Level.TRACE, "jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
     }
 
     private void registerAll(Level level, String prefix, MetricSet metrics) throws IllegalArgumentException {
