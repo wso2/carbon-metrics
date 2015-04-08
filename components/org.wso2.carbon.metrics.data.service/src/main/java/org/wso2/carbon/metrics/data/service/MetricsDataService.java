@@ -406,4 +406,59 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
     }
+
+    public MetricData findLastJMXClassLoadingMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXClassLoadingMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXClassLoadingMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+
+        metrics.add("jvm.class-loading.loaded.current");
+        metrics.add("jvm.class-loading.loaded.total");
+        metrics.add("jvm.class-loading.unloaded.total");
+
+        displayNames.add("Current Classes Loaded");
+        displayNames.add("Total Classes Loaded");
+        displayNames.add("Total Classes Unloaded");
+
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
+
+    public MetricData findLastJMXThreadingMetrics(String source, String from) {
+        long startTime = getStartTime(from);
+        if (startTime == -1) {
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        return findJMXThreadingMetricsByTimePeriod(source, startTime, endTime);
+    }
+
+    public MetricData findJMXThreadingMetricsByTimePeriod(String source, long startTime, long endTime) {
+        List<String> metrics = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+
+        metrics.add("jvm.threads.count");
+        metrics.add("jvm.threads.daemon.count");
+
+        displayNames.add("Live Threads");
+        displayNames.add("Daemon Threads");
+
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+        valueConverters.add(DUMB_VALUE_CONVERTER);
+
+        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
+    }
 }
