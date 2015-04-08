@@ -130,7 +130,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         long startTime = -1;
 
         if (matcher.find()) {
-            int count = Integer.parseInt(matcher.group(1));
+            long count = Long.parseLong(matcher.group(1));
             String unit = matcher.group(2);
             if ("m".equals(unit)) {
                 startTime = currentTimeMillis + (count * 1000 * 60);
