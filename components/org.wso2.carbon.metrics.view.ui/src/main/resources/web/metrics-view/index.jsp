@@ -183,6 +183,9 @@
                     <tbody>
                         <tr>
                             <td class="formRow">
+                                <span id="msgNoData{{type}}" style="display: none;">
+                                    <fmt:message key="metrics.nodata"/>
+                                </span>
                                 <div id="toggle{{type}}"></div>
                                 <div id="igviz{{type}}" class="igvizChart"></div>
                             </td>

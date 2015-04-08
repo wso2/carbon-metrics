@@ -89,10 +89,23 @@ function plotChart(chart) {
 
 	metricsJQuery.getJSON(url, data).done(function(data) {
 		igvizPlot(chart, data);
-	});
+	})
+    .fail(function() {
+        displayNoData(chart);
+    });
+}
+
+function displayNoData(chart) {
+    var noDataMsgId = "#msgNoData".concat(chart);
+    metricsJQuery(noDataMsgId).show();
 }
 
 function igvizPlot(chart, data) {
+
+    if (!data.data || data.data.length == 0) {
+        displayNoData(chart);
+        return;
+    }
 
 	var toggleId = "#toggle".concat(chart);
 	var igvizId = "#igviz".concat(chart);

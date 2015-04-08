@@ -30,9 +30,13 @@ public class MetricDataWrapper {
 
     public MetricDataWrapper(MetricData metricData) {
         super();
-        this.data = new BigDecimal[metricData.getData().length][];
-        for (int i = 0; i < metricData.getData().length; i++) {
-            data[i] = metricData.getData()[i].getArray();
+        if (metricData.getData() != null) {
+            this.data = new BigDecimal[metricData.getData().length][];
+            for (int i = 0; i < metricData.getData().length; i++) {
+                data[i] = metricData.getData()[i].getArray();
+            }
+        } else {
+            this.data = new BigDecimal[0][];
         }
         metadata = new MetadataWrapper(metricData.getMetadata());
     }
