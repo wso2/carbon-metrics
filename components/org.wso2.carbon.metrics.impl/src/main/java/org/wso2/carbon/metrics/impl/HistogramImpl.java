@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
 
     private Histogram histogram;
 
-    public HistogramImpl(Level level, Histogram histogram) {
-        super(level);
+    public HistogramImpl(Level level, String name, Histogram histogram) {
+        super(level, name);
         this.histogram = histogram;
     }
 

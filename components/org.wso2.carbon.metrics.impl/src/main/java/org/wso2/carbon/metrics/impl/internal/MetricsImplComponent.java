@@ -17,14 +17,15 @@ package org.wso2.carbon.metrics.impl.internal;
 
 import java.io.File;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.common.MetricsConfigException;
+import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.MetricServiceImpl;
-import org.wso2.carbon.metrics.impl.MetricsConfigException;
-import org.wso2.carbon.metrics.impl.MetricsConfiguration;
-import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.impl.MetricsLevelConfigException;
+import org.wso2.carbon.metrics.impl.MetricsLevelConfiguration;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -40,12 +41,12 @@ public class MetricsImplComponent {
 
     @SuppressWarnings("rawtypes")
     private ServiceRegistration metricsServiceRegistration;
-    
+
     private MetricService metricService;
 
     protected void activate(ComponentContext componentContext) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Metrics manager component activated");
+            logger.debug("Metrics Service component activated");
         }
         MetricsConfiguration configuration = new MetricsConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
@@ -57,7 +58,17 @@ public class MetricsImplComponent {
             }
         }
 
-        metricService = new MetricServiceImpl(configuration);
+        MetricsLevelConfiguration levelConfiguration = new MetricsLevelConfiguration();
+        String propertiesFilePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.properties";
+        try {
+            levelConfiguration.load(propertiesFilePath);
+        } catch (MetricsLevelConfigException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("Error reading metrics level configuration from " + filePath, e);
+            }
+        }
+
+        metricService = new MetricServiceImpl(configuration, levelConfiguration);
 
         metricsServiceRegistration = componentContext.getBundleContext().registerService(MetricService.class.getName(),
                 metricService, null);
@@ -66,10 +77,10 @@ public class MetricsImplComponent {
 
     protected void deactivate(ComponentContext componentContext) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Deactivating Metrics manager component");
+            logger.debug("Deactivating Metrics Service component");
         }
-        // Set Level to OFF to stop reporters etc.
-        metricService.setLevel(Level.OFF);
+        // Disable Metric Service to stop reporters etc.
+        metricService.disable();
         metricsServiceRegistration.unregister();
     }
 

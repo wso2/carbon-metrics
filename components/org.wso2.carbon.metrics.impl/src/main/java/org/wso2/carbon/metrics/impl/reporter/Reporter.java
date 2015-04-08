@@ -19,9 +19,13 @@ package org.wso2.carbon.metrics.impl.reporter;
  * Reporter interface to manage multiple reporters in this service
  */
 public interface Reporter {
+
+    void report();
+
     void start();
 
     boolean isRunning();
 
     void stop();
+
 }

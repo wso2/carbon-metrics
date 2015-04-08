@@ -36,7 +36,7 @@ public class MeterTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration());
+        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
@@ -62,7 +62,7 @@ public class MeterTest extends TestCase {
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
     }
@@ -73,7 +73,7 @@ public class MeterTest extends TestCase {
         meter.mark(n);
         assertEquals("Count should be " + n, n, meter.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         meter.mark(n);
         assertEquals("Count should be " + n, n, meter.getCount());
     }

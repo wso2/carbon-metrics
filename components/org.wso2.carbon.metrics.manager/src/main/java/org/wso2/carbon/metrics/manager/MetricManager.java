@@ -15,8 +15,6 @@
  */
 package org.wso2.carbon.metrics.manager;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
@@ -26,24 +24,7 @@ import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
  */
 public final class MetricManager {
 
-    private static final ConcurrentMap<String, MetricWrapper<? extends Metric>> metrics = new ConcurrentHashMap<String, MetricWrapper<? extends Metric>>();
-
     private MetricManager() {
-    }
-
-    /**
-     * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} with metric
-     */
-    private static class MetricWrapper<T extends Metric> {
-
-        private final Level level;
-        private final T metric;
-
-        private MetricWrapper(Level level, T metric) {
-            super();
-            this.level = level;
-            this.metric = metric;
-        }
     }
 
     /**
@@ -84,133 +65,6 @@ public final class MetricManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T extends Metric> T getOrCreateMetric(Level level, String name, MetricBuilder<T> metricBuilder) {
-        MetricWrapper<? extends Metric> metricWrapper = metrics.get(name);
-        if (metricWrapper != null) {
-            Metric metric = metricWrapper.metric;
-            if (metricBuilder.isInstance(metric)) {
-                if (level.equals(metricWrapper.level)) {
-                    return (T) metric;
-                } else {
-                    throw new IllegalArgumentException(name + " is already used with a different level");
-                }
-            } else {
-                throw new IllegalArgumentException(name + " is already used for a different type of metric");
-            }
-        } else {
-            T newMetric = metricBuilder.createMetric(level, name);
-            metricWrapper = new MetricWrapper<T>(level, newMetric);
-            metrics.put(name, metricWrapper);
-            return newMetric;
-        }
-    }
-
-    /**
-     * An interface for creating a new metric from MetricService
-     */
-    private static interface MetricBuilder<T extends Metric> {
-        T createMetric(Level level, String name);
-
-        boolean isInstance(Metric metric);
-    }
-
-    private static final MetricBuilder<Meter> METER_BUILDER = new MetricBuilder<Meter>() {
-        @Override
-        public Meter createMetric(Level level, String name) {
-            MetricService metricService = ServiceReferenceHolder.getInstance().getMetricService();
-            return metricService.createMeter(level, name);
-        }
-
-        @Override
-        public boolean isInstance(Metric metric) {
-            return Meter.class.isInstance(metric);
-        }
-    };
-
-    private static final MetricBuilder<Counter> COUNTER_BUILDER = new MetricBuilder<Counter>() {
-        @Override
-        public Counter createMetric(Level level, String name) {
-            MetricService metricService = ServiceReferenceHolder.getInstance().getMetricService();
-            return metricService.createCounter(level, name);
-        }
-
-        @Override
-        public boolean isInstance(Metric metric) {
-            return Counter.class.isInstance(metric);
-        }
-    };
-
-    private static final MetricBuilder<Timer> TIMER_BUILDER = new MetricBuilder<Timer>() {
-        @Override
-        public Timer createMetric(Level level, String name) {
-            MetricService metricService = ServiceReferenceHolder.getInstance().getMetricService();
-            return metricService.createTimer(level, name);
-        }
-
-        @Override
-        public boolean isInstance(Metric metric) {
-            return Timer.class.isInstance(metric);
-        }
-    };
-
-    private static final MetricBuilder<Histogram> HISTOGRAM_BUILDER = new MetricBuilder<Histogram>() {
-        @Override
-        public Histogram createMetric(Level level, String name) {
-            MetricService metricService = ServiceReferenceHolder.getInstance().getMetricService();
-            return metricService.createHistogram(level, name);
-        }
-
-        @Override
-        public boolean isInstance(Metric metric) {
-            return Histogram.class.isInstance(metric);
-        }
-    };
-
-    private static class GaugeBuilder<T> implements MetricBuilder<Gauge<T>> {
-
-        private final Gauge<T> gauge;
-
-        public GaugeBuilder(Gauge<T> gauge) {
-            super();
-            this.gauge = gauge;
-        }
-
-        @Override
-        public Gauge<T> createMetric(Level level, String name) {
-            MetricService metricService = ServiceReferenceHolder.getInstance().getMetricService();
-            metricService.createGauge(level, name, gauge);
-            return gauge;
-        }
-
-        @Override
-        public boolean isInstance(Metric metric) {
-            return Gauge.class.isInstance(metric);
-        }
-    };
-
-    private static class CachedGaugeBuilder<T> extends GaugeBuilder<T> implements MetricBuilder<Gauge<T>> {
-
-        private final Gauge<T> gauge;
-        private final long timeout;
-        private final TimeUnit timeoutUnit;
-
-        public CachedGaugeBuilder(Gauge<T> gauge, long timeout, TimeUnit timeoutUnit) {
-            super(gauge);
-            this.gauge = gauge;
-            this.timeout = timeout;
-            this.timeoutUnit = timeoutUnit;
-        }
-
-        @Override
-        public Gauge<T> createMetric(Level level, String name) {
-            MetricService metricService = ServiceReferenceHolder.getInstance().getMetricService();
-            metricService.createCachedGauge(level, name, timeout, timeoutUnit, gauge);
-            return gauge;
-        }
-
-    };
-
     /**
      * Return a {@link Meter} instance registered under given name
      * 
@@ -219,7 +73,7 @@ public final class MetricManager {
      * @return a {@link Meter} instance
      */
     public static Meter meter(Level level, String name) {
-        return getOrCreateMetric(level, name, METER_BUILDER);
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(level, name);
     }
 
     /**
@@ -230,7 +84,7 @@ public final class MetricManager {
      * @return a {@link Counter} instance
      */
     public static Counter counter(Level level, String name) {
-        return getOrCreateMetric(level, name, COUNTER_BUILDER);
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(level, name);
     }
 
     /**
@@ -241,7 +95,7 @@ public final class MetricManager {
      * @return a {@link Timer} instance
      */
     public static Timer timer(Level level, String name) {
-        return getOrCreateMetric(level, name, TIMER_BUILDER);
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(level, name);
     }
 
     /**
@@ -252,7 +106,7 @@ public final class MetricManager {
      * @return a {@link Histogram} instance
      */
     public static Histogram histogram(Level level, String name) {
-        return getOrCreateMetric(level, name, HISTOGRAM_BUILDER);
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(level, name);
     }
 
     /**
@@ -263,7 +117,7 @@ public final class MetricManager {
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void gauge(Level level, String name, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, new GaugeBuilder<T>(gauge));
+        ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, gauge);
     }
 
     /**
@@ -276,7 +130,7 @@ public final class MetricManager {
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, timeout, timeoutUnit, gauge);
     }
 
     /**
@@ -288,6 +142,7 @@ public final class MetricManager {
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, long timeout, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, new CachedGaugeBuilder<T>(gauge, timeout, TimeUnit.SECONDS));
+        ServiceReferenceHolder.getInstance().getMetricService()
+                .cachedGauge(level, name, timeout, TimeUnit.SECONDS, gauge);
     }
 }

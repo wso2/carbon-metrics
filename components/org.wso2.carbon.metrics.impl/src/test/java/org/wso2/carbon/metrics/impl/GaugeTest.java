@@ -32,7 +32,7 @@ public class GaugeTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration());
+        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 

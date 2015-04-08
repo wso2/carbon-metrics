@@ -36,7 +36,7 @@ public class CounterTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration());
+        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
@@ -60,7 +60,7 @@ public class CounterTest extends TestCase {
         counter.inc();
         assertEquals("Count should be one", 1, counter.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         counter.inc();
         assertEquals("Count should be one", 1, counter.getCount());
     }
@@ -72,7 +72,7 @@ public class CounterTest extends TestCase {
         counter.inc(n);
         assertEquals("Count should be " + n, n, counter.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         counter.inc(n);
         assertEquals("Count should be " + n, n, counter.getCount());
     }
@@ -82,7 +82,7 @@ public class CounterTest extends TestCase {
         counter.dec();
         assertEquals("Count should be -1", -1, counter.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         counter.dec();
         assertEquals("Count should be -1", -1, counter.getCount());
     }
@@ -94,7 +94,7 @@ public class CounterTest extends TestCase {
         counter.dec(n);
         assertEquals("Count should be " + n, 0 - n, counter.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         counter.dec(n);
         assertEquals("Count should be " + n, 0 - n, counter.getCount());
     }

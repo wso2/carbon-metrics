@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    # Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org)
+    # Copyright (c) 2014-2015, WSO2 Inc. (http://www.wso2.org)
     #
     # Licensed under the Apache License, Version 2.0 (the "License");
     # you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
@@ -23,7 +25,7 @@
 
     <groupId>org.wso2.carbon.metrics</groupId>
     <artifactId>carbon-metrics</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <name>Metrics</name>
@@ -50,15 +52,24 @@
     </scm>
 
     <modules>
+        <module>service-stubs/org.wso2.carbon.metrics.data.service.stub</module>
         <module>components/org.wso2.carbon.metrics.jdbc.reporter</module>
         <module>components/org.wso2.carbon.metrics.manager</module>
+        <module>components/org.wso2.carbon.metrics.common</module>
         <module>components/org.wso2.carbon.metrics.impl</module>
+        <module>components/org.wso2.carbon.metrics.data.service</module>
+        <module>components/org.wso2.carbon.metrics.view.ui</module>
         <module>features/carbon-metrics</module>
         <module>features/repository</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.common</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.manager</artifactId>
@@ -72,6 +83,21 @@
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.impl</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.data.service</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.data.service.stub</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.view.ui</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>
@@ -90,6 +116,11 @@
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-jvm</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-stax-api_1.0_spec</artifactId>
                 <version>${stax.api.version}</version>
@@ -100,14 +131,29 @@
                 <version>${axiom.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-io.wso2</groupId>
+                <groupId>org.apache.ws.commons.axiom</groupId>
+                <artifactId>axiom-impl</artifactId>
+                <version>${axiom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>${commons-io.wso2.version}</version>
+                <version>${commons-io.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.securevault</artifactId>
+                <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.ui</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.securevault</groupId>
+                <artifactId>org.wso2.securevault</artifactId>
+                <version>${securevault.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -118,6 +164,17 @@
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.registry.core</artifactId>
                 <version>${carbon.kernel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-io.wso2</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -165,14 +222,61 @@
                 <version>${spring.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>${tomcat.version}</version>
+                <scope>test</scope>
+            </dependency>
 
-            <!-- Features -->
+
+            <!-- Service Stubs - Start -->
+            <dependency>
+                <groupId>org.apache.axis2</groupId>
+                <artifactId>axis2</artifactId>
+                <version>${axis2.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>wsdl4j.wso2</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>${wsdl4j.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons.logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.schema.wso2</groupId>
+                <artifactId>XmlSchema</artifactId>
+                <version>${xmlschema.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ws.commons.axiom.wso2</groupId>
+                <artifactId>axiom</artifactId>
+                <version>${axiom.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.neethi.wso2</groupId>
+                <artifactId>neethi</artifactId>
+                <version>${neethi.wso2.version}</version>
+            </dependency>
+            <!-- Service Stubs - End -->
+
+            <!-- Features - Start -->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.server.feature</artifactId>
                 <version>${carbon.metrics.version}</version>
                 <type>zip</type>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.ui.feature</artifactId>
+                <version>${carbon.metrics.version}</version>
+                <type>zip</type>
+            </dependency>
+            <!-- Features - End -->
         </dependencies>
     </dependencyManagement>
 
@@ -217,6 +321,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -239,6 +351,21 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${maven.dependency.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven.war.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.axis2</groupId>
+                    <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
+                    <version>${axis2.wso2.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build.helper.maven.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -274,26 +401,45 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <carbon.metrics.version>1.0.1-SNAPSHOT</carbon.metrics.version>
+        <carbon.metrics.version>1.1.0-SNAPSHOT</carbon.metrics.version>
         <junit.version>4.12</junit.version>
-        <metrics.version>3.1.0</metrics.version>
+        <metrics.version>3.1.1</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
-        <eclipse.osgi.version>3.8.1.v20120830-144521</eclipse.osgi.version>
+        <eclipse.osgi.version>3.9.1.v20140110-1610</eclipse.osgi.version>
         <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
-        <carbon.kernel.version>4.3.0</carbon.kernel.version>
+        <carbon.kernel.version>4.4.0</carbon.kernel.version>
+        <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
+        <securevault.version>1.0.0-wso2v2</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>
-        <axiom.version>1.2.11-wso2v5</axiom.version>
-        <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
-        <slf4j.version>1.7.10</slf4j.version>
+        <axiom.version>1.2.14</axiom.version>
+        <commons-io.version>2.4</commons-io.version>
+        <commons-io.wso2.version.range>[2.0.0, 3.0.0)</commons-io.wso2.version.range>
+        <gson.version>2.3.1</gson.version>
+        <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
+        <slf4j.version>1.7.12</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <!-- Cannot use a latest version (1.4.185). We need to use a compatible version with Carbon's H2 library -->
         <h2.version>1.2.140</h2.version>
-        <spring.version>4.1.5.RELEASE</spring.version>
+        <spring.version>4.1.6.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
+        <javax.ws.rs.version>2.0.1</javax.ws.rs.version>
         <!-- scr plugin version 1.7.4 is required to recognize javadoc comments for scr components -->
         <maven.scr.plugin.version>1.7.4</maven.scr.plugin.version>
-        <maven.bundle.plugin.version>2.3.6</maven.bundle.plugin.version>
+        <maven.bundle.plugin.version>2.5.3</maven.bundle.plugin.version>
         <maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
+        <maven.war.plugin.version>2.6</maven.war.plugin.version>
+        <build.helper.maven.plugin.version>1.9.1</build.helper.maven.plugin.version>
+
+        <tomcat.version>8.0.21</tomcat.version>
+
+        <!-- Service Stubs - Start -->
+        <commons.logging.version>1.2</commons.logging.version>
+        <axis2.wso2.version>1.6.1-wso2v12</axis2.wso2.version>
+        <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
+        <xmlschema.wso2.version>1.4.7.wso2v3</xmlschema.wso2.version>
+        <axiom.wso2.version>1.2.11.wso2v6</axiom.wso2.version>
+        <neethi.wso2.version>2.0.4.wso2v4</neethi.wso2.version>
+        <!-- Service Stubs - End -->
     </properties>
 </project>

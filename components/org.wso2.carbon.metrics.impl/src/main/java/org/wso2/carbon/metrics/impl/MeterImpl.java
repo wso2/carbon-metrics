@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
     private Meter meter;
 
-    public MeterImpl(Level level, Meter meter) {
-        super(level);
+    public MeterImpl(Level level, String name, Meter meter) {
+        super(level, name);
         this.meter = meter;
     }
 

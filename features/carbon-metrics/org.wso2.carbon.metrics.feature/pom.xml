@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
         <artifactId>carbon-metrics-feature</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -35,6 +35,11 @@
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.server.feature</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.ui.feature</artifactId>
             <type>zip</type>
         </dependency>
     </dependencies>
@@ -62,6 +67,7 @@
                             </adviceFile>
                             <includedFeatures>
                                 <includedFeatureDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.server.feature</includedFeatureDef>
+                                <includedFeatureDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.ui.feature</includedFeatureDef>
                             </includedFeatures>
                         </configuration>
                     </execution>

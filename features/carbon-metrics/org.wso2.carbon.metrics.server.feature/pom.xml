@@ -14,12 +14,14 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
         <artifactId>carbon-metrics-feature</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,6 +35,10 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.manager</artifactId>
         </dependency>
         <dependency>
@@ -44,8 +50,16 @@
             <artifactId>org.wso2.carbon.metrics.impl</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.data.service</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -83,7 +97,10 @@
                                     <path refid="maven.compile.classpath" />
                                 </path>
                                 <echo message="########### Creating Carbon Metrics Database ##############" />
-                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/src/main/resources/repository/database/WSO2METRICS_DB;create=true" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+                                <sql driver="org.h2.Driver"
+                                    url="jdbc:h2:${basedir}/src/main/resources/repository/database/WSO2METRICS_DB;create=true"
+                                    userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue"
+                                >
                                     <classpath>
                                         <path refid="h2.classpath" />
                                     </classpath>
@@ -115,17 +132,20 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.common</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.manager</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.impl</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service</bundleDef>                  
                                 <bundleDef>io.dropwizard.metrics:metrics-core</bundleDef>
+                                <bundleDef>io.dropwizard.metrics:metrics-jvm</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-api</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-log4j12</bundleDef>
                             </bundles>
                             <!--
-                            <importFeatures>
+                                <importFeatures>
                                 <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}</importFeatureDef>
-                            </importFeatures>
+                                </importFeatures>
                             -->
                         </configuration>
                     </execution>

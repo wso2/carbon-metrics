@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
     private Timer timer;
 
-    public TimerImpl(Level level, Timer timer) {
-        super(level);
+    public TimerImpl(Level level, String name, Timer timer) {
+        super(level, name);
         this.timer = timer;
     }
 

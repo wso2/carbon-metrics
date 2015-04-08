@@ -36,7 +36,7 @@ public class HistogramTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration());
+        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
@@ -62,7 +62,7 @@ public class HistogramTest extends TestCase {
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
     }
@@ -74,7 +74,7 @@ public class HistogramTest extends TestCase {
         histogram.update(randomGenerator.nextLong());
         assertEquals("Count should be one", 1, histogram.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         histogram.update(randomGenerator.nextLong());
         assertEquals("Count should be one", 1, histogram.getCount());
     }

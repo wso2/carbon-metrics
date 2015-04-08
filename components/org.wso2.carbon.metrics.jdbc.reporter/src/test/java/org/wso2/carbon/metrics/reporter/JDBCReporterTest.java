@@ -247,6 +247,40 @@ public class JDBCReporterTest {
         assertEquals("nanoseconds", result.get(0).get("DURATION_UNIT"));
     }
 
+    @Test
+    public void reportsSeconds() {
+        long timestamp = TimeUnit.MILLISECONDS.toSeconds(clock.getTime());
+        assertEquals(timestamp, reportGauge(TimeUnit.SECONDS));
+    }
+
+    @Test
+    public void reportsMilliseconds() {
+        long timestamp = clock.getTime();
+        assertEquals(timestamp, reportGauge(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void reportsNanoseconds() {
+        long timestamp = TimeUnit.NANOSECONDS.convert(clock.getTime(), TimeUnit.MILLISECONDS);
+        assertEquals(timestamp, reportGauge(TimeUnit.NANOSECONDS));
+    }
+
+    @SuppressWarnings("rawtypes")
+    private long reportGauge(TimeUnit timestampUnit) {
+        final Gauge gauge = mock(Gauge.class);
+        when(gauge.getValue()).thenReturn(1);
+
+        JDBCReporter reporter = JDBCReporter.forRegistry(registry).convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.NANOSECONDS).convertTimestampTo(timestampUnit).withClock(clock)
+                .filter(MetricFilter.ALL).build(SOURCE, dataSource);
+
+        reporter.report(map("gauge", gauge), this.<Counter> map(), this.<Histogram> map(), this.<Meter> map(),
+                this.<Timer> map());
+        List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_GAUGE");
+        assertEquals(1, result.size());
+        return (Long) result.get(0).get("TIMESTAMP");
+    }
+
     private <T> SortedMap<String, T> map() {
         return new TreeMap<String, T>();
     }

@@ -20,15 +20,9 @@
 <Metrics xmlns="http://wso2.org/projects/carbon/metrics.xml">
 
     <!--
-        Metrics Levels are organized from most specific to least:
-
-        OFF (most specific, no metrics)
-        INFO
-        DEBUG
-        TRACE (least specific, a lot of data)
-        ALL (least specific, all data)
+        Enable Metrics
     -->
-    <Level>OFF</Level>
+    <Enabled>false</Enabled>
 
     <!--
         Metrics reporting configurations
@@ -47,7 +41,7 @@
             <Enabled>true</Enabled>
             <!-- Source of Metrics, which will be used to
                 identify each metric in database -->
-            <!-- Commented to use a generated value
+            <!-- Commented to use the hostname
                 <Source>Carbon</Source>
             -->
             <!--

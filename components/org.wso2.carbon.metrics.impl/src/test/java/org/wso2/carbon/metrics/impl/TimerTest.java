@@ -36,7 +36,7 @@ public class TimerTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration());
+        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
@@ -60,10 +60,12 @@ public class TimerTest extends TestCase {
         Context context = timer.start();
         assertTrue("Timer works!", context.stop() > 0);
         assertEquals("Timer count should be one", 1, timer.getCount());
+        context.close();
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         context = timer.start();
         assertEquals("Timer should not work", 0, context.stop());
+        context.close();
     }
 
     public void testTimerUpdateCount() {
@@ -71,7 +73,7 @@ public class TimerTest extends TestCase {
         timer.update(1, TimeUnit.SECONDS);
         assertEquals("Timer count should be one", 1, timer.getCount());
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         timer.update(1, TimeUnit.SECONDS);
         assertEquals("Timer count should be one", 1, timer.getCount());
     }
@@ -88,7 +90,7 @@ public class TimerTest extends TestCase {
         String value = timer.time(callable);
         assertEquals("Value should be 'test'", "test", value);
 
-        metricService.setLevel(Level.OFF);
+        metricService.setRootLevel(Level.OFF);
         value = timer.time(callable);
         assertNull("Value should be null", value);
     }

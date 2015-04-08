@@ -36,13 +36,13 @@ public class MetricManagerMXBeanImpl implements MetricManagerMXBean {
     }
 
     @Override
-    public String getLevel() {
-        return metricService.getLevel().name();
+    public String getRootLevel() {
+        return metricService.getRootLevel().name();
     }
 
     @Override
-    public void setLevel(String level) {
-        metricService.setLevel(Level.valueOf(level));
+    public void setRootLevel(String level) {
+        metricService.setRootLevel(Level.valueOf(level));
     }
 
 }

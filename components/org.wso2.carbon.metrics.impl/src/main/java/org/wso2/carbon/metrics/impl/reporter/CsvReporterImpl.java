@@ -32,6 +32,11 @@ public class CsvReporterImpl extends AbstractReporter {
     }
 
     @Override
+    public void report() {
+        csvReporter.report();
+    }
+
+    @Override
     public void startReporter() {
         csvReporter.start(pollingPeriod, TimeUnit.SECONDS);
     }
@@ -40,4 +45,5 @@ public class CsvReporterImpl extends AbstractReporter {
     public void stopReporter() {
         csvReporter.stop();
     }
+
 }
