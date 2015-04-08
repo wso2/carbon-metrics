@@ -35,8 +35,8 @@ function createViewSelection() {
         // Check whether the value is stored as a cookie
         var checkedCookieValue = metricsJQuery.cookie(checkboxId);
         var checked = view.visible;
-        if (checkedCookieValue != null && checkedCookieValue === "false") {
-            checked = false;
+        if (checkedCookieValue != null) {
+            checked = (checkedCookieValue === "true");
         }
         
         metricsJQuery('<input />', { type: 'checkbox', id: checkboxId, value: key, checked: checked }).appendTo(container);
@@ -111,8 +111,8 @@ function igvizPlot(chart, data) {
                 // Check whether the value is stored as a cookie
                 var checkedCookieValue = metricsJQuery.cookie(checkboxId);
                 var checked = true;
-                if (checkedCookieValue != null && checkedCookieValue === "false") {
-                    checked = false;
+                if (checkedCookieValue != null) {
+                    checked = (checkedCookieValue === "true");
                 }
 
 				metricsJQuery('<input />', {
