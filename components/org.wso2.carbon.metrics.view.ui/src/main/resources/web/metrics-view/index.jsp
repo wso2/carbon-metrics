@@ -24,6 +24,9 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil"%>
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage"%>
 <%@ page import="org.wso2.carbon.ui.util.CharacterEncoder"%>
+<%@ page import="java.util.Map"%>
+<%@ page import="java.util.LinkedHashMap"%>
+
 
 <div>
 
@@ -72,7 +75,7 @@
 									<table class="normal" style="width: 100%">
 										<tr>
 											<td style="width: 5%; padding-right: 2px !important;"><fmt:message key="metrics.source" /></td>
-											<td><select name="source" id="source">
+											<td style="width: 15%;"><select name="source" id="source">
 
 													<%
 												        for (String source : sources) {
@@ -83,6 +86,8 @@
 													%>
 
 											</select></td>
+											<td style="width: 5%; padding-right: 2px !important;"><fmt:message key="metrics.views" /></td>
+											<td><div id="viewsSelection"></div></td>
 											<td style="width: 25px; padding-right: 2px !important;"><a id="refreshButton" class="icon-link"
 												style="background-image: url(images/refresh.png);" href="javascript:plotCharts()"></a></td>
 											<td style="width: 10%;"><select name="from" id="from">
@@ -113,47 +118,79 @@
 		</div>
 
         <script id="initialSetup" type="text/javascript">
-            var charts = [];
-            var titles = [];
+	        var views = {};
             <%
-            String[] charts = new String[]{"CPU", "LoadAverage", "Memory", "PhysicalMemory", "FileDescriptor"};
-            for (String chart : charts) {
-            %>
-            charts.push("<%=chart%>");
-            titles.push("<fmt:message key="<%="metrics.chart." + chart%>"/>");
-            <%
+            
+            class ChartView {
+                private final boolean visible;
+                private final String[] charts;
+                
+                public ChartView(final boolean visible, final String[] charts) {
+                    this.visible = visible;
+                    this.charts = charts;
+                }
+                
+                public boolean isVisible() {
+                    return visible;
+                }
+                
+                public String[] getCharts() {
+                    return charts;
+                }
+            }
+            
+            Map<String, ChartView> viewMap = new LinkedHashMap<String, ChartView>();
+            viewMap.put("CPUView", new ChartView(true, new String[]{"CPU", "LoadAverage"}));
+            viewMap.put("MemoryView", new ChartView(true, new String[]{"Memory", "PhysicalMemory"}));
+            viewMap.put("ThreadingView", new ChartView(false, new String[]{"Threading"}));
+            viewMap.put("ClassLoadingView", new ChartView(false, new String[]{"ClassLoading"}));
+            viewMap.put("OtherView", new ChartView(false, new String[]{"FileDescriptor"}));
+            
+            for (String key : viewMap.keySet()) {
+                ChartView chartView = viewMap.get(key);
+                %>
+	            chartNames = [];
+	            chartTitles = [];
+	            views["<%=key%>"] = {name: "<fmt:message key="<%="metrics.view." + key%>"/>", charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
+                <%
+                String[] charts = chartView.getCharts();
+                for (String chart : charts) {
+                %>
+                    chartNames.push("<%=chart%>");
+                    chartTitles.push("<fmt:message key="<%="metrics.chart." + chart%>"/>");
+                <%
+                }
             }
             %>
         </script>
 
-	</fmt:bundle>
-
-	<script src="plugins/d3/d3.min.js"></script>
-	<script src="plugins/vega/vega.js"></script>
-	<script src="plugins/igviz/igviz.js"></script>
-	<script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
-	<script src="plugins/jquery/jquery-2.1.3.min.js"></script>
-	<script src="plugins/jquery-plugins/jquery.cookie.js"></script>
-	<script src="js/metrics.ui.js"></script>
-
-    <script id="chartTemplate" type="text/x-handlebars-template">
-        <div id="chart{{type}}">
-            <table border="1" class="styledLeft">
-                <thead>
-                <tr>
-                    <th>{{title}}</th>
-                </tr>
-                </thead>
-                <tbody>
+        <script src="plugins/d3/d3.min.js"></script>
+        <script src="plugins/vega/vega.js"></script>
+        <script src="plugins/igviz/igviz.js"></script>
+        <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
+        <script src="plugins/jquery/jquery-2.1.3.min.js"></script>
+        <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
+        <script src="js/metrics.ui.js"></script>
+        
+        <script id="chartTemplate" type="text/x-handlebars-template">
+            <div id="chart{{type}}">
+                <table border="1" class="styledLeft">
+                    <thead>
                     <tr>
-                        <td class="formRow">
-                            <div id="toggle{{type}}"></div>
-                            <div id="igviz{{type}}" class="igvizChart"></div>
-                        </td>
+                        <th>{{title}}</th>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-        <br></br>
-    </script>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="formRow">
+                                <div id="toggle{{type}}"></div>
+                                <div id="igviz{{type}}" class="igvizChart"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br></br>
+        </script>
+    </fmt:bundle>
 </div>

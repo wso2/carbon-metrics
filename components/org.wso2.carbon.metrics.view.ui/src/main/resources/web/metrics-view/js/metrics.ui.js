@@ -15,14 +15,52 @@
  */
 var metricsJQuery = jQuery.noConflict();
 
+var charts = [];
+var titles = [];
+
 metricsJQuery(function($) {
-	// Create Chart Holders from the template
-	metricsJQuery.map(charts, createChartHolder);
+    createViewSelection();
 	plotCharts();
 	metricsJQuery(window).on('resize', resizeCharts);
 	metricsJQuery("#source").change(plotCharts);
 	metricsJQuery("#from").change(plotCharts);
 });
+
+function createViewSelection() {
+
+    var container = metricsJQuery("#viewsSelection");
+    
+    metricsJQuery.each(views, function( key, view ) {
+        var checkboxId = "cb".concat(key);
+        // Check whether the value is stored as a cookie
+        var checkedCookieValue = metricsJQuery.cookie(checkboxId);
+        var checked = view.visible;
+        if (checkedCookieValue != null && checkedCookieValue === "false") {
+            checked = false;
+        }
+        
+        metricsJQuery('<input />', { type: 'checkbox', id: checkboxId, value: key, checked: checked }).appendTo(container);
+        metricsJQuery('<label />', { 'for': checkboxId, text: view.name, class: 'toggleLabel' }).appendTo(container);
+
+        if (checked) {
+            metricsJQuery.each(view.charts, function(i, value) {
+                charts.push(value);
+            });
+            metricsJQuery.each(view.titles, function(i, value) {
+                titles.push(value);
+            });
+        }
+
+    });
+    
+    container.on("click", "input:checkbox",  refreshViews);
+}
+
+function createChartHolders() {
+    metricsJQuery("#chartHolder").empty();
+    // Create Chart Holders from the template
+    metricsJQuery.map(charts, createChartHolder);
+}
 
 function createChartHolder(chart, i) {
     // Get the template, compile and append to main chart holder
@@ -35,6 +73,8 @@ function createChartHolder(chart, i) {
 };
 
 function plotCharts() {
+    // Create holders first. Chart Views might have been changed
+    createChartHolders();
 	metricsJQuery.map(charts, plotChart);
 }
 
@@ -93,7 +133,7 @@ function igvizPlot(chart, data) {
 			}
 		});
 
-		metricsJQuery(toggleId).on("click", "input:checkbox", {
+		container.on("click", "input:checkbox", {
 			chart : chart
 		}, redrawChart);
 	} else {
@@ -167,4 +207,40 @@ function redrawChart(event) {
 
 	chart = igviz.setUp(igvizId, chartConfig, data);
 	chart.plot(data.data);
+}
+
+
+function refreshViews(event) {
+    var viewsSelectionId = "#viewsSelection";
+    var container = metricsJQuery();
+
+    var viewKeys = metricsJQuery.map(metricsJQuery(viewsSelectionId.concat(' input:checkbox:checked')), function(e, i) {
+        return e.value;
+    });
+
+    if (viewKeys.length == 0) {
+        event.preventDefault();
+        return;
+    }
+
+    // Reinitialize charts array & titles array
+    charts = [];
+    titles = [];
+
+    metricsJQuery.each(viewKeys, function(index, value) {
+        console.log(value);
+        var view = views[value];
+        metricsJQuery.each(view.charts, function(index, value) {
+            charts.push(value);
+        });
+        metricsJQuery.each(view.titles, function(index, value) {
+            titles.push(value);
+        });
+    });
+
+    // Save checked value in a cookie
+    var inputCheckbox = metricsJQuery(this);
+    var inputId = inputCheckbox.attr("id");
+    var checked = inputCheckbox.prop("checked");
+    metricsJQuery.cookie(inputId, checked);
 }

@@ -53,6 +53,10 @@
             metricData = metricsViewClient.findLastJMXFileDescriptorMetrics(source, from);
         } else if ("PhysicalMemory".equals(type)) {
             metricData = metricsViewClient.findLastJMXPhysicalMemoryMetrics(source, from);
+        } else if ("ClassLoading".equals(type)) {
+            metricData = metricsViewClient.findLastJMXClassLoadingMetrics(source, from);
+        } else if ("Threading".equals(type)) {
+            metricData = metricsViewClient.findLastJMXThreadingMetrics(source, from);
         }
 
         if (metricData != null) {
