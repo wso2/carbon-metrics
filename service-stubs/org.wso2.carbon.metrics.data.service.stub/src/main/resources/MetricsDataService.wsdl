@@ -188,13 +188,87 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="findLastJMXClassLoadingMetrics">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXClassLoadingMetricsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXClassLoadingMetricsByTimePeriod">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startTime" type="xs:long"/>
+                        <xs:element minOccurs="0" name="endTime" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXClassLoadingMetricsByTimePeriodResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXThreadingMetrics">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findLastJMXThreadingMetricsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXThreadingMetricsByTimePeriod">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="startTime" type="xs:long"/>
+                        <xs:element minOccurs="0" name="endTime" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="findJMXThreadingMetricsByTimePeriodResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax21:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:schema>
     </wsdl:types>
+    <wsdl:message name="findLastJMXThreadingMetricsRequest">
+        <wsdl:part name="parameters" element="ns:findLastJMXThreadingMetrics"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXThreadingMetricsResponse">
+        <wsdl:part name="parameters" element="ns:findLastJMXThreadingMetricsResponse"/>
+    </wsdl:message>
     <wsdl:message name="findJMXPhysicalMemoryMetricsByTimePeriodRequest">
         <wsdl:part name="parameters" element="ns:findJMXPhysicalMemoryMetricsByTimePeriod"/>
     </wsdl:message>
     <wsdl:message name="findJMXPhysicalMemoryMetricsByTimePeriodResponse">
         <wsdl:part name="parameters" element="ns:findJMXPhysicalMemoryMetricsByTimePeriodResponse"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXThreadingMetricsByTimePeriodRequest">
+        <wsdl:part name="parameters" element="ns:findJMXThreadingMetricsByTimePeriod"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXThreadingMetricsByTimePeriodResponse">
+        <wsdl:part name="parameters" element="ns:findJMXThreadingMetricsByTimePeriodResponse"/>
     </wsdl:message>
     <wsdl:message name="findJMXMemoryMetricsByTimePeriodRequest">
         <wsdl:part name="parameters" element="ns:findJMXMemoryMetricsByTimePeriod"/>
@@ -232,6 +306,12 @@
     <wsdl:message name="findLastJMXMemoryMetricsResponse">
         <wsdl:part name="parameters" element="ns:findLastJMXMemoryMetricsResponse"/>
     </wsdl:message>
+    <wsdl:message name="findLastJMXClassLoadingMetricsRequest">
+        <wsdl:part name="parameters" element="ns:findLastJMXClassLoadingMetrics"/>
+    </wsdl:message>
+    <wsdl:message name="findLastJMXClassLoadingMetricsResponse">
+        <wsdl:part name="parameters" element="ns:findLastJMXClassLoadingMetricsResponse"/>
+    </wsdl:message>
     <wsdl:message name="findLastJMXPhysicalMemoryMetricsRequest">
         <wsdl:part name="parameters" element="ns:findLastJMXPhysicalMemoryMetrics"/>
     </wsdl:message>
@@ -250,6 +330,12 @@
     <wsdl:message name="findJMXCPULoadMetricsByTimePeriodResponse">
         <wsdl:part name="parameters" element="ns:findJMXCPULoadMetricsByTimePeriodResponse"/>
     </wsdl:message>
+    <wsdl:message name="findJMXClassLoadingMetricsByTimePeriodRequest">
+        <wsdl:part name="parameters" element="ns:findJMXClassLoadingMetricsByTimePeriod"/>
+    </wsdl:message>
+    <wsdl:message name="findJMXClassLoadingMetricsByTimePeriodResponse">
+        <wsdl:part name="parameters" element="ns:findJMXClassLoadingMetricsByTimePeriodResponse"/>
+    </wsdl:message>
     <wsdl:message name="findJMXFileDescriptorMetricsByTimePeriodRequest">
         <wsdl:part name="parameters" element="ns:findJMXFileDescriptorMetricsByTimePeriod"/>
     </wsdl:message>
@@ -257,9 +343,17 @@
         <wsdl:part name="parameters" element="ns:findJMXFileDescriptorMetricsByTimePeriodResponse"/>
     </wsdl:message>
     <wsdl:portType name="MetricsDataServicePortType">
+        <wsdl:operation name="findLastJMXThreadingMetrics">
+            <wsdl:input message="ns:findLastJMXThreadingMetricsRequest" wsaw:Action="urn:findLastJMXThreadingMetrics"/>
+            <wsdl:output message="ns:findLastJMXThreadingMetricsResponse" wsaw:Action="urn:findLastJMXThreadingMetricsResponse"/>
+        </wsdl:operation>
         <wsdl:operation name="findJMXPhysicalMemoryMetricsByTimePeriod">
             <wsdl:input message="ns:findJMXPhysicalMemoryMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXPhysicalMemoryMetricsByTimePeriod"/>
             <wsdl:output message="ns:findJMXPhysicalMemoryMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXPhysicalMemoryMetricsByTimePeriodResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXThreadingMetricsByTimePeriod">
+            <wsdl:input message="ns:findJMXThreadingMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXThreadingMetricsByTimePeriod"/>
+            <wsdl:output message="ns:findJMXThreadingMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXThreadingMetricsByTimePeriodResponse"/>
         </wsdl:operation>
         <wsdl:operation name="findJMXMemoryMetricsByTimePeriod">
             <wsdl:input message="ns:findJMXMemoryMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXMemoryMetricsByTimePeriod"/>
@@ -285,6 +379,10 @@
             <wsdl:input message="ns:findLastJMXMemoryMetricsRequest" wsaw:Action="urn:findLastJMXMemoryMetrics"/>
             <wsdl:output message="ns:findLastJMXMemoryMetricsResponse" wsaw:Action="urn:findLastJMXMemoryMetricsResponse"/>
         </wsdl:operation>
+        <wsdl:operation name="findLastJMXClassLoadingMetrics">
+            <wsdl:input message="ns:findLastJMXClassLoadingMetricsRequest" wsaw:Action="urn:findLastJMXClassLoadingMetrics"/>
+            <wsdl:output message="ns:findLastJMXClassLoadingMetricsResponse" wsaw:Action="urn:findLastJMXClassLoadingMetricsResponse"/>
+        </wsdl:operation>
         <wsdl:operation name="findLastJMXPhysicalMemoryMetrics">
             <wsdl:input message="ns:findLastJMXPhysicalMemoryMetricsRequest" wsaw:Action="urn:findLastJMXPhysicalMemoryMetrics"/>
             <wsdl:output message="ns:findLastJMXPhysicalMemoryMetricsResponse" wsaw:Action="urn:findLastJMXPhysicalMemoryMetricsResponse"/>
@@ -297,6 +395,10 @@
             <wsdl:input message="ns:findJMXCPULoadMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXCPULoadMetricsByTimePeriod"/>
             <wsdl:output message="ns:findJMXCPULoadMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXCPULoadMetricsByTimePeriodResponse"/>
         </wsdl:operation>
+        <wsdl:operation name="findJMXClassLoadingMetricsByTimePeriod">
+            <wsdl:input message="ns:findJMXClassLoadingMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXClassLoadingMetricsByTimePeriod"/>
+            <wsdl:output message="ns:findJMXClassLoadingMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXClassLoadingMetricsByTimePeriodResponse"/>
+        </wsdl:operation>
         <wsdl:operation name="findJMXFileDescriptorMetricsByTimePeriod">
             <wsdl:input message="ns:findJMXFileDescriptorMetricsByTimePeriodRequest" wsaw:Action="urn:findJMXFileDescriptorMetricsByTimePeriod"/>
             <wsdl:output message="ns:findJMXFileDescriptorMetricsByTimePeriodResponse" wsaw:Action="urn:findJMXFileDescriptorMetricsByTimePeriodResponse"/>
@@ -306,6 +408,24 @@
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="findJMXPhysicalMemoryMetricsByTimePeriod">
             <soap:operation soapAction="urn:findJMXPhysicalMemoryMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXThreadingMetrics">
+            <soap:operation soapAction="urn:findLastJMXThreadingMetrics" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXThreadingMetricsByTimePeriod">
+            <soap:operation soapAction="urn:findJMXThreadingMetricsByTimePeriod" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -367,6 +487,15 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="findLastJMXClassLoadingMetrics">
+            <soap:operation soapAction="urn:findLastJMXClassLoadingMetrics" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="findLastJMXPhysicalMemoryMetrics">
             <soap:operation soapAction="urn:findLastJMXPhysicalMemoryMetrics" style="document"/>
             <wsdl:input>
@@ -394,6 +523,15 @@
                 <soap:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="findJMXClassLoadingMetricsByTimePeriod">
+            <soap:operation soapAction="urn:findJMXClassLoadingMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="findJMXFileDescriptorMetricsByTimePeriod">
             <soap:operation soapAction="urn:findJMXFileDescriptorMetricsByTimePeriod" style="document"/>
             <wsdl:input>
@@ -408,6 +546,24 @@
         <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         <wsdl:operation name="findJMXPhysicalMemoryMetricsByTimePeriod">
             <soap12:operation soapAction="urn:findJMXPhysicalMemoryMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXThreadingMetrics">
+            <soap12:operation soapAction="urn:findLastJMXThreadingMetrics" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXThreadingMetricsByTimePeriod">
+            <soap12:operation soapAction="urn:findJMXThreadingMetricsByTimePeriod" style="document"/>
             <wsdl:input>
                 <soap12:body use="literal"/>
             </wsdl:input>
@@ -469,6 +625,15 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="findLastJMXClassLoadingMetrics">
+            <soap12:operation soapAction="urn:findLastJMXClassLoadingMetrics" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="findLastJMXPhysicalMemoryMetrics">
             <soap12:operation soapAction="urn:findLastJMXPhysicalMemoryMetrics" style="document"/>
             <wsdl:input>
@@ -496,6 +661,15 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="findJMXClassLoadingMetricsByTimePeriod">
+            <soap12:operation soapAction="urn:findJMXClassLoadingMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="findJMXFileDescriptorMetricsByTimePeriod">
             <soap12:operation soapAction="urn:findJMXFileDescriptorMetricsByTimePeriod" style="document"/>
             <wsdl:input>
@@ -510,6 +684,24 @@
         <http:binding verb="POST"/>
         <wsdl:operation name="findJMXPhysicalMemoryMetricsByTimePeriod">
             <http:operation location="findJMXPhysicalMemoryMetricsByTimePeriod"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findLastJMXThreadingMetrics">
+            <http:operation location="findLastJMXThreadingMetrics"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXThreadingMetricsByTimePeriod">
+            <http:operation location="findJMXThreadingMetricsByTimePeriod"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>
@@ -571,6 +763,15 @@
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="findLastJMXClassLoadingMetrics">
+            <http:operation location="findLastJMXClassLoadingMetrics"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="findLastJMXPhysicalMemoryMetrics">
             <http:operation location="findLastJMXPhysicalMemoryMetrics"/>
             <wsdl:input>
@@ -591,6 +792,15 @@
         </wsdl:operation>
         <wsdl:operation name="findJMXCPULoadMetricsByTimePeriod">
             <http:operation location="findJMXCPULoadMetricsByTimePeriod"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="findJMXClassLoadingMetricsByTimePeriod">
+            <http:operation location="findJMXClassLoadingMetricsByTimePeriod"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>

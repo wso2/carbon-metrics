@@ -32,6 +32,9 @@ public class MetricsViewClient {
     public MetricsDataServiceStub stub;
 
     public MetricsViewClient(String cookie, String backendServerURL, ConfigurationContext configCtx) throws AxisFault {
+        if (cookie == null) {
+            throw new IllegalStateException("Admin Service Cookie is not available");
+        }
         String serviceURL = backendServerURL + "MetricsDataService";
         stub = new MetricsDataServiceStub(configCtx, serviceURL);
         ServiceClient client = stub._getServiceClient();
@@ -93,6 +96,26 @@ public class MetricsViewClient {
     public MetricDataWrapper findLastJMXPhysicalMemoryMetrics(String source, String from) throws RemoteException {
         try {
             return new MetricDataWrapper(stub.findLastJMXPhysicalMemoryMetrics(source, from));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastJMXClassLoadingMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXClassLoadingMetrics(source, from));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastJMXThreadingMetrics(String source, String from) throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findLastJMXThreadingMetrics(source, from));
         } catch (RemoteException e) {
             String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
             logger.error(msg, e);
