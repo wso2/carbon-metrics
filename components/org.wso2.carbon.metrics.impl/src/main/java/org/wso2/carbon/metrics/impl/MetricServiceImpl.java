@@ -17,8 +17,6 @@ package org.wso2.carbon.metrics.impl;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +32,7 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.internal.LocalDatabaseCreator;
 import org.wso2.carbon.metrics.impl.metric.ClassLoadingGaugeSet;
@@ -726,9 +725,10 @@ public class MetricServiceImpl implements MetricService {
             }
             return null;
         }
-        String pollingPeriod = configuration.getFirstProperty(JDBC_REPORTING_POLLING_PERIOD);
-        // Default polling period for JDBC reporter is 60 seconds
-        long jdbcReporterPollingPeriod = 60;
+        // Default polling period for JDBC reporter is 30 seconds
+        long jdbcReporterPollingPeriod = 30;
+        String pollingPeriod = configuration.getFirstProperty(JDBC_REPORTING_POLLING_PERIOD,
+                String.valueOf(jdbcReporterPollingPeriod));
         try {
             jdbcReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
@@ -738,22 +738,7 @@ public class MetricServiceImpl implements MetricService {
             }
         }
 
-        String source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE);
-
-        if (source == null || source.trim().length() == 0) {
-            // Use host name if available
-            String hostname = null;
-            try {
-                hostname = InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                // Ignore exception
-            }
-            if (hostname == null || hostname.trim().length() == 0) {
-                source = "Carbon";
-            } else {
-                source = hostname;
-            }
-        }
+        String source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE, new DefaultSourceValueProvider());
 
         String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
 

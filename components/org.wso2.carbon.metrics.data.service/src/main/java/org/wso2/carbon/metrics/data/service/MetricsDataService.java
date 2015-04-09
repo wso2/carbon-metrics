@@ -37,6 +37,7 @@ import org.apache.axis2.service.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.core.AbstractAdmin;
+import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfigException;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.data.service.dao.MetricDataProcessor;
@@ -50,6 +51,8 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     private ReporterDAO reporterDAO;
 
     private final Pattern fromPattern = Pattern.compile("(\\-?\\d+)([hdm])");
+
+    private String currentJDBCReportingSource;
 
     public MetricsDataService() {
     }
@@ -85,7 +88,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
     void init(MetricsConfiguration configuration) {
         final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
-        // final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
+        final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
 
         String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
 
@@ -116,6 +119,9 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
 
         reporterDAO = new ReporterDAO(dataSource);
+
+        currentJDBCReportingSource = configuration.getFirstProperty(JDBC_REPORTING_SOURCE,
+                new DefaultSourceValueProvider());
     }
 
     private long getStartTime(String from) {
@@ -147,7 +153,14 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     public List<String> getAllSources() {
-        return reporterDAO.queryAllSources();
+        List<String> sources =  reporterDAO.queryAllSources();
+        if (sources == null) {
+            sources = new ArrayList<String>();
+        }
+        if (sources.isEmpty()) {
+            sources.add(currentJDBCReportingSource);
+        }
+        return sources;
     }
 
     private class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
