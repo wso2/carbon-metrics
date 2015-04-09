@@ -114,8 +114,8 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             throw new IllegalStateException(msg);
         }
 
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format("Creating Metrics Data Service with data source '%s'", dataSourceName));
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Creating Metrics Data Service with data source '%s'", dataSourceName));
         }
 
         reporterDAO = new ReporterDAO(dataSource);
