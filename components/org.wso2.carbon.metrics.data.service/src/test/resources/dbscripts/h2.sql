@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS METRIC_TIMER (
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -94,14 +95,67 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  1,
   'carbon-server',
-  1427714860,
+  1428567356013,
+  'jvm.class-loading.loaded.current',
+  '10159'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  2,
+  'carbon-server',
+  1428567356013,
+  'jvm.class-loading.loaded.total',
+  '10427'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  3,
+  'carbon-server',
+  1428567356013,
+  'jvm.class-loading.unloaded.total',
+  '268'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  4,
+  'carbon-server',
+  1428567356013,
   'jvm.gc.PS-MarkSweep.count',
-  '1'
+  '10'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -109,14 +163,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  5,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.gc.PS-MarkSweep.time',
-  '386'
+  '3101'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -124,14 +180,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  6,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.gc.PS-Scavenge.count',
-  '21'
+  '37'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -139,14 +197,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  7,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.gc.PS-Scavenge.time',
-  '458'
+  '898'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -154,14 +214,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  8,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.heap.committed',
-  '478674944'
+  '425721856'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -169,14 +231,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  9,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.heap.init',
   '268435456'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -184,14 +248,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  10,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.heap.max',
   '954728448'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -199,14 +265,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  11,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.heap.usage',
-  '0.3472468183958419'
+  '0.18403085858398974'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -214,14 +282,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  12,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.heap.used',
-  '331526416'
+  '175699496'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -229,14 +299,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  13,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.non-heap.committed',
-  '135790592'
+  '108986368'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -244,14 +316,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  14,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.non-heap.init',
   '24576000'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -259,14 +333,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  15,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.non-heap.max',
   '318767104'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -274,14 +350,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  16,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.non-heap.usage',
-  '0.2561725315294768'
+  '0.24130966788844058'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -289,14 +367,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  17,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.non-heap.used',
-  '81659376'
+  '76921584'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -304,14 +384,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  18,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.total.committed',
-  '614465536'
+  '534708224'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -319,14 +401,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  19,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.total.init',
   '293011456'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -334,14 +418,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  20,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.total.max',
   '1273495552'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -349,14 +435,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  21,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.memory.total.used',
-  '413185792'
+  '252621080'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -364,14 +452,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  22,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.cpu.load.process',
-  '5.535875629239749E-4'
+  '8.337154529159198E-4'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -379,14 +469,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  23,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.cpu.load.system',
-  '0.17192766073400548'
+  '0.2378590187169119'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -394,14 +486,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  24,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.file.descriptor.max.count',
   '65535'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -409,14 +503,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  25,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.file.descriptor.open.count',
-  '347'
+  '313'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -424,14 +520,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  26,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.physical.memory.free.size',
-  '174706688'
+  '4270161920'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -439,14 +537,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  27,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.physical.memory.total.size',
   '16514957312'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -454,14 +554,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  28,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.swap.space.free.size',
-  '8269930496'
+  '7348232192'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -469,14 +571,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  29,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.swap.space.total.size',
   '8270114816'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -484,14 +588,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  30,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.system.load.average',
-  '0.74'
+  '0.99'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -499,14 +605,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  31,
   'carbon-server',
-  1427714860,
+  1428567356013,
   'jvm.os.virtual.memory.committed.size',
-  '3719208960'
+  '3846098944'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -514,14 +622,101 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  32,
   'carbon-server',
-  1427714920,
+  1428567356013,
+  'jvm.threads.count',
+  '116'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  33,
+  'carbon-server',
+  1428567356013,
+  'jvm.threads.daemon.count',
+  '108'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  34,
+  'carbon-server',
+  1428567416013,
+  'jvm.class-loading.loaded.current',
+  '10159'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  35,
+  'carbon-server',
+  1428567416013,
+  'jvm.class-loading.loaded.total',
+  '10427'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  36,
+  'carbon-server',
+  1428567416013,
+  'jvm.class-loading.unloaded.total',
+  '268'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  37,
+  'carbon-server',
+  1428567416013,
   'jvm.gc.PS-MarkSweep.count',
-  '1'
+  '10'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -529,14 +724,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  38,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.gc.PS-MarkSweep.time',
-  '386'
+  '3101'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -544,14 +741,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  39,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.gc.PS-Scavenge.count',
-  '22'
+  '38'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -559,14 +758,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  40,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.gc.PS-Scavenge.time',
-  '472'
+  '905'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -574,14 +775,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  41,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.heap.committed',
-  '483393536'
+  '487063552'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -589,14 +792,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  42,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.heap.init',
   '268435456'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -604,14 +809,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  43,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.heap.max',
   '954728448'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -619,14 +826,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  44,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.heap.usage',
-  '0.1279627942960384'
+  '0.2880009541728875'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -634,14 +843,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  45,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.heap.used',
-  '122169720'
+  '274962704'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -649,14 +860,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  46,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.non-heap.committed',
-  '135921664'
+  '109117440'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -664,14 +877,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  47,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.non-heap.init',
   '24576000'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -679,14 +894,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  48,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.non-heap.max',
   '318767104'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -694,14 +911,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  49,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.non-heap.usage',
-  '0.25640756205508586'
+  '0.24154577757182874'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -709,14 +928,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  50,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.non-heap.used',
-  '81734296'
+  '76996848'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -724,14 +945,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  51,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.total.committed',
-  '619315200'
+  '596180992'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -739,14 +962,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  52,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.total.init',
   '293011456'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -754,14 +979,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  53,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.total.max',
   '1273495552'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -769,14 +996,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  54,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.memory.total.used',
-  '203904016'
+  '351959552'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -784,14 +1013,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  55,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.cpu.load.process',
-  '0.0016532521209484446'
+  '0.006559582877806745'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -799,14 +1030,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  56,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.cpu.load.system',
-  '0.16232325429628017'
+  '0.24863342023379026'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -814,14 +1047,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  57,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.file.descriptor.max.count',
   '65535'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -829,14 +1064,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  58,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.file.descriptor.open.count',
-  '346'
+  '315'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -844,14 +1081,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  59,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.physical.memory.free.size',
-  '168161280'
+  '4164788224'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -859,14 +1098,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  60,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.physical.memory.total.size',
   '16514957312'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -874,14 +1115,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  61,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.swap.space.free.size',
-  '8269930496'
+  '7348236288'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -889,14 +1132,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  62,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.swap.space.total.size',
   '8270114816'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -904,14 +1149,16 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  63,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.system.load.average',
-  '0.98'
+  '1.01'
 );
 
 INSERT INTO METRIC_GAUGE
 (
+  ID,
   SOURCE,
   TIMESTAMP,
   NAME,
@@ -919,12 +1166,46 @@ INSERT INTO METRIC_GAUGE
 )
 VALUES
 (
+  64,
   'carbon-server',
-  1427714920,
+  1428567416013,
   'jvm.os.virtual.memory.committed.size',
-  '3721314304'
+  '3847151616'
 );
 
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  65,
+  'carbon-server',
+  1428567416013,
+  'jvm.threads.count',
+  '118'
+);
+
+INSERT INTO METRIC_GAUGE
+(
+  ID,
+  SOURCE,
+  TIMESTAMP,
+  NAME,
+  VALUE
+)
+VALUES
+(
+  66,
+  'carbon-server',
+  1428567416013,
+  'jvm.threads.daemon.count',
+  '110'
+);
 
 COMMIT;
 

@@ -43,9 +43,9 @@ public class MetricsDataServiceTest extends TestCase {
 
     private static final String SOURCE = "carbon-server";
 
-    private static final long START_TIME = 1427714860L;
+    private static final long START_TIME = 1428567356013L;
 
-    private static final long END_TIME = 1427714920L;
+    private static final long END_TIME = 1428567416013L;
 
     public static Test suite() {
         return new TestSetup(new TestSuite(MetricsDataServiceTest.class)) {
@@ -82,7 +82,7 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testAllData() {
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE");
-        assertEquals("There are 56 results", 56, gaugeResult.size());
+        assertEquals("There are 66 results", 66, gaugeResult.size());
     }
 
     public void testSpecificData() {
@@ -113,7 +113,7 @@ public class MetricsDataServiceTest extends TestCase {
         MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1d");
         assertNotNull("Metric Data is not null", metricData);
     }
-    
+
     public void testLastJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, String.valueOf(START_TIME));
         assertEquals("There are two results", 2, metricData.getData().length);
@@ -146,6 +146,26 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are two types", 2, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are two values", 2, metricData.getData()[i].length);
+        }
+    }
+
+    public void testJMXThreadingMetrics() {
+        MetricData metricData = metricsDataService.findJMXThreadingMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
+        assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are three values", 3, metricData.getData()[i].length);
+        }
+    }
+
+    public void testJMXClassLoadingMetrics() {
+        MetricData metricData = metricsDataService.findJMXClassLoadingMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are four names", 4, metricData.getMetadata().getNames().length);
+        assertEquals("There are four types", 4, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are four values", 4, metricData.getData()[i].length);
         }
     }
 }
