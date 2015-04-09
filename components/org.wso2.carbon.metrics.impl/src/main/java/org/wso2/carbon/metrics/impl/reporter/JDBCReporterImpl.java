@@ -17,47 +17,87 @@ package org.wso2.carbon.metrics.impl.reporter;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
 import org.wso2.carbon.metrics.reporter.JDBCReporter;
 
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
+
 public class JDBCReporterImpl extends AbstractReporter {
 
-    private final JDBCReporter jdbcReporter;
+    private static final Logger logger = LoggerFactory.getLogger(JDBCReporterImpl.class);
+
+    private final MetricRegistry metricRegistry;
+
+    private final MetricFilter metricFilter;
+
+    private final String source;
+
+    private final DataSource dataSource;
 
     private final long pollingPeriod;
 
-    // This task can be null
-    private final ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask;
+    private final boolean runCleanupTask;
+
+    private final int daysToKeep;
 
     private final long cleanupPeriod;
 
-    public JDBCReporterImpl(JDBCReporter jdbcReporter, long pollingPeriod,
-            ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask, long cleanupPeriod) {
+    private JDBCReporter jdbcReporter;
+
+    // This task can be null
+    private ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask;
+
+    public JDBCReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, String source,
+            DataSource dataSource, long pollingPeriod, boolean runCleanupTask, int daysToKeep, long cleanupPeriod) {
         super("JDBC");
-        this.jdbcReporter = jdbcReporter;
+        this.metricRegistry = metricRegistry;
+        this.metricFilter = metricFilter;
+        this.source = source;
+        this.dataSource = dataSource;
         this.pollingPeriod = pollingPeriod;
-        this.scheduledJDBCMetricsCleanupTask = scheduledJDBCMetricsCleanupTask;
+        this.runCleanupTask = runCleanupTask;
+        this.daysToKeep = daysToKeep;
         this.cleanupPeriod = cleanupPeriod;
     }
 
     @Override
     public void report() {
-        jdbcReporter.report();
+        if (jdbcReporter != null) {
+            jdbcReporter.report();
+        }
     }
 
     @Override
     public void startReporter() {
+        jdbcReporter = JDBCReporter.forRegistry(metricRegistry).filter(metricFilter).convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS).convertTimestampTo(TimeUnit.MILLISECONDS)
+                .build(source, dataSource);
         jdbcReporter.start(pollingPeriod, TimeUnit.SECONDS);
-        if (scheduledJDBCMetricsCleanupTask != null) {
+        if (runCleanupTask) {
+            scheduledJDBCMetricsCleanupTask = new ScheduledJDBCMetricsCleanupTask(dataSource, daysToKeep);
             scheduledJDBCMetricsCleanupTask.start(cleanupPeriod, TimeUnit.SECONDS);
         }
     }
 
     @Override
     public void stopReporter() {
-        jdbcReporter.stop();
-        if (scheduledJDBCMetricsCleanupTask != null) {
-            scheduledJDBCMetricsCleanupTask.stop();
+        try {
+            jdbcReporter.stop();
+            jdbcReporter = null;
+        } catch (Throwable e) {
+            logger.error("An error occurred when trying to stop the reporter", e);
+        }
+        try {
+            if (scheduledJDBCMetricsCleanupTask != null) {
+                scheduledJDBCMetricsCleanupTask.stop();
+            }
+        } catch (Throwable e) {
+            logger.error("An error occurred when trying to stop the cleanup task", e);
         }
     }
 }

@@ -24,8 +24,6 @@ public interface Reporter {
 
     void start();
 
-    boolean isRunning();
-
     void stop();
 
 }

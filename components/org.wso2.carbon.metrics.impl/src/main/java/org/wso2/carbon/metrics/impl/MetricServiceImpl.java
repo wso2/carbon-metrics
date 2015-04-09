@@ -19,7 +19,6 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,7 +40,6 @@ import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
-import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
@@ -49,10 +47,7 @@ import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.Timer;
-import org.wso2.carbon.metrics.reporter.JDBCReporter;
 
-import com.codahale.metrics.CsvReporter;
-import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -127,6 +122,8 @@ public class MetricServiceImpl implements MetricService {
     private static final String DB_CHECK_SQL = "SELECT NAME FROM METRIC_GAUGE";
 
     private final List<Reporter> reporters = new ArrayList<Reporter>();
+
+    private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
 
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
@@ -616,25 +613,19 @@ public class MetricServiceImpl implements MetricService {
      */
     void report() {
         for (Reporter reporter : reporters) {
-            if (reporter.isRunning()) {
-                reporter.report();
-            }
+            reporter.report();
         }
     }
 
     private void startReporters() {
         for (Reporter reporter : reporters) {
-            if (!reporter.isRunning()) {
-                reporter.start();
-            }
+            reporter.start();
         }
     }
 
     private void stopReporters() {
         for (Reporter reporter : reporters) {
-            if (reporter.isRunning()) {
-                reporter.stop();
-            }
+            reporter.stop();
         }
     }
 
@@ -660,10 +651,7 @@ public class MetricServiceImpl implements MetricService {
             }
             return null;
         }
-        final JmxReporter jmxReporter = JmxReporter.forRegistry(metricRegistry).inDomain(JMX_REPORTING_DOMAIN)
-                .filter(new EnabledMetricFilter()).convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS).build();
-        return new JmxReporterImpl(jmxReporter);
+        return new JmxReporterImpl(metricRegistry, enabledMetricFilter, JMX_REPORTING_DOMAIN);
     }
 
     private Reporter configureCSVReporter() {
@@ -712,10 +700,7 @@ public class MetricServiceImpl implements MetricService {
                     csvReporterPollingPeriod));
         }
 
-        final CsvReporter csvReporter = CsvReporter.forRegistry(metricRegistry).formatFor(Locale.US)
-                .filter(new EnabledMetricFilter()).convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS).build(file);
-        return new CsvReporterImpl(csvReporter, csvReporterPollingPeriod);
+        return new CsvReporterImpl(metricRegistry, enabledMetricFilter, file, csvReporterPollingPeriod);
     }
 
     private Reporter configureJDBCReporter() {
@@ -780,10 +765,13 @@ public class MetricServiceImpl implements MetricService {
             return null;
         }
 
-        ScheduledJDBCMetricsCleanupTask scheduledJDBCMetricsCleanupTask = null;
+        boolean runCleanupTask = Boolean.parseBoolean(configuration
+                .getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED));
         // Default cleanup period for JDBC is 86400 seconds
         long jdbcScheduledCleanupPeriod = 86400;
-        if (Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED))) {
+        // Default days to keep is 7 days
+        int daysToKeep = 7;
+        if (runCleanupTask) {
             String cleanupPeriod = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD);
             try {
                 jdbcScheduledCleanupPeriod = Long.parseLong(cleanupPeriod);
@@ -795,8 +783,7 @@ public class MetricServiceImpl implements MetricService {
             }
 
             String daysToKeepValue = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP);
-            // Default days to keep is 7 days
-            int daysToKeep = 7;
+
             try {
                 daysToKeep = Integer.parseInt(daysToKeepValue);
             } catch (NumberFormatException e) {
@@ -805,15 +792,10 @@ public class MetricServiceImpl implements MetricService {
                             jdbcReporterPollingPeriod));
                 }
             }
-
-            scheduledJDBCMetricsCleanupTask = new ScheduledJDBCMetricsCleanupTask(dataSource, daysToKeep);
         }
 
-        final JDBCReporter jdbcReporter = JDBCReporter.forRegistry(metricRegistry).filter(new EnabledMetricFilter())
-                .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS)
-                .convertTimestampTo(TimeUnit.MILLISECONDS).build(source, dataSource);
-        return new JDBCReporterImpl(jdbcReporter, jdbcReporterPollingPeriod, scheduledJDBCMetricsCleanupTask,
-                jdbcScheduledCleanupPeriod);
+        return new JDBCReporterImpl(metricRegistry, enabledMetricFilter, source, dataSource, jdbcReporterPollingPeriod,
+                runCleanupTask, daysToKeep, jdbcScheduledCleanupPeriod);
     }
 
     /**
