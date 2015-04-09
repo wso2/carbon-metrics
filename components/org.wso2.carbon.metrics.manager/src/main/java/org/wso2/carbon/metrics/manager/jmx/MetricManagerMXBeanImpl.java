@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,21 @@ public class MetricManagerMXBeanImpl implements MetricManagerMXBean {
     public MetricManagerMXBeanImpl(MetricService metricService) {
         super();
         this.metricService = metricService;
+    }
+
+    @Override
+    public void enable() {
+        metricService.enable();
+    }
+
+    @Override
+    public void disable() {
+        metricService.disable();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return metricService.isEnabled();
     }
 
     @Override

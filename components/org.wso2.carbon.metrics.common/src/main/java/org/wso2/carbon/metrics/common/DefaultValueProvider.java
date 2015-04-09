@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.impl.reporter;
+package org.wso2.carbon.metrics.common;
 
 /**
- * Reporter interface to manage multiple reporters in this service
+ * Provide a default value, if the value is not available.
  */
-public interface Reporter {
+public interface DefaultValueProvider {
 
-    void report();
-
-    void start();
-
-    void stop();
+    String getValue();
 
 }

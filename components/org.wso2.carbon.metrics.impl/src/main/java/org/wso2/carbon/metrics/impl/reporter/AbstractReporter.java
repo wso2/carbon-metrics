@@ -32,26 +32,25 @@ public abstract class AbstractReporter implements Reporter {
 
     @Override
     public final void start() {
-        startReporter();
-        running = true;
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format("Started %s reporter for Metrics", name));
+        if (!running) {
+            startReporter();
+            running = true;
+            if (logger.isInfoEnabled()) {
+                logger.info(String.format("Started %s reporter for Metrics", name));
+            }
         }
     }
 
     public abstract void startReporter();
 
     @Override
-    public final boolean isRunning() {
-        return running;
-    }
-
-    @Override
     public final void stop() {
-        stopReporter();
-        running = false;
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format("Stopped %s reporter for Metrics", name));
+        if (running) {
+            stopReporter();
+            running = false;
+            if (logger.isInfoEnabled()) {
+                logger.info(String.format("Stopped %s reporter for Metrics", name));
+            }
         }
     }
 

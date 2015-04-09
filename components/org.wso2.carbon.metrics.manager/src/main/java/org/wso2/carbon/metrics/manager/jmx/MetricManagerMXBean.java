@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,23 @@ package org.wso2.carbon.metrics.manager.jmx;
  * Interface for JMX Managed Metric Manager Bean
  */
 public interface MetricManagerMXBean {
+
+    /**
+     * Enables the Metrics Feature
+     */
+    void enable();
+
+    /**
+     * Disables the Metrics Feature
+     */
+    void disable();
+
+    /**
+     * Get the current status of Metrics (Enabled/Disabled)
+     * 
+     * @return {@code true} if the Metrics feature is enabled
+     */
+    boolean isEnabled();
 
     /**
      * @return The number of metrics used

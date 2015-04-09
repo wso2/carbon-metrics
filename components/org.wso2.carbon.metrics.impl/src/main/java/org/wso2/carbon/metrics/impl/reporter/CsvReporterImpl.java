@@ -15,35 +15,61 @@
  */
 package org.wso2.carbon.metrics.impl.reporter;
 
+import java.io.File;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.CsvReporter;
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
 
 public class CsvReporterImpl extends AbstractReporter {
 
-    private final CsvReporter csvReporter;
+    private static final Logger logger = LoggerFactory.getLogger(CsvReporterImpl.class);
+
+    private final MetricRegistry metricRegistry;
+
+    private final MetricFilter metricFilter;
+
+    private final File directory;
 
     private final long pollingPeriod;
 
-    public CsvReporterImpl(CsvReporter csvReporter, long pollingPeriod) {
+    private CsvReporter csvReporter;
+
+    public CsvReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, File directory, long pollingPeriod) {
         super("CSV");
-        this.csvReporter = csvReporter;
+        this.metricRegistry = metricRegistry;
+        this.metricFilter = metricFilter;
+        this.directory = directory;
         this.pollingPeriod = pollingPeriod;
     }
 
     @Override
     public void report() {
-        csvReporter.report();
+        if (csvReporter != null) {
+            csvReporter.report();
+        }
     }
 
     @Override
     public void startReporter() {
+        csvReporter = CsvReporter.forRegistry(metricRegistry).formatFor(Locale.US).filter(metricFilter)
+                .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build(directory);
         csvReporter.start(pollingPeriod, TimeUnit.SECONDS);
     }
 
     @Override
     public void stopReporter() {
-        csvReporter.stop();
+        try {
+            csvReporter.stop();
+            csvReporter = null;
+        } catch (Throwable e) {
+            logger.error("An error occurred when trying to stop the reporter", e);
+        }
     }
 
 }

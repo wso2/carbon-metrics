@@ -15,15 +15,20 @@
  */
 package org.wso2.carbon.metrics.impl.reporter;
 
+import java.util.concurrent.TimeUnit;
+
 import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
 
 public class JmxReporterImpl extends AbstractReporter {
-
+    
     private final JmxReporter jmxReporter;
 
-    public JmxReporterImpl(JmxReporter jmxReporter) {
+    public JmxReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, String domain) {
         super("JMX");
-        this.jmxReporter = jmxReporter;
+        this.jmxReporter = JmxReporter.forRegistry(metricRegistry).inDomain(domain).filter(metricFilter)
+                .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build();
     }
 
     @Override

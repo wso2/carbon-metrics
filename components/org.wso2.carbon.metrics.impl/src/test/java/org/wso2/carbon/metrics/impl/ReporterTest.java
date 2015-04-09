@@ -111,6 +111,12 @@ public class ReporterTest extends TestCase {
         };
 
         MetricManager.gauge(Level.INFO, gaugeName, gauge);
+
+        template.execute("DELETE FROM METRIC_GAUGE;");
+        template.execute("DELETE FROM METRIC_TIMER;");
+        template.execute("DELETE FROM METRIC_METER;");
+        template.execute("DELETE FROM METRIC_HISTOGRAM;");
+        template.execute("DELETE FROM METRIC_COUNTER;");
     }
 
     @Override
@@ -138,6 +144,22 @@ public class ReporterTest extends TestCase {
         assertTrue("Gauge CSV file is created", new File("target/metrics-logs", gaugeName + ".csv").exists());
     }
 
+    public void testCSVReporterRestart() {
+        metricService.report();
+        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterName + ".csv").exists());
+
+        metricService.disable();
+        String meterName2 = MetricManager.name(this.getClass(), "test-meter2");
+        Meter meter = MetricManager.meter(Level.INFO, meterName2);
+        meter.mark();
+
+        metricService.report();
+        metricService.enable();
+        metricService.report();
+
+        assertTrue("Meter2 CSV file is created", new File("target/metrics-logs", meterName2 + ".csv").exists());
+    }
+
     public void testJDBCReporter() {
         metricService.report();
         List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?",
@@ -151,6 +173,21 @@ public class ReporterTest extends TestCase {
         assertEquals("There is one result", 1, gaugeResult.size());
         assertEquals("Gauge is available", gaugeName, gaugeResult.get(0).get("NAME"));
         assertEquals("Gauge value is one", "1", gaugeResult.get(0).get("VALUE"));
+    }
+
+    public void testJDBCReporterRestart() {
+        metricService.report();
+        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?",
+                meterName);
+        assertEquals("There is one result", 1, meterResult.size());
+
+        metricService.disable();
+        metricService.report();
+        metricService.enable();
+        metricService.report();
+
+        meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
+        assertEquals("There are two results", 2, meterResult.size());
     }
 
     private AttributeList getAttributes(String name, String... attributeNames) {

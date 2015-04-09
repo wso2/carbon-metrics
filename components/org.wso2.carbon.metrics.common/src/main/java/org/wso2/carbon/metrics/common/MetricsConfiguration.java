@@ -108,6 +108,18 @@ public class MetricsConfiguration {
         return value.get(0);
     }
 
+    public String getFirstProperty(String key, String defaultValue) {
+        String returnValue = getFirstProperty(key);
+        if (returnValue == null || returnValue.trim().length() == 0) {
+            return defaultValue;
+        }
+        return returnValue;
+    }
+
+    public String getFirstProperty(String key, DefaultValueProvider defaultValueProvider) {
+        return getFirstProperty(key, defaultValueProvider.getValue());
+    }
+
     public List<String> getProperty(String key) {
         return configurationMap.get(key);
     }
