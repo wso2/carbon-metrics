@@ -148,10 +148,13 @@
             
             for (String key : viewMap.keySet()) {
                 ChartView chartView = viewMap.get(key);
+                // Use a variable to concatenate view key. This is to avoid escape character issues when concatenating inline.
+                String viewKey = "metrics.view." + key;
                 %>
 	            chartNames = [];
 	            chartTitles = [];
-	            views["<%=key%>"] = {name: "<fmt:message key="<%="metrics.view." + key%>"/>", charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
+	            chartViewName = '<fmt:message key="<%=viewKey%>"/>';
+	            views["<%=key%>"] = {name: chartViewName, charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
                 <%
                 String[] charts = chartView.getCharts();
                 for (String chart : charts) {
