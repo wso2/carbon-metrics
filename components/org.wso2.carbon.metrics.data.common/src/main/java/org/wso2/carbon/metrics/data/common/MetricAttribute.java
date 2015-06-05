@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.data.service;
+package org.wso2.carbon.metrics.data.common;
 
 /**
- * Description about MetricType
+ * Metric Attributes supported by all Metric Types
  */
 public enum MetricAttribute {
     VALUE, COUNT, MEAN_RATE, M1_RATE, M5_RATE, M15_RATE, MAX, MEAN, MIN, STDDEV, P50, P75, P95, P98, P99, P999

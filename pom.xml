@@ -57,6 +57,7 @@
         <module>components/org.wso2.carbon.metrics.manager</module>
         <module>components/org.wso2.carbon.metrics.common</module>
         <module>components/org.wso2.carbon.metrics.impl</module>
+        <module>components/org.wso2.carbon.metrics.data.common</module>
         <module>components/org.wso2.carbon.metrics.data.service</module>
         <module>components/org.wso2.carbon.metrics.view.ui</module>
         <module>features/carbon-metrics</module>
@@ -83,6 +84,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.impl</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>

@@ -40,6 +40,8 @@ import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfigException;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricType;
 import org.wso2.carbon.metrics.data.service.dao.MetricDataProcessor;
 import org.wso2.carbon.metrics.data.service.dao.ReporterDAO;
 import org.wso2.carbon.utils.CarbonUtils;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.data.service;
+package org.wso2.carbon.metrics.data.common;
 
 /**
- * Description about MetricType
+ * Metric Types
  */
 public enum MetricType {
     GAUGE, COUNTER, METER, HISTOGRAM, TIMER

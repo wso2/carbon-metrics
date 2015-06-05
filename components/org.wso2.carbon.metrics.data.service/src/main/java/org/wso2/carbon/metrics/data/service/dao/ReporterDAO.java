@@ -33,8 +33,8 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.data.service.MetricAttribute;
-import org.wso2.carbon.metrics.data.service.MetricType;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricType;
 
 /**
  * Querying Metric Data via JDBC
