@@ -34,6 +34,10 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.data.service.stub</artifactId>
         </dependency>
         <dependency>
@@ -68,6 +72,7 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.common</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service.stub</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.view.ui</bundleDef>
                                 <bundleDef>com.google.code.gson:gson</bundleDef>

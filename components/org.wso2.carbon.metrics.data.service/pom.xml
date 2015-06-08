@@ -105,6 +105,7 @@
                         </Export-Package>
                         <Import-Package>
                             org.wso2.carbon.metrics.common.*,
+                            org.wso2.carbon.metrics.data.common.*,
                             org.wso2.carbon.core;version="${carbon.kernel.version.range}",
                             org.wso2.carbon.utils;version="${carbon.kernel.version.range}"
                         </Import-Package>
