@@ -17,9 +17,9 @@ package org.wso2.carbon.metrics.data.service;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +40,17 @@ import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfigException;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.data.common.Metric;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricDataFormat;
+import org.wso2.carbon.metrics.data.common.MetricList;
+import org.wso2.carbon.metrics.data.common.MetricType;
 import org.wso2.carbon.metrics.data.service.dao.MetricDataProcessor;
 import org.wso2.carbon.metrics.data.service.dao.ReporterDAO;
+import org.wso2.carbon.metrics.data.service.dao.converter.DumbConverter;
+import org.wso2.carbon.metrics.data.service.dao.converter.MemoryConverter;
+import org.wso2.carbon.metrics.data.service.dao.converter.PercentageConverter;
+import org.wso2.carbon.metrics.data.service.dao.converter.ValueConverter;
 import org.wso2.carbon.utils.CarbonUtils;
 
 public class MetricsDataService extends AbstractAdmin implements Lifecycle {
@@ -153,7 +162,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     public List<String> getAllSources() {
-        List<String> sources =  reporterDAO.queryAllSources();
+        List<String> sources = reporterDAO.queryAllSources();
         if (sources == null) {
             sources = new ArrayList<String>();
         }
@@ -228,250 +237,148 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
     }
 
-    /**
-     * Convert value
-     */
-    private interface ValueConverter {
-        BigDecimal convert(BigDecimal value);
+    private static final ValueConverter MEMORY_VALUE_CONVERTER = new MemoryConverter();
+
+    private static final ValueConverter PERCENTAGE_VALUE_CONVERTER = new PercentageConverter();
+
+    private static final ValueConverter DUMB_VALUE_CONVERTER = new DumbConverter();
+
+    private final class MetricGroupKey {
+
+        private MetricType metricType;
+        private MetricAttribute metricAttribute;
+
+        public MetricGroupKey(MetricType metricType, MetricAttribute metricAttribute) {
+            super();
+            this.metricType = metricType;
+            this.metricAttribute = metricAttribute;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((metricAttribute == null) ? 0 : metricAttribute.hashCode());
+            result = prime * result + ((metricType == null) ? 0 : metricType.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof MetricGroupKey)) {
+                return false;
+            }
+            MetricGroupKey other = (MetricGroupKey) obj;
+            if (metricAttribute != other.metricAttribute) {
+                return false;
+            }
+            if (metricType != other.metricType) {
+                return false;
+            }
+            return true;
+        }
     }
 
-    private static final ValueConverter MEMORY_VALUE_CONVERTER = new ValueConverter() {
+    private class MetricGroup {
+        private MetricType metricType;
+        private MetricAttribute metricAttribute;
+        private List<String> names = new ArrayList<String>();
+        private List<String> displayNames = new ArrayList<String>();
+        private List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
+    }
 
-        private final BigDecimal BYTES_IN_ONE_MEGABYTE = BigDecimal.valueOf(1024 * 1024);
+    private MetricData getResults(Collection<MetricGroup> metricGroups, String source, long startTime, long endTime) {
+        List<String> names = new ArrayList<String>();
+        List<String> displayNames = new ArrayList<String>();
+        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
 
-        @Override
-        public BigDecimal convert(BigDecimal value) {
-            return value.divide(BYTES_IN_ONE_MEGABYTE, 2, RoundingMode.CEILING);
+        for (MetricGroup metricGroup : metricGroups) {
+            names.addAll(metricGroup.names);
+            displayNames.addAll(metricGroup.displayNames);
+            valueConverters.addAll(metricGroup.valueConverters);
         }
-    };
 
-    private static final ValueConverter PERCENTAGE_VALUE_CONVERTER = new ValueConverter() {
-
-        private final BigDecimal HUNDRED = BigDecimal.valueOf(100);
-
-        @Override
-        public BigDecimal convert(BigDecimal value) {
-            return value.multiply(HUNDRED).setScale(2, RoundingMode.CEILING);
-        }
-    };
-
-    private static final ValueConverter DUMB_VALUE_CONVERTER = new ValueConverter() {
-
-        @Override
-        public BigDecimal convert(BigDecimal value) {
-            return value;
-        }
-    };
-
-    private MetricData getResults(List<String> metrics, List<String> displayNames,
-            List<ValueConverter> valueConverters, String source, long startTime, long endTime) {
-        String[] names = metrics.toArray(new String[metrics.size()]);
-        JVMMetricDataProcessor processor = new JVMMetricDataProcessor(names,
+        JVMMetricDataProcessor processor = new JVMMetricDataProcessor(names.toArray(new String[names.size()]),
                 displayNames.toArray(new String[displayNames.size()]),
                 valueConverters.toArray(new ValueConverter[valueConverters.size()]));
-        reporterDAO.queryMetrics(MetricType.GAUGE, names, MetricAttribute.VALUE, source, startTime, endTime, processor);
+
+        for (MetricGroup metricGroup : metricGroups) {
+            reporterDAO.queryMetrics(metricGroup.metricType, metricGroup.names, metricGroup.metricAttribute, source,
+                    startTime, endTime, processor);
+        }
         return processor.getResult();
     }
 
-    // Method overloading doesn't support in Axis2.
-    public MetricData findLastJMXMemoryMetrics(String source, String from) {
+    public MetricData findLastMetrics(MetricList metrics, String source, String from) {
         long startTime = getStartTime(from);
         if (startTime == -1) {
             return null;
         }
         long endTime = System.currentTimeMillis();
-        return findJMXMemoryMetricsByTimePeriod(source, startTime, endTime);
+        return findMetricsByTimePeriod(metrics, source, startTime, endTime);
     }
 
-    public MetricData findJMXMemoryMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-        addMemoryMetrics(metrics, displayNames, valueConverters, "heap", "Heap");
-        addMemoryMetrics(metrics, displayNames, valueConverters, "non-heap", "Non-Heap");
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
-
-    private void addMemoryMetrics(List<String> metrics, List<String> displayNames,
-            List<ValueConverter> valueConverters, String type, String displayType) {
-        metrics.add(String.format("jvm.memory.%s.init", type));
-        metrics.add(String.format("jvm.memory.%s.used", type));
-        metrics.add(String.format("jvm.memory.%s.committed", type));
-        metrics.add(String.format("jvm.memory.%s.max", type));
-
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-
-        displayNames.add(String.format("%s Init", displayType));
-        displayNames.add(String.format("%s Used", displayType));
-        displayNames.add(String.format("%s Committed", displayType));
-        displayNames.add(String.format("%s Max", displayType));
-    }
-
-    public MetricData findLastJMXCPULoadMetrics(String source, String from) {
-        long startTime = getStartTime(from);
-        if (startTime == -1) {
+    public MetricData findMetricsByTimePeriod(MetricList metrics, String source, long startTime, long endTime) {
+        Collection<MetricGroup> metricGroups = getMetricGroups(metrics);
+        if (metricGroups == null) {
             return null;
         }
-        long endTime = System.currentTimeMillis();
-        return findJMXCPULoadMetricsByTimePeriod(source, startTime, endTime);
+        return getResults(metricGroups, source, startTime, endTime);
     }
 
-    public MetricData findJMXCPULoadMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        metrics.add("jvm.os.cpu.load.process");
-        metrics.add("jvm.os.cpu.load.system");
-
-        displayNames.add("Process CPU Load");
-        displayNames.add("System CPU Load");
-
-        valueConverters.add(PERCENTAGE_VALUE_CONVERTER);
-        valueConverters.add(PERCENTAGE_VALUE_CONVERTER);
-
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
-
-    public MetricData findLastJMXLoadAverageMetrics(String source, String from) {
-        long startTime = getStartTime(from);
-        if (startTime == -1) {
+    private Collection<MetricGroup> getMetricGroups(MetricList metrics) {
+        Metric[] list = null;
+        if (metrics == null || (list = metrics.getMetric()) == null) {
+            // No metrics
             return null;
         }
-        long endTime = System.currentTimeMillis();
-        return findJMXLoadAverageMetricsByTimePeriod(source, startTime, endTime);
-    }
-
-    public MetricData findJMXLoadAverageMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        metrics.add("jvm.os.system.load.average");
-
-        displayNames.add("System Load Average");
-
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
-
-    public MetricData findLastJMXFileDescriptorMetrics(String source, String from) {
-        long startTime = getStartTime(from);
-        if (startTime == -1) {
-            return null;
+        Map<MetricGroupKey, MetricGroup> map = new HashMap<MetricGroupKey, MetricGroup>();
+        for (int i = 0; i < list.length; i++) {
+            Metric metric = list[i];
+            MetricType metricType = MetricType.valueOf(metric.getType());
+            MetricAttribute metricAttribute = MetricAttribute.valueOf(metric.getAttr());
+            MetricDataFormat metricDataFormat = null;
+            if (metric.getFormat() != null) {
+                metricDataFormat = MetricDataFormat.valueOf(metric.getFormat());
+            }
+            MetricGroupKey metricGroupKey = new MetricGroupKey(metricType, metricAttribute);
+            MetricGroup metricGroup = map.get(metricGroupKey);
+            if (metricGroup == null) {
+                metricGroup = new MetricGroup();
+                map.put(metricGroupKey, metricGroup);
+            }
+            metricGroup.metricType = metricType;
+            metricGroup.metricAttribute = metricAttribute;
+            // Metric name should be unique!
+            if (metricGroup.names.contains(metric.getName())) {
+                continue;
+            }
+            metricGroup.names.add(metric.getName());
+            metricGroup.displayNames.add(metric.getDisplayName());
+            if (metricDataFormat != null) {
+                switch (metricDataFormat) {
+                case P:
+                    metricGroup.valueConverters.add(PERCENTAGE_VALUE_CONVERTER);
+                    break;
+                case B:
+                    metricGroup.valueConverters.add(MEMORY_VALUE_CONVERTER);
+                    break;
+                default:
+                    metricGroup.valueConverters.add(DUMB_VALUE_CONVERTER);
+                    break;
+                }
+            } else {
+                metricGroup.valueConverters.add(DUMB_VALUE_CONVERTER);
+            }
         }
-        long endTime = System.currentTimeMillis();
-        return findJMXFileDescriptorMetricsByTimePeriod(source, startTime, endTime);
+
+        return map.values();
     }
 
-    public MetricData findJMXFileDescriptorMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        metrics.add("jvm.os.file.descriptor.open.count");
-        metrics.add("jvm.os.file.descriptor.max.count");
-
-        displayNames.add("Open File Descriptor Count");
-        displayNames.add("Max File Descriptor Count");
-
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
-
-    public MetricData findLastJMXPhysicalMemoryMetrics(String source, String from) {
-        long startTime = getStartTime(from);
-        if (startTime == -1) {
-            return null;
-        }
-        long endTime = System.currentTimeMillis();
-        return findJMXPhysicalMemoryMetricsByTimePeriod(source, startTime, endTime);
-    }
-
-    public MetricData findJMXPhysicalMemoryMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        metrics.add("jvm.os.physical.memory.free.size");
-        metrics.add("jvm.os.physical.memory.total.size");
-        metrics.add("jvm.os.swap.space.free.size");
-        metrics.add("jvm.os.swap.space.total.size");
-        metrics.add("jvm.os.virtual.memory.committed.size");
-
-        displayNames.add("Free Physical Memory Size");
-        displayNames.add("Total Physical Memory Size");
-        displayNames.add("Free Swap Space Size");
-        displayNames.add("Total Swap Space Size");
-        displayNames.add("Committed Virtual Memory Size");
-
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-        valueConverters.add(MEMORY_VALUE_CONVERTER);
-
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
-
-    public MetricData findLastJMXClassLoadingMetrics(String source, String from) {
-        long startTime = getStartTime(from);
-        if (startTime == -1) {
-            return null;
-        }
-        long endTime = System.currentTimeMillis();
-        return findJMXClassLoadingMetricsByTimePeriod(source, startTime, endTime);
-    }
-
-    public MetricData findJMXClassLoadingMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        metrics.add("jvm.class-loading.loaded.current");
-        metrics.add("jvm.class-loading.loaded.total");
-        metrics.add("jvm.class-loading.unloaded.total");
-
-        displayNames.add("Current Classes Loaded");
-        displayNames.add("Total Classes Loaded");
-        displayNames.add("Total Classes Unloaded");
-
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
-
-    public MetricData findLastJMXThreadingMetrics(String source, String from) {
-        long startTime = getStartTime(from);
-        if (startTime == -1) {
-            return null;
-        }
-        long endTime = System.currentTimeMillis();
-        return findJMXThreadingMetricsByTimePeriod(source, startTime, endTime);
-    }
-
-    public MetricData findJMXThreadingMetricsByTimePeriod(String source, long startTime, long endTime) {
-        List<String> metrics = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        metrics.add("jvm.threads.count");
-        metrics.add("jvm.threads.daemon.count");
-
-        displayNames.add("Live Threads");
-        displayNames.add("Daemon Threads");
-
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-        valueConverters.add(DUMB_VALUE_CONVERTER);
-
-        return getResults(metrics, displayNames, valueConverters, source, startTime, endTime);
-    }
 }

@@ -51,6 +51,10 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.data.service</artifactId>
         </dependency>
         <dependency>
@@ -136,7 +140,8 @@
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.manager</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.impl</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service</bundleDef>                  
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.common</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service</bundleDef>
                                 <bundleDef>io.dropwizard.metrics:metrics-core</bundleDef>
                                 <bundleDef>io.dropwizard.metrics:metrics-jvm</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-api</bundleDef>

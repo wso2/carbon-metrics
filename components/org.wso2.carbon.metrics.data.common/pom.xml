@@ -17,6 +17,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 >
+
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
         <artifactId>carbon-metrics</artifactId>
@@ -25,33 +26,12 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.metrics.view.ui</artifactId>
+    <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Metrics View UI</name>
+    <name>WSO2 Carbon - Metrics Data Common</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.data.service.stub</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.ui</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -63,15 +43,11 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.carbon.metrics.view.ui.*
+                            org.wso2.carbon.metrics.data.common.*
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.metrics.data.service.stub.*,
-                            com.google.gson;
-                            version="${gson.version.range}",
-                            *;resolution:=optional
                         </Import-Package>
-                        <Carbon-Component>UIBundle</Carbon-Component>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

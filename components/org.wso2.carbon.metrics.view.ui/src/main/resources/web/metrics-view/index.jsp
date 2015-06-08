@@ -148,7 +148,7 @@
             
             for (String key : viewMap.keySet()) {
                 ChartView chartView = viewMap.get(key);
-                // Use a variable to concatenate view key. This is to avoid escape character issues when concatenating inline.
+                // Use a variable to concatenate keys. This is to avoid escape character issues when concatenating inline.
                 String viewKey = "metrics.view." + key;
                 %>
 	            chartNames = [];
@@ -158,9 +158,10 @@
                 <%
                 String[] charts = chartView.getCharts();
                 for (String chart : charts) {
+                    String chartKey = "metrics.chart." + chart;
                 %>
-                    chartNames.push("<%=chart%>");
-                    chartTitles.push("<fmt:message key="<%="metrics.chart." + chart%>"/>");
+                    chartNames.push('<%=chart%>');
+                    chartTitles.push('<fmt:message key="<%=chartKey%>"/>');
                 <%
                 }
             }
@@ -171,7 +172,7 @@
         <script src="plugins/vega/vega.js"></script>
         <script src="plugins/igviz/igviz.js"></script>
         <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
-        <script src="plugins/jquery/jquery-2.1.3.min.js"></script>
+        <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
         <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
         <script src="js/metrics.ui.js"></script>
         

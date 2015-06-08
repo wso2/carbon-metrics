@@ -13,11 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.data.service;
+package org.wso2.carbon.metrics.data.service.dao.converter;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
- * Description about MetricType
+ * Percentage Converter
  */
-public enum MetricType {
-    GAUGE, COUNTER, METER, HISTOGRAM, TIMER
+public class PercentageConverter implements ValueConverter {
+
+    private final BigDecimal HUNDRED = BigDecimal.valueOf(100);
+
+    @Override
+    public BigDecimal convert(BigDecimal value) {
+        return value.multiply(HUNDRED).setScale(2, RoundingMode.CEILING);
+    }
 }

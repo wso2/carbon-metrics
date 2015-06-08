@@ -15,6 +15,8 @@
  */
 package org.wso2.carbon.metrics.data.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,11 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.wso2.carbon.metrics.data.common.Metric;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricDataFormat;
+import org.wso2.carbon.metrics.data.common.MetricList;
+import org.wso2.carbon.metrics.data.common.MetricType;
 
 /**
  * Test Metrics Data Service
@@ -99,28 +106,30 @@ public class MetricsDataServiceTest extends TestCase {
     }
 
     public void testLast1MinuteJMXMemoryMetrics() {
-        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1m");
+        MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1m");
         assertNotNull("Metric Data is not null", metricData);
 
     }
 
     public void testLast1HourJMXMemoryMetrics() {
-        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1h");
+        MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1h");
         assertNotNull("Metric Data is not null", metricData);
     }
 
     public void testLast1DayJMXMemoryMetrics() {
-        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, "-1d");
+        MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1d");
         assertNotNull("Metric Data is not null", metricData);
     }
 
     public void testLastJMXMemoryMetrics() {
-        MetricData metricData = metricsDataService.findLastJMXMemoryMetrics(SOURCE, String.valueOf(START_TIME));
+        MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE,
+                String.valueOf(START_TIME));
         assertEquals("There are two results", 2, metricData.getData().length);
     }
 
     public void testJMXMemoryMetrics() {
-        MetricData metricData = metricsDataService.findJMXMemoryMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(getMemoryMetrics(), SOURCE, START_TIME,
+                END_TIME);
         assertEquals("There are two results", 2, metricData.getData().length);
         assertEquals("There are nine names", 9, metricData.getMetadata().getNames().length);
         assertEquals("There are nine types", 9, metricData.getMetadata().getTypes().length);
@@ -129,18 +138,64 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    private MetricList getMemoryMetrics() {
+        List<Metric> metrics = new ArrayList<Metric>();
+
+        addMemoryMetrics(metrics, "heap", "Heap");
+        addMemoryMetrics(metrics, "non-heap", "Non-Heap");
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+        return metricList;
+    }
+
+    private void addMemoryMetrics(List<Metric> metrics, String type, String displayType) {
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.init", type), String.format("%s Init",
+                displayType), MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.used", type), String.format("%s Used",
+                displayType), MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.committed", type), String.format(
+                "%s Committed", displayType), MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.max", type), String.format("%s Max",
+                displayType), MetricAttribute.VALUE, MetricDataFormat.B));
+
+    }
+
     public void testJMXCPULoadMetrics() {
-        MetricData metricData = metricsDataService.findJMXCPULoadMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        List<Metric> metrics = new ArrayList<Metric>();
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.process", "Process CPU Load", MetricAttribute.VALUE,
+                MetricDataFormat.P));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.system", "System CPU Load", MetricAttribute.VALUE,
+                MetricDataFormat.P));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
+
         assertEquals("There are two results", 2, metricData.getData().length);
         assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
         assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are three values", 3, metricData.getData()[i].length);
+            for (int j = 1; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertTrue("Value is greater than or equal to zero", value.compareTo(BigDecimal.ZERO) >= 0);
+                assertTrue("Value is less than or equal to 100%", value.compareTo(new BigDecimal("100")) <= 0);
+            }
         }
     }
 
     public void testJMXLoadAverageMetrics() {
-        MetricData metricData = metricsDataService.findJMXLoadAverageMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        List<Metric> metrics = new ArrayList<Metric>();
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.system.load.average", "System Load Average",
+                MetricAttribute.VALUE, null));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
+
         assertEquals("There are two results", 2, metricData.getData().length);
         assertEquals("There are two names", 2, metricData.getMetadata().getNames().length);
         assertEquals("There are two types", 2, metricData.getMetadata().getTypes().length);
@@ -149,8 +204,60 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    public void testJMXFileDescriptorMetrics() {
+        List<Metric> metrics = new ArrayList<Metric>();
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.open.count", "Open File Descriptor Count",
+                MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.max.count", "Max File Descriptor Count",
+                MetricAttribute.VALUE, null));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
+        assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are three values", 3, metricData.getData()[i].length);
+        }
+    }
+
+    public void testJMXPhysicalMemoryMetrics() {
+        List<Metric> metrics = new ArrayList<Metric>();
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.free.size", "Free Physical Memory Size",
+                MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.total.size", "Total Physical Memory Size",
+                MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.swap.space.free.size", "Free Swap Space Size",
+                MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.swap.space.total.size", "Total Swap Space Size",
+                MetricAttribute.VALUE, MetricDataFormat.B));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.virtual.memory.committed.size",
+                "Committed Virtual Memory Size", MetricAttribute.VALUE, MetricDataFormat.B));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are six names", 6, metricData.getMetadata().getNames().length);
+        assertEquals("There are six types", 6, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are six values", 6, metricData.getData()[i].length);
+        }
+    }
+
     public void testJMXThreadingMetrics() {
-        MetricData metricData = metricsDataService.findJMXThreadingMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        List<Metric> metrics = new ArrayList<Metric>();
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads", MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.daemon.count", "Daemon Threads", MetricAttribute.VALUE,
+                null));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
         assertEquals("There are two results", 2, metricData.getData().length);
         assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
         assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
@@ -160,7 +267,19 @@ public class MetricsDataServiceTest extends TestCase {
     }
 
     public void testJMXClassLoadingMetrics() {
-        MetricData metricData = metricsDataService.findJMXClassLoadingMetricsByTimePeriod(SOURCE, START_TIME, END_TIME);
+        List<Metric> metrics = new ArrayList<Metric>();
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current", "Current Classes Loaded",
+                MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.total", "Total Classes Loaded",
+                MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total", "Total Classes Unloaded",
+                MetricAttribute.VALUE, null));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
+
         assertEquals("There are two results", 2, metricData.getData().length);
         assertEquals("There are four names", 4, metricData.getMetadata().getNames().length);
         assertEquals("There are four types", 4, metricData.getMetadata().getTypes().length);
@@ -168,4 +287,5 @@ public class MetricsDataServiceTest extends TestCase {
             assertEquals("There are four values", 4, metricData.getData()[i].length);
         }
     }
+
 }

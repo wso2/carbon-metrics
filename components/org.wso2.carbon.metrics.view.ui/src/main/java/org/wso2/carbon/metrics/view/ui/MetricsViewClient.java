@@ -23,6 +23,8 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.data.common.Metric;
+import org.wso2.carbon.metrics.data.common.MetricList;
 import org.wso2.carbon.metrics.data.service.stub.MetricsDataServiceStub;
 
 public class MetricsViewClient {
@@ -53,9 +55,9 @@ public class MetricsViewClient {
         }
     }
 
-    public MetricDataWrapper findLastJMXMemoryMetrics(String source, String from) throws RemoteException {
+    public MetricDataWrapper findLastMetrics(MetricList metrics, String source, String from) throws RemoteException {
         try {
-            return new MetricDataWrapper(stub.findLastJMXMemoryMetrics(source, from));
+            return new MetricDataWrapper(stub.findLastMetrics(convert(metrics), source, from));
         } catch (RemoteException e) {
             String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
             logger.error(msg, e);
@@ -63,64 +65,22 @@ public class MetricsViewClient {
         }
     }
 
-    public MetricDataWrapper findLastJMXCPULoadMetrics(String source, String from) throws RemoteException {
-        try {
-            return new MetricDataWrapper(stub.findLastJMXCPULoadMetrics(source, from));
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
+    private org.wso2.carbon.metrics.data.service.stub.common.MetricList convert(MetricList list) {
+        org.wso2.carbon.metrics.data.service.stub.common.MetricList xsdMetricList = new org.wso2.carbon.metrics.data.service.stub.common.MetricList();
+        Metric[] metrics = list.getMetric();
+        org.wso2.carbon.metrics.data.service.stub.common.Metric[] xsdMetrics = new org.wso2.carbon.metrics.data.service.stub.common.Metric[metrics.length];
+        xsdMetricList.setMetric(xsdMetrics);
+        for (int i = 0; i < metrics.length; i++) {
+            Metric metric = metrics[i];
+            org.wso2.carbon.metrics.data.service.stub.common.Metric xsdMetric = new org.wso2.carbon.metrics.data.service.stub.common.Metric();
+            xsdMetrics[i] = xsdMetric;
+            xsdMetric.setAttr(metric.getAttr());
+            xsdMetric.setDisplayName(metric.getDisplayName());
+            xsdMetric.setFormat(metric.getFormat());
+            xsdMetric.setName(metric.getName());
+            xsdMetric.setType(metric.getType());
         }
-    }
-
-    public MetricDataWrapper findLastJMXLoadAverageMetrics(String source, String from) throws RemoteException {
-        try {
-            return new MetricDataWrapper(stub.findLastJMXLoadAverageMetrics(source, from));
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
-        }
-    }
-
-    public MetricDataWrapper findLastJMXFileDescriptorMetrics(String source, String from) throws RemoteException {
-        try {
-            return new MetricDataWrapper(stub.findLastJMXFileDescriptorMetrics(source, from));
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
-        }
-    }
-
-    public MetricDataWrapper findLastJMXPhysicalMemoryMetrics(String source, String from) throws RemoteException {
-        try {
-            return new MetricDataWrapper(stub.findLastJMXPhysicalMemoryMetrics(source, from));
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
-        }
-    }
-
-    public MetricDataWrapper findLastJMXClassLoadingMetrics(String source, String from) throws RemoteException {
-        try {
-            return new MetricDataWrapper(stub.findLastJMXClassLoadingMetrics(source, from));
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
-        }
-    }
-
-    public MetricDataWrapper findLastJMXThreadingMetrics(String source, String from) throws RemoteException {
-        try {
-            return new MetricDataWrapper(stub.findLastJMXThreadingMetrics(source, from));
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
-        }
+        return xsdMetricList;
     }
 
 }

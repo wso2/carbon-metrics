@@ -13,11 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.data.service;
+package org.wso2.carbon.metrics.data.service.dao.converter;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
- * Description about MetricType
+ * Memory Converter
  */
-public enum MetricAttribute {
-    VALUE, COUNT, MEAN_RATE, M1_RATE, M5_RATE, M15_RATE, MAX, MEAN, MIN, STDDEV, P50, P75, P95, P98, P99, P999
+public class MemoryConverter implements ValueConverter {
+
+    private final BigDecimal BYTES_IN_ONE_MEGABYTE = BigDecimal.valueOf(1024 * 1024);
+
+    @Override
+    public BigDecimal convert(BigDecimal value) {
+        return value.divide(BYTES_IN_ONE_MEGABYTE, 2, RoundingMode.CEILING);
+    }
 }

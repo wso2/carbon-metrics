@@ -33,8 +33,8 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.data.service.MetricAttribute;
-import org.wso2.carbon.metrics.data.service.MetricType;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricType;
 
 /**
  * Querying Metric Data via JDBC
@@ -171,15 +171,15 @@ public class ReporterDAO {
         return results;
     }
 
-    public <T> void queryMetrics(MetricType metricType, String[] names, MetricAttribute metricAttribute, String source,
-            long startTime, long endTime, MetricDataProcessor<T> processor) {
+    public <T> void queryMetrics(MetricType metricType, List<String> names, MetricAttribute metricAttribute,
+            String source, long startTime, long endTime, MetricDataProcessor<T> processor) {
         validateMetricAttribute(metricType, metricAttribute);
         StringBuilder queryBuilder = new StringBuilder("SELECT NAME, TIMESTAMP, ");
         queryBuilder.append(getColumnName(metricAttribute));
         queryBuilder.append(" FROM ");
         queryBuilder.append(getTableName(metricType));
         queryBuilder.append(" WHERE NAME IN (");
-        for (int i = 0; i < names.length; i++) {
+        for (int i = 0; i < names.size(); i++) {
             if (i > 0) {
                 queryBuilder.append(", ");
             }
@@ -197,8 +197,8 @@ public class ReporterDAO {
 
             ps = connection.prepareStatement(queryBuilder.toString());
             int i;
-            for (i = 0; i < names.length; i++) {
-                ps.setString(i + 1, names[i]);
+            for (i = 0; i < names.size(); i++) {
+                ps.setString(i + 1, names.get(i));
             }
             ps.setLong(++i, startTime);
             ps.setLong(++i, endTime);
