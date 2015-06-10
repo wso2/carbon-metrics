@@ -18,6 +18,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon"%>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient"%>
+<%@ page import="org.wso2.carbon.metrics.view.ui.ChartView"%>
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
 <%@ page import="org.wso2.carbon.CarbonConstants"%>
 <%@ page import="org.wso2.carbon.utils.ServerConstants"%>
@@ -38,6 +39,8 @@
 
 
 	<%
+	    String item = request.getParameter("item");
+
 	    String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
 	    ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
 	            CarbonConstants.CONFIGURATION_CONTEXT);
@@ -116,65 +119,6 @@
 				
 			</div>
 		</div>
-
-        <script id="initialSetup" type="text/javascript">
-	        var views = {};
-            <%
-            
-            class ChartView {
-                private final boolean visible;
-                private final String[] charts;
-                
-                public ChartView(final boolean visible, final String[] charts) {
-                    this.visible = visible;
-                    this.charts = charts;
-                }
-                
-                public boolean isVisible() {
-                    return visible;
-                }
-                
-                public String[] getCharts() {
-                    return charts;
-                }
-            }
-            
-            Map<String, ChartView> viewMap = new LinkedHashMap<String, ChartView>();
-            viewMap.put("CPUView", new ChartView(true, new String[]{"CPU", "LoadAverage"}));
-            viewMap.put("MemoryView", new ChartView(true, new String[]{"Memory", "PhysicalMemory"}));
-            viewMap.put("ThreadingView", new ChartView(false, new String[]{"Threading"}));
-            viewMap.put("ClassLoadingView", new ChartView(false, new String[]{"ClassLoading"}));
-            viewMap.put("OtherView", new ChartView(false, new String[]{"FileDescriptor"}));
-            
-            for (String key : viewMap.keySet()) {
-                ChartView chartView = viewMap.get(key);
-                // Use a variable to concatenate keys. This is to avoid escape character issues when concatenating inline.
-                String viewKey = "metrics.view." + key;
-                %>
-	            chartNames = [];
-	            chartTitles = [];
-	            chartViewName = '<fmt:message key="<%=viewKey%>"/>';
-	            views["<%=key%>"] = {name: chartViewName, charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
-                <%
-                String[] charts = chartView.getCharts();
-                for (String chart : charts) {
-                    String chartKey = "metrics.chart." + chart;
-                %>
-                    chartNames.push('<%=chart%>');
-                    chartTitles.push('<fmt:message key="<%=chartKey%>"/>');
-                <%
-                }
-            }
-            %>
-        </script>
-
-        <script src="plugins/d3/d3.min.js"></script>
-        <script src="plugins/vega/vega.js"></script>
-        <script src="plugins/igviz/igviz.js"></script>
-        <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
-        <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
-        <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
-        <script src="js/metrics.ui.js"></script>
         
         <script id="chartTemplate" type="text/x-handlebars-template">
             <div id="chart{{type}}">
@@ -200,4 +144,60 @@
             <br></br>
         </script>
     </fmt:bundle>
+    <script id="initialSetup" type="text/javascript">
+        var views = {};
+        var dataPageUrl;
+        <%
+
+        Map<String, ChartView> viewMap = new LinkedHashMap<String, ChartView>();
+        request.setAttribute("viewMap", viewMap);
+
+        // Check for menu item
+        if (item == null || item.trim().length() == 0) {
+        %>
+            <jsp:include page='<%="metrics_jvm_menu_ajaxprocessor.jsp"%>' />
+            dataPageUrl = 'metrics_jvm_menu_data_ajaxprocessor.jsp';
+        <%
+        } else {
+        %>
+            <jsp:include page='<%=item+"_ajaxprocessor.jsp"%>' />
+            dataPageUrl = '<%=item+"_data_ajaxprocessor.jsp"%>';
+        <%
+        }
+
+        String chartBundle = (String) request.getAttribute("chartBundle");
+        %>
+        <fmt:bundle basename="${chartBundle}">
+        <%
+        for (String key : viewMap.keySet()) {
+            ChartView chartView = viewMap.get(key);
+            // Use a variable to concatenate keys. This is to avoid escape character issues when concatenating inline.
+            String viewKey = "metrics.view." + key;
+            %>
+            chartNames = [];
+            chartTitles = [];
+            chartViewName = '<fmt:message key="<%=viewKey%>" />';
+            views["<%=key%>"] = {name: chartViewName, charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
+            <%
+            String[] charts = chartView.getCharts();
+            for (String chart : charts) {
+                String chartKey = "metrics.chart." + chart;
+            %>
+                chartNames.push('<%=chart%>');
+                chartTitles.push('<fmt:message key="<%=chartKey%>" />');
+            <%
+            }
+        }
+        %>
+        </fmt:bundle>
+    </script>
+
+    <script src="plugins/d3/d3.min.js"></script>
+    <script src="plugins/vega/vega.js"></script>
+    <script src="plugins/igviz/igviz.js"></script>
+    <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
+    <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
+    <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
+    <script src="js/metrics.ui.js"></script>
+
 </div>

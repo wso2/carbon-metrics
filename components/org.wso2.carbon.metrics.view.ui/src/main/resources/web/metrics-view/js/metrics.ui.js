@@ -79,7 +79,11 @@ function plotCharts() {
 }
 
 function plotChart(chart) {
-	var url = "data-ajaxprocessor.jsp";
+    // The dataPageUrl is defined in the JSP page
+    if (!dataPageUrl) {
+        displayNoData(chart);
+        return;
+    }
 
 	var data = metricsJQuery("#formInput").serializeArray();
 	data.push({
@@ -87,7 +91,7 @@ function plotChart(chart) {
 		value : chart
 	});
 
-	metricsJQuery.getJSON(url, data).done(function(data) {
+	metricsJQuery.getJSON(dataPageUrl, data).done(function(data) {
 		igvizPlot(chart, data);
 	})
     .fail(function() {
