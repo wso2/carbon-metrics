@@ -18,13 +18,25 @@
     <!-- Metric View UI Menu Configuration -->
     <menus>
         <menu>
-            <id>metrics_ui_menu</id>
+            <id>metrics_menu</id>
             <i18n-key>metrics.menu.text</i18n-key>
             <i18n-bundle>org.wso2.carbon.metrics.view.ui.i18n.Resources</i18n-bundle>
             <parent-menu>monitor_menu</parent-menu>
+            <link>#</link>
+            <region>region4</region>
+            <order>2</order>
+            <icon>../metrics-view/images/icon_monitor_pc.gif</icon>
+            <style-class>monitor</style-class>
+            <require-permission>/permission/admin/monitor/metrics</require-permission>
+        </menu>
+        <menu>
+            <id>metrics_jvm_menu</id>
+            <i18n-key>metrics.jvm.menu.text</i18n-key>
+            <i18n-bundle>org.wso2.carbon.metrics.view.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>metrics_menu</parent-menu>
             <link>../metrics-view/index.jsp</link>
             <region>region4</region>
-            <order>10</order>
+            <order>1</order>
             <style-class>monitor</style-class>
             <icon>../metrics-view/images/icon_monitor_pc.gif</icon>
             <require-permission>/permission/admin/monitor/metrics</require-permission>
