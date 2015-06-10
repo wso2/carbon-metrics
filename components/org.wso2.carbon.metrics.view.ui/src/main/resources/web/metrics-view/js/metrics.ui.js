@@ -165,7 +165,7 @@ function igvizPlot(chart, data) {
 		"chartType" : "line",
 		"pointVisible": true,
 		"markerSize": 2,
-		"interpolationMode" : "step-after"
+		"interpolationMode" : "linear"
 	}
 
 	var chart = igviz.setUp(igvizId, chartConfig, data);
