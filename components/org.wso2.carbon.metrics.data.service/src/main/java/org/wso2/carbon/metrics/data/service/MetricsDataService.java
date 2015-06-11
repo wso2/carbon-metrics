@@ -18,11 +18,11 @@ package org.wso2.carbon.metrics.data.service;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,6 +62,12 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     private final Pattern fromPattern = Pattern.compile("(\\-?\\d+)([hdm])");
 
     private String currentJDBCReportingSource;
+
+    private static final ValueConverter MEMORY_VALUE_CONVERTER = new MemoryConverter();
+
+    private static final ValueConverter PERCENTAGE_VALUE_CONVERTER = new PercentageConverter();
+
+    private static final ValueConverter DUMB_VALUE_CONVERTER = new DumbConverter();
 
     public MetricsDataService() {
     }
@@ -161,15 +167,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return startTime;
     }
 
-    public List<String> getAllSources() {
-        List<String> sources = reporterDAO.queryAllSources();
+    public String[] getAllSources() {
+        Set<String> sources = reporterDAO.queryAllSources();
         if (sources == null) {
-            sources = new ArrayList<String>();
+            sources = new HashSet<String>();
         }
         if (sources.isEmpty()) {
             sources.add(currentJDBCReportingSource);
         }
-        return sources;
+        return sources.toArray(new String[sources.size()]);
     }
 
     private class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
@@ -181,76 +187,64 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
          */
         private final List<BigDecimal[]> orderedList = new ArrayList<BigDecimal[]>();
 
-        private final String[] names;
+        private final Map<MetricGroup, MetricGroup> metricGroupMap;
+
+        private final String[] dataTypes;
 
         private final String[] displayNames;
 
-        private final ValueConverter[] valueConverters;
-
-        private JVMMetricDataProcessor(String[] names, String[] displayNames, ValueConverter[] valueConverters) {
-            this.names = names;
-            this.displayNames = displayNames;
-            this.valueConverters = valueConverters;
+        private JVMMetricDataProcessor(Map<MetricGroup, MetricGroup> metricGroupMap) {
+            this.metricGroupMap = metricGroupMap;
+            dataTypes = new String[metricGroupMap.size() + 1];
+            displayNames = new String[metricGroupMap.size() + 1];
         }
 
         @Override
-        public void process(String source, String name, long timestamp, BigDecimal value) {
+        public void process(String source, long timestamp, MetricType metricType, String metricName,
+                MetricAttribute metricAttribute, BigDecimal value) {
             BigDecimal[] data = dataMap.get(timestamp);
             if (data == null) {
-                data = new BigDecimal[names.length + 1];
+                data = new BigDecimal[metricGroupMap.size() + 1];
                 dataMap.put(timestamp, data);
                 orderedList.add(data);
                 // First element is the timestamp
                 data[0] = BigDecimal.valueOf(timestamp);
+                dataTypes[0] = "T";
+                displayNames[0] = "Time";
             }
 
-            int index = indexOf(name);
+            MetricGroup metricGroupKey = new MetricGroup(metricType, metricName, metricAttribute);
 
-            if (index >= 0) {
-                data[index + 1] = valueConverters[index].convert(value);
-            }
-        }
+            MetricGroup metricGroup = metricGroupMap.get(metricGroupKey);
 
-        private int indexOf(String name) {
-            for (int i = 0; i < names.length; i++) {
-                if (names[i].equals(name)) {
-                    return i;
-                }
-            }
-            return -1;
+            int index = metricGroup.index;
+
+            data[index + 1] = metricGroup.valueConverter.convert(value);
+            dataTypes[index + 1] = "N";
+            displayNames[index + 1] = metricGroup.displayName;
         }
 
         @Override
         public MetricData getResult() {
-            String[] types = new String[displayNames.length + 1];
-            types[0] = "T";
-            for (int i = 1; i < types.length; i++) {
-                types[i] = "N";
-            }
-
-            List<String> names = new ArrayList<String>(displayNames.length + 1);
-            names.add("Time");
-            names.addAll(Arrays.asList(displayNames));
-
-            return new MetricData(new Metadata(names.toArray(new String[names.size()]), types),
-                    orderedList.toArray(new BigDecimal[orderedList.size()][]));
+            return new MetricData(new Metadata(displayNames, dataTypes), orderedList.toArray(new BigDecimal[orderedList
+                    .size()][]));
         }
     }
 
-    private static final ValueConverter MEMORY_VALUE_CONVERTER = new MemoryConverter();
+    private class MetricGroup {
 
-    private static final ValueConverter PERCENTAGE_VALUE_CONVERTER = new PercentageConverter();
+        private final MetricType metricType;
+        private final String metricName;
+        private final MetricAttribute metricAttribute;
 
-    private static final ValueConverter DUMB_VALUE_CONVERTER = new DumbConverter();
+        private int index;
+        private String displayName;
+        private ValueConverter valueConverter;
 
-    private final class MetricGroupKey {
-
-        private MetricType metricType;
-        private MetricAttribute metricAttribute;
-
-        public MetricGroupKey(MetricType metricType, MetricAttribute metricAttribute) {
+        public MetricGroup(MetricType metricType, String metricName, MetricAttribute metricAttribute) {
             super();
             this.metricType = metricType;
+            this.metricName = metricName;
             this.metricAttribute = metricAttribute;
         }
 
@@ -260,6 +254,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             int result = 1;
             result = prime * result + ((metricAttribute == null) ? 0 : metricAttribute.hashCode());
             result = prime * result + ((metricType == null) ? 0 : metricType.hashCode());
+            result = prime * result + ((metricName == null) ? 0 : metricName.hashCode());
             return result;
         }
 
@@ -271,48 +266,25 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             if (obj == null) {
                 return false;
             }
-            if (!(obj instanceof MetricGroupKey)) {
+            if (!(obj instanceof MetricGroup)) {
                 return false;
             }
-            MetricGroupKey other = (MetricGroupKey) obj;
+            MetricGroup other = (MetricGroup) obj;
             if (metricAttribute != other.metricAttribute) {
                 return false;
             }
             if (metricType != other.metricType) {
                 return false;
             }
+            if (metricName == null) {
+                if (other.metricName != null) {
+                    return false;
+                }
+            } else if (!metricName.equals(other.metricName)) {
+                return false;
+            }
             return true;
         }
-    }
-
-    private class MetricGroup {
-        private MetricType metricType;
-        private MetricAttribute metricAttribute;
-        private List<String> names = new ArrayList<String>();
-        private List<String> displayNames = new ArrayList<String>();
-        private List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-    }
-
-    private MetricData getResults(Collection<MetricGroup> metricGroups, String source, long startTime, long endTime) {
-        List<String> names = new ArrayList<String>();
-        List<String> displayNames = new ArrayList<String>();
-        List<ValueConverter> valueConverters = new ArrayList<ValueConverter>();
-
-        for (MetricGroup metricGroup : metricGroups) {
-            names.addAll(metricGroup.names);
-            displayNames.addAll(metricGroup.displayNames);
-            valueConverters.addAll(metricGroup.valueConverters);
-        }
-
-        JVMMetricDataProcessor processor = new JVMMetricDataProcessor(names.toArray(new String[names.size()]),
-                displayNames.toArray(new String[displayNames.size()]),
-                valueConverters.toArray(new ValueConverter[valueConverters.size()]));
-
-        for (MetricGroup metricGroup : metricGroups) {
-            reporterDAO.queryMetrics(metricGroup.metricType, metricGroup.names, metricGroup.metricAttribute, source,
-                    startTime, endTime, processor);
-        }
-        return processor.getResult();
     }
 
     public MetricData findLastMetrics(MetricList metrics, String source, String from) {
@@ -325,60 +297,119 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     public MetricData findMetricsByTimePeriod(MetricList metrics, String source, long startTime, long endTime) {
-        Collection<MetricGroup> metricGroups = getMetricGroups(metrics);
-        if (metricGroups == null) {
-            return null;
-        }
-        return getResults(metricGroups, source, startTime, endTime);
-    }
 
-    private Collection<MetricGroup> getMetricGroups(MetricList metrics) {
         Metric[] list = null;
         if (metrics == null || (list = metrics.getMetric()) == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Metric List is not available. Returning null");
+            }
             // No metrics
             return null;
         }
-        Map<MetricGroupKey, MetricGroup> map = new HashMap<MetricGroupKey, MetricGroup>();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Metric List Count: %d", list.length));
+        }
+
+        Map<MetricGroup, MetricGroup> metricGroupMap = new HashMap<MetricGroup, MetricGroup>();
+        Map<String, List<MetricAttribute>> nameGroupMap = new HashMap<String, List<MetricAttribute>>();
+        Map<MetricAttribute, List<String>> attributeGroupMap = new HashMap<MetricAttribute, List<String>>();
+        int index = 0;
         for (int i = 0; i < list.length; i++) {
             Metric metric = list[i];
+            String metricName = metric.getName();
+            String displayName = metric.getDisplayName();
             MetricType metricType = MetricType.valueOf(metric.getType());
             MetricAttribute metricAttribute = MetricAttribute.valueOf(metric.getAttr());
             MetricDataFormat metricDataFormat = null;
             if (metric.getFormat() != null) {
                 metricDataFormat = MetricDataFormat.valueOf(metric.getFormat());
             }
-            MetricGroupKey metricGroupKey = new MetricGroupKey(metricType, metricAttribute);
-            MetricGroup metricGroup = map.get(metricGroupKey);
-            if (metricGroup == null) {
-                metricGroup = new MetricGroup();
-                map.put(metricGroupKey, metricGroup);
+
+            List<MetricAttribute> attributes = nameGroupMap.get(metricName);
+            if (attributes == null) {
+                attributes = new ArrayList<MetricAttribute>();
+                nameGroupMap.put(metricName, attributes);
             }
-            metricGroup.metricType = metricType;
-            metricGroup.metricAttribute = metricAttribute;
-            // Metric name should be unique!
-            if (metricGroup.names.contains(metric.getName())) {
-                continue;
+            List<String> names = attributeGroupMap.get(metricAttribute);
+            if (names == null) {
+                names = new ArrayList<String>();
+                attributeGroupMap.put(metricAttribute, names);
             }
-            metricGroup.names.add(metric.getName());
-            metricGroup.displayNames.add(metric.getDisplayName());
+            attributes.add(metricAttribute);
+            names.add(metricName);
+
+            ValueConverter valueConverter;
+
             if (metricDataFormat != null) {
                 switch (metricDataFormat) {
                 case P:
-                    metricGroup.valueConverters.add(PERCENTAGE_VALUE_CONVERTER);
+                    valueConverter = PERCENTAGE_VALUE_CONVERTER;
                     break;
                 case B:
-                    metricGroup.valueConverters.add(MEMORY_VALUE_CONVERTER);
+                    valueConverter = MEMORY_VALUE_CONVERTER;
                     break;
                 default:
-                    metricGroup.valueConverters.add(DUMB_VALUE_CONVERTER);
+                    valueConverter = DUMB_VALUE_CONVERTER;
                     break;
                 }
             } else {
-                metricGroup.valueConverters.add(DUMB_VALUE_CONVERTER);
+                valueConverter = DUMB_VALUE_CONVERTER;
+            }
+
+            MetricGroup metricGroup = new MetricGroup(metricType, metricName, metricAttribute);
+            if (!metricGroupMap.containsKey(metricGroup)) {
+                // Put only if there is no existing metric group. Important for determining correct index
+                metricGroupMap.put(metricGroup, metricGroup);
+                metricGroup.index = index++;
+                metricGroup.displayName = displayName;
+                metricGroup.valueConverter = valueConverter;
             }
         }
 
-        return map.values();
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Metric Group Map Size: %d", metricGroupMap.size()));
+        }
+
+        JVMMetricDataProcessor processor = new JVMMetricDataProcessor(metricGroupMap);
+
+        Set<MetricGroup> processedMetricGroups = new HashSet<MetricGroup>();
+
+        for (MetricGroup metricGroup : metricGroupMap.values()) {
+            if (!processedMetricGroups.contains(metricGroup)) {
+                MetricType metricType = metricGroup.metricType;
+                List<String> names = attributeGroupMap.get(metricGroup.metricAttribute);
+                List<MetricAttribute> attributes = nameGroupMap.get(metricGroup.metricName);
+
+                List<String> metricNames;
+                List<MetricAttribute> metricAttributes;
+
+                if (names.size() > attributes.size()) {
+                    metricNames = names;
+                    metricAttributes = new ArrayList<MetricAttribute>(1);
+                    metricAttributes.add(metricGroup.metricAttribute);
+                } else {
+                    metricAttributes = attributes;
+                    metricNames = new ArrayList<String>(1);
+                    metricNames.add(metricGroup.metricName);
+                }
+
+                reporterDAO.queryMetrics(metricType, metricNames, metricAttributes, source, startTime, endTime,
+                        processor);
+
+                for (String metricName : metricNames) {
+                    for (MetricAttribute metricAttribute : metricAttributes) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(String.format("Processed. Metric Type: %s, Name: %s, Attribute: %s",
+                                    metricType, metricName, metricAttribute));
+                        }
+                        processedMetricGroups.add(new MetricGroup(metricType, metricName, metricAttribute));
+                    }
+                }
+
+            }
+        }
+        return processor.getResult();
     }
 
 }

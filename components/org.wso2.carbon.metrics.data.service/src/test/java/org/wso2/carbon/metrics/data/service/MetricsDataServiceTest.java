@@ -100,9 +100,9 @@ public class MetricsDataServiceTest extends TestCase {
     }
 
     public void testSources() {
-        List<String> sources = metricsDataService.getAllSources();
-        assertEquals("There is one source", 1, sources.size());
-        assertEquals("The source is " + SOURCE, SOURCE, sources.get(0));
+        String[] sources = metricsDataService.getAllSources();
+        assertEquals("There is one source", 1, sources.length);
+        assertEquals("The source is " + SOURCE, SOURCE, sources[0]);
     }
 
     public void testLast1MinuteJMXMemoryMetrics() {
@@ -135,6 +135,10 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are nine types", 9, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are nine values", 9, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
         }
     }
 
@@ -180,6 +184,7 @@ public class MetricsDataServiceTest extends TestCase {
             assertEquals("There are three values", 3, metricData.getData()[i].length);
             for (int j = 1; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
                 assertTrue("Value is greater than or equal to zero", value.compareTo(BigDecimal.ZERO) >= 0);
                 assertTrue("Value is less than or equal to 100%", value.compareTo(new BigDecimal("100")) <= 0);
             }
@@ -201,6 +206,10 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are two types", 2, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are two values", 2, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
         }
     }
 
@@ -220,6 +229,10 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are three values", 3, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
         }
     }
 
@@ -245,6 +258,10 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are six types", 6, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are six values", 6, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
         }
     }
 
@@ -263,6 +280,10 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are three values", 3, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
         }
     }
 
@@ -285,6 +306,108 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There are four types", 4, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
             assertEquals("There are four values", 4, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
+        }
+    }
+
+    public void testDatabaseReadWriteAndJMXMetrics() {
+        // This test will check the metric find queries
+        List<Metric> metrics = new ArrayList<Metric>();
+        // Read Metrics
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Minimum Database Read Time", MetricAttribute.MIN,
+                null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Mean Database Read Time", MetricAttribute.MEAN, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Maximum Database Read Time", MetricAttribute.MAX,
+                null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Standard Deviation of Database Read Time",
+                MetricAttribute.STDDEV, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "50th Percentile of Database Read Time",
+                MetricAttribute.P50, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "75th Percentile of Database Read Time",
+                MetricAttribute.P75, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "95th Percentile of Database Read Time",
+                MetricAttribute.P95, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "98th Percentile of Database Read Time",
+                MetricAttribute.P98, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "99th Percentile of Database Read Time",
+                MetricAttribute.P99, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "99.9th Percentile of Database Read Time",
+                MetricAttribute.P999, null));
+
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Mean Rate", MetricAttribute.MEAN_RATE,
+                null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Last Minute Rate",
+                MetricAttribute.M1_RATE, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Last 5 Minutes Rate",
+                MetricAttribute.M5_RATE, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Last 15 Minutes Rate",
+                MetricAttribute.M15_RATE, null));
+
+        // JMX Thread
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads", MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.daemon.count", "Daemon Threads", MetricAttribute.VALUE,
+                null));
+
+        // Write Metrics
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Minimum Database Write Time", MetricAttribute.MIN,
+                null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Mean Database Write Time", MetricAttribute.MEAN,
+                null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Maximum Database Write Time", MetricAttribute.MAX,
+                null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Standard Deviation of Database Write Time",
+                MetricAttribute.STDDEV, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "50th Percentile of Database Write Time",
+                MetricAttribute.P50, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "75th Percentile of Database Write Time",
+                MetricAttribute.P75, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "95th Percentile of Database Write Time",
+                MetricAttribute.P95, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "98th Percentile of Database Write Time",
+                MetricAttribute.P98, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "99th Percentile of Database Write Time",
+                MetricAttribute.P99, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "99.9th Percentile of Database Write Time",
+                MetricAttribute.P999, null));
+
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Mean Rate",
+                MetricAttribute.MEAN_RATE, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Last Minute Rate",
+                MetricAttribute.M1_RATE, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Last 5 Minutes Rate",
+                MetricAttribute.M5_RATE, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Last 15 Minutes Rate",
+                MetricAttribute.M15_RATE, null));
+
+        // JMX Class Loading
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current", "Current Classes Loaded",
+                MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.total", "Total Classes Loaded",
+                MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total", "Total Classes Unloaded",
+                MetricAttribute.VALUE, null));
+
+        // Duplicate Metric
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total", "Total Classes Unloaded",
+                MetricAttribute.VALUE, null));
+
+        MetricList metricList = new MetricList();
+        metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
+
+        MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
+
+        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There are 34 names", 34, metricData.getMetadata().getNames().length);
+        assertEquals("There are 34 types", 34, metricData.getMetadata().getTypes().length);
+        for (int i = 0; i < metricData.getData().length; i++) {
+            assertEquals("There are 34 values", 34, metricData.getData()[i].length);
+            for (int j = 0; j < metricData.getData()[i].length; j++) {
+                BigDecimal value = metricData.getData()[i][j];
+                assertNotNull("Value is available", value);
+            }
         }
     }
 
