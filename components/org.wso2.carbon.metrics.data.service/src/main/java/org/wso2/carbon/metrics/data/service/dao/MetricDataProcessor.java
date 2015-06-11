@@ -17,12 +17,16 @@ package org.wso2.carbon.metrics.data.service.dao;
 
 import java.math.BigDecimal;
 
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricType;
+
 /**
  * Implementing class should process metric data and return the final result.
  */
 public interface MetricDataProcessor<T> {
 
-    void process(String source, String name, long timestamp, BigDecimal value);
+    void process(String source, long timestamp, MetricType metricType, String name, MetricAttribute attribute,
+            BigDecimal value);
 
     T getResult();
 

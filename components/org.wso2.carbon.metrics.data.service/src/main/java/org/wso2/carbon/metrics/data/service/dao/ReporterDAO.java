@@ -106,11 +106,16 @@ public class ReporterDAO {
         validMetricAttributeMap.put(MetricType.TIMER, attributes);
     }
 
-    private void validateMetricAttribute(MetricType metricType, MetricAttribute metricAttribute) {
+    private void validateMetricAttributes(MetricType metricType, List<MetricAttribute> metricAttributes) {
         Set<MetricAttribute> attributes = validMetricAttributeMap.get(metricType);
-        if (attributes == null || !attributes.contains(metricAttribute)) {
-            throw new IllegalArgumentException("Invalid Metric Attribute \"" + metricAttribute.name()
-                    + "\" for the Metric Type \"" + metricType.name() + "\"");
+        if (attributes == null) {
+            return;
+        }
+        for (MetricAttribute metricAttribute : metricAttributes) {
+            if (!attributes.contains(metricAttribute)) {
+                throw new IllegalArgumentException("Invalid Metric Attribute \"" + metricAttribute.name()
+                        + "\" for the Metric Type \"" + metricType.name() + "\"");
+            }
         }
     }
 
@@ -171,23 +176,45 @@ public class ReporterDAO {
         return results;
     }
 
-    public <T> void queryMetrics(MetricType metricType, List<String> names, MetricAttribute metricAttribute,
+    public <T> void queryMetrics(MetricType metricType, List<String> names, List<MetricAttribute> attributes,
             String source, long startTime, long endTime, MetricDataProcessor<T> processor) {
-        validateMetricAttribute(metricType, metricAttribute);
+        if (logger.isDebugEnabled()) {
+            logger.debug(String
+                    .format("Metric Search Query Parameters. Metric Type: %s, Names: %s, Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
+                            metricType, names, attributes, source, startTime, endTime));
+        }
+        validateMetricAttributes(metricType, attributes);
         StringBuilder queryBuilder = new StringBuilder("SELECT NAME, TIMESTAMP, ");
-        queryBuilder.append(getColumnName(metricAttribute));
-        queryBuilder.append(" FROM ");
-        queryBuilder.append(getTableName(metricType));
-        queryBuilder.append(" WHERE NAME IN (");
-        for (int i = 0; i < names.size(); i++) {
+        for (int i = 0; i < attributes.size(); i++) {
             if (i > 0) {
                 queryBuilder.append(", ");
             }
-            queryBuilder.append("?");
+            queryBuilder.append(getColumnName(attributes.get(i)));
         }
-        queryBuilder.append(") AND TIMESTAMP >= ? AND TIMESTAMP <= ?");
+        queryBuilder.append(" FROM ");
+        queryBuilder.append(getTableName(metricType));
+        queryBuilder.append(" WHERE");
+        if (names.size() == 1) {
+            queryBuilder.append(" NAME = ?");
+        } else {
+            queryBuilder.append(" NAME IN (");
+            for (int i = 0; i < names.size(); i++) {
+                if (i > 0) {
+                    queryBuilder.append(", ");
+                }
+                queryBuilder.append("?");
+            }
+            queryBuilder.append(")");
+        }
+        queryBuilder.append(" AND TIMESTAMP >= ? AND TIMESTAMP <= ?");
         queryBuilder.append(" AND SOURCE = ?");
         queryBuilder.append(" ORDER BY TIMESTAMP");
+
+        String query = queryBuilder.toString();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Metric Search Query: %s", query));
+        }
 
         Connection connection = null;
         PreparedStatement ps = null;
@@ -195,7 +222,7 @@ public class ReporterDAO {
         try {
             connection = dataSource.getConnection();
 
-            ps = connection.prepareStatement(queryBuilder.toString());
+            ps = connection.prepareStatement(query);
             int i;
             for (i = 0; i < names.size(); i++) {
                 ps.setString(i + 1, names.get(i));
@@ -209,14 +236,17 @@ public class ReporterDAO {
             while (rs.next()) {
                 String name = rs.getString(1);
                 long timestamp = rs.getLong(2);
-                BigDecimal value;
-                try {
-                    value = rs.getBigDecimal(3);
-                } catch (NumberFormatException e) {
-                    value = BigDecimal.ZERO;
-                    // throw?
+                for (int j = 0; j < attributes.size(); j++) {
+                    BigDecimal value;
+                    try {
+                        value = rs.getBigDecimal(3 + j);
+                    } catch (NumberFormatException e) {
+                        value = BigDecimal.ZERO;
+                        // throw?
+                    }
+                    processor.process(source, timestamp, metricType, name, attributes.get(j), value);
                 }
-                processor.process(source, name, timestamp, value);
+
             }
 
             ps.close();
