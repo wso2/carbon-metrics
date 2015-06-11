@@ -22,12 +22,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.sql.DataSource;
 
@@ -119,8 +119,8 @@ public class ReporterDAO {
         }
     }
 
-    public List<String> queryAllSources() {
-        List<String> results = new ArrayList<String>();
+    public Set<String> queryAllSources() {
+        Set<String> results = new TreeSet<String>();
 
         Connection connection = null;
 
@@ -133,9 +133,6 @@ public class ReporterDAO {
                     results.addAll(list);
                 }
             }
-
-            // Sort source names
-            Collections.sort(results);
 
             connection.close();
             connection = null;

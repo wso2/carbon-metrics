@@ -167,15 +167,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return startTime;
     }
 
-    public List<String> getAllSources() {
-        List<String> sources = reporterDAO.queryAllSources();
+    public String[] getAllSources() {
+        Set<String> sources = reporterDAO.queryAllSources();
         if (sources == null) {
-            sources = new ArrayList<String>();
+            sources = new HashSet<String>();
         }
         if (sources.isEmpty()) {
             sources.add(currentJDBCReportingSource);
         }
-        return sources;
+        return sources.toArray(new String[sources.size()]);
     }
 
     private class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
@@ -233,10 +233,11 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
     private class MetricGroup {
 
-        private int index;
         private final MetricType metricType;
         private final String metricName;
         private final MetricAttribute metricAttribute;
+
+        private int index;
         private String displayName;
         private ValueConverter valueConverter;
 
@@ -245,16 +246,6 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             this.metricType = metricType;
             this.metricName = metricName;
             this.metricAttribute = metricAttribute;
-        }
-
-        public MetricGroup(MetricType metricType, String metricName, MetricAttribute metricAttribute,
-                String displayName, ValueConverter valueConverter) {
-            super();
-            this.metricType = metricType;
-            this.metricName = metricName;
-            this.metricAttribute = metricAttribute;
-            this.displayName = displayName;
-            this.valueConverter = valueConverter;
         }
 
         @Override
@@ -366,10 +357,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 valueConverter = DUMB_VALUE_CONVERTER;
             }
 
-            MetricGroup metricGroup = new MetricGroup(metricType, metricName, metricAttribute, displayName,
-                    valueConverter);
-            if (metricGroupMap.put(metricGroup, metricGroup) == null) {
+            MetricGroup metricGroup = new MetricGroup(metricType, metricName, metricAttribute);
+            if (!metricGroupMap.containsKey(metricGroup)) {
+                // Put only if there is no existing metric group. Important for determining correct index
+                metricGroupMap.put(metricGroup, metricGroup);
                 metricGroup.index = index++;
+                metricGroup.displayName = displayName;
+                metricGroup.valueConverter = valueConverter;
             }
         }
 
