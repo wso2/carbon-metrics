@@ -197,6 +197,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             this.metricGroupMap = metricGroupMap;
             dataTypes = new String[metricGroupMap.size() + 1];
             displayNames = new String[metricGroupMap.size() + 1];
+
+            // Initialize types and display names
+            dataTypes[0] = "T";
+            displayNames[0] = "Time";
+            for (MetricGroup metricGroup : metricGroupMap.values()) {
+                int index = metricGroup.index;
+                dataTypes[index + 1] = "N";
+                displayNames[index + 1] = metricGroup.displayName;
+            }
         }
 
         @Override
@@ -209,8 +218,6 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 orderedList.add(data);
                 // First element is the timestamp
                 data[0] = BigDecimal.valueOf(timestamp);
-                dataTypes[0] = "T";
-                displayNames[0] = "Time";
             }
 
             MetricGroup metricGroupKey = new MetricGroup(metricType, metricName, metricAttribute);
@@ -220,8 +227,6 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             int index = metricGroup.index;
 
             data[index + 1] = metricGroup.valueConverter.convert(value);
-            dataTypes[index + 1] = "N";
-            displayNames[index + 1] = metricGroup.displayName;
         }
 
         @Override
