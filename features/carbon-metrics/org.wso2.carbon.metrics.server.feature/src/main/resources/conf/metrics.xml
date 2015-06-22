@@ -34,7 +34,9 @@
         <CSV>
             <Enabled>false</Enabled>
             <Location>${carbon.home}/repository/logs/metrics/</Location>
-            <!-- Polling Period in seconds -->
+            <!-- Polling Period in seconds.
+                This is the period for polling metrics from the metric registry and
+                update CSV files in the given location -->
             <PollingPeriod>60</PollingPeriod>
         </CSV>
         <JDBC>
@@ -50,7 +52,9 @@
                 file in conf/datasources directory.
             -->
             <DataSourceName>jdbc/WSO2MetricsDB</DataSourceName>
-            <!-- Polling Period in seconds -->
+            <!-- Polling Period in seconds.
+                This is the period for polling metrics from the metric registry and
+                updating the database with the values -->
             <PollingPeriod>60</PollingPeriod>
             <ScheduledCleanup>
                 <!--
