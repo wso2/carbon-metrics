@@ -38,95 +38,95 @@
 <link href="css/metrics.css" type="text/css" rel="stylesheet" property="stylesheet" />
 
 
-	<%
-	    String item = request.getParameter("item");
+    <%
+        String item = request.getParameter("item");
 
-	    String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-	    ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
-	            CarbonConstants.CONFIGURATION_CONTEXT);
-	    String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
-	    MetricsViewClient metricsViewClient;
-	    String[] sources = null;
-	    try {
-	        metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
-	        sources = metricsViewClient.getAllSources();
-	    } catch (Exception e) {
-	        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
+                CarbonConstants.CONFIGURATION_CONTEXT);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        MetricsViewClient metricsViewClient;
+        String[] sources = null;
+        try {
+            metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
+            sources = metricsViewClient.getAllSources();
+        } catch (Exception e) {
+            CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
     %>
     <script type="text/javascript">
         location.href = "../admin/error.jsp";
     </script>
     <%
-	        return;
-	    }
-	%>
+            return;
+        }
+    %>
 
-	<fmt:bundle basename="org.wso2.carbon.metrics.view.ui.i18n.Resources">
+    <fmt:bundle basename="org.wso2.carbon.metrics.view.ui.i18n.Resources">
 
-		<carbon:breadcrumb label="metrics.view" resourceBundle="org.wso2.carbon.metrics.view.ui.i18n.Resources" topPage="true"
-			request="<%=request%>" />
-		<div id="middle">
-			<h2>
-				<fmt:message key="metrics.view" />
-			</h2>
-			<div id="workArea">
-				<form id="formInput">
-					<table border="0" class="styledLeft">
-						<tbody>
-							<tr>
-								<td>
-									<table id="metricsViewInputTable" class="normal" style="width: 100%">
-										<tr>
-											<td style="width: 5%;">
-											    <fmt:message key="metrics.source.tip" var="msgKeySourceTip"/>
-											    <label for="source" title="${msgKeySourceTip}"><fmt:message key="metrics.source" /></label>
-											</td>
-											<td style="width: 15%;"><select name="source" id="source">
+        <carbon:breadcrumb label="metrics.view" resourceBundle="org.wso2.carbon.metrics.view.ui.i18n.Resources" topPage="true"
+            request="<%=request%>" />
+        <div id="middle">
+            <h2>
+                <fmt:message key="metrics.view" />
+            </h2>
+            <div id="workArea">
+                <form id="formInput">
+                    <table border="0" class="styledLeft">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table id="metricsViewInputTable" class="normal" style="width: 100%">
+                                        <tr>
+                                            <td style="width: 5%;">
+                                                <fmt:message key="metrics.source.tip" var="msgKeySourceTip"/>
+                                                <label for="source" title="${msgKeySourceTip}"><fmt:message key="metrics.source" /></label>
+                                            </td>
+                                            <td style="width: 15%;"><select name="source" id="source">
 
-													<%
-												        for (String source : sources) {
-													%>
-													<option value="<%=source%>"><%=source%></option>
-													<%
-													    }
-													%>
+                                                    <%
+                                                        for (String source : sources) {
+                                                    %>
+                                                    <option value="<%=source%>"><%=source%></option>
+                                                    <%
+                                                        }
+                                                    %>
 
-											</select></td>
-											<td style="width: 5%;">
-											    <fmt:message key="metrics.views.tip" var="msgKeyViewTip"/>
-											    <label title="${msgKeyViewTip}"><fmt:message key="metrics.views" /></label>
-											</td>
-											<td><div id="viewsSelection"></div></td>
-											<td style="width: 2%;">
-											    <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip"/>
-											    <a id="reloadButton" class="icon-link"
+                                            </select></td>
+                                            <td style="width: 5%;">
+                                                <fmt:message key="metrics.views.tip" var="msgKeyViewTip"/>
+                                                <label title="${msgKeyViewTip}"><fmt:message key="metrics.views" /></label>
+                                            </td>
+                                            <td><div id="viewsSelection"></div></td>
+                                            <td style="width: 2%;">
+                                                <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip"/>
+                                                <a id="reloadButton" class="icon-link"
                                                     href="javascript:plotCharts()" title="${msgKeyReloadTip}"><fmt:message key="metrics.reload" /></a></td>
-											<td style="width: 10%;"><select name="from" id="from">
-													<option value="-5m">Last 5 minutes</option>
-													<option value="-15m">Last 15 minutes</option>
-													<option value="-1h">Last 1 hour</option>
-													<option value="-2h">Last 2 hours</option>
-													<option value="-6h">Last 6 hours</option>
-													<option value="-12h">Last 12 hours</option>
-													<option value="-24h" selected="selected">Last 24 hours</option>
-													<option value="-2d">Last 2 days</option>
-													<option value="-7d">Last 7 days</option>
-													<option value="-30d">Last 30 days</option>
-											</select></td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</form>
+                                            <td style="width: 10%;"><select name="from" id="from">
+                                                    <option value="-5m">Last 5 minutes</option>
+                                                    <option value="-15m">Last 15 minutes</option>
+                                                    <option value="-1h">Last 1 hour</option>
+                                                    <option value="-2h">Last 2 hours</option>
+                                                    <option value="-6h">Last 6 hours</option>
+                                                    <option value="-12h">Last 12 hours</option>
+                                                    <option value="-24h" selected="selected">Last 24 hours</option>
+                                                    <option value="-2d">Last 2 days</option>
+                                                    <option value="-7d">Last 7 days</option>
+                                                    <option value="-30d">Last 30 days</option>
+                                            </select></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
 
- 				<br/>
+                 <br/>
  
                 <div id="chartHolder"></div>
-				
-			</div>
-		</div>
+                
+            </div>
+        </div>
         
         <script id="chartTemplate" type="text/x-handlebars-template">
             <div id="chart{{type}}">
