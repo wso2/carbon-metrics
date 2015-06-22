@@ -13,23 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Metrics UI specific jQuery object to avoid conflicts with other jQuery versions
 var metricsJQuery = jQuery.noConflict();
 
+// Charts are grouped in to different views.
+
+// Chart names in the metrics view
 var charts = [];
+// Titles for charts. Relevant title for a chart is identified by the index
 var titles = [];
 
 metricsJQuery(function($) {
+    // First of all initialize charts and views arrays
     createViewSelection();
-	plotCharts();
+    plotCharts();
+
+	// Register resize callback handler
 	metricsJQuery(window).on('resize', resizeCharts);
+
+	// Plot charts when input value changes
 	metricsJQuery("#source").change(plotCharts);
 	metricsJQuery("#from").change(plotCharts);
 });
 
+// Populate charts and titles arrays according to the selected views
 function createViewSelection() {
-
+    // Container for keeping view selection check boxes
     var container = metricsJQuery("#viewsSelection");
-    
+    // The "views" variable is defined in the JSP page.
     metricsJQuery.each(views, function( key, view ) {
         var checkboxId = "cb".concat(key);
         // Check whether the value is stored as a cookie
@@ -62,11 +73,11 @@ function createChartHolders() {
     metricsJQuery.map(charts, createChartHolder);
 }
 
-function createChartHolder(chart, i) {
+function createChartHolder(chart, index) {
     // Get the template, compile and append to main chart holder
     var source   = $("#chartTemplate").html();
     var template = Handlebars.compile(source);
-    var context = {type: chart, title: titles[i]};
+    var context = {type: chart, title: titles[index]};
     var html    = template(context);
 
     metricsJQuery("#chartHolder").append(html);
@@ -173,7 +184,7 @@ function igvizPlot(chart, data) {
 	}
 
 	var chart = igviz.setUp(igvizId, chartConfig, data);
-
+    // Keep chart, data and configuration in toggle inputs' container
 	metricsJQuery(toggleId).data("chartConfig", chartConfig);
 	metricsJQuery(toggleId).data("data", data);
 	metricsJQuery(toggleId).data("chart", chart);
