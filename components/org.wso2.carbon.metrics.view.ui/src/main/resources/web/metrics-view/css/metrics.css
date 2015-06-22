@@ -20,3 +20,14 @@
 .igvizChart {
 	padding: 5px;
 }
+
+#reloadButton {
+    background: url('../images/refresh.png') no-repeat;
+    padding-left: 20px;
+    background-position: left;
+}
+
+#metricsViewInputTable td {
+   padding-left: 10px;
+   padding-right: 10px;
+}

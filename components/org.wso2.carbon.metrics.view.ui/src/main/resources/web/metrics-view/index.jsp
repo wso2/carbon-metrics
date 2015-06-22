@@ -75,9 +75,12 @@
 						<tbody>
 							<tr>
 								<td>
-									<table class="normal" style="width: 100%">
+									<table id="metricsViewInputTable" class="normal" style="width: 100%">
 										<tr>
-											<td style="width: 5%; padding-right: 2px !important;"><fmt:message key="metrics.source" /></td>
+											<td style="width: 5%;">
+											    <fmt:message key="metrics.source.tip" var="msgKeySourceTip"/>
+											    <label for="source" title="${msgKeySourceTip}"><fmt:message key="metrics.source" /></label>
+											</td>
 											<td style="width: 15%;"><select name="source" id="source">
 
 													<%
@@ -89,10 +92,15 @@
 													%>
 
 											</select></td>
-											<td style="width: 5%; padding-right: 2px !important;"><fmt:message key="metrics.views" /></td>
+											<td style="width: 5%;">
+											    <fmt:message key="metrics.views.tip" var="msgKeyViewTip"/>
+											    <label title="${msgKeyViewTip}"><fmt:message key="metrics.views" /></label>
+											</td>
 											<td><div id="viewsSelection"></div></td>
-											<td style="width: 25px; padding-right: 2px !important;"><a id="refreshButton" class="icon-link"
-												style="background-image: url(images/refresh.png);" href="javascript:plotCharts()"></a></td>
+											<td style="width: 2%;">
+											    <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip"/>
+											    <a id="reloadButton" class="icon-link"
+                                                    href="javascript:plotCharts()" title="${msgKeyReloadTip}"><fmt:message key="metrics.reload" /></a></td>
 											<td style="width: 10%;"><select name="from" id="from">
 													<option value="-5m">Last 5 minutes</option>
 													<option value="-15m">Last 15 minutes</option>
