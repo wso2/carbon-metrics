@@ -24,17 +24,97 @@ var charts = [];
 var titles = [];
 
 metricsJQuery(function($) {
+    // Initializing UI components
+    initJQueryUIComponents();
+
     // First of all initialize charts and views arrays
     createViewSelection();
+    // Plot charts
     plotCharts();
 
     // Register resize callback handler
     metricsJQuery(window).on('resize', resizeCharts);
-
-    // Plot charts when input value changes
-    metricsJQuery("#source").change(plotCharts);
-    metricsJQuery("#from").change(plotCharts);
 });
+
+function initJQueryUIComponents() {
+    // Initialize source select menu
+    var sourceMenu = metricsJQuery("#source");
+    sourceMenu.selectmenu();
+
+    // Initialize from select menu
+    var fromMenu = metricsJQuery("#from");
+    fromMenu.selectmenu({
+        change : showHideCustomRangeEvent
+    });
+    // Check the selected value. Useful when reloading the page
+    showHideCustomRange(fromMenu.val());
+
+    // Initialize reload button
+    var reloadButton = metricsJQuery("#reloadButton");
+    reloadButton.button({
+        icons : {
+            primary : "ui-icon-refresh"
+        }
+    });
+
+    metricsJQuery("#metricsViewInputTable").tooltip();
+
+    // Initialize Date Time Pickers and support time range selection
+    var fromTimeInput = metricsJQuery("#fromTime");
+
+    var toTimeInput = metricsJQuery("#toTime");
+
+    fromTimeInput.datetimepicker({
+        changeMonth : true,
+        changeYear : true,
+        onClose : function(dateText, inst) {
+            if (toTimeInput.val() != '') {
+                var testStartDate = fromTimeInput.datetimepicker('getDate');
+                var testEndDate = toTimeInput.datetimepicker('getDate');
+                if (testStartDate > testEndDate)
+                    toTimeInput.datetimepicker('setDate', testStartDate);
+            } else {
+                toTimeInput.val(dateText);
+            }
+        },
+        onSelect : function(selectedDateTime) {
+            toTimeInput.datetimepicker('option', 'minDate', fromTimeInput.datetimepicker('getDate'));
+        }
+    });
+    toTimeInput.datetimepicker({
+        changeMonth : true,
+        changeYear : true,
+        onClose : function(dateText, inst) {
+            if (fromTimeInput.val() != '') {
+                var testStartDate = fromTimeInput.datetimepicker('getDate');
+                var testEndDate = toTimeInput.datetimepicker('getDate');
+                if (testStartDate > testEndDate)
+                    fromTimeInput.datetimepicker('setDate', testEndDate);
+            } else {
+                fromTimeInput.val(dateText);
+            }
+        },
+        onSelect : function(selectedDateTime) {
+            fromTimeInput.datetimepicker('option', 'maxDate', toTimeInput.datetimepicker('getDate'));
+        }
+    });
+
+}
+
+// This function is set as an event listener to from menu
+function showHideCustomRangeEvent(event) {
+    showHideCustomRange(this.value);
+}
+
+// Show/Hide custom range inputs depending on the selected value
+function showHideCustomRange(selectedValue) {
+    var customRange = metricsJQuery(".customRange");
+    if (selectedValue === "custom") {
+        customRange.show();
+    } else {
+        customRange.hide();
+    }
+}
 
 // Populate charts and titles arrays according to the selected views
 function createViewSelection() {
@@ -63,7 +143,10 @@ function createViewSelection() {
         }
 
     });
-    
+
+    // Show views as button set
+    container.buttonset();
+
     container.on("click", "input:checkbox",  refreshViews);
 }
 
@@ -96,11 +179,46 @@ function plotChart(chart) {
         return;
     }
 
+    // Get Chart Data to be submitted for dataPageUrl
     var data = metricsJQuery("#formInput").serializeArray();
     data.push({
         name : "type",
         value : chart
     });
+
+    var fromMenu = metricsJQuery("#from");
+    if (fromMenu.val() === "custom") {
+        var fromTimeInput = metricsJQuery("#fromTime");
+        var toTimeInput = metricsJQuery("#toTime");
+
+        var fromDate = fromTimeInput.datetimepicker('getDate');
+        var toDate = toTimeInput.datetimepicker('getDate');
+        if (!fromDate) {
+            fromTimeInput.addClass("ui-state-error");
+            // Cannot display an alert message as plotChart is invoked multiple
+            // times for each chart
+            return;
+        } else {
+            fromTimeInput.removeClass("ui-state-error");
+        }
+        if (!toDate) {
+            toTimeInput.addClass("ui-state-error");
+            return;
+        } else {
+            toTimeInput.removeClass("ui-state-error");
+        }
+
+        metricsJQuery.each(data, function(index, value) {
+            if (value.name === "from") {
+                value.value = fromDate.getTime();
+            }
+        });
+
+        data.push({
+            name : "to",
+            value : toDate.getTime()
+        });
+    }
 
     metricsJQuery.getJSON(dataPageUrl, data).done(function(data) {
         igvizPlot(chart, data);

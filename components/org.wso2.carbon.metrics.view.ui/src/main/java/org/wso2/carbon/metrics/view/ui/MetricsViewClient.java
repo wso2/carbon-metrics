@@ -65,6 +65,17 @@ public class MetricsViewClient {
         }
     }
 
+    public MetricDataWrapper findMetricsByTimePeriod(MetricList metrics, String source, long from, long to)
+            throws RemoteException {
+        try {
+            return new MetricDataWrapper(stub.findMetricsByTimePeriod(convert(metrics), source, from, to));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
     private org.wso2.carbon.metrics.data.service.stub.common.MetricList convert(MetricList list) {
         org.wso2.carbon.metrics.data.service.stub.common.MetricList xsdMetricList = new org.wso2.carbon.metrics.data.service.stub.common.MetricList();
         Metric[] metrics = list.getMetric();

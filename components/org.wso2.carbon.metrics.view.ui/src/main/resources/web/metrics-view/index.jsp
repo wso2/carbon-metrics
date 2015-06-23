@@ -32,9 +32,14 @@
 <div>
 
 <!-- Removed head tag. This page is rendered within the body tag in Management Console -->
-
+<!-- jQuery UI styles -->
+<link href="plugins/jquery-ui/jquery-ui.structure.min.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<link href="plugins/jquery-ui/jquery-ui.theme.min.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<!-- jQuery UI Timepicker styles -->
+<link href="plugins/jquery-ui/jquery-ui-timepicker-addon.min.css" type="text/css" rel="stylesheet" property="stylesheet" />
 <!-- igviz styles -->
 <link href="plugins/igviz/igviz.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<!-- Metrics UI styles -->
 <link href="css/metrics.css" type="text/css" rel="stylesheet" property="stylesheet" />
 
 
@@ -69,7 +74,7 @@
             <h2>
                 <fmt:message key="metrics.view" />
             </h2>
-            <div id="workArea">
+            <div id="workArea" class="metricsView">
                 <form id="formInput">
                     <table border="0" class="styledLeft">
                         <tbody>
@@ -78,10 +83,13 @@
                                     <table id="metricsViewInputTable" class="normal" style="width: 100%">
                                         <tr>
                                             <td style="width: 5%;">
-                                                <fmt:message key="metrics.source.tip" var="msgKeySourceTip"/>
-                                                <label for="source" title="${msgKeySourceTip}"><fmt:message key="metrics.source" /></label>
+                                                <fmt:message key="metrics.source.tip" var="msgKeySourceTip" />
+                                                <label for="source" title="${msgKeySourceTip}">
+                                                    <fmt:message key="metrics.source" />
+                                                </label>
                                             </td>
-                                            <td style="width: 15%;"><select name="source" id="source">
+                                            <td style="width: 15%;">
+                                                <select name="source" id="source" style="width: 100%" title="${msgKeySourceTip}">
 
                                                     <%
                                                         for (String source : sources) {
@@ -93,15 +101,37 @@
 
                                             </select></td>
                                             <td style="width: 5%;">
-                                                <fmt:message key="metrics.views.tip" var="msgKeyViewTip"/>
-                                                <label title="${msgKeyViewTip}"><fmt:message key="metrics.views" /></label>
+                                                <fmt:message key="metrics.views.tip" var="msgKeyViewTip" />
+                                                <label title="${msgKeyViewTip}">
+                                                    <fmt:message key="metrics.views" />
+                                                </label>
                                             </td>
-                                            <td><div id="viewsSelection"></div></td>
-                                            <td style="width: 2%;">
-                                                <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip"/>
-                                                <a id="reloadButton" class="icon-link"
-                                                    href="javascript:plotCharts()" title="${msgKeyReloadTip}"><fmt:message key="metrics.reload" /></a></td>
-                                            <td style="width: 10%;"><select name="from" id="from">
+                                            <td>
+                                                <div id="viewsSelection"></div>
+                                            </td>
+                                            <td style="width: 2%; text-align: right;">
+                                                <fmt:message key="metrics.from.tip" var="msgKeyFromTip" />
+                                                <label for="fromTime" class="customRange" title="${msgKeyFromTip}">
+                                                    <fmt:message key="metrics.from" />
+                                                </label>
+                                            </td>
+                                            <td style="width: 5%;">
+                                                <input type="text" id="fromTime" name="fromTime"
+                                                    class="customRange inputTime" title="${msgKeyFromTip}" />
+                                            </td>
+                                            <td style="width: 2%; text-align: right;">
+                                                <fmt:message key="metrics.to.tip" var="msgKeyToTip" />
+                                                <label for="toTime" class="customRange" title="${msgKeyToTip}">
+                                                    <fmt:message key="metrics.to" />
+                                                </label>
+                                            </td>
+                                            <td style="width: 5%;">
+                                                <input type="text" id="toTime" name="toTime"
+                                                    class="customRange inputTime" title="${msgKeyToTip}" />
+                                            </td>
+                                            <td style="width: 10%;">
+                                                <fmt:message key="metrics.fromselect.tip" var="msgKeyFromSelectTip" />
+                                                <select name="from" id="from" title="${msgKeyFromSelectTip}">
                                                     <option value="-5m">Last 5 minutes</option>
                                                     <option value="-15m">Last 15 minutes</option>
                                                     <option value="-1h">Last 1 hour</option>
@@ -112,7 +142,16 @@
                                                     <option value="-2d">Last 2 days</option>
                                                     <option value="-7d">Last 7 days</option>
                                                     <option value="-30d">Last 30 days</option>
-                                            </select></td>
+                                                    <option value="custom">Custom</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 2%;">
+                                                <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip" />
+                                                <button id="reloadButton" type="button" onclick="plotCharts();"
+                                                    title="${msgKeyReloadTip}">
+                                                    <fmt:message key="metrics.reload" />
+                                                </button>
+                                            </td>
                                         </tr>
                                     </table>
                                 </td>
@@ -200,12 +239,21 @@
         </fmt:bundle>
     </script>
 
+    <!-- Scripts required for charts -->
     <script src="plugins/d3/d3.min.js"></script>
     <script src="plugins/vega/vega.js"></script>
     <script src="plugins/igviz/igviz.js"></script>
+    <!-- Script required for chart templates -->
     <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
+    <!-- jQuery -->
     <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
+    <!-- jQuery Cookie Plugin -->
     <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
+    <!-- jQuery UI Custom Download -->
+    <script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+    <!-- jQuery UI Timepicker plugin -->
+    <script src="plugins/jquery-ui/jquery-ui-timepicker-addon.min.js"></script>
+    <!-- Metrics UI script -->
     <script src="js/metrics.ui.js"></script>
 
 </div>
