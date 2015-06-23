@@ -31,7 +31,11 @@
 }
 
 .inputTime {
-    width: 120px;
+    width: 150px;
+}
+
+.ui-datepicker-current {
+    display: inline;
 }
 
 /*

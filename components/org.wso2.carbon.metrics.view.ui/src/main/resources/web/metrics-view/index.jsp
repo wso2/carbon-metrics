@@ -82,14 +82,25 @@
                                 <td>
                                     <table id="metricsViewInputTable" class="normal" style="width: 100%">
                                         <tr>
-                                            <td style="width: 5%;">
+                                            <td style="width: 10%;">
+                                                <fmt:message key="metrics.views.tip" var="msgKeyViewTip" />
+                                                <label title="${msgKeyViewTip}">
+                                                    <fmt:message key="metrics.views" />
+                                                </label>
+                                            </td>
+                                            <td colspan="8">
+                                                <div id="viewsSelection"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 10%;">
                                                 <fmt:message key="metrics.source.tip" var="msgKeySourceTip" />
                                                 <label for="source" title="${msgKeySourceTip}">
                                                     <fmt:message key="metrics.source" />
                                                 </label>
                                             </td>
-                                            <td style="width: 15%;">
-                                                <select name="source" id="source" style="width: 100%" title="${msgKeySourceTip}">
+                                            <td>
+                                                <select name="source" id="source" title="${msgKeySourceTip}">
 
                                                     <%
                                                         for (String source : sources) {
@@ -99,37 +110,29 @@
                                                         }
                                                     %>
 
-                                            </select></td>
-                                            <td style="width: 5%;">
-                                                <fmt:message key="metrics.views.tip" var="msgKeyViewTip" />
-                                                <label title="${msgKeyViewTip}">
-                                                    <fmt:message key="metrics.views" />
-                                                </label>
+                                                </select>
                                             </td>
-                                            <td>
-                                                <div id="viewsSelection"></div>
-                                            </td>
-                                            <td style="width: 2%; text-align: right;">
+                                            <td style="width: 5%; text-align: right;">
                                                 <fmt:message key="metrics.from.tip" var="msgKeyFromTip" />
                                                 <label for="fromTime" class="customRange" title="${msgKeyFromTip}">
                                                     <fmt:message key="metrics.from" />
                                                 </label>
                                             </td>
-                                            <td style="width: 5%;">
+                                            <td style="width: 10%;">
                                                 <input type="text" id="fromTime" name="fromTime"
                                                     class="customRange inputTime" title="${msgKeyFromTip}" />
                                             </td>
-                                            <td style="width: 2%; text-align: right;">
+                                            <td style="width: 5%; text-align: right;">
                                                 <fmt:message key="metrics.to.tip" var="msgKeyToTip" />
                                                 <label for="toTime" class="customRange" title="${msgKeyToTip}">
                                                     <fmt:message key="metrics.to" />
                                                 </label>
                                             </td>
-                                            <td style="width: 5%;">
+                                            <td style="width: 10%;">
                                                 <input type="text" id="toTime" name="toTime"
                                                     class="customRange inputTime" title="${msgKeyToTip}" />
                                             </td>
-                                            <td style="width: 10%;">
+                                            <td style="width: 20%; text-align: right;">
                                                 <fmt:message key="metrics.fromselect.tip" var="msgKeyFromSelectTip" />
                                                 <select name="from" id="from" title="${msgKeyFromSelectTip}">
                                                     <option value="-5m">Last 5 minutes</option>
@@ -145,7 +148,7 @@
                                                     <option value="custom">Custom</option>
                                                 </select>
                                             </td>
-                                            <td style="width: 2%;">
+                                            <td style="width: 5%; text-align: right;">
                                                 <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip" />
                                                 <button id="reloadButton" type="button" onclick="plotCharts();"
                                                     title="${msgKeyReloadTip}">

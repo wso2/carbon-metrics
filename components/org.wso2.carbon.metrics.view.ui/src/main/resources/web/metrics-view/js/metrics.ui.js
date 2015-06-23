@@ -39,12 +39,15 @@ metricsJQuery(function($) {
 function initJQueryUIComponents() {
     // Initialize source select menu
     var sourceMenu = metricsJQuery("#source");
-    sourceMenu.selectmenu();
+    sourceMenu.selectmenu({
+        width: 250
+    });
 
     // Initialize from select menu
     var fromMenu = metricsJQuery("#from");
     fromMenu.selectmenu({
-        change : showHideCustomRangeEvent
+        change : showHideCustomRangeEvent,
+        width: 180
     });
     // Check the selected value. Useful when reloading the page
     showHideCustomRange(fromMenu.val());
