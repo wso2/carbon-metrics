@@ -14,9 +14,65 @@
  * limitations under the License.
  */
 .toggleLabel {
-	padding: 0 5px;
+    padding: 0 5px;
 }
 
 .igvizChart {
-	padding: 5px;
+    padding: 5px;
+}
+
+#metricsViewInput td {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.customRange {
+    display: none;
+}
+
+.inputTime {
+    width: 150px;
+}
+
+.ui-widget {
+    font-size: 1em;
+}
+
+.ui-datepicker-current {
+    display: inline;
+}
+
+/*
+Following is to  fix styling issues in datepicker due to old jQueryUI styles loaded via
+https://localhost:9443/carbon/dialog/css/jqueryui/jqueryui-themeroller.css
+*/
+.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div {
+    background: #ffffff;
+    background-image: none;
+    border: 1px solid #dddddd;
+    margin: 0px;
+    padding: 0px;
+    /*
+	Width should be removed to render the Datepicker correctly.
+	It's not possible to remove a defined style.
+	Using auto also doesn't work.
+	*/
+    width: 250px;
+}
+/*
+Due to the width issue, the next icon is not aligned properly.
+Therefore hiding both previous and next icons.
+*/
+.ui-datepicker-prev, .ui-datepicker-next {
+    display: none;
+}
+
+/*
+Align month and year dropdowns
+*/
+.ui-datepicker-header select {
+    position: relative;
+    margin: 0px;
+    padding: .2em 0;
+    top: 0px;
 }

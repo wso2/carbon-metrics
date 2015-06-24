@@ -38,6 +38,7 @@
 <%
     String source = request.getParameter("source");
     String from = request.getParameter("from");
+    String to = request.getParameter("to");
     String type = request.getParameter("type");
 
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
@@ -92,7 +93,12 @@
 
         MetricList metricList = new MetricList();
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
-        metricData = metricsViewClient.findLastMetrics(metricList, source, from);
+        if (to != null && to.trim().length() > 0) {
+            metricData = metricsViewClient.findMetricsByTimePeriod(metricList, source,
+                    Long.parseLong(from), Long.parseLong(to));
+        } else {
+            metricData = metricsViewClient.findLastMetrics(metricList, source, from);
+        }
         if (metricData != null) {
             response.getWriter().write(gson.toJson(metricData));
         }

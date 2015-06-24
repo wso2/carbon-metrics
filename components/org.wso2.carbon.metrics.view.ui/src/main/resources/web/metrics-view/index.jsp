@@ -32,93 +32,142 @@
 <div>
 
 <!-- Removed head tag. This page is rendered within the body tag in Management Console -->
-
+<!-- jQuery UI styles -->
+<link href="plugins/jquery-ui/jquery-ui.structure.min.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<link href="plugins/jquery-ui/jquery-ui.theme.min.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<!-- jQuery UI Timepicker styles -->
+<link href="plugins/jquery-ui/jquery-ui-timepicker-addon.min.css" type="text/css" rel="stylesheet" property="stylesheet" />
 <!-- igviz styles -->
 <link href="plugins/igviz/igviz.css" type="text/css" rel="stylesheet" property="stylesheet" />
+<!-- Metrics UI styles -->
 <link href="css/metrics.css" type="text/css" rel="stylesheet" property="stylesheet" />
 
 
-	<%
-	    String item = request.getParameter("item");
+    <%
+        String item = request.getParameter("item");
 
-	    String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
-	    ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
-	            CarbonConstants.CONFIGURATION_CONTEXT);
-	    String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
-	    MetricsViewClient metricsViewClient;
-	    String[] sources = null;
-	    try {
-	        metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
-	        sources = metricsViewClient.getAllSources();
-	    } catch (Exception e) {
-	        CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
+                CarbonConstants.CONFIGURATION_CONTEXT);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        MetricsViewClient metricsViewClient;
+        String[] sources = null;
+        try {
+            metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
+            sources = metricsViewClient.getAllSources();
+        } catch (Exception e) {
+            CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
     %>
     <script type="text/javascript">
         location.href = "../admin/error.jsp";
     </script>
     <%
-	        return;
-	    }
-	%>
+            return;
+        }
+    %>
 
-	<fmt:bundle basename="org.wso2.carbon.metrics.view.ui.i18n.Resources">
+    <fmt:bundle basename="org.wso2.carbon.metrics.view.ui.i18n.Resources">
 
-		<carbon:breadcrumb label="metrics.view" resourceBundle="org.wso2.carbon.metrics.view.ui.i18n.Resources" topPage="true"
-			request="<%=request%>" />
-		<div id="middle">
-			<h2>
-				<fmt:message key="metrics.view" />
-			</h2>
-			<div id="workArea">
-				<form id="formInput">
-					<table border="0" class="styledLeft">
-						<tbody>
-							<tr>
-								<td>
-									<table class="normal" style="width: 100%">
-										<tr>
-											<td style="width: 5%; padding-right: 2px !important;"><fmt:message key="metrics.source" /></td>
-											<td style="width: 15%;"><select name="source" id="source">
+        <carbon:breadcrumb label="metrics.view" resourceBundle="org.wso2.carbon.metrics.view.ui.i18n.Resources" topPage="true"
+            request="<%=request%>" />
+        <div id="middle">
+            <h2>
+                <fmt:message key="metrics.view" />
+            </h2>
+            <div id="workArea" class="metricsView">
+                <form id="formInput">
+                    <table border="0" class="styledLeft">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table id="metricsViewInputTable" class="normal" style="width: 100%">
+                                        <tr>
+                                            <td style="width: 10%;">
+                                                <fmt:message key="metrics.views.tip" var="msgKeyViewTip" />
+                                                <label title="${msgKeyViewTip}">
+                                                    <fmt:message key="metrics.views" />
+                                                </label>
+                                            </td>
+                                            <td colspan="8">
+                                                <div id="viewsSelection"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 10%;">
+                                                <fmt:message key="metrics.source.tip" var="msgKeySourceTip" />
+                                                <label for="source" title="${msgKeySourceTip}">
+                                                    <fmt:message key="metrics.source" />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <select name="source" id="source" title="${msgKeySourceTip}">
 
-													<%
-												        for (String source : sources) {
-													%>
-													<option value="<%=source%>"><%=source%></option>
-													<%
-													    }
-													%>
+                                                    <%
+                                                        for (String source : sources) {
+                                                    %>
+                                                    <option value="<%=source%>"><%=source%></option>
+                                                    <%
+                                                        }
+                                                    %>
 
-											</select></td>
-											<td style="width: 5%; padding-right: 2px !important;"><fmt:message key="metrics.views" /></td>
-											<td><div id="viewsSelection"></div></td>
-											<td style="width: 25px; padding-right: 2px !important;"><a id="refreshButton" class="icon-link"
-												style="background-image: url(images/refresh.png);" href="javascript:plotCharts()"></a></td>
-											<td style="width: 10%;"><select name="from" id="from">
-													<option value="-5m">Last 5 minutes</option>
-													<option value="-15m">Last 15 minutes</option>
-													<option value="-1h">Last 1 hour</option>
-													<option value="-2h">Last 2 hours</option>
-													<option value="-6h">Last 6 hours</option>
-													<option value="-12h">Last 12 hours</option>
-													<option value="-24h" selected="selected">Last 24 hours</option>
-													<option value="-2d">Last 2 days</option>
-													<option value="-7d">Last 7 days</option>
-													<option value="-30d">Last 30 days</option>
-											</select></td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</form>
+                                                </select>
+                                            </td>
+                                            <td style="width: 5%; text-align: right;">
+                                                <fmt:message key="metrics.from.tip" var="msgKeyFromTip" />
+                                                <label for="fromTime" class="customRange" title="${msgKeyFromTip}">
+                                                    <fmt:message key="metrics.from" />
+                                                </label>
+                                            </td>
+                                            <td style="width: 10%;">
+                                                <input type="text" id="fromTime" name="fromTime"
+                                                    class="customRange inputTime" title="${msgKeyFromTip}" />
+                                            </td>
+                                            <td style="width: 5%; text-align: right;">
+                                                <fmt:message key="metrics.to.tip" var="msgKeyToTip" />
+                                                <label for="toTime" class="customRange" title="${msgKeyToTip}">
+                                                    <fmt:message key="metrics.to" />
+                                                </label>
+                                            </td>
+                                            <td style="width: 10%;">
+                                                <input type="text" id="toTime" name="toTime"
+                                                    class="customRange inputTime" title="${msgKeyToTip}" />
+                                            </td>
+                                            <td style="width: 20%; text-align: right;">
+                                                <fmt:message key="metrics.fromselect.tip" var="msgKeyFromSelectTip" />
+                                                <select name="from" id="from" title="${msgKeyFromSelectTip}">
+                                                    <option value="-5m" selected="selected">Last 5 minutes</option>
+                                                    <option value="-15m">Last 15 minutes</option>
+                                                    <option value="-1h">Last 1 hour</option>
+                                                    <option value="-2h">Last 2 hours</option>
+                                                    <option value="-6h">Last 6 hours</option>
+                                                    <option value="-12h">Last 12 hours</option>
+                                                    <option value="-24h">Last 24 hours</option>
+                                                    <option value="-2d">Last 2 days</option>
+                                                    <option value="-7d">Last 7 days</option>
+                                                    <option value="custom">Custom</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 5%; text-align: right;">
+                                                <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip" />
+                                                <button id="reloadButton" type="button" onclick="plotCharts();"
+                                                    title="${msgKeyReloadTip}">
+                                                    <fmt:message key="metrics.reload" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
 
- 				<br/>
+                 <br/>
  
                 <div id="chartHolder"></div>
-				
-			</div>
-		</div>
+                
+            </div>
+        </div>
         
         <script id="chartTemplate" type="text/x-handlebars-template">
             <div id="chart{{type}}">
@@ -192,12 +241,21 @@
         </fmt:bundle>
     </script>
 
+    <!-- Scripts required for charts -->
     <script src="plugins/d3/d3.min.js"></script>
-    <script src="plugins/vega/vega.js"></script>
+    <script src="plugins/vega/vega.min.js"></script>
     <script src="plugins/igviz/igviz.js"></script>
+    <!-- Script required for chart templates -->
     <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
+    <!-- jQuery -->
     <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
+    <!-- jQuery Cookie Plugin -->
     <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
+    <!-- jQuery UI Custom Download -->
+    <script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+    <!-- jQuery UI Timepicker plugin -->
+    <script src="plugins/jquery-ui/jquery-ui-timepicker-addon.min.js"></script>
+    <!-- Metrics UI script -->
     <script src="js/metrics.ui.js"></script>
 
 </div>
