@@ -243,7 +243,7 @@
 
     <!-- Scripts required for charts -->
     <script src="plugins/d3/d3.min.js"></script>
-    <script src="plugins/vega/vega.js"></script>
+    <script src="plugins/vega/vega.min.js"></script>
     <script src="plugins/igviz/igviz.js"></script>
     <!-- Script required for chart templates -->
     <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
