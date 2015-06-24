@@ -175,11 +175,6 @@ public class ReporterDAO {
 
     public <T> void queryMetrics(MetricType metricType, List<String> names, List<MetricAttribute> attributes,
             String source, long startTime, long endTime, MetricDataProcessor<T> processor) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(String
-                    .format("Metric Search Query Parameters. Metric Type: %s, Names: %s, Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
-                            metricType, names, attributes, source, startTime, endTime));
-        }
         validateMetricAttributes(metricType, attributes);
         StringBuilder queryBuilder = new StringBuilder("SELECT NAME, TIMESTAMP, ");
         for (int i = 0; i < attributes.size(); i++) {
@@ -210,7 +205,9 @@ public class ReporterDAO {
         String query = queryBuilder.toString();
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Metric Search Query: %s", query));
+            logger.debug(String
+                    .format("Metric Search Query: %s Parameters: Metric Type: %s, Names: %s, Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
+                            query, metricType, names, attributes, source, startTime, endTime));
         }
 
         Connection connection = null;

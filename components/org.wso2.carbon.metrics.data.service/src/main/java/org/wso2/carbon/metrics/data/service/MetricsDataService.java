@@ -18,6 +18,7 @@ package org.wso2.carbon.metrics.data.service;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -144,6 +145,10 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             return -1;
         }
 
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Get Start Time. From Value: %s", from));
+        }
+
         long currentTimeMillis = System.currentTimeMillis();
 
         Matcher matcher = fromPattern.matcher(from);
@@ -168,14 +173,21 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     public String[] getAllSources() {
+        List<String> sourcesList;
         Set<String> sources = reporterDAO.queryAllSources();
         if (sources == null) {
-            sources = new HashSet<String>();
+            sourcesList = new ArrayList<String>(1);
+            sourcesList.add(currentJDBCReportingSource);
+        } else {
+            // Remove current source from set
+            sources.remove(currentJDBCReportingSource);
+            // Add the current source to top
+            // This will make sure that the current source is selected by default
+            sourcesList = new ArrayList<String>(sources.size());
+            sourcesList.add(currentJDBCReportingSource);
+            sourcesList.addAll(sources);
         }
-        if (sources.isEmpty()) {
-            sources.add(currentJDBCReportingSource);
-        }
-        return sources.toArray(new String[sources.size()]);
+        return sourcesList.toArray(new String[sourcesList.size()]);
     }
 
     private class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
@@ -231,6 +243,12 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         @Override
         public MetricData getResult() {
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format(
+                        "Metrics Search Results. Display Names: %s, Data Types: %s, Result Count: %d",
+                        Arrays.asList(displayNames), Arrays.asList(dataTypes), orderedList.size()));
+            }
+
             return new MetricData(new Metadata(displayNames, dataTypes), orderedList.toArray(new BigDecimal[orderedList
                     .size()][]));
         }
@@ -302,7 +320,6 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     public MetricData findMetricsByTimePeriod(MetricList metrics, String source, long startTime, long endTime) {
-
         Metric[] list = null;
         if (metrics == null || (list = metrics.getMetric()) == null) {
             if (logger.isDebugEnabled()) {
@@ -313,7 +330,9 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Metric List Count: %d", list.length));
+            logger.debug(String.format(
+                    "Find Metrics by time period. Metric List Count: %d, Source: %s, Start Time: %d, End Time: %d",
+                    list.length, source, startTime, endTime));
         }
 
         Map<MetricGroup, MetricGroup> metricGroupMap = new HashMap<MetricGroup, MetricGroup>();
