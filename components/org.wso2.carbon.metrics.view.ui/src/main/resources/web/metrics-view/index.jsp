@@ -88,8 +88,15 @@
                                                     <fmt:message key="metrics.views" />
                                                 </label>
                                             </td>
-                                            <td colspan="8">
+                                            <td colspan="6">
                                                 <div id="viewsSelection"></div>
+                                            </td>
+                                            <td style="width: 10%; text-align: right;">
+                                                <fmt:message key="metrics.autoupdate.tip" var="msgKeyAutoUpdateTip" />
+                                                <label for="autoUpdateButton" title="${msgKeyAutoUpdateTip}">
+                                                    <fmt:message key="metrics.autoupdate" />
+                                                </label>
+                                                <input type="checkbox" id="autoUpdateButton" />
                                             </td>
                                         </tr>
                                         <tr>
@@ -147,10 +154,9 @@
                                                     <option value="custom">Custom</option>
                                                 </select>
                                             </td>
-                                            <td style="width: 5%; text-align: right;">
+                                            <td style="text-align: right;">
                                                 <fmt:message key="metrics.reload.tip" var="msgKeyReloadTip" />
-                                                <button id="reloadButton" type="button" onclick="plotCharts();"
-                                                    title="${msgKeyReloadTip}">
+                                                <button id="reloadButton" type="button" title="${msgKeyReloadTip}">
                                                     <fmt:message key="metrics.reload" />
                                                 </button>
                                             </td>

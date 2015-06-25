@@ -22,6 +22,10 @@ var metricsJQuery = jQuery.noConflict();
 var charts = [];
 // Titles for charts. Relevant title for a chart is identified by the index
 var titles = [];
+// Variable for keeping auto update interval reference
+var autoUpdateRef;
+// Update every 30 seconds
+var autoUpdateTime = 30000;
 
 metricsJQuery(function($) {
     // Initializing UI components
@@ -59,6 +63,11 @@ function initJQueryUIComponents() {
             primary : "ui-icon-refresh"
         }
     });
+    reloadButton.click(plotCharts);
+
+    var autoUpdateButton = metricsJQuery("#autoUpdateButton");
+    autoUpdateButton.button();
+    autoUpdateButton.click(autoUpdateToggle);
 
     metricsJQuery("#metricsViewInputTable").tooltip();
 
@@ -392,4 +401,81 @@ function refreshViews(event) {
     var inputId = inputCheckbox.attr("id");
     var checked = inputCheckbox.prop("checked");
     metricsJQuery.cookie(inputId, checked);
+}
+
+function autoUpdateToggle(event) {
+    var toggleIconClass;
+    if (this.checked) {
+        toggleIconClass = "ui-icon-check";
+        autoUpdateRef = setInterval(updateCharts, autoUpdateTime);
+    } else {
+        toggleIconClass = "ui-icon-blank";
+        if (autoUpdateRef) {
+            clearInterval(autoUpdateRef);
+        }
+    }
+    metricsJQuery(this).button("option", "icons", {
+        primary : toggleIconClass
+    });
+}
+
+// Update charts without rebuilding
+function updateCharts() {
+    metricsJQuery.map(charts, updateChart);
+}
+
+function updateChart(chart) {
+    // The dataPageUrl is defined in the JSP page
+    if (!dataPageUrl) {
+        displayNoData(chart);
+        return;
+    }
+
+    var fromMenu = metricsJQuery("#from");
+    if (fromMenu.val() === "custom") {
+        return;
+    }
+
+    // Get Chart Data to be submitted for dataPageUrl
+    var data = metricsJQuery("#formInput").serializeArray();
+    data.push({
+        name : "type",
+        value : chart
+    });
+
+    metricsJQuery.each(data, function(index, value) {
+        if (value.name === "from") {
+            // Get data for last 2 minutes
+            var fromDate = new Date();
+            var durationInMinutes = 2;
+            fromDate.setMinutes(fromDate.getMinutes() - durationInMinutes);
+            value.value = fromDate.getTime();
+        }
+    });
+
+    metricsJQuery.getJSON(dataPageUrl, data).done(function(data) {
+        igvizUpdate(chart, data);
+    }).fail(function() {
+        // Do nothing
+    });
+}
+
+function igvizUpdate(chart, data) {
+    var toggleId = "#toggle".concat(chart);
+    var igvizId = "#igviz".concat(chart);
+
+    var igvizChart = metricsJQuery(toggleId).data("chart");
+    var existingData = metricsJQuery(toggleId).data("data");
+
+    var newData;
+
+    if (existingData.data.length > data.data.length) {
+        var existingDataSlice = existingData.data.slice(data.data.length)
+        newData = existingDataSlice.concat(data.data);
+    } else {
+        newData = data.data;
+    }
+
+    // Plot again. igviz update works only for a single point
+    igvizChart.plot(newData);
 }

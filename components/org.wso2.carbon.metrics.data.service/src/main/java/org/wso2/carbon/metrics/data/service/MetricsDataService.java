@@ -244,9 +244,10 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         @Override
         public MetricData getResult() {
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format(
-                        "Metrics Search Results. Display Names: %s, Data Types: %s, Result Count: %d",
-                        Arrays.asList(displayNames), Arrays.asList(dataTypes), orderedList.size()));
+                logger.debug(String
+                        .format("Metrics Search Results. Display Names: %s, Data Types: %s, Columns %d, Rows: %d, Total Data Points: %d",
+                                Arrays.asList(displayNames), Arrays.asList(dataTypes), displayNames.length,
+                                orderedList.size(), displayNames.length * orderedList.size()));
             }
 
             return new MetricData(new Metadata(displayNames, dataTypes), orderedList.toArray(new BigDecimal[orderedList
