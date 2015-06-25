@@ -26,7 +26,7 @@ import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 
-public class CsvReporterImpl extends AbstractReporter {
+public class CsvReporterImpl extends AbstractReporter implements ScheduledReporter {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvReporterImpl.class);
 

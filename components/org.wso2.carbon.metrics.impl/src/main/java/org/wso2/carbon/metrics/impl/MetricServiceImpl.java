@@ -39,7 +39,9 @@ import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
+import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
+import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
@@ -275,6 +277,41 @@ public class MetricServiceImpl implements MetricService {
     /*
      * (non-Javadoc)
      * 
+     * @see org.wso2.carbon.metrics.manager.MetricService#getMetricLevel(java.lang.String)
+     */
+    @Override
+    public Level getMetricLevel(String name) {
+        if (!metricsMap.containsKey(name)) {
+            throw new IllegalArgumentException("Invalid Metric Name");
+        }
+        return levelConfiguration.getLevel(name);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.wso2.carbon.metrics.manager.MetricService#setMetricLevel(java.lang.String,
+     * org.wso2.carbon.metrics.manager.Level)
+     */
+    @Override
+    public void setMetricLevel(String name, Level level) {
+        MetricWrapper metricWrapper = metricsMap.get(name);
+        if (metricWrapper == null) {
+            throw new IllegalArgumentException("Invalid Metric Name");
+        }
+        Level currentLevel = levelConfiguration.getLevel(name);
+        if (currentLevel == null || !currentLevel.equals(level)) {
+            // Set new level only if there is no existing level or the new level is different from exisiting level
+            levelConfiguration.setLevel(name, level);
+            AbstractMetric metric = metricWrapper.metric;
+            metric.setEnabled(isMetricEnabled(metric.getName(), metric.getLevel(), level, false));
+            restartListeningReporters();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.wso2.carbon.metrics.manager.MetricService#getRootLevel()
      */
     @Override
@@ -293,6 +330,7 @@ public class MetricServiceImpl implements MetricService {
         levelConfiguration.setRootLevel(level);
         if (changed) {
             notifyEnabledStatus();
+            restartListeningReporters();
         }
     }
 
@@ -613,7 +651,9 @@ public class MetricServiceImpl implements MetricService {
      */
     void report() {
         for (Reporter reporter : reporters) {
-            reporter.report();
+            if (reporter instanceof ScheduledReporter) {
+                ((ScheduledReporter) reporter).report();
+            }
         }
     }
 
@@ -626,6 +666,16 @@ public class MetricServiceImpl implements MetricService {
     private void stopReporters() {
         for (Reporter reporter : reporters) {
             reporter.stop();
+        }
+    }
+
+    private void restartListeningReporters() {
+        for (Reporter reporter : reporters) {
+            if (reporter instanceof ListeningReporter) {
+                ListeningReporter listeningReporter = (ListeningReporter) reporter;
+                listeningReporter.stop();
+                listeningReporter.start();
+            }
         }
     }
 

@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.manager.jmx;
 
+
 /**
  * Interface for JMX Managed Metric Manager Bean
  */
@@ -41,6 +42,19 @@ public interface MetricManagerMXBean {
      * @return The number of metrics used
      */
     int getMetricsCount();
+
+    /**
+     * @return The Level for the given metric name
+     */
+    String getMetricLevel(String name);
+
+    /**
+     * Set a new level to the given metric name
+     * 
+     * @param name The name of the Metric
+     * @param level New Level for the Metric
+     */
+    void setMetricLevel(String name, String level);
 
     /**
      * @return Get the current configured root level

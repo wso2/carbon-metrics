@@ -51,6 +51,17 @@ public class MetricManagerMXBeanImpl implements MetricManagerMXBean {
     }
 
     @Override
+    public String getMetricLevel(String name) {
+        Level level = metricService.getMetricLevel(name);
+        return level != null ? level.name() : null;
+    }
+
+    @Override
+    public void setMetricLevel(String name, String level) {
+        metricService.setMetricLevel(name, Level.valueOf(level));
+    }
+
+    @Override
     public String getRootLevel() {
         return metricService.getRootLevel().name();
     }
@@ -59,5 +70,4 @@ public class MetricManagerMXBeanImpl implements MetricManagerMXBean {
     public void setRootLevel(String level) {
         metricService.setRootLevel(Level.valueOf(level));
     }
-
 }

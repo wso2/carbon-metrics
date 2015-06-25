@@ -18,6 +18,7 @@ package org.wso2.carbon.metrics.impl;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class MetricsLevelConfiguration {
      */
     private Level rootLevel = Level.OFF;
 
-    private final Map<String, Level> levelMap = new HashMap<String, Level>();
+    private final Map<String, Level> levelMap = Collections.synchronizedMap(new HashMap<String, Level>());
 
     private static final String METRICS_ROOT_LEVEL = "metrics.rootLevel";
 
@@ -94,5 +95,9 @@ public class MetricsLevelConfiguration {
 
     public Level getLevel(String metricName) {
         return levelMap.get(metricName);
+    }
+
+    public void setLevel(String metricName, Level level) {
+        levelMap.put(metricName, level);
     }
 }

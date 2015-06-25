@@ -27,7 +27,7 @@ import org.wso2.carbon.metrics.reporter.JDBCReporter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 
-public class JDBCReporterImpl extends AbstractReporter {
+public class JDBCReporterImpl extends AbstractReporter implements ScheduledReporter {
 
     private static final Logger logger = LoggerFactory.getLogger(JDBCReporterImpl.class);
 
