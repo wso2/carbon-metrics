@@ -40,6 +40,19 @@ public interface MetricService {
     boolean isEnabled();
 
     /**
+     * @return The {@link Level} for the given metric name
+     */
+    Level getMetricLevel(String name);
+
+    /**
+     * Set a new level to the given metric name
+     * 
+     * @param name The name of the Metric
+     * @param level New {@link Level} for the Metric
+     */
+    void setMetricLevel(String name, Level level);
+
+    /**
      * @return The current root {@link Level}
      */
     Level getRootLevel();

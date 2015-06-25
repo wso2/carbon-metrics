@@ -21,19 +21,14 @@ import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 
-public class JmxReporterImpl extends AbstractReporter {
-    
+public class JmxReporterImpl extends AbstractReporter implements ListeningReporter {
+
     private final JmxReporter jmxReporter;
 
     public JmxReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, String domain) {
         super("JMX");
         this.jmxReporter = JmxReporter.forRegistry(metricRegistry).inDomain(domain).filter(metricFilter)
                 .convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS).build();
-    }
-
-    @Override
-    public void report() {
-        // Nothing to report
     }
 
     @Override

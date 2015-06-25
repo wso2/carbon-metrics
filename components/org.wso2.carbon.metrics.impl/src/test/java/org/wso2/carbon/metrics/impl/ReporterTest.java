@@ -190,6 +190,18 @@ public class ReporterTest extends TestCase {
         assertEquals("There are two results", 2, meterResult.size());
     }
 
+    public void testJVMMetricSetLevel() {
+        // This test is to check restarting of listener reporters
+        String name = "jvm.threads.runnable.count";
+        // Initially this gauge is set to OFF and when changing the level, we need to restart JMXReporter
+        metricService.setMetricLevel(name, Level.TRACE);
+        assertEquals("Configured level should be TRACE", Level.TRACE, metricService.getMetricLevel(name));
+        AttributeList gaugeAttributes = getAttributes(name, "Value");
+        SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
+        assertTrue("Gauge is available", gaugeMap.containsKey("Value"));
+        assertTrue("Gauge value is a positive number", ((Integer) gaugeMap.get("Value")) > 0);
+    }
+
     private AttributeList getAttributes(String name, String... attributeNames) {
         ObjectName n;
         try {

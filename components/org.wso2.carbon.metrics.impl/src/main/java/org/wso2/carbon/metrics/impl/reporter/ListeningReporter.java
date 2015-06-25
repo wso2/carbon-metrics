@@ -16,12 +16,8 @@
 package org.wso2.carbon.metrics.impl.reporter;
 
 /**
- * Reporter interface to manage multiple reporters in this service
+ * Reporter interface for reporters implemented via listener interfaces
  */
-public interface Reporter {
-
-    void start();
-
-    void stop();
+public interface ListeningReporter extends Reporter {
 
 }

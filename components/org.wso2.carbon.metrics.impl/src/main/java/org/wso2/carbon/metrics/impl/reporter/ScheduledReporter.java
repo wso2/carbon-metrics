@@ -16,12 +16,10 @@
 package org.wso2.carbon.metrics.impl.reporter;
 
 /**
- * Reporter interface to manage multiple reporters in this service
+ * Reporter interface for scheduled reporter
  */
-public interface Reporter {
+public interface ScheduledReporter extends Reporter {
 
-    void start();
-
-    void stop();
+    void report();
 
 }

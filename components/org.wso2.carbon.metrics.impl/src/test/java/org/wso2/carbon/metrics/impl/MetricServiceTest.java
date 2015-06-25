@@ -42,7 +42,7 @@ public class MetricServiceTest extends TestCase {
         assertEquals("Initial count should be zero", 0, meter.getCount());
         assertTrue("Metrics Count is not zero", metricService.getMetricsCount() > 0);
     }
-    
+
     public void testDuplicateMetric() {
         String name = "test-name";
         MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), name));
@@ -81,6 +81,46 @@ public class MetricServiceTest extends TestCase {
         metricService.enable();
         meter.mark();
         assertEquals("Count should be two", 2, meter.getCount());
+    }
+
+    public void testMetricSetLevel() {
+        String name = MetricManager.name(this.getClass(), "test-metric-level");
+        Meter meter = MetricManager.meter(Level.INFO, name);
+        assertNull("There should no configured level", metricService.getMetricLevel(name));
+
+        metricService.setRootLevel(Level.TRACE);
+        meter.mark();
+        assertEquals("Count should be one", 1, meter.getCount());
+
+        metricService.setMetricLevel(name, Level.INFO);
+        assertEquals("Configured level should be INFO", Level.INFO, metricService.getMetricLevel(name));
+        meter.mark();
+        assertEquals("Count should be two", 2, meter.getCount());
+
+        metricService.setMetricLevel(name, Level.DEBUG);
+        assertEquals("Configured level should be DEBUG", Level.DEBUG, metricService.getMetricLevel(name));
+        meter.mark();
+        assertEquals("Count should be three", 3, meter.getCount());
+
+        metricService.setMetricLevel(name, Level.TRACE);
+        assertEquals("Configured level should be TRACE", Level.TRACE, metricService.getMetricLevel(name));
+        meter.mark();
+        assertEquals("Count should be four", 4, meter.getCount());
+
+        metricService.setMetricLevel(name, Level.ALL);
+        assertEquals("Configured level should be ALL", Level.ALL, metricService.getMetricLevel(name));
+        meter.mark();
+        assertEquals("Count should be five", 5, meter.getCount());
+
+        metricService.setMetricLevel(name, Level.OFF);
+        assertEquals("Configured level should be OFF", Level.OFF, metricService.getMetricLevel(name));
+        meter.mark();
+        assertEquals("Count should be five", 5, meter.getCount());
+
+        metricService.setMetricLevel(name, Level.INFO);
+        assertEquals("Configured level should be INFO", Level.INFO, metricService.getMetricLevel(name));
+        meter.mark();
+        assertEquals("Count should be six", 6, meter.getCount());
     }
 
     public void testMetricServiceLevels() {
