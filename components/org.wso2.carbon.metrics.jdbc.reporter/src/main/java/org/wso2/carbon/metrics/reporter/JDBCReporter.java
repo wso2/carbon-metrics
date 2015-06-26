@@ -150,11 +150,11 @@ public class JDBCReporter extends ScheduledReporter {
     private final DataSource dataSource;
     private final TimeUnit timestampUnit;
 
-    private static final String INSERT_GAUGE_QUERY = "INSERT INTO METRIC_GAUGE (SOURCE, TIMESTAMP, NAME, VALUE) VALUES (?,?,?,?);";
-    private static final String INSERT_COUNTER_QUERY = "INSERT INTO METRIC_COUNTER (SOURCE, TIMESTAMP, NAME, COUNT) VALUES (?,?,?,?);";
-    private static final String INSERT_METER_QUERY = "INSERT INTO METRIC_METER (SOURCE,TIMESTAMP,NAME,COUNT,MEAN_RATE,M1_RATE,M5_RATE,M15_RATE,RATE_UNIT) VALUES (?,?,?,?,?,?,?,?,?);";
-    private static final String INSERT_HISTOGRAM_QUERY = "INSERT INTO METRIC_HISTOGRAM (SOURCE,TIMESTAMP,NAME,COUNT,MAX,MEAN,MIN,STDDEV,P50,P75,P95,P98,P99,P999) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-    private static final String INSERT_TIMER_QUERY = "INSERT INTO METRIC_TIMER (SOURCE,TIMESTAMP,NAME,COUNT,MAX,MEAN,MIN,STDDEV,P50,P75,P95,P98,P99,P999,MEAN_RATE,M1_RATE,M5_RATE,M15_RATE,RATE_UNIT,DURATION_UNIT) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+    private static final String INSERT_GAUGE_QUERY = "INSERT INTO METRIC_GAUGE (SOURCE, TIMESTAMP, NAME, VALUE) VALUES (?,?,?,?)";
+    private static final String INSERT_COUNTER_QUERY = "INSERT INTO METRIC_COUNTER (SOURCE, TIMESTAMP, NAME, COUNT) VALUES (?,?,?,?)";
+    private static final String INSERT_METER_QUERY = "INSERT INTO METRIC_METER (SOURCE,TIMESTAMP,NAME,COUNT,MEAN_RATE,M1_RATE,M5_RATE,M15_RATE,RATE_UNIT) VALUES (?,?,?,?,?,?,?,?,?)";
+    private static final String INSERT_HISTOGRAM_QUERY = "INSERT INTO METRIC_HISTOGRAM (SOURCE,TIMESTAMP,NAME,COUNT,MAX,MEAN,MIN,STDDEV,P50,P75,P95,P98,P99,P999) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String INSERT_TIMER_QUERY = "INSERT INTO METRIC_TIMER (SOURCE,TIMESTAMP,NAME,COUNT,MAX,MEAN,MIN,STDDEV,P50,P75,P95,P98,P99,P999,MEAN_RATE,M1_RATE,M5_RATE,M15_RATE,RATE_UNIT,DURATION_UNIT) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     private JDBCReporter(MetricRegistry registry, String source, DataSource dataSource, TimeUnit rateUnit,
             TimeUnit durationUnit, TimeUnit timestampUnit, Clock clock, MetricFilter filter) {
