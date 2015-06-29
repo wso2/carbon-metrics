@@ -28,6 +28,7 @@
             <icon>../metrics-view/images/icon_monitor_pc.gif</icon>
             <style-class>monitor</style-class>
             <require-permission>/permission/admin/monitor/metrics</require-permission>
+            <require-super-tenant>true</require-super-tenant>
         </menu>
         <menu>
             <id>metrics_jvm_menu</id>
@@ -40,7 +41,7 @@
             <style-class>monitor</style-class>
             <icon>../metrics-view/images/icon_monitor_pc.gif</icon>
             <require-permission>/permission/admin/monitor/metrics</require-permission>
-            <!--require-super-tenant>true</require-super-tenant -->
+            <require-super-tenant>true</require-super-tenant>
         </menu>
     </menus>
 </component>
