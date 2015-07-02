@@ -67,10 +67,11 @@
                             org.wso2.carbon.metrics.common.*
                         </Export-Package>
                         <Import-Package>
-                            org.apache.commons.io;
-                            version="${commons-io.wso2.version.range}
+                            org.apache.commons.io;version="${commons-io.wso2.version.range}",
+                            org.slf4j;version="${slf4j.version.range}",
+                            org.apache.axiom.*;version="${axiom.version.range}",
+                            org.wso2.securevault
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
