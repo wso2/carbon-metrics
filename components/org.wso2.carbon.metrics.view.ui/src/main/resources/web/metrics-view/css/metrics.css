@@ -42,6 +42,11 @@
     display: inline;
 }
 
+/* Default active state in jQuery UI Smoothness theme is confusing! */
+.ui-state-active {
+    background: #9e9e9e none repeat scroll 0 0;
+}
+
 /*
 Following is to  fix styling issues in datepicker due to old jQueryUI styles loaded via
 https://localhost:9443/carbon/dialog/css/jqueryui/jqueryui-themeroller.css

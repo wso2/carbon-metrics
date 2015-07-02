@@ -30,5 +30,5 @@
     viewMap.put("MemoryView", new ChartView(true, new String[] { "Memory", "PhysicalMemory" }));
     viewMap.put("ThreadingView", new ChartView(false, new String[] { "Threading" }));
     viewMap.put("ClassLoadingView", new ChartView(false, new String[] { "ClassLoading" }));
-    viewMap.put("OtherView", new ChartView(false, new String[] { "FileDescriptor" }));
+    viewMap.put("FileDescriptorView", new ChartView(false, new String[] { "FileDescriptor" }));
 %>

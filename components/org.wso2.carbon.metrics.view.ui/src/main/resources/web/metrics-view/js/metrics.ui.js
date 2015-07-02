@@ -314,10 +314,11 @@ function igvizPlot(chart, data) {
     }
 
     var chart = igviz.setUp(igvizId, chartConfig, data);
-    // Keep chart, data and configuration in toggle inputs' container
+    // Keep data and configuration in toggle inputs' container
     metricsJQuery(toggleId).data("chartConfig", chartConfig);
     metricsJQuery(toggleId).data("data", data);
-    metricsJQuery(toggleId).data("chart", chart);
+    // Due to igviz reloading issues, we need to set up the chart again
+    // metricsJQuery(toggleId).data("chart", chart);
 
     chart.plot(data.data);
 
@@ -464,8 +465,10 @@ function igvizUpdate(chart, data) {
     var toggleId = "#toggle".concat(chart);
     var igvizId = "#igviz".concat(chart);
 
-    var igvizChart = metricsJQuery(toggleId).data("chart");
     var existingData = metricsJQuery(toggleId).data("data");
+    var chartConfig = metricsJQuery(toggleId).data("chartConfig");
+
+    var chart = igviz.setUp(igvizId, chartConfig, data);
 
     var newData;
 
@@ -477,5 +480,5 @@ function igvizUpdate(chart, data) {
     }
 
     // Plot again. igviz update works only for a single point
-    igvizChart.plot(newData);
+    chart.plot(newData);
 }
