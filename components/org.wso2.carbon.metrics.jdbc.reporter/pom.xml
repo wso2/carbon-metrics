@@ -64,9 +64,9 @@
                         </Export-Package>
                         <Import-Package>
                             com.codahale.metrics;
-                            version="${metrics.version.range}
+                            version="${metrics.version.range}",
+                            org.slf4j;version="${slf4j.version.range}"
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
