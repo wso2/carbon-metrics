@@ -45,9 +45,6 @@
                         <Export-Package>
                             org.wso2.carbon.metrics.data.common.*
                         </Export-Package>
-                        <Import-Package>
-                        </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
