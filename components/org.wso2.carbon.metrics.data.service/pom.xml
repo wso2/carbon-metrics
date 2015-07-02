@@ -104,6 +104,8 @@
                             org.wso2.carbon.metrics.data.service.*
                         </Export-Package>
                         <Import-Package>
+                            javax.naming,
+                            org.osgi.service.component,
                             org.wso2.carbon.registry.core.service;version="${carbon.registry.version.range}",
                             org.wso2.carbon.metrics.common.*,
                             org.wso2.carbon.metrics.data.common.*,

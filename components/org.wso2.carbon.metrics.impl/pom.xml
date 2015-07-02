@@ -111,6 +111,10 @@
                             org.wso2.carbon.metrics.impl.*,
                         </Export-Package>
                         <Import-Package>
+                            javax.naming,
+                            javax.sql,
+                            org.osgi.service.component,
+                            org.osgi.framework,
                             org.apache.commons.io;version="${commons-io.wso2.version.range}",
                             org.wso2.carbon.registry.core.*;version="${carbon.registry.version.range}",
                             org.wso2.carbon.utils.*;version="${carbon.kernel.version.range}",
@@ -118,9 +122,9 @@
                             org.wso2.carbon.metrics.manager.*,
                             org.wso2.carbon.metrics.reporter.*,
                             com.codahale.metrics;version="${metrics.version.range}",
+                            com.codahale.metrics.jvm;version="${metrics.version.range}",
                             org.slf4j;version="${slf4j.version.range}"
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

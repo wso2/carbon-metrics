@@ -54,9 +54,10 @@
                             org.wso2.carbon.metrics.manager.*;
                         </Export-Package>
                         <Import-Package>
+                            javax.management,
+                            org.osgi.service.component,
                             org.slf4j;version="${slf4j.version.range}"
                         </Import-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
