@@ -25,6 +25,8 @@ import java.util.TreeMap;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
+import javax.management.JMException;
+import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -32,11 +34,6 @@ import javax.management.ReflectionException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.core.io.ClassPathResource;
@@ -48,6 +45,13 @@ import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
+import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
+
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Test Cases for Reporters in {@link MetricService}
@@ -63,6 +67,8 @@ public class ReporterTest extends TestCase {
     private String meterName = MetricManager.name(this.getClass(), "test-meter");
 
     private String gaugeName = MetricManager.name(this.getClass(), "test-gauge");
+
+    private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 
     public static Test suite() {
         return new TestSetup(new TestSuite(ReporterTest.class)) {
@@ -99,6 +105,8 @@ public class ReporterTest extends TestCase {
         metricService = new MetricServiceImpl(Utils.getConfigurationWithReporters(), Utils.getLevelConfiguration());
         metricService.setRootLevel(Level.ALL);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
+        // Register the MX Bean
+        registerMXBean(metricService);
 
         Meter meter = MetricManager.meter(Level.INFO, meterName);
         meter.mark();
@@ -119,11 +127,39 @@ public class ReporterTest extends TestCase {
         template.execute("DELETE FROM METRIC_COUNTER;");
     }
 
+    private void registerMXBean(MetricService metricService) {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName name = new ObjectName(MBEAN_NAME);
+            if (mBeanServer.isRegistered(name)) {
+                mBeanServer.unregisterMBean(name);
+            }
+            MetricManagerMXBean mxBean = new MetricManagerMXBeanImpl(metricService);
+            mBeanServer.registerMBean(mxBean, name);
+        } catch (JMException e) {
+            // Ignore
+        }
+    }
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         // Disable to stop reporters
         metricService.disable();
+        // Unregister the MX Bean
+        unregisterMXBean();
+    }
+
+    private void unregisterMXBean() {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName name = new ObjectName(MBEAN_NAME);
+            if (mBeanServer.isRegistered(name)) {
+                mBeanServer.unregisterMBean(name);
+            }
+        } catch (JMException e) {
+            // Ignore
+        }
     }
 
     public void testJMXReporter() {
@@ -200,6 +236,26 @@ public class ReporterTest extends TestCase {
         SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
         assertTrue("Gauge is available", gaugeMap.containsKey("Value"));
         assertTrue("Gauge value is a positive number", ((Integer) gaugeMap.get("Value")) > 0);
+    }
+
+    public void testJMXReport() {
+        invokeJMXReportOperation();
+        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?",
+                meterName);
+        assertEquals("There is one result", 1, meterResult.size());
+        assertEquals("Meter is available", meterName, meterResult.get(0).get("NAME"));
+        assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));
+    }
+
+    private void invokeJMXReportOperation() {
+        ObjectName n;
+        try {
+            n = new ObjectName(MBEAN_NAME);
+            MetricManagerMXBean metricManagerMXBean = JMX.newMXBeanProxy(mBeanServer, n, MetricManagerMXBean.class);
+            metricManagerMXBean.report();
+        } catch (MalformedObjectNameException e) {
+            fail(e.getMessage());
+        }
     }
 
     private AttributeList getAttributes(String name, String... attributeNames) {

@@ -68,4 +68,8 @@ public interface MetricManagerMXBean {
      */
     void setRootLevel(String level);
 
+    /**
+     * Invoke report method of all scheduled reporters.
+     */
+    void report();
 }
