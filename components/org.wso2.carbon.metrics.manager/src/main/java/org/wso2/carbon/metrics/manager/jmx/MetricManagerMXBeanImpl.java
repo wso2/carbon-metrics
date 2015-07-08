@@ -70,4 +70,9 @@ public class MetricManagerMXBeanImpl implements MetricManagerMXBean {
     public void setRootLevel(String level) {
         metricService.setRootLevel(Level.valueOf(level));
     }
+
+    @Override
+    public void report() {
+        metricService.report();
+    }
 }

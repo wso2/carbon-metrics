@@ -649,7 +649,8 @@ public class MetricServiceImpl implements MetricService {
     /**
      * For testing purposes
      */
-    void report() {
+    @Override
+    public void report() {
         for (Reporter reporter : reporters) {
             if (reporter instanceof ScheduledReporter) {
                 ((ScheduledReporter) reporter).report();

@@ -127,4 +127,8 @@ public interface MetricService {
      */
     <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
 
+    /**
+     * Invoke report method of all scheduled reporters.
+     */
+    void report();
 }
