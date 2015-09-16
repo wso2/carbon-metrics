@@ -1,3 +1,5 @@
+[![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=carbon-metrics)](https://wso2.org/jenkins/job/carbon-metrics/)
+
 WSO2 Carbon Metrics
 ===================
 
