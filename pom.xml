@@ -14,7 +14,8 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
@@ -411,25 +412,25 @@
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <eclipse.osgi.version>3.9.1.v20140110-1610</eclipse.osgi.version>
         <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
-        <carbon.kernel.version>4.4.0</carbon.kernel.version>
+        <carbon.kernel.version>4.4.1</carbon.kernel.version>
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
         <securevault.version>1.0.0-wso2v2</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>
-        <axiom.version>1.2.14</axiom.version>
+        <axiom.version>1.2.15</axiom.version>
         <axiom.version.range>[1.2.0,1.3.0)</axiom.version.range>
         <commons-io.version>2.4</commons-io.version>
         <commons-io.wso2.version.range>[2.0.0, 3.0.0)</commons-io.wso2.version.range>
-        <gson.version>2.3.1</gson.version>
+        <gson.version>2.4</gson.version>
         <gson.version.range>[2.0.0, 3.0.0)</gson.version.range>
         <slf4j.version>1.7.12</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>1.2.17</log4j.version>
         <!-- Cannot use a latest version (1.4.185). We need to use a compatible version with Carbon's H2 library -->
         <h2.version>1.2.140</h2.version>
-        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
         <javax.ws.rs.version>2.0.1</javax.ws.rs.version>
         <!-- scr plugin version 1.7.4 is required to recognize javadoc comments for scr components -->
@@ -439,15 +440,15 @@
         <maven.war.plugin.version>2.6</maven.war.plugin.version>
         <build.helper.maven.plugin.version>1.9.1</build.helper.maven.plugin.version>
 
-        <tomcat.version>8.0.21</tomcat.version>
+        <tomcat.version>8.0.28</tomcat.version>
 
         <!-- Service Stubs - Start -->
         <commons.logging.version>1.2</commons.logging.version>
-        <axis2.wso2.version>1.6.1-wso2v12</axis2.wso2.version>
+        <axis2.wso2.version>1.6.1-wso2v15</axis2.wso2.version>
         <axis2.wso2.version.range>[1.6.0, 1.7.0)</axis2.wso2.version.range>
         <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
         <xmlschema.wso2.version>1.4.7.wso2v3</xmlschema.wso2.version>
-        <axiom.wso2.version>1.2.11.wso2v6</axiom.wso2.version>
+        <axiom.wso2.version>1.2.11.wso2v9</axiom.wso2.version>
         <neethi.wso2.version>2.0.4.wso2v4</neethi.wso2.version>
         <!-- Service Stubs - End -->
     </properties>
