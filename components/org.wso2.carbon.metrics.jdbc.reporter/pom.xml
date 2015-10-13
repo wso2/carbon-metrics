@@ -60,7 +60,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.carbon.metrics.reporter.*,
+                            org.wso2.carbon.metrics.jdbc.reporter.*,
                         </Export-Package>
                         <Import-Package>
                             com.codahale.metrics;

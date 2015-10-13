@@ -37,7 +37,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.datasource.init.ScriptException;
 import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
-import org.wso2.carbon.metrics.reporter.JDBCReporter;
+import org.wso2.carbon.metrics.jdbc.reporter.JDBCReporter;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;
