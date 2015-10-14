@@ -1,0 +1,50 @@
+{
+  "name": "org.wso2.carbon.metrics.meter",
+  "version": "1.0.0",
+  "nickName": "meter_metrics",
+  "description": "Meter Metrics",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "LONG"
+    },
+    {
+      "name": "mean_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "one_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "five_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "fifteen_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "rate_unit",
+      "type": "STRING"
+    },
+    {
+      "name": "duration_unit",
+      "type": "STRING"
+    }
+  ]
+}

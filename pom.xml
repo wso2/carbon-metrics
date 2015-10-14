@@ -53,6 +53,7 @@
     <modules>
         <module>service-stubs/org.wso2.carbon.metrics.data.service.stub</module>
         <module>components/org.wso2.carbon.metrics.jdbc.reporter</module>
+        <module>components/org.wso2.carbon.metrics.das.reporter</module>
         <module>components/org.wso2.carbon.metrics.manager</module>
         <module>components/org.wso2.carbon.metrics.common</module>
         <module>components/org.wso2.carbon.metrics.impl</module>
@@ -78,6 +79,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>
@@ -175,6 +181,11 @@
                         <artifactId>commons-io</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.agent</artifactId>
+                <version>${carbon.analytics.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -416,6 +427,8 @@
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
+        <carbon.analytics.common.version>5.0.4</carbon.analytics.common.version>
+        <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
         <carbon.p2.plugin.version>1.5.4</carbon.p2.plugin.version>
         <securevault.version>1.0.0-wso2v2</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>

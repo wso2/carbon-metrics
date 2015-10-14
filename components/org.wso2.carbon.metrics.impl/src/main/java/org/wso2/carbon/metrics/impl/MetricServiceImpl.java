@@ -37,6 +37,7 @@ import org.wso2.carbon.metrics.impl.internal.LocalDatabaseCreator;
 import org.wso2.carbon.metrics.impl.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
+import org.wso2.carbon.metrics.impl.reporter.DASReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
@@ -109,6 +110,15 @@ public class MetricServiceImpl implements MetricService {
     private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED = "Reporting.JDBC.ScheduledCleanup.Enabled";
     private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD = "Reporting.JDBC.ScheduledCleanup.ScheduledCleanupPeriod";
     private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP = "Reporting.JDBC.ScheduledCleanup.DaysToKeep";
+
+    private static final String DAS_REPORTING_ENABLED = "Reporting.DAS.Enabled";
+    private static final String DAS_REPORTING_SOURCE = "Reporting.DAS.Source";
+    private static final String DAS_REPORTING_TYPE = "Reporting.DAS.Type";
+    private static final String DAS_REPORTING_RECEIVER_URL = "Reporting.DAS.ReceiverURL";
+    private static final String DAS_REPORTING_AUTH_URL = "Reporting.DAS.AuthURL";
+    private static final String DAS_REPORTING_USERNAME = "Reporting.DAS.Username";
+    private static final String DAS_REPORTING_PASSWORD = "Reporting.DAS.Password";
+    private static final String DAS_REPORTING_POLLING_PERIOD = "Reporting.DAS.PollingPeriod";
 
     private final MetricsConfiguration configuration;
     private final MetricsLevelConfiguration levelConfiguration;
@@ -220,6 +230,17 @@ public class MetricServiceImpl implements MetricService {
 
         if (jdbcReporter != null) {
             reporters.add(jdbcReporter);
+        }
+
+        Reporter dasReporter = null;
+        try {
+            dasReporter = configureDASReporter();
+        } catch (Throwable e) {
+            logger.error("Error when configuring DAS reporter", e);
+        }
+
+        if (dasReporter != null) {
+            reporters.add(dasReporter);
         }
     }
 
@@ -746,9 +767,9 @@ public class MetricServiceImpl implements MetricService {
             }
         }
         if (logger.isInfoEnabled()) {
-            logger.info(String.format(
-                    "Creating CSV reporter for Metrics with location '%s' and %d seconds polling period", location,
-                    csvReporterPollingPeriod));
+            logger.info(
+                    String.format("Creating CSV reporter for Metrics with location '%s' and %d seconds polling period",
+                            location, csvReporterPollingPeriod));
         }
 
         return new CsvReporterImpl(metricRegistry, enabledMetricFilter, file, csvReporterPollingPeriod);
@@ -780,7 +801,8 @@ public class MetricServiceImpl implements MetricService {
 
         if (dataSourceName == null || dataSourceName.trim().length() == 0) {
             if (logger.isWarnEnabled()) {
-                logger.warn("Data Source Name is not specified for JDBC Reporting. The JDBC reporting will not be enabled");
+                logger.warn(
+                        "Data Source Name is not specified for JDBC Reporting. The JDBC reporting will not be enabled");
             }
             return null;
         }
@@ -799,9 +821,9 @@ public class MetricServiceImpl implements MetricService {
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info(String
-                    .format("Creating JDBC reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
-                            source, dataSourceName, jdbcReporterPollingPeriod));
+            logger.info(String.format(
+                    "Creating JDBC reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
+                    source, dataSourceName, jdbcReporterPollingPeriod));
         }
 
         // Setup Database if required
@@ -816,8 +838,8 @@ public class MetricServiceImpl implements MetricService {
             return null;
         }
 
-        boolean runCleanupTask = Boolean.parseBoolean(configuration
-                .getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED));
+        boolean runCleanupTask = Boolean
+                .parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED));
         // Default cleanup period for JDBC is 86400 seconds
         long jdbcScheduledCleanupPeriod = 86400;
         // Default days to keep is 7 days
@@ -866,6 +888,76 @@ public class MetricServiceImpl implements MetricService {
                 }
             }
         }
+    }
+
+    private Reporter configureDASReporter() {
+        if (!Boolean.parseBoolean(configuration.getFirstProperty(DAS_REPORTING_ENABLED))) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("DAS Reporting for Metrics is not enabled");
+            }
+            return null;
+        }
+        // Default polling period for DAS reporter is 30 seconds
+        long dasReporterPollingPeriod = 30;
+        String pollingPeriod = configuration.getFirstProperty(DAS_REPORTING_POLLING_PERIOD,
+                String.valueOf(dasReporterPollingPeriod));
+        try {
+            dasReporterPollingPeriod = Long.parseLong(pollingPeriod);
+        } catch (NumberFormatException e) {
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format("Error parsing the polling period for DAS Reporting. Using %d seconds",
+                        dasReporterPollingPeriod));
+            }
+        }
+
+        String source = configuration.getFirstProperty(DAS_REPORTING_SOURCE, new DefaultSourceValueProvider());
+
+        String type = configuration.getFirstProperty(DAS_REPORTING_TYPE);
+
+        if (type == null || type.trim().length() == 0) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Type is not specified for DAS Reporting. The DAS reporting will not be enabled");
+            }
+            return null;
+        }
+
+        String receiverURL = configuration.getFirstProperty(DAS_REPORTING_RECEIVER_URL);
+
+        if (receiverURL == null || receiverURL.trim().length() == 0) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Receiver URL is not specified for DAS Reporting. The DAS reporting will not be enabled");
+            }
+            return null;
+        }
+
+        String authURL = configuration.getFirstProperty(DAS_REPORTING_AUTH_URL);
+
+        String username = configuration.getFirstProperty(DAS_REPORTING_USERNAME);
+
+        if (username == null || username.trim().length() == 0) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Username is not specified for DAS Reporting. The DAS reporting will not be enabled");
+            }
+            return null;
+        }
+
+        String password = configuration.getFirstProperty(DAS_REPORTING_PASSWORD);
+
+        if (password == null || password.trim().length() == 0) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Password is not specified for DAS Reporting. The DAS reporting will not be enabled");
+            }
+            return null;
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format(
+                    "Creating DAS reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
+                    source, type, dasReporterPollingPeriod));
+        }
+
+        return new DASReporterImpl(metricRegistry, enabledMetricFilter, source, type, receiverURL, authURL, username,
+                password, dasReporterPollingPeriod);
     }
 
 }

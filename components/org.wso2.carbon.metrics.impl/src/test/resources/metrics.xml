@@ -40,5 +40,15 @@
                 <DaysToKeep>7</DaysToKeep>
             </ScheduledCleanup>
         </JDBC>
+        <DAS>
+            <Enabled>false</Enabled>
+            <Source></Source>
+            <PollingPeriod>60</PollingPeriod>
+            <Type>thrift</Type>
+            <ReceiverURL>tcp://localhost:7611</ReceiverURL>
+            <!-- <AuthURL>ssl://localhost:7711</AuthURL> -->
+            <Username>admin</Username>
+            <Password>admin</Password>
+        </DAS>
     </Reporting>
 </Metrics>

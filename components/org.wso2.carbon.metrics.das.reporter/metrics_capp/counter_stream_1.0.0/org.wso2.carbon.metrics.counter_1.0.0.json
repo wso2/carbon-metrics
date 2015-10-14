@@ -1,0 +1,26 @@
+{
+  "name": "org.wso2.carbon.metrics.counter",
+  "version": "1.0.0",
+  "nickName": "counter_metrics",
+  "description": "Counter Metrics",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "LONG"
+    }
+  ]
+}
