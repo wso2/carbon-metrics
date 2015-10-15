@@ -11,11 +11,11 @@
   ],
   "payloadData": [
     {
-      "name": "name",
+      "name": "source",
       "type": "STRING"
     },
     {
-      "name": "source",
+      "name": "name",
       "type": "STRING"
     },
     {
