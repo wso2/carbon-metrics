@@ -23,15 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Measure the time
+ * Count
  */
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface Timed {
+public @interface Counted {
     /**
-     * @return The name of the timer.
+     * @return The name of the counter.
      */
     String name() default "";
 
@@ -45,4 +45,13 @@ public @interface Timed {
      *         relative to the annotated class
      */
     boolean absolute() default false;
+
+    /**
+     * @return
+     *         If {@code false} (default), the counter is decremented when the annotated
+     *         method returns, counting current invocations of the annotated method.
+     *         If {@code true}, the counter increases monotonically, counting total
+     *         invocations of the annotated method.
+     */
+    boolean monotonic() default false;
 }

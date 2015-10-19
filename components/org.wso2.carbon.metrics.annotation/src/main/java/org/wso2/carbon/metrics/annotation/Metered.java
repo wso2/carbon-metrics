@@ -23,15 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Measure the time
+ * Measure the rate of events
  */
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface Timed {
+public @interface Metered {
     /**
-     * @return The name of the timer.
+     * @return The name of the meter.
      */
     String name() default "";
 
@@ -42,7 +42,8 @@ public @interface Timed {
 
     /**
      * @return If {@code true}, use the given name as an absolute name. If {@code false}, use the given name
-     *         relative to the annotated class
+     *         relative to the annotated class.
      */
     boolean absolute() default false;
+
 }
