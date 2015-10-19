@@ -70,5 +70,25 @@
                 <DaysToKeep>7</DaysToKeep>
             </ScheduledCleanup>
         </JDBC>
+        <DAS>
+            <Enabled>true</Enabled>
+            <!-- Source of Metrics, which will be used to
+                identify each metric sent in the streams -->
+            <!-- Commented to use the hostname
+                <Source>Carbon</Source>
+            -->
+            <!-- Polling Period in seconds.
+                This is the period for polling metrics from the metric registry and
+                sending events via the Data Publisher -->
+            <PollingPeriod>60</PollingPeriod>
+            <!-- The type used with Data Publisher -->
+            <Type>thrift</Type>
+            <!-- Data Receiver URL used by the Data Publisher -->
+            <ReceiverURL>tcp://localhost:7611</ReceiverURL>
+            <!-- Authentication URL for the Data Publisher -->
+            <!-- <AuthURL>ssl://localhost:7711</AuthURL> -->
+            <Username>admin</Username>
+            <Password>admin</Password>
+        </DAS>
     </Reporting>
 </Metrics>
