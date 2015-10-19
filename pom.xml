@@ -55,6 +55,7 @@
         <module>components/org.wso2.carbon.metrics.jdbc.reporter</module>
         <module>components/org.wso2.carbon.metrics.das.reporter</module>
         <module>components/org.wso2.carbon.metrics.manager</module>
+        <module>components/org.wso2.carbon.metrics.annotation</module>
         <module>components/org.wso2.carbon.metrics.common</module>
         <module>components/org.wso2.carbon.metrics.impl</module>
         <module>components/org.wso2.carbon.metrics.data.common</module>
