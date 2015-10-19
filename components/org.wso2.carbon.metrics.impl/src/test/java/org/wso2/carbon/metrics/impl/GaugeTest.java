@@ -15,13 +15,14 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
-
+import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Gauge}
@@ -32,7 +33,9 @@ public class GaugeTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
+        MetricsConfiguration configuration = Utils.getConfiguration();
+        MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
+        metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 

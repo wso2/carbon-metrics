@@ -26,6 +26,10 @@ import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.MetricServiceImpl;
 import org.wso2.carbon.metrics.impl.MetricsLevelConfigException;
 import org.wso2.carbon.metrics.impl.MetricsLevelConfiguration;
+import org.wso2.carbon.metrics.impl.util.CsvReporterBuilder;
+import org.wso2.carbon.metrics.impl.util.DASReporterBuilder;
+import org.wso2.carbon.metrics.impl.util.JDBCReporterBuilder;
+import org.wso2.carbon.metrics.impl.util.JmxReporterBuilder;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.utils.CarbonUtils;
@@ -68,7 +72,11 @@ public class MetricsImplComponent {
             }
         }
 
-        metricService = new MetricServiceImpl(configuration, levelConfiguration);
+        metricService = new MetricServiceImpl.Builder().configure(configuration)
+                .addReporterBuilder(new JmxReporterBuilder().configure(configuration))
+                .addReporterBuilder(new CsvReporterBuilder().configure(configuration))
+                .addReporterBuilder(new JDBCReporterBuilder().configure(configuration))
+                .addReporterBuilder(new DASReporterBuilder().configure(configuration)).build(levelConfiguration);
 
         metricsServiceRegistration = componentContext.getBundleContext().registerService(MetricService.class.getName(),
                 metricService, null);

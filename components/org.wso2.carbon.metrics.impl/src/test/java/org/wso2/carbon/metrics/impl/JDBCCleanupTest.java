@@ -72,7 +72,7 @@ public class JDBCCleanupTest {
     private final int SUBSTRACT_MILLIS = (DAYS * 86400 * 1000) + 1000;
 
     @BeforeClass
-    public static void setupDatasource() throws ScriptException, SQLException  {
+    public static void setupDatasource() throws ScriptException, SQLException {
         dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test-cleanup;DB_CLOSE_DELAY=-1", "sa", "");
         template = new JdbcTemplate(dataSource);
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();

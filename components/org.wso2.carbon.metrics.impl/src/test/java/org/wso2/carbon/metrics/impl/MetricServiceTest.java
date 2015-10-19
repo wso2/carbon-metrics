@@ -15,13 +15,14 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
-
+import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link MetricService}
@@ -32,7 +33,9 @@ public class MetricServiceTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
+        MetricsConfiguration configuration = Utils.getConfiguration();
+        MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
+        metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         metricService.setRootLevel(Level.OFF);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
@@ -175,7 +178,8 @@ public class MetricServiceTest extends TestCase {
 
         meter = MetricManager.meter(Level.DEBUG, MetricManager.name(this.getClass(), "test5"));
         meter.mark(100);
-        assertEquals("Corg.wso2.carbon.metrics.impl.MetricServiceTestount should be one hundred", 100, meter.getCount());
+        assertEquals("Corg.wso2.carbon.metrics.impl.MetricServiceTestount should be one hundred", 100,
+                meter.getCount());
 
     }
 }
