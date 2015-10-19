@@ -397,8 +397,11 @@
                         <artifactId>apache-rat-plugin</artifactId>
                         <configuration>
                             <excludes>
-                                <exclude>**/README.md</exclude>
+                                <exclude>README.md</exclude>
                                 <exclude>.travis.yml</exclude>
+                                <exclude>**/*.json</exclude>
+                                <exclude>**/images/*</exclude>
+                                <exclude>**/plugins/**</exclude>
                             </excludes>
                         </configuration>
                         <executions>
