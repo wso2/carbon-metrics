@@ -80,9 +80,9 @@ public class CsvReporterBuilder implements ReporterBuilder<CsvReporterImpl> {
 
     @Override
     public CsvReporterImpl build(MetricRegistry metricRegistry, MetricFilter metricFilter)
-            throws ReportedDisabledException, ReporterBuildException {
+            throws ReporterDisabledException, ReporterBuildException {
         if (!enabled) {
-            throw new ReportedDisabledException("CSV Reporting for Metrics is not enabled");
+            throw new ReporterDisabledException("CSV Reporting for Metrics is not enabled");
         }
         if (location == null) {
             throw new ReporterBuildException("CSV Reporting location is not specified");

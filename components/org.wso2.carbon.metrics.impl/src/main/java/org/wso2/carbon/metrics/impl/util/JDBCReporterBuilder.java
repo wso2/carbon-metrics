@@ -149,9 +149,9 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
 
     @Override
     public JDBCReporterImpl build(MetricRegistry metricRegistry, MetricFilter metricFilter)
-            throws ReportedDisabledException, ReporterBuildException {
+            throws ReporterDisabledException, ReporterBuildException {
         if (!enabled) {
-            throw new ReportedDisabledException("JDBC Reporting for Metrics is not enabled");
+            throw new ReporterDisabledException("JDBC Reporting for Metrics is not enabled");
         }
         if (dataSourceName == null || dataSourceName.trim().length() == 0) {
             throw new ReporterBuildException("Data Source Name is not specified for JDBC Reporting.");

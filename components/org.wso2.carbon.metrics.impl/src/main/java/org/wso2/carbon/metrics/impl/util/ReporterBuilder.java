@@ -26,6 +26,6 @@ public interface ReporterBuilder<T extends Reporter> {
     ReporterBuilder<T> configure(MetricsConfiguration configuration);
 
     T build(MetricRegistry metricRegistry, MetricFilter metricFilter)
-            throws ReportedDisabledException, ReporterBuildException;
+            throws ReporterDisabledException, ReporterBuildException;
 
 }

@@ -31,7 +31,7 @@ import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
-import org.wso2.carbon.metrics.impl.util.ReportedDisabledException;
+import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
@@ -178,7 +178,7 @@ public class MetricServiceImpl implements MetricService {
         for (ReporterBuilder<? extends Reporter> reporterBuilder : reporterBuilders) {
             try {
                 reporters.add(reporterBuilder.build(metricRegistry, enabledMetricFilter));
-            } catch (ReportedDisabledException e) {
+            } catch (ReporterDisabledException e) {
                 // This can be ignored
             } catch (Throwable e) {
                 if (logger.isWarnEnabled()) {

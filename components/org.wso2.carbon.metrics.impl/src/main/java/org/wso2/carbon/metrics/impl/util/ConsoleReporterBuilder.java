@@ -65,9 +65,9 @@ public class ConsoleReporterBuilder implements ReporterBuilder<ConsoleReporterIm
 
     @Override
     public ConsoleReporterImpl build(MetricRegistry metricRegistry, MetricFilter metricFilter)
-            throws ReportedDisabledException, ReporterBuildException {
+            throws ReporterDisabledException, ReporterBuildException {
         if (!enabled) {
-            throw new ReportedDisabledException("Console Reporting for Metrics is not enabled");
+            throw new ReporterDisabledException("Console Reporting for Metrics is not enabled");
         }
         if (logger.isInfoEnabled()) {
             logger.info(String.format("Creating Console reporter for Metrics with %d seconds polling period",

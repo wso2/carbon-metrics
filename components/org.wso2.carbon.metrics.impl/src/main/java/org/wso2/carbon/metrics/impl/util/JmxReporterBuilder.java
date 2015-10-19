@@ -49,9 +49,9 @@ public class JmxReporterBuilder implements ReporterBuilder<JmxReporterImpl> {
 
     @Override
     public JmxReporterImpl build(MetricRegistry metricRegistry, MetricFilter metricFilter)
-            throws ReportedDisabledException, ReporterBuildException {
+            throws ReporterDisabledException, ReporterBuildException {
         if (!enabled) {
-            throw new ReportedDisabledException("JMX Reporting for Metrics is not enabled");
+            throw new ReporterDisabledException("JMX Reporting for Metrics is not enabled");
         }
 
         if (logger.isInfoEnabled()) {

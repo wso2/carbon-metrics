@@ -15,22 +15,22 @@
  */
 package org.wso2.carbon.metrics.impl.util;
 
-public class ReportedDisabledException extends Exception {
+public class ReporterDisabledException extends Exception {
 
     private static final long serialVersionUID = -7875361972711163827L;
 
-    public ReportedDisabledException() {
+    public ReporterDisabledException() {
     }
 
-    public ReportedDisabledException(String message) {
+    public ReporterDisabledException(String message) {
         super(message);
     }
 
-    public ReportedDisabledException(Throwable cause) {
+    public ReporterDisabledException(Throwable cause) {
         super(cause);
     }
 
-    public ReportedDisabledException(String message, Throwable cause) {
+    public ReporterDisabledException(String message, Throwable cause) {
         super(message, cause);
     }
 

@@ -126,9 +126,9 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
 
     @Override
     public DASReporterImpl build(MetricRegistry metricRegistry, MetricFilter metricFilter)
-            throws ReportedDisabledException, ReporterBuildException {
+            throws ReporterDisabledException, ReporterBuildException {
         if (!enabled) {
-            throw new ReportedDisabledException("DAS Reporting for Metrics is not enabled");
+            throw new ReporterDisabledException("DAS Reporting for Metrics is not enabled");
         }
         if (type == null || type.trim().length() == 0) {
             throw new ReporterBuildException("Type is not specified for DAS Reporting.");
