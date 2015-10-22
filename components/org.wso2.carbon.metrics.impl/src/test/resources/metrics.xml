@@ -25,6 +25,10 @@
         <JMX>
             <Enabled>true</Enabled>
         </JMX>
+        <Console>
+            <Enabled>false</Enabled>
+            <PollingPeriod>60</PollingPeriod>
+        </Console>
         <CSV>
             <Enabled>false</Enabled>
             <Location>${carbon.home}/repository/logs/metrics/</Location>

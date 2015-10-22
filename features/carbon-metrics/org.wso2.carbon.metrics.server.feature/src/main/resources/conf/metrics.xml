@@ -31,6 +31,13 @@
         <JMX>
             <Enabled>true</Enabled>
         </JMX>
+        <Console>
+            <Enabled>false</Enabled>
+            <!-- Polling Period in seconds.
+                This is the period for polling metrics from the metric registry and
+                printing in the console -->
+            <PollingPeriod>60</PollingPeriod>
+        </Console>
         <CSV>
             <Enabled>false</Enabled>
             <Location>${carbon.home}/repository/logs/metrics/</Location>
