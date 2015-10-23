@@ -22,7 +22,7 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.common.MetricsConfigException;
-import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.common.MetricsXMLConfiguration;
 import org.wso2.carbon.metrics.impl.MetricServiceImpl;
 import org.wso2.carbon.metrics.impl.MetricsLevelConfigException;
 import org.wso2.carbon.metrics.impl.MetricsLevelConfiguration;
@@ -52,7 +52,7 @@ public class MetricsImplComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Service component activated");
         }
-        MetricsConfiguration configuration = new MetricsConfiguration();
+        MetricsXMLConfiguration configuration = new MetricsXMLConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
         try {
             configuration.load(filePath);

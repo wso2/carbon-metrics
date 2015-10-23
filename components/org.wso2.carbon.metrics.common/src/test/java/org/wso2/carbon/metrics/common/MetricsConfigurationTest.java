@@ -41,8 +41,8 @@ public class MetricsConfigurationTest extends TestCase {
 
     public void testSystemPropertiesReplacements() {
         System.setProperty("user.home", "/home/test");
-        assertEquals("/home/test/file", MetricsConfiguration.replaceSystemProperties("${user.home}/file"));
+        assertEquals("/home/test/file", MetricsXMLConfiguration.replaceSystemProperties("${user.home}/file"));
         assertEquals("/home/test/file/wso2/carbon",
-                MetricsConfiguration.replaceSystemProperties("${user.home}/file${carbon.home}"));
+                MetricsXMLConfiguration.replaceSystemProperties("${user.home}/file${carbon.home}"));
     }
 }

@@ -41,6 +41,7 @@ import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfigException;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.common.MetricsXMLConfiguration;
 import org.wso2.carbon.metrics.data.common.Metric;
 import org.wso2.carbon.metrics.data.common.MetricAttribute;
 import org.wso2.carbon.metrics.data.common.MetricDataFormat;
@@ -80,7 +81,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
      */
     @Override
     public void init(ServiceContext serviceContext) throws AxisFault {
-        MetricsConfiguration configuration = new MetricsConfiguration();
+        MetricsXMLConfiguration configuration = new MetricsXMLConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
         try {
             configuration.load(filePath);
