@@ -58,7 +58,7 @@ public class ConsoleReporterBuilder implements ReporterBuilder<ConsoleReporterIm
         return this;
     }
 
-    public ReporterBuilder<ConsoleReporterImpl> setCsvReporterPollingPeriod(long consoleReporterPollingPeriod) {
+    public ReporterBuilder<ConsoleReporterImpl> setConsoleReporterPollingPeriod(long consoleReporterPollingPeriod) {
         this.consoleReporterPollingPeriod = consoleReporterPollingPeriod;
         return this;
     }
