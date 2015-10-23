@@ -37,7 +37,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.datasource.init.ScriptException;
 import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
-import org.wso2.carbon.metrics.reporter.JDBCReporter;
+import org.wso2.carbon.metrics.jdbc.reporter.JDBCReporter;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;
@@ -72,7 +72,7 @@ public class JDBCCleanupTest {
     private final int SUBSTRACT_MILLIS = (DAYS * 86400 * 1000) + 1000;
 
     @BeforeClass
-    public static void setupDatasource() throws ScriptException, SQLException  {
+    public static void setupDatasource() throws ScriptException, SQLException {
         dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test-cleanup;DB_CLOSE_DELAY=-1", "sa", "");
         template = new JdbcTemplate(dataSource);
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();

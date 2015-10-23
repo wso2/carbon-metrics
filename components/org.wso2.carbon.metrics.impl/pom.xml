@@ -42,6 +42,10 @@
             <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
@@ -118,7 +122,7 @@
                             org.wso2.carbon.utils.*;version="${carbon.kernel.version.range}",
                             org.wso2.carbon.metrics.common.*,
                             org.wso2.carbon.metrics.manager.*,
-                            org.wso2.carbon.metrics.reporter.*,
+                            org.wso2.carbon.metrics.jdbc.reporter.*,
                             com.codahale.metrics;version="${metrics.version.range}",
                             com.codahale.metrics.jvm;version="${metrics.version.range}",
                             org.slf4j;version="${slf4j.version.range}"

@@ -68,7 +68,7 @@ public class ScheduledJDBCMetricsCleanupTask extends ScheduledTask {
 
             // Timestamp is in seconds. There are 86400 seconds for a day (24 hours)
 
-            long timestamp = (System.currentTimeMillis() / 1000) - (daysToKeep * 86400);
+            long timestamp = (System.currentTimeMillis() / 1000) - (daysToKeep * 86400L);
 
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("Executing SQL Query [%s]. Parameter: %s", query, timestamp));

@@ -15,13 +15,14 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
-
+import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link MetricService}
@@ -34,7 +35,9 @@ public class MetricServiceSystemPropertiesTest extends TestCase {
         super.setUp();
         System.setProperty("metrics.enabled", "true");
         System.setProperty("metrics.rootLevel", "INFO");
-        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
+        MetricsConfiguration configuration = Utils.getConfiguration();
+        MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
+        metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 

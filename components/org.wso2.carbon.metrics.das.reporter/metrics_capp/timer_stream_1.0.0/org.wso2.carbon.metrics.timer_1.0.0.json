@@ -1,0 +1,90 @@
+{
+  "name": "org.wso2.carbon.metrics.timer",
+  "version": "1.0.0",
+  "nickName": "timer_metrics",
+  "description": "Timer Metrics",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "LONG"
+    },
+    {
+      "name": "max",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "mean",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "min",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "stddev",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "median",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "75th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "95th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "98th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "99th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "999th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "mean_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "one_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "five_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "fifteen_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "rate_unit",
+      "type": "STRING"
+    },
+    {
+      "name": "duration_unit",
+      "type": "STRING"
+    }
+  ]
+}
