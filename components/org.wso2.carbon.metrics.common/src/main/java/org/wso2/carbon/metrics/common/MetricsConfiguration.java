@@ -18,12 +18,20 @@ package org.wso2.carbon.metrics.common;
 /**
  * Configuration for Metrics
  */
-public interface MetricsConfiguration {
+public abstract class MetricsConfiguration {
 
-    String getFirstProperty(String key);
+    public abstract String getFirstProperty(String key);
 
-    String getFirstProperty(String key, String defaultValue);
+    public final String getFirstProperty(String key, String defaultValue) {
+        String returnValue = getFirstProperty(key);
+        if (returnValue == null || returnValue.trim().length() == 0) {
+            return defaultValue;
+        }
+        return returnValue;
+    }
 
-    String getFirstProperty(String key, DefaultValueProvider defaultValueProvider);
+    public final String getFirstProperty(String key, DefaultValueProvider defaultValueProvider) {
+        return getFirstProperty(key, defaultValueProvider.getValue());
+    }
 
 }

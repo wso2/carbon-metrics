@@ -42,7 +42,7 @@ import org.wso2.securevault.SecretResolverFactory;
 /**
  * Global Configuration Reader for Metrics
  */
-public class MetricsXMLConfiguration implements MetricsConfiguration {
+public class MetricsXMLConfiguration extends MetricsConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsXMLConfiguration.class);
 
@@ -106,18 +106,6 @@ public class MetricsXMLConfiguration implements MetricsConfiguration {
             return null;
         }
         return value.get(0);
-    }
-
-    public String getFirstProperty(String key, String defaultValue) {
-        String returnValue = getFirstProperty(key);
-        if (returnValue == null || returnValue.trim().length() == 0) {
-            return defaultValue;
-        }
-        return returnValue;
-    }
-
-    public String getFirstProperty(String key, DefaultValueProvider defaultValueProvider) {
-        return getFirstProperty(key, defaultValueProvider.getValue());
     }
 
     public List<String> getProperty(String key) {
