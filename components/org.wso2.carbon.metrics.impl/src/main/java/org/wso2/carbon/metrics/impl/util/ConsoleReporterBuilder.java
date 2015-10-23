@@ -30,7 +30,7 @@ public class ConsoleReporterBuilder implements ReporterBuilder<ConsoleReporterIm
     private static final String CONSOLE_REPORTING_ENABLED = "Reporting.Console.Enabled";
     private static final String CONSOLE_REPORTING_POLLING_PERIOD = "Reporting.Console.PollingPeriod";
 
-    private boolean enabled = true;
+    private boolean enabled;
 
     // Default polling period for console reporter is 60 seconds
     private long consoleReporterPollingPeriod = 60;
@@ -58,7 +58,7 @@ public class ConsoleReporterBuilder implements ReporterBuilder<ConsoleReporterIm
         return this;
     }
 
-    public ReporterBuilder<ConsoleReporterImpl> setConsoleReporterPollingPeriod(long consoleReporterPollingPeriod) {
+    public ReporterBuilder<ConsoleReporterImpl> setCsvReporterPollingPeriod(long consoleReporterPollingPeriod) {
         this.consoleReporterPollingPeriod = consoleReporterPollingPeriod;
         return this;
     }

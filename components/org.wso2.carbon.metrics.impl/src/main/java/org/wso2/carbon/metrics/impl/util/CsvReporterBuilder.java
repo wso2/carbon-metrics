@@ -33,7 +33,7 @@ public class CsvReporterBuilder implements ReporterBuilder<CsvReporterImpl> {
     private static final String CSV_REPORTING_LOCATION = "Reporting.CSV.Location";
     private static final String CSV_REPORTING_POLLING_PERIOD = "Reporting.CSV.PollingPeriod";
 
-    private boolean enabled = true;
+    private boolean enabled;
 
     // Default polling period for CSV reporter is 60 seconds
     private long csvReporterPollingPeriod = 60;

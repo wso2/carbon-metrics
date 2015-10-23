@@ -37,7 +37,7 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
     private static final String DAS_REPORTING_PASSWORD = "Reporting.DAS.Password";
     private static final String DAS_REPORTING_POLLING_PERIOD = "Reporting.DAS.PollingPeriod";
 
-    private boolean enabled = true;
+    private boolean enabled;
 
     // Default polling period for DAS reporter is 60 seconds
     private long dasReporterPollingPeriod = 60;

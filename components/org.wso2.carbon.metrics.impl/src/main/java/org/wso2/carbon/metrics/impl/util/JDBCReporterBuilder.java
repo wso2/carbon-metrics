@@ -48,7 +48,7 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
      */
     private static final String DB_CHECK_SQL = "SELECT NAME FROM METRIC_GAUGE";
 
-    private boolean enabled = true;
+    private boolean enabled;
 
     // Default polling period for JDBC reporter is 60 seconds
     private long jdbcReporterPollingPeriod = 60;
