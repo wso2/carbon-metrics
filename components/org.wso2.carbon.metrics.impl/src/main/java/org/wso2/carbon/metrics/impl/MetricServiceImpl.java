@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.impl;
 
 import java.lang.management.ManagementFactory;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,8 +32,9 @@ import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
-import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
+import org.wso2.carbon.metrics.impl.util.ReporterBuildException;
 import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
+import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
@@ -88,7 +90,7 @@ public class MetricServiceImpl implements MetricService {
 
     private final MetricsLevelConfiguration levelConfiguration;
 
-    private final Set<Reporter> reporters = new HashSet<Reporter>();
+    private final Set<Reporter> reporters = Collections.synchronizedSet(new HashSet<Reporter>());
 
     private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
 
@@ -193,6 +195,15 @@ public class MetricServiceImpl implements MetricService {
         // Register JVM Metrics
         // This should be the last method when initializing MetricService
         registerJVMMetrics();
+    }
+
+    public void addReporterBuilder(final ReporterBuilder<? extends Reporter> reporterBuilder)
+            throws ReporterDisabledException, ReporterBuildException {
+        Reporter reporter = reporterBuilder.build(metricRegistry, enabledMetricFilter);
+        reporters.add(reporter);
+        if (enabled) {
+            reporter.start();
+        }
     }
 
     /*
