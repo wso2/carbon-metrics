@@ -34,7 +34,7 @@ public class JmxReporterBuilder implements ReporterBuilder<JmxReporterImpl> {
 
     private static final String JMX_REPORTING_ENABLED = "Reporting.JMX.Enabled";
 
-    private boolean enabled;
+    private boolean enabled = true;
 
     @Override
     public ReporterBuilder<JmxReporterImpl> configure(MetricsConfiguration configuration) {
