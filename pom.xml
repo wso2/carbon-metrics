@@ -455,7 +455,7 @@
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <eclipse.osgi.version>3.9.1.v20140110-1610</eclipse.osgi.version>
         <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
-        <carbon.kernel.version>4.4.1</carbon.kernel.version>
+        <carbon.kernel.version>4.4.2</carbon.kernel.version>
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
@@ -475,7 +475,7 @@
         <log4j.version>1.2.17</log4j.version>
         <!-- Cannot use a latest version (1.4.185). We need to use a compatible version with Carbon's H2 library -->
         <h2.version>1.2.140</h2.version>
-        <spring.version>4.2.1.RELEASE</spring.version>
+        <spring.version>4.2.2.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
         <javax.ws.rs.version>2.0.1</javax.ws.rs.version>
         <!-- scr plugin version 1.7.4 is required to recognize javadoc comments for scr components -->
