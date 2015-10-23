@@ -23,8 +23,8 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.data.common.Metric;
-import org.wso2.carbon.metrics.data.common.MetricList;
+import org.wso2.carbon.metrics.data.service.stub.Metric;
+import org.wso2.carbon.metrics.data.service.stub.MetricList;
 import org.wso2.carbon.metrics.data.service.stub.MetricsDataServiceStub;
 
 public class MetricsViewClient {
@@ -76,14 +76,14 @@ public class MetricsViewClient {
         }
     }
 
-    private org.wso2.carbon.metrics.data.service.stub.common.MetricList convert(MetricList list) {
-        org.wso2.carbon.metrics.data.service.stub.common.MetricList xsdMetricList = new org.wso2.carbon.metrics.data.service.stub.common.MetricList();
+    private org.wso2.carbon.metrics.data.service.stub.MetricList convert(MetricList list) {
+        org.wso2.carbon.metrics.data.service.stub.MetricList xsdMetricList = new org.wso2.carbon.metrics.data.service.stub.MetricList();
         Metric[] metrics = list.getMetric();
-        org.wso2.carbon.metrics.data.service.stub.common.Metric[] xsdMetrics = new org.wso2.carbon.metrics.data.service.stub.common.Metric[metrics.length];
+        org.wso2.carbon.metrics.data.service.stub.Metric[] xsdMetrics = new org.wso2.carbon.metrics.data.service.stub.Metric[metrics.length];
         xsdMetricList.setMetric(xsdMetrics);
         for (int i = 0; i < metrics.length; i++) {
             Metric metric = metrics[i];
-            org.wso2.carbon.metrics.data.service.stub.common.Metric xsdMetric = new org.wso2.carbon.metrics.data.service.stub.common.Metric();
+            org.wso2.carbon.metrics.data.service.stub.Metric xsdMetric = new org.wso2.carbon.metrics.data.service.stub.Metric();
             xsdMetrics[i] = xsdMetric;
             xsdMetric.setAttr(metric.getAttr());
             xsdMetric.setDisplayName(metric.getDisplayName());

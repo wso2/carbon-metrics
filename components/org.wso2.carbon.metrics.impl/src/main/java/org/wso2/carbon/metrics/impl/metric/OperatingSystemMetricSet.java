@@ -52,7 +52,7 @@ public class OperatingSystemMetricSet implements MetricSet {
         final Map<String, Metric> gauges = new HashMap<String, Metric>();
 
         Double loadAverage = mxBean.getSystemLoadAverage();
-        if (loadAverage != null && loadAverage.compareTo(0.0d) >= 0) {
+        if (loadAverage != null && Double.compare(loadAverage, 0.0d) >= 0) {
             gauges.put("system.load.average", new Gauge<Double>() {
                 @Override
                 public Double getValue() {

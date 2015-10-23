@@ -99,7 +99,7 @@ public class MetricServiceImpl implements MetricService {
      * MetricRegistry. The wrapper is not available when the listener gets called and by keeping enabled status
      * separately, we can check whether the metric should be filtered without having the metric wrapper
      */
-    private class MetricWrapper {
+    private static class MetricWrapper {
 
         private final Level level;
 
@@ -603,7 +603,7 @@ public class MetricServiceImpl implements MetricService {
         return true;
     }
 
-    private class JVMGaugeWrapper implements Gauge<Object> {
+    private static class JVMGaugeWrapper implements Gauge<Object> {
 
         private final com.codahale.metrics.Gauge<?> gauge;
 
