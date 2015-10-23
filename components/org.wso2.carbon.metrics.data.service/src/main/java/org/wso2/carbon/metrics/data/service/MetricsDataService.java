@@ -175,7 +175,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     public String[] getAllSources() {
         List<String> sourcesList;
         Set<String> sources = reporterDAO.queryAllSources();
-        if (sources == null || sources.isEmpty()) {
+        if (sources.isEmpty()) {
             sourcesList = new ArrayList<String>(1);
             sourcesList.add(currentJDBCReportingSource);
         } else {
