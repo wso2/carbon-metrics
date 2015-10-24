@@ -45,6 +45,10 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.impl</artifactId>
         </dependency>
         <dependency>
@@ -134,6 +138,7 @@
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.common</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.manager</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.jdbc.reporter</bundleDef>
+                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.das.reporter</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.impl</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.common</bundleDef>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service</bundleDef>
