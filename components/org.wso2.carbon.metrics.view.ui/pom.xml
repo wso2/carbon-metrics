@@ -64,7 +64,6 @@
                             org.wso2.carbon.metrics.view.ui.*
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.metrics.data.common.*,
                             org.wso2.carbon.metrics.data.service.stub.*,
                             com.google.gson;version="${gson.version.range}",
                             org.slf4j;version="${slf4j.version.range}",

@@ -15,33 +15,24 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.impl.internal.LocalDatabaseCreator;
 import org.wso2.carbon.metrics.impl.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
-import org.wso2.carbon.metrics.impl.reporter.CsvReporterImpl;
-import org.wso2.carbon.metrics.impl.reporter.JDBCReporterImpl;
-import org.wso2.carbon.metrics.impl.reporter.JmxReporterImpl;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
+import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
+import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
@@ -85,8 +76,6 @@ public class MetricServiceImpl implements MetricService {
     private static final String SYSTEM_PROPERTY_METRICS_ENABLED = "metrics.enabled";
     private static final String SYSTEM_PROPERTY_METRICS_ROOT_LEVEL = "metrics.rootLevel";
 
-    private static final String ENABLED = "Enabled";
-
     /**
      * Name of the root metric. This is set to empty string.
      */
@@ -97,33 +86,9 @@ public class MetricServiceImpl implements MetricService {
      */
     private static final String HIERARCHY_DELIMITER = ".";
 
-    private static final String JMX_REPORTING_ENABLED = "Reporting.JMX.Enabled";
-    private static final String CSV_REPORTING_ENABLED = "Reporting.CSV.Enabled";
-    private static final String CSV_REPORTING_LOCATION = "Reporting.CSV.Location";
-    private static final String CSV_REPORTING_POLLING_PERIOD = "Reporting.CSV.PollingPeriod";
-    private static final String JDBC_REPORTING_ENABLED = "Reporting.JDBC.Enabled";
-    private static final String JDBC_REPORTING_POLLING_PERIOD = "Reporting.JDBC.PollingPeriod";
-    private static final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
-    private static final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
-
-    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED = "Reporting.JDBC.ScheduledCleanup.Enabled";
-    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD = "Reporting.JDBC.ScheduledCleanup.ScheduledCleanupPeriod";
-    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP = "Reporting.JDBC.ScheduledCleanup.DaysToKeep";
-
-    private final MetricsConfiguration configuration;
     private final MetricsLevelConfiguration levelConfiguration;
 
-    /**
-     * JMX domain registered with MBean Server
-     */
-    private static final String JMX_REPORTING_DOMAIN = "org.wso2.carbon.metrics";
-
-    /**
-     * Select query to check whether database tables are created
-     */
-    private static final String DB_CHECK_SQL = "SELECT NAME FROM METRIC_GAUGE";
-
-    private final List<Reporter> reporters = new ArrayList<Reporter>();
+    private final Set<Reporter> reporters = new HashSet<Reporter>();
 
     private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
 
@@ -134,7 +99,7 @@ public class MetricServiceImpl implements MetricService {
      * MetricRegistry. The wrapper is not available when the listener gets called and by keeping enabled status
      * separately, we can check whether the metric should be filtered without having the metric wrapper
      */
-    private class MetricWrapper {
+    private static class MetricWrapper {
 
         private final Level level;
 
@@ -148,37 +113,79 @@ public class MetricServiceImpl implements MetricService {
         }
     }
 
+    public static class Builder {
+
+        private static final String ENABLED = "Enabled";
+
+        private boolean enabled;
+
+        private Level rootLevel;
+
+        private Set<ReporterBuilder<? extends Reporter>> reporterBuilders = new HashSet<>();
+
+        public Builder setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public Builder setRootLevel(final Level rootLevel) {
+            this.rootLevel = rootLevel;
+            return this;
+        }
+
+        public Builder addReporterBuilder(final ReporterBuilder<? extends Reporter> reporterBuilder) {
+            this.reporterBuilders.add(reporterBuilder);
+            return this;
+        }
+
+        public Builder configure(final MetricsConfiguration configuration) {
+            enabled = Boolean.valueOf(configuration.getFirstProperty(ENABLED));
+            return this;
+        }
+
+        public MetricService build(final MetricsLevelConfiguration levelConfiguration) {
+            return new MetricServiceImpl(enabled, rootLevel, levelConfiguration, reporterBuilders);
+        }
+    }
+
     /**
      * Initialize the MetricRegistry, Level and Reporters
      */
-    public MetricServiceImpl(final MetricsConfiguration configuration,
-            final MetricsLevelConfiguration levelConfiguration) {
-        this.configuration = configuration;
+    private MetricServiceImpl(boolean enabled, Level rootLevel, final MetricsLevelConfiguration levelConfiguration,
+            Set<ReporterBuilder<? extends Reporter>> reporterBuilders) {
         this.levelConfiguration = levelConfiguration;
-
         // Highest priority is given for the System Properties
-        String metricsEnabled = System.getProperty(SYSTEM_PROPERTY_METRICS_ENABLED);
-        if (metricsEnabled == null || metricsEnabled.trim().isEmpty()) {
-            metricsEnabled = configuration.getFirstProperty(ENABLED);
+        String metricsEnabledProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ENABLED);
+        if (metricsEnabledProperty != null && !metricsEnabledProperty.trim().isEmpty()) {
+            enabled = Boolean.valueOf(metricsEnabledProperty);
+        }
+        String rootLevelProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
+        if (rootLevelProperty != null && !rootLevelProperty.trim().isEmpty()) {
+            Level level = Level.getLevel(rootLevelProperty);
+            if (level != null) {
+                rootLevel = level;
+            }
         }
 
-        String rootLevel = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
-        Level level = null;
-        if (rootLevel != null && !rootLevel.trim().isEmpty()) {
-            level = Level.getLevel(rootLevel);
+        if (rootLevel != null) {
+            levelConfiguration.setRootLevel(rootLevel);
         }
-
-        if (level != null) {
-            levelConfiguration.setRootLevel(level);
-        }
-
-        boolean enabled = Boolean.valueOf(metricsEnabled);
 
         // Initialize Metric Registry
         metricRegistry = new MetricRegistry();
 
-        // Configure all reporters
-        configureReporters();
+        // Build all reporters
+        for (ReporterBuilder<? extends Reporter> reporterBuilder : reporterBuilders) {
+            try {
+                reporters.add(reporterBuilder.build(metricRegistry, enabledMetricFilter));
+            } catch (ReporterDisabledException e) {
+                // This can be ignored
+            } catch (Throwable e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to build the reporter", e);
+                }
+            }
+        }
 
         // Set enabled
         setEnabled(enabled);
@@ -186,41 +193,6 @@ public class MetricServiceImpl implements MetricService {
         // Register JVM Metrics
         // This should be the last method when initializing MetricService
         registerJVMMetrics();
-    }
-
-    private void configureReporters() {
-        Reporter jmxReporter = null;
-        try {
-            jmxReporter = configureJMXReporter();
-        } catch (Throwable e) {
-            logger.error("Error when configuring JMX reporter", e);
-        }
-
-        if (jmxReporter != null) {
-            reporters.add(jmxReporter);
-        }
-
-        Reporter csvReporter = null;
-        try {
-            csvReporter = configureCSVReporter();
-        } catch (Throwable e) {
-            logger.error("Error when configuring CSV reporter", e);
-        }
-
-        if (csvReporter != null) {
-            reporters.add(csvReporter);
-        }
-
-        Reporter jdbcReporter = null;
-        try {
-            jdbcReporter = configureJDBCReporter();
-        } catch (Throwable e) {
-            logger.error("Error when configuring JDBC reporter", e);
-        }
-
-        if (jdbcReporter != null) {
-            reporters.add(jdbcReporter);
-        }
     }
 
     /*
@@ -631,7 +603,7 @@ public class MetricServiceImpl implements MetricService {
         return true;
     }
 
-    private class JVMGaugeWrapper implements Gauge<Object> {
+    private static class JVMGaugeWrapper implements Gauge<Object> {
 
         private final com.codahale.metrics.Gauge<?> gauge;
 
@@ -660,13 +632,21 @@ public class MetricServiceImpl implements MetricService {
 
     private void startReporters() {
         for (Reporter reporter : reporters) {
-            reporter.start();
+            try {
+                reporter.start();
+            } catch (Throwable e) {
+                logger.error("Error when starting the reporter", e);
+            }
         }
     }
 
     private void stopReporters() {
         for (Reporter reporter : reporters) {
-            reporter.stop();
+            try {
+                reporter.stop();
+            } catch (Throwable e) {
+                logger.error("Error when stopping the reporter", e);
+            }
         }
     }
 
@@ -692,179 +672,6 @@ public class MetricServiceImpl implements MetricService {
                 return isMetricEnabled(name, metricWrapper.level, levelConfiguration.getLevel(name), true);
             }
             return false;
-        }
-    }
-
-    private Reporter configureJMXReporter() {
-        if (!Boolean.parseBoolean(configuration.getFirstProperty(JMX_REPORTING_ENABLED))) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("JMX Reporting for Metrics is not enabled");
-            }
-            return null;
-        }
-        return new JmxReporterImpl(metricRegistry, enabledMetricFilter, JMX_REPORTING_DOMAIN);
-    }
-
-    private Reporter configureCSVReporter() {
-        if (!Boolean.parseBoolean(configuration.getFirstProperty(CSV_REPORTING_ENABLED))) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("CSV Reporting for Metrics is not enabled");
-            }
-            return null;
-        }
-        String location = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
-        if (location == null || location.trim().isEmpty()) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("CSV Reporting location is not specified");
-            }
-            return null;
-        }
-        File file = new File(location);
-        if (!file.exists()) {
-            if (!file.mkdir()) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("CSV Reporting location was not created!. Location: " + location);
-                }
-                return null;
-            }
-        }
-        if (!file.isDirectory()) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("CSV Reporting location is not a directory");
-            }
-            return null;
-        }
-        String pollingPeriod = configuration.getFirstProperty(CSV_REPORTING_POLLING_PERIOD);
-        // Default polling period for CSV reporter is 60 seconds
-        long csvReporterPollingPeriod = 60;
-        try {
-            csvReporterPollingPeriod = Long.parseLong(pollingPeriod);
-        } catch (NumberFormatException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(String.format("Error parsing the polling period for CSV Reporting. Using %d seconds",
-                        csvReporterPollingPeriod));
-            }
-        }
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format(
-                    "Creating CSV reporter for Metrics with location '%s' and %d seconds polling period", location,
-                    csvReporterPollingPeriod));
-        }
-
-        return new CsvReporterImpl(metricRegistry, enabledMetricFilter, file, csvReporterPollingPeriod);
-    }
-
-    private Reporter configureJDBCReporter() {
-        if (!Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_ENABLED))) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("JDBC Reporting for Metrics is not enabled");
-            }
-            return null;
-        }
-        // Default polling period for JDBC reporter is 30 seconds
-        long jdbcReporterPollingPeriod = 30;
-        String pollingPeriod = configuration.getFirstProperty(JDBC_REPORTING_POLLING_PERIOD,
-                String.valueOf(jdbcReporterPollingPeriod));
-        try {
-            jdbcReporterPollingPeriod = Long.parseLong(pollingPeriod);
-        } catch (NumberFormatException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(String.format("Error parsing the polling period for JDBC Reporting. Using %d seconds",
-                        jdbcReporterPollingPeriod));
-            }
-        }
-
-        String source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE, new DefaultSourceValueProvider());
-
-        String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
-
-        if (dataSourceName == null || dataSourceName.trim().length() == 0) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Data Source Name is not specified for JDBC Reporting. The JDBC reporting will not be enabled");
-            }
-            return null;
-        }
-
-        DataSource dataSource = null;
-        try {
-            Context ctx = new InitialContext();
-            dataSource = (DataSource) ctx.lookup(dataSourceName);
-        } catch (NamingException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(String.format(
-                        "Error when looking up the Data Source: '%s'. The JDBC reporting will not be enabled",
-                        dataSourceName));
-            }
-            return null;
-        }
-
-        if (logger.isInfoEnabled()) {
-            logger.info(String
-                    .format("Creating JDBC reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
-                            source, dataSourceName, jdbcReporterPollingPeriod));
-        }
-
-        // Setup Database if required
-        try {
-            setupMetricsDatabase(dataSource);
-        } catch (Exception e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(String.format(
-                        "Error when looking up the Data Source: '%s'. The JDBC reporting will not be enabled",
-                        dataSourceName));
-            }
-            return null;
-        }
-
-        boolean runCleanupTask = Boolean.parseBoolean(configuration
-                .getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED));
-        // Default cleanup period for JDBC is 86400 seconds
-        long jdbcScheduledCleanupPeriod = 86400;
-        // Default days to keep is 7 days
-        int daysToKeep = 7;
-        if (runCleanupTask) {
-            String cleanupPeriod = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD);
-            try {
-                jdbcScheduledCleanupPeriod = Long.parseLong(cleanupPeriod);
-            } catch (NumberFormatException e) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
-                            jdbcReporterPollingPeriod));
-                }
-            }
-
-            String daysToKeepValue = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP);
-
-            try {
-                daysToKeep = Integer.parseInt(daysToKeepValue);
-            } catch (NumberFormatException e) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn(String.format("Error parsing the period for JDBC Sceduled Cleanup. Using %d seconds",
-                            jdbcReporterPollingPeriod));
-                }
-            }
-        }
-
-        return new JDBCReporterImpl(metricRegistry, enabledMetricFilter, source, dataSource, jdbcReporterPollingPeriod,
-                runCleanupTask, daysToKeep, jdbcScheduledCleanupPeriod);
-    }
-
-    /**
-     * Create Metrics Database Tables
-     *
-     * @throws Exception if an error occurred while creating the Metrics Tables.
-     */
-    private static void setupMetricsDatabase(DataSource dataSource) throws Exception {
-        String value = System.getProperty("setup");
-        if (value != null) {
-            LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
-            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
-                databaseCreator.createRegistryDatabase();
-            } else {
-                if (logger.isInfoEnabled()) {
-                    logger.info("Metrics tables exist. Skipping the Metrics Database setup process.");
-                }
-            }
         }
     }
 

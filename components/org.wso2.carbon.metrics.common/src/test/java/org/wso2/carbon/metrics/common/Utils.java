@@ -17,16 +17,13 @@ package org.wso2.carbon.metrics.common;
 
 import java.net.URL;
 
-import org.wso2.carbon.metrics.common.MetricsConfigException;
-import org.wso2.carbon.metrics.common.MetricsConfiguration;
-
 /**
  * Utility class for Tests
  */
 public class Utils {
 
     public static MetricsConfiguration getConfiguration() throws MetricsConfigException {
-        MetricsConfiguration metricsConfiguration = new MetricsConfiguration();
+        MetricsXMLConfiguration metricsConfiguration = new MetricsXMLConfiguration();
         URL file = Utils.class.getResource("/metrics.xml");
         String filePath = file.getPath();
         metricsConfiguration.load(filePath);

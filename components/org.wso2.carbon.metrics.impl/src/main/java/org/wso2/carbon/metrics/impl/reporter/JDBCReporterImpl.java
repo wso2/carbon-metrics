@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
-import org.wso2.carbon.metrics.reporter.JDBCReporter;
+import org.wso2.carbon.metrics.jdbc.reporter.JDBCReporter;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;

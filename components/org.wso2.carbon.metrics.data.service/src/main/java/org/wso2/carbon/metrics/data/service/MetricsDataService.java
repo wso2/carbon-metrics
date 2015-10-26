@@ -41,6 +41,7 @@ import org.wso2.carbon.core.AbstractAdmin;
 import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
 import org.wso2.carbon.metrics.common.MetricsConfigException;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.common.MetricsXMLConfiguration;
 import org.wso2.carbon.metrics.data.common.Metric;
 import org.wso2.carbon.metrics.data.common.MetricAttribute;
 import org.wso2.carbon.metrics.data.common.MetricDataFormat;
@@ -80,7 +81,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
      */
     @Override
     public void init(ServiceContext serviceContext) throws AxisFault {
-        MetricsConfiguration configuration = new MetricsConfiguration();
+        MetricsXMLConfiguration configuration = new MetricsXMLConfiguration();
         String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
         try {
             configuration.load(filePath);
@@ -175,7 +176,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     public String[] getAllSources() {
         List<String> sourcesList;
         Set<String> sources = reporterDAO.queryAllSources();
-        if (sources == null) {
+        if (sources.isEmpty()) {
             sourcesList = new ArrayList<String>(1);
             sourcesList.add(currentJDBCReportingSource);
         } else {
@@ -190,7 +191,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return sourcesList.toArray(new String[sourcesList.size()]);
     }
 
-    private class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
+    private static class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {
 
         private final Map<Long, BigDecimal[]> dataMap = new HashMap<Long, BigDecimal[]>();
 
@@ -244,18 +245,18 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         @Override
         public MetricData getResult() {
             if (logger.isDebugEnabled()) {
-                logger.debug(String
-                        .format("Metrics Search Results. Display Names: %s, Data Types: %s, Columns %d, Rows: %d, Total Data Points: %d",
-                                Arrays.asList(displayNames), Arrays.asList(dataTypes), displayNames.length,
-                                orderedList.size(), displayNames.length * orderedList.size()));
+                logger.debug(String.format(
+                        "Metrics Search Results. Display Names: %s, Data Types: %s, Columns %d, Rows: %d, Total Data Points: %d",
+                        Arrays.asList(displayNames), Arrays.asList(dataTypes), displayNames.length, orderedList.size(),
+                        displayNames.length * orderedList.size()));
             }
 
-            return new MetricData(new Metadata(displayNames, dataTypes), orderedList.toArray(new BigDecimal[orderedList
-                    .size()][]));
+            return new MetricData(new Metadata(displayNames, dataTypes),
+                    orderedList.toArray(new BigDecimal[orderedList.size()][]));
         }
     }
 
-    private class MetricGroup {
+    private static class MetricGroup {
 
         private final MetricType metricType;
         private final String metricName;

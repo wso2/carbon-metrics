@@ -139,7 +139,7 @@ public class ReporterDAO {
         } catch (SQLException e) {
             logger.error("Error when querying sources.", e);
         } finally {
-            closeQuietly(connection, null);
+            closeQuietly(connection);
         }
 
         return results;
@@ -151,23 +151,26 @@ public class ReporterDAO {
         queryBuilder.append(getTableName(metricType));
 
         Statement statement = null;
+        ResultSet rs = null;
 
         try {
             statement = connection.createStatement();
 
-            ResultSet rs = statement.executeQuery(queryBuilder.toString());
+            rs = statement.executeQuery(queryBuilder.toString());
 
             while (rs.next()) {
                 String source = rs.getString("SOURCE");
                 results.add(source);
             }
 
+            rs.close();
+            rs = null;
             statement.close();
             statement = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources. Metric Type: " + metricType, e);
         } finally {
-            closeQuietly(null, statement);
+            closeQuietly(null, statement, rs);
         }
 
         return results;
@@ -205,13 +208,14 @@ public class ReporterDAO {
         String query = queryBuilder.toString();
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String
-                    .format("Metric Search Query: %s Parameters: Metric Type: %s, Names: %s, Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
-                            query, metricType, names, attributes, source, startTime, endTime));
+            logger.debug(String.format(
+                    "Metric Search Query: %s Parameters: Metric Type: %s, Names: %s, Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
+                    query, metricType, names, attributes, source, startTime, endTime));
         }
 
         Connection connection = null;
         PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
             connection = dataSource.getConnection();
@@ -225,7 +229,7 @@ public class ReporterDAO {
             ps.setLong(++i, endTime);
             ps.setString(++i, source);
 
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
 
             while (rs.next()) {
                 String name = rs.getString(1);
@@ -243,14 +247,16 @@ public class ReporterDAO {
 
             }
 
+            rs.close();
+            rs = null;
             ps.close();
-            connection.close();
             ps = null;
+            connection.close();
             connection = null;
         } catch (SQLException e) {
             logger.error(String.format("Error when querying metrics. SQL %s", queryBuilder.toString()), e);
         } finally {
-            closeQuietly(connection, ps);
+            closeQuietly(connection, ps, rs);
         }
     }
 
@@ -274,7 +280,24 @@ public class ReporterDAO {
         return metricAttribute.name();
     }
 
-    private void closeQuietly(Connection connection, Statement statement) {
+    private void closeQuietly(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // Ignore
+            }
+        }
+    }
+
+    private void closeQuietly(Connection connection, Statement statement, ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                // Ignore
+            }
+        }
         if (statement != null) {
             try {
                 statement.close();
@@ -291,7 +314,14 @@ public class ReporterDAO {
         }
     }
 
-    private void closeQuietly(Connection connection, PreparedStatement ps) {
+    private void closeQuietly(Connection connection, PreparedStatement ps, ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                // Ignore
+            }
+        }
         if (ps != null) {
             try {
                 ps.close();

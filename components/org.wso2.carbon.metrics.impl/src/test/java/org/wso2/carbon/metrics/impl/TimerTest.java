@@ -18,14 +18,15 @@ package org.wso2.carbon.metrics.impl;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
-
+import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.Timer;
 import org.wso2.carbon.metrics.manager.Timer.Context;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Timer}
@@ -36,7 +37,9 @@ public class TimerTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        metricService = new MetricServiceImpl(Utils.getConfiguration(), Utils.getLevelConfiguration());
+        MetricsConfiguration configuration = Utils.getConfiguration();
+        MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
+        metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
     }
 
@@ -44,7 +47,7 @@ public class TimerTest extends TestCase {
         Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass(), "test-initial-count"));
         assertEquals("Initial count should be zero", 0, timer.getCount());
     }
-    
+
     public void testSameMetric() {
         String name = MetricManager.name(this.getClass(), "test-same-timer");
         Timer timer = MetricManager.timer(Level.INFO, name);
