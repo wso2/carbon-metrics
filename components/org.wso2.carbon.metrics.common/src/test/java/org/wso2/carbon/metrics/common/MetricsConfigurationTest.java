@@ -32,10 +32,10 @@ public class MetricsConfigurationTest extends TestCase {
     }
 
     public void testConfigLoad() {
-        String enabled = configuration.getFirstProperty(ENABLED);
+        String enabled = configuration.getProperty(ENABLED);
         assertEquals("Enabled should be true", "true", enabled);
 
-        String csvLocation = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
+        String csvLocation = configuration.getProperty(CSV_REPORTING_LOCATION);
         assertEquals("/wso2/carbon/repository/logs/metrics/", csvLocation);
     }
 

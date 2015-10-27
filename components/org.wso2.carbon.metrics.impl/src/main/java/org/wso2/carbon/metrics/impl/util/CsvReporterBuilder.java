@@ -42,10 +42,10 @@ public class CsvReporterBuilder implements ReporterBuilder<CsvReporterImpl> {
 
     @Override
     public ReporterBuilder<CsvReporterImpl> configure(MetricsConfiguration configuration) {
-        enabled = Boolean.parseBoolean(configuration.getFirstProperty(CSV_REPORTING_ENABLED));
+        enabled = Boolean.parseBoolean(configuration.getProperty(CSV_REPORTING_ENABLED, String.valueOf(enabled)));
 
-        String pollingPeriod = configuration.getFirstProperty(CSV_REPORTING_POLLING_PERIOD,
-                String.valueOf(csvReporterPollingPeriod));
+        String pollingPeriod =
+                configuration.getProperty(CSV_REPORTING_POLLING_PERIOD, String.valueOf(csvReporterPollingPeriod));
         try {
             csvReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
@@ -55,7 +55,7 @@ public class CsvReporterBuilder implements ReporterBuilder<CsvReporterImpl> {
             }
         }
 
-        String location = configuration.getFirstProperty(CSV_REPORTING_LOCATION);
+        String location = configuration.getProperty(CSV_REPORTING_LOCATION);
         if (location != null && !location.trim().isEmpty()) {
             this.location = new File(location);
         }

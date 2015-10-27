@@ -139,7 +139,7 @@ public class MetricServiceImpl implements MetricService {
         }
 
         public Builder configure(final MetricsConfiguration configuration) {
-            enabled = Boolean.valueOf(configuration.getFirstProperty(ENABLED));
+            enabled = Boolean.valueOf(configuration.getProperty(ENABLED));
             return this;
         }
 

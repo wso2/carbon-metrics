@@ -107,7 +107,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
         final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
 
-        String dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
+        String dataSourceName = configuration.getProperty(JDBC_REPORTING_DATASOURCE_NAME);
 
         if (dataSourceName == null || dataSourceName.trim().length() == 0) {
             String msg = "Data Source Name is not specified for Metrics Data Service";
@@ -137,7 +137,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         reporterDAO = new ReporterDAO(dataSource);
 
-        currentJDBCReportingSource = configuration.getFirstProperty(JDBC_REPORTING_SOURCE,
+        currentJDBCReportingSource = configuration.getProperty(JDBC_REPORTING_SOURCE,
                 new DefaultSourceValueProvider());
     }
 

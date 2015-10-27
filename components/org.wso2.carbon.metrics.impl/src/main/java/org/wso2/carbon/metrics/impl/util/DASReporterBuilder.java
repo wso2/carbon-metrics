@@ -56,10 +56,10 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
 
     @Override
     public ReporterBuilder<DASReporterImpl> configure(MetricsConfiguration configuration) {
-        enabled = Boolean.parseBoolean(configuration.getFirstProperty(DAS_REPORTING_ENABLED));
+        enabled = Boolean.parseBoolean(configuration.getProperty(DAS_REPORTING_ENABLED, String.valueOf(enabled)));
 
-        String pollingPeriod = configuration.getFirstProperty(DAS_REPORTING_POLLING_PERIOD,
-                String.valueOf(dasReporterPollingPeriod));
+        String pollingPeriod =
+                configuration.getProperty(DAS_REPORTING_POLLING_PERIOD, String.valueOf(dasReporterPollingPeriod));
         try {
             dasReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
@@ -69,17 +69,21 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
             }
         }
 
-        source = configuration.getFirstProperty(DAS_REPORTING_SOURCE, new DefaultSourceValueProvider());
+        source = configuration.getProperty(DAS_REPORTING_SOURCE, source);
 
-        type = configuration.getFirstProperty(DAS_REPORTING_TYPE);
+        if (source == null) {
+            source = new DefaultSourceValueProvider().getValue();
+        }
 
-        receiverURL = configuration.getFirstProperty(DAS_REPORTING_RECEIVER_URL);
+        type = configuration.getProperty(DAS_REPORTING_TYPE, type);
 
-        authURL = configuration.getFirstProperty(DAS_REPORTING_AUTH_URL);
+        receiverURL = configuration.getProperty(DAS_REPORTING_RECEIVER_URL, receiverURL);
 
-        username = configuration.getFirstProperty(DAS_REPORTING_USERNAME);
+        authURL = configuration.getProperty(DAS_REPORTING_AUTH_URL, authURL);
 
-        password = configuration.getFirstProperty(DAS_REPORTING_PASSWORD);
+        username = configuration.getProperty(DAS_REPORTING_USERNAME, username);
+
+        password = configuration.getProperty(DAS_REPORTING_PASSWORD, password);
 
         return this;
     }

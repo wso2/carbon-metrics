@@ -18,9 +18,7 @@ package org.wso2.carbon.metrics.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +44,7 @@ public class MetricsXMLConfiguration extends MetricsConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsXMLConfiguration.class);
 
-    private Map<String, List<String>> configurationMap = new ConcurrentHashMap<String, List<String>>();
+    private Map<String, String> configurationMap = new ConcurrentHashMap<String, String>();
 
     private SecretResolver secretResolver;
 
@@ -100,15 +98,7 @@ public class MetricsXMLConfiguration extends MetricsConfiguration {
         }
     }
 
-    public String getFirstProperty(String key) {
-        List<String> value = configurationMap.get(key);
-        if (value == null) {
-            return null;
-        }
-        return value.get(0);
-    }
-
-    public List<String> getProperty(String key) {
+    public String getProperty(String key) {
         return configurationMap.get(key);
     }
 
@@ -150,14 +140,7 @@ public class MetricsXMLConfiguration extends MetricsConfiguration {
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Adding configuration '%s' with value '%s'", key, value));
         }
-        List<String> list = configurationMap.get(key);
-        if (list == null) {
-            list = new ArrayList<String>();
-            list.add(value);
-            configurationMap.put(key, list);
-        } else {
-            list.add(value);
-        }
+        configurationMap.put(key, value);
     }
 
     public static String replaceSystemProperties(String text) {
