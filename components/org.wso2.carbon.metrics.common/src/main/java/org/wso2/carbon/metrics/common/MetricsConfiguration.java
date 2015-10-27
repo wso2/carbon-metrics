@@ -30,8 +30,4 @@ public abstract class MetricsConfiguration {
         return returnValue;
     }
 
-    public final String getProperty(String key, DefaultValueProvider defaultValueProvider) {
-        return getProperty(key, defaultValueProvider.getValue());
-    }
-
 }

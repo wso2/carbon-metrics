@@ -72,7 +72,7 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
         source = configuration.getProperty(DAS_REPORTING_SOURCE, source);
 
         if (source == null) {
-            source = new DefaultSourceValueProvider().getValue();
+            source = DefaultSourceValueProvider.getValue();
         }
 
         type = configuration.getProperty(DAS_REPORTING_TYPE, type);

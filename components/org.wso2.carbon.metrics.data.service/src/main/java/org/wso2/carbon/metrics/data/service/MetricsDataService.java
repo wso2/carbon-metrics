@@ -137,8 +137,8 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         reporterDAO = new ReporterDAO(dataSource);
 
-        currentJDBCReportingSource = configuration.getProperty(JDBC_REPORTING_SOURCE,
-                new DefaultSourceValueProvider());
+        currentJDBCReportingSource =
+                configuration.getProperty(JDBC_REPORTING_SOURCE, DefaultSourceValueProvider.getValue());
     }
 
     private long getStartTime(String from) {

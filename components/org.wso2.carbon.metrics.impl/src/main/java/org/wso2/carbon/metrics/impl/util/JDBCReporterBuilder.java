@@ -85,7 +85,7 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
         source = configuration.getProperty(JDBC_REPORTING_SOURCE, source);
 
         if (source == null) {
-            source = new DefaultSourceValueProvider().getValue();
+            source = DefaultSourceValueProvider.getValue();
         }
 
         dataSourceName = configuration.getProperty(JDBC_REPORTING_DATASOURCE_NAME, dataSourceName);
