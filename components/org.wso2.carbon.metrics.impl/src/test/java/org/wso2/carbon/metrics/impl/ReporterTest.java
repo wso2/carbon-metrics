@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
-import javax.management.JMException;
 import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -50,7 +49,6 @@ import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
-import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
@@ -115,7 +113,7 @@ public class ReporterTest extends TestCase {
         metricService.setRootLevel(Level.ALL);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
         // Register the MX Bean
-        registerMXBean(metricService);
+        MetricManager.registerMXBean();
 
         Meter meter = MetricManager.meter(Level.INFO, meterName);
         meter.mark();
@@ -136,39 +134,13 @@ public class ReporterTest extends TestCase {
         template.execute("DELETE FROM METRIC_COUNTER;");
     }
 
-    private void registerMXBean(MetricService metricService) {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName name = new ObjectName(MBEAN_NAME);
-            if (mBeanServer.isRegistered(name)) {
-                mBeanServer.unregisterMBean(name);
-            }
-            MetricManagerMXBean mxBean = new MetricManagerMXBeanImpl(metricService);
-            mBeanServer.registerMBean(mxBean, name);
-        } catch (JMException e) {
-            // Ignore
-        }
-    }
-
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
         // Disable to stop reporters
         metricService.disable();
         // Unregister the MX Bean
-        unregisterMXBean();
-    }
-
-    private void unregisterMXBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName name = new ObjectName(MBEAN_NAME);
-            if (mBeanServer.isRegistered(name)) {
-                mBeanServer.unregisterMBean(name);
-            }
-        } catch (JMException e) {
-            // Ignore
-        }
+        MetricManager.unregisterMXBean();
     }
 
     public void testJMXReporter() {
