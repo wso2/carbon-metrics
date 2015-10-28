@@ -35,6 +35,7 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
     private static final String DAS_REPORTING_AUTH_URL = "Reporting.DAS.AuthURL";
     private static final String DAS_REPORTING_USERNAME = "Reporting.DAS.Username";
     private static final String DAS_REPORTING_PASSWORD = "Reporting.DAS.Password";
+    private static final String DAS_REPORTING_DATAAGENTCONFIGPATH = "Reporting.DAS.DataAgentConfigPath";
     private static final String DAS_REPORTING_POLLING_PERIOD = "Reporting.DAS.PollingPeriod";
 
     private boolean enabled;
@@ -44,15 +45,17 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
 
     private String source;
 
-    private String type;
+    private String type = "thrift";
 
-    private String receiverURL;
+    private String receiverURL = "tcp://localhost:7611";
 
     private String authURL;
 
-    private String username;
+    private String username = "admin";
 
-    private String password;
+    private String password = "admin";
+
+    private String dataAgentConfigPath;
 
     @Override
     public ReporterBuilder<DASReporterImpl> configure(MetricsConfiguration configuration) {
@@ -84,6 +87,8 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
         username = configuration.getProperty(DAS_REPORTING_USERNAME, username);
 
         password = configuration.getProperty(DAS_REPORTING_PASSWORD, password);
+
+        dataAgentConfigPath = configuration.getProperty(DAS_REPORTING_DATAAGENTCONFIGPATH, dataAgentConfigPath);
 
         return this;
     }
@@ -156,6 +161,6 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
         }
 
         return new DASReporterImpl(metricRegistry, metricFilter, source, type, receiverURL, authURL, username, password,
-                dasReporterPollingPeriod);
+                dataAgentConfigPath, dasReporterPollingPeriod);
     }
 }
