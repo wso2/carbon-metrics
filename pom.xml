@@ -459,7 +459,7 @@
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
-        <carbon.analytics.common.version>5.0.4</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.0.5</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
         <carbon.p2.plugin.version>1.5.6</carbon.p2.plugin.version>
         <securevault.version>1.0.0-wso2v2</securevault.version>
