@@ -79,13 +79,6 @@
             <EnableScoreParam>false</EnableScoreParam>
             <Type>STRING</Type>
         </ColumnDefinition>
-        <ColumnDefinition>
-            <Name>duration_unit</Name>
-            <EnableIndexing>false</EnableIndexing>
-            <IsPrimaryKey>false</IsPrimaryKey>
-            <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
-        </ColumnDefinition>
     </TableSchema>
     <Source>
         <StreamId>org.wso2.carbon.metrics.meter:1.0.0</StreamId>
