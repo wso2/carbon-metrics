@@ -40,8 +40,10 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
     private static final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
 
     private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED = "Reporting.JDBC.ScheduledCleanup.Enabled";
-    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD = "Reporting.JDBC.ScheduledCleanup.ScheduledCleanupPeriod";
-    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP = "Reporting.JDBC.ScheduledCleanup.DaysToKeep";
+    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD =
+            "Reporting.JDBC.ScheduledCleanup.ScheduledCleanupPeriod";
+    private static final String JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP =
+            "Reporting.JDBC.ScheduledCleanup.DaysToKeep";
 
     /**
      * Select query to check whether database tables are created
@@ -67,10 +69,10 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
 
     @Override
     public ReporterBuilder<JDBCReporterImpl> configure(MetricsConfiguration configuration) {
-        enabled = Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_ENABLED));
+        enabled = Boolean.parseBoolean(configuration.getProperty(JDBC_REPORTING_ENABLED, String.valueOf(enabled)));
 
-        String pollingPeriod = configuration.getFirstProperty(JDBC_REPORTING_POLLING_PERIOD,
-                String.valueOf(jdbcReporterPollingPeriod));
+        String pollingPeriod =
+                configuration.getProperty(JDBC_REPORTING_POLLING_PERIOD, String.valueOf(jdbcReporterPollingPeriod));
         try {
             jdbcReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
@@ -80,14 +82,20 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
             }
         }
 
-        source = configuration.getFirstProperty(JDBC_REPORTING_SOURCE, new DefaultSourceValueProvider());
+        source = configuration.getProperty(JDBC_REPORTING_SOURCE, source);
 
-        dataSourceName = configuration.getFirstProperty(JDBC_REPORTING_DATASOURCE_NAME);
+        if (source == null) {
+            source = DefaultSourceValueProvider.getValue();
+        }
 
-        runCleanupTask = Boolean.parseBoolean(configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED));
+        dataSourceName = configuration.getProperty(JDBC_REPORTING_DATASOURCE_NAME, dataSourceName);
+
+        runCleanupTask = Boolean.parseBoolean(
+                configuration.getProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_ENABLED, String.valueOf(runCleanupTask)));
 
         if (runCleanupTask) {
-            String cleanupPeriod = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD);
+            String cleanupPeriod = configuration.getProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_PERIOD,
+                    String.valueOf(jdbcScheduledCleanupPeriod));
             try {
                 jdbcScheduledCleanupPeriod = Long.parseLong(cleanupPeriod);
             } catch (NumberFormatException e) {
@@ -97,7 +105,8 @@ public class JDBCReporterBuilder implements ReporterBuilder<JDBCReporterImpl> {
                 }
             }
 
-            String daysToKeepValue = configuration.getFirstProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP);
+            String daysToKeepValue = configuration.getProperty(JDBC_REPORTING_SCHEDULED_CLEANUP_DAYS_TO_KEEP,
+                    String.valueOf(daysToKeep));
 
             try {
                 daysToKeep = Integer.parseInt(daysToKeepValue);

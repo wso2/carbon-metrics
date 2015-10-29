@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.databridge.agent.AgentHolder;
 import org.wso2.carbon.databridge.agent.DataPublisher;
 import org.wso2.carbon.databridge.agent.exception.DataEndpointAgentConfigurationException;
 import org.wso2.carbon.databridge.agent.exception.DataEndpointAuthenticationException;
@@ -136,12 +137,13 @@ public class DASReporter extends ScheduledReporter {
          * @param authURL
          * @param username
          * @param password
+         * @param dataAgentConfigPath
          * @return a {@link DASReporter}
          */
         public DASReporter build(String source, String type, String receiverURL, String authURL, String username,
-                String password) {
-            return new DASReporter(registry, source, type, receiverURL, authURL, username, password, rateUnit,
-                    durationUnit, clock, filter);
+                String password, String dataAgentConfigPath) {
+            return new DASReporter(registry, source, type, receiverURL, authURL, username, password,
+                    dataAgentConfigPath, rateUnit, durationUnit, clock, filter);
         }
     }
 
@@ -174,8 +176,8 @@ public class DASReporter extends ScheduledReporter {
     }
 
     private DASReporter(MetricRegistry registry, String source, String type, String receiverURL, String authURL,
-            String username, String password, TimeUnit rateUnit, TimeUnit durationUnit, Clock clock,
-            MetricFilter filter) {
+            String username, String password, String dataAgentConfigPath, TimeUnit rateUnit, TimeUnit durationUnit,
+            Clock clock, MetricFilter filter) {
         super(registry, "das-reporter", filter, rateUnit, durationUnit);
         this.source = source;
         this.clock = clock;
@@ -193,6 +195,9 @@ public class DASReporter extends ScheduledReporter {
         }
         if (password == null) {
             throw new IllegalArgumentException("Password cannot be null");
+        }
+        if (dataAgentConfigPath != null) {
+            AgentHolder.setConfigPath(dataAgentConfigPath);
         }
         try {
             dataPublisher = new DataPublisher(type, receiverURL, authURL, username, password);

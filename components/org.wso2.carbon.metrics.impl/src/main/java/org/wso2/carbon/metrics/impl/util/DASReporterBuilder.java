@@ -35,6 +35,7 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
     private static final String DAS_REPORTING_AUTH_URL = "Reporting.DAS.AuthURL";
     private static final String DAS_REPORTING_USERNAME = "Reporting.DAS.Username";
     private static final String DAS_REPORTING_PASSWORD = "Reporting.DAS.Password";
+    private static final String DAS_REPORTING_DATAAGENTCONFIGPATH = "Reporting.DAS.DataAgentConfigPath";
     private static final String DAS_REPORTING_POLLING_PERIOD = "Reporting.DAS.PollingPeriod";
 
     private boolean enabled;
@@ -44,22 +45,24 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
 
     private String source;
 
-    private String type;
+    private String type = "thrift";
 
-    private String receiverURL;
+    private String receiverURL = "tcp://localhost:7611";
 
     private String authURL;
 
-    private String username;
+    private String username = "admin";
 
-    private String password;
+    private String password = "admin";
+
+    private String dataAgentConfigPath;
 
     @Override
     public ReporterBuilder<DASReporterImpl> configure(MetricsConfiguration configuration) {
-        enabled = Boolean.parseBoolean(configuration.getFirstProperty(DAS_REPORTING_ENABLED));
+        enabled = Boolean.parseBoolean(configuration.getProperty(DAS_REPORTING_ENABLED, String.valueOf(enabled)));
 
-        String pollingPeriod = configuration.getFirstProperty(DAS_REPORTING_POLLING_PERIOD,
-                String.valueOf(dasReporterPollingPeriod));
+        String pollingPeriod =
+                configuration.getProperty(DAS_REPORTING_POLLING_PERIOD, String.valueOf(dasReporterPollingPeriod));
         try {
             dasReporterPollingPeriod = Long.parseLong(pollingPeriod);
         } catch (NumberFormatException e) {
@@ -69,17 +72,23 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
             }
         }
 
-        source = configuration.getFirstProperty(DAS_REPORTING_SOURCE, new DefaultSourceValueProvider());
+        source = configuration.getProperty(DAS_REPORTING_SOURCE, source);
 
-        type = configuration.getFirstProperty(DAS_REPORTING_TYPE);
+        if (source == null) {
+            source = DefaultSourceValueProvider.getValue();
+        }
 
-        receiverURL = configuration.getFirstProperty(DAS_REPORTING_RECEIVER_URL);
+        type = configuration.getProperty(DAS_REPORTING_TYPE, type);
 
-        authURL = configuration.getFirstProperty(DAS_REPORTING_AUTH_URL);
+        receiverURL = configuration.getProperty(DAS_REPORTING_RECEIVER_URL, receiverURL);
 
-        username = configuration.getFirstProperty(DAS_REPORTING_USERNAME);
+        authURL = configuration.getProperty(DAS_REPORTING_AUTH_URL, authURL);
 
-        password = configuration.getFirstProperty(DAS_REPORTING_PASSWORD);
+        username = configuration.getProperty(DAS_REPORTING_USERNAME, username);
+
+        password = configuration.getProperty(DAS_REPORTING_PASSWORD, password);
+
+        dataAgentConfigPath = configuration.getProperty(DAS_REPORTING_DATAAGENTCONFIGPATH, dataAgentConfigPath);
 
         return this;
     }
@@ -152,6 +161,6 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
         }
 
         return new DASReporterImpl(metricRegistry, metricFilter, source, type, receiverURL, authURL, username, password,
-                dasReporterPollingPeriod);
+                dataAgentConfigPath, dasReporterPollingPeriod);
     }
 }

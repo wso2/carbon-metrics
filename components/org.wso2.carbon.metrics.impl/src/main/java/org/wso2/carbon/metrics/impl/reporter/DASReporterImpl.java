@@ -39,14 +39,16 @@ public class DASReporterImpl extends AbstractReporter implements ScheduledReport
     private final String authURL;
     private final String username;
     private final String password;
+    private final String dataAgentConfigPath;
 
     private DASReporter dasReporter;
 
     private final long pollingPeriod;
 
     public DASReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, String source, String type,
-            String receiverURL, String authURL, String username, String password, long pollingPeriod) {
-        super("JDBC");
+            String receiverURL, String authURL, String username, String password, String dataAgentConfigPath,
+            long pollingPeriod) {
+        super("DAS");
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;
         this.source = source;
@@ -55,6 +57,7 @@ public class DASReporterImpl extends AbstractReporter implements ScheduledReport
         this.authURL = authURL;
         this.username = username;
         this.password = password;
+        this.dataAgentConfigPath = dataAgentConfigPath;
         this.pollingPeriod = pollingPeriod;
     }
 
@@ -69,7 +72,7 @@ public class DASReporterImpl extends AbstractReporter implements ScheduledReport
     public void startReporter() {
         dasReporter = DASReporter.forRegistry(metricRegistry).filter(metricFilter).convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build(source, type, receiverURL, authURL, username, password);
+                .build(source, type, receiverURL, authURL, username, password, dataAgentConfigPath);
         dasReporter.start(pollingPeriod, TimeUnit.SECONDS);
     }
 

@@ -47,7 +47,16 @@ public class MetricsLevelConfiguration {
 
     private static final String METRIC_LEVEL_PREFIX = "metric.level.";
 
+    private static final String METRICS_LEVEL_CONFIGURATION = "metrics.level.configuration";
+
     public MetricsLevelConfiguration() {
+    }
+
+    public void loadFromSystemPropertyFile() throws MetricsLevelConfigException {
+        String filePath = System.getProperty(METRICS_LEVEL_CONFIGURATION);
+        if (filePath != null && filePath.length() > 0) {
+            load(filePath);
+        }
     }
 
     public void load(String filePath) throws MetricsLevelConfigException {

@@ -37,9 +37,9 @@ public class ConsoleReporterBuilder implements ReporterBuilder<ConsoleReporterIm
 
     @Override
     public ReporterBuilder<ConsoleReporterImpl> configure(MetricsConfiguration configuration) {
-        enabled = Boolean.parseBoolean(configuration.getFirstProperty(CONSOLE_REPORTING_ENABLED));
+        enabled = Boolean.parseBoolean(configuration.getProperty(CONSOLE_REPORTING_ENABLED, String.valueOf(enabled)));
 
-        String pollingPeriod = configuration.getFirstProperty(CONSOLE_REPORTING_POLLING_PERIOD,
+        String pollingPeriod = configuration.getProperty(CONSOLE_REPORTING_POLLING_PERIOD,
                 String.valueOf(consoleReporterPollingPeriod));
         try {
             consoleReporterPollingPeriod = Long.parseLong(pollingPeriod);

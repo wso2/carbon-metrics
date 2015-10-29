@@ -15,18 +15,11 @@
  */
 package org.wso2.carbon.metrics.manager.internal;
 
-import java.lang.management.ManagementFactory;
-
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
+import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
-import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
-import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
 
 /**
  * @scr.component name="org.wso2.carbon.metrics.manager.internal.MetricManagerComponent" immediate="true"
@@ -37,8 +30,6 @@ public class MetricManagerComponent {
 
     private static final Logger log = LoggerFactory.getLogger(MetricManagerComponent.class);
 
-    private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
-
     private ServiceReferenceHolder serviceReferenceHolder = ServiceReferenceHolder.getInstance();
 
     protected void activate(ComponentContext componentContext) {
@@ -46,26 +37,7 @@ public class MetricManagerComponent {
             log.debug("Metrics manager component activated");
         }
 
-        registerMXBean();
-    }
-
-    private void registerMXBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName name = new ObjectName(MBEAN_NAME);
-            if (mBeanServer.isRegistered(name)) {
-                mBeanServer.unregisterMBean(name);
-            }
-            MetricManagerMXBean mxBean = new MetricManagerMXBeanImpl(serviceReferenceHolder.getMetricService());
-            mBeanServer.registerMBean(mxBean, name);
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("MetricManagerMXBean registered under name: %s", name));
-            }
-        } catch (JMException e) {
-            if (log.isErrorEnabled()) {
-                log.error(String.format("MetricManagerMXBean registration failed. Name: %s", MBEAN_NAME), e);
-            }
-        }
+        MetricManager.registerMXBean();
     }
 
     protected void deactivate(ComponentContext componentContext) {
@@ -73,24 +45,7 @@ public class MetricManagerComponent {
             log.debug("Deactivating Metrics manager component");
         }
 
-        unregisterMXBean();
-    }
-
-    private void unregisterMXBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName name = new ObjectName(MBEAN_NAME);
-            if (mBeanServer.isRegistered(name)) {
-                mBeanServer.unregisterMBean(name);
-            }
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("MetricManagerMXBean with name '%s' was unregistered.", name));
-            }
-        } catch (JMException e) {
-            if (log.isErrorEnabled()) {
-                log.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME), e);
-            }
-        }
+        MetricManager.unregisterMXBean();
     }
 
     protected void setMetricService(MetricService metricService) {

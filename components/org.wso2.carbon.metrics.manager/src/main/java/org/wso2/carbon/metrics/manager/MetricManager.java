@@ -15,14 +15,27 @@
  */
 package org.wso2.carbon.metrics.manager;
 
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
 
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
+import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
 
 /**
  * MetricManager is a static utility class providing various metrics.
  */
 public final class MetricManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(MetricManager.class);
+
+    private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 
     private MetricManager() {
     }
@@ -142,7 +155,45 @@ public final class MetricManager {
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, long timeout, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService()
-                .cachedGauge(level, name, timeout, TimeUnit.SECONDS, gauge);
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, timeout, TimeUnit.SECONDS,
+                gauge);
+    }
+
+    public static void registerMXBean() {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName name = new ObjectName(MBEAN_NAME);
+            if (mBeanServer.isRegistered(name)) {
+                mBeanServer.unregisterMBean(name);
+            }
+            MetricManagerMXBean mxBean =
+                    new MetricManagerMXBeanImpl(ServiceReferenceHolder.getInstance().getMetricService());
+            mBeanServer.registerMBean(mxBean, name);
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("MetricManagerMXBean registered under name: %s", name));
+            }
+        } catch (JMException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("MetricManagerMXBean registration failed. Name: %s", MBEAN_NAME), e);
+            }
+        }
+    }
+
+    public static void unregisterMXBean() {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName name = new ObjectName(MBEAN_NAME);
+            if (mBeanServer.isRegistered(name)) {
+                mBeanServer.unregisterMBean(name);
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("MetricManagerMXBean with name '%s' was unregistered.", name));
+            }
+        } catch (JMException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME),
+                        e);
+            }
+        }
     }
 }
