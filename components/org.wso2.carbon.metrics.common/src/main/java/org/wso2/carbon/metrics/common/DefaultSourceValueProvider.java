@@ -19,12 +19,14 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * A {@code DefaultValueProvider} to provide a default source value
+ * A utility class to provide a default source value
  */
-public class DefaultSourceValueProvider implements DefaultValueProvider {
+public final class DefaultSourceValueProvider {
 
-    @Override
-    public String getValue() {
+    private DefaultSourceValueProvider() {
+    }
+
+    public static String getValue() {
         String source;
         // Use host name if available
         String hostname = null;

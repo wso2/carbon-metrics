@@ -38,7 +38,7 @@ public class JmxReporterBuilder implements ReporterBuilder<JmxReporterImpl> {
 
     @Override
     public ReporterBuilder<JmxReporterImpl> configure(MetricsConfiguration configuration) {
-        enabled = Boolean.parseBoolean(configuration.getFirstProperty(JMX_REPORTING_ENABLED));
+        enabled = Boolean.parseBoolean(configuration.getProperty(JMX_REPORTING_ENABLED, String.valueOf(enabled)));
         return this;
     }
 
