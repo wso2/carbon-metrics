@@ -40,7 +40,7 @@ public class GaugeTest extends TestCase {
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-guage");
+        String name = MetricManager.name(this.getClass());
 
         Gauge<Integer> gauge = new Gauge<Integer>() {
             @Override
@@ -49,14 +49,14 @@ public class GaugeTest extends TestCase {
             }
         };
 
-        MetricManager.gauge(Level.INFO, name, gauge);
+        MetricManager.gauge(Level.INFO, name, "test-same-guage", gauge);
 
         // This call also should be successful as we are getting the same gauge
-        MetricManager.gauge(Level.INFO, name, gauge);
+        MetricManager.gauge(Level.INFO, name, "test-same-guage", gauge);
     }
 
     public void testSameCachedMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-cached-guage");
+        String name = MetricManager.name(this.getClass());
 
         Gauge<Integer> gauge = new Gauge<Integer>() {
             @Override
@@ -65,9 +65,9 @@ public class GaugeTest extends TestCase {
             }
         };
 
-        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+        MetricManager.cachedGauge(Level.INFO, name, "test-same-cached-guage", 5, gauge);
 
-        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+        MetricManager.cachedGauge(Level.INFO, name, "test-same-cached-guage", 5, gauge);
     }
 
 }

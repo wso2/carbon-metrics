@@ -37,6 +37,8 @@ public final class MetricManager {
 
     private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 
+    private static final String DEFAULT_HIERARCHY_ROOT = "org.wso2";
+
     private MetricManager() {
     }
 
@@ -85,8 +87,19 @@ public final class MetricManager {
      * @param name The name of the metric
      * @return a {@link Meter} instance
      */
-    public static Meter meter(Level level, String name) {
-        return ServiceReferenceHolder.getInstance().getMetricService().meter(level, name);
+    public static Meter meter(Level level, String name, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(level, name, name, identifier);
+    }
+
+    /**
+     * Return a {@link Meter} instance registered under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metric
+     * @return a {@link Meter} instance
+     */
+    public static Meter meter(Level level, String name, String path, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(level, name, path, identifier);
     }
 
     /**
@@ -96,8 +109,19 @@ public final class MetricManager {
      * @param name The name of the metric
      * @return a {@link Counter} instance
      */
-    public static Counter counter(Level level, String name) {
-        return ServiceReferenceHolder.getInstance().getMetricService().counter(level, name);
+    public static Counter counter(Level level, String name, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(level, name, name, identifier);
+    }
+
+    /**
+     * Return a {@link Counter} instance registered under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metric
+     * @return a {@link Counter} instance
+     */
+    public static Counter counter(Level level, String name, String path, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(level, name, path, identifier);
     }
 
     /**
@@ -107,8 +131,19 @@ public final class MetricManager {
      * @param name The name of the metric
      * @return a {@link Timer} instance
      */
-    public static Timer timer(Level level, String name) {
-        return ServiceReferenceHolder.getInstance().getMetricService().timer(level, name);
+    public static Timer timer(Level level, String name, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(level, name, name, identifier);
+    }
+
+    /**
+     * Return a {@link Timer} instance registered under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metric
+     * @return a {@link Timer} instance
+     */
+    public static Timer timer(Level level, String name, String path, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(level, name, path, identifier);
     }
 
     /**
@@ -118,8 +153,19 @@ public final class MetricManager {
      * @param name The name of the metric
      * @return a {@link Histogram} instance
      */
-    public static Histogram histogram(Level level, String name) {
-        return ServiceReferenceHolder.getInstance().getMetricService().histogram(level, name);
+    public static Histogram histogram(Level level, String name, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(level, name, name, identifier);
+    }
+
+    /**
+     * Return a {@link Histogram} instance registered under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metric
+     * @return a {@link Histogram} instance
+     */
+    public static Histogram histogram(Level level, String name, String path, String identifier) {
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(level, name, path, identifier);
     }
 
     /**
@@ -129,8 +175,19 @@ public final class MetricManager {
      * @param name The name of the metric
      * @param gauge An implementation of {@link Gauge}
      */
-    public static <T> void gauge(Level level, String name, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, gauge);
+    public static <T> void gauge(Level level, String name, String identifier, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, name, identifier, gauge);
+    }
+
+    /**
+     * Register a {@link Gauge} instance under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metric
+     * @param gauge An implementation of {@link Gauge}
+     */
+    public static <T> void gauge(Level level, String name, String path, String identifier, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, path, identifier, gauge);
     }
 
     /**
@@ -139,11 +196,24 @@ public final class MetricManager {
      * @param level The {@link Level} used for metric
      * @param name The name of the metrics
      * @param timeout The timeout value
-     * @param timeoutUnit The {@link TimeUnit} for the {@link timeout}
+     * @param timeoutUnit The {@link TimeUnit} for the timeout
      * @param gauge An implementation of {@link Gauge}
      */
-    public static <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, timeout, timeoutUnit, gauge);
+    public static <T> void cachedGauge(Level level, String name, String identifier, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, name, identifier, timeout, timeoutUnit, gauge);
+    }
+
+    /**
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metrics
+     * @param timeout The timeout value
+     * @param timeoutUnit The {@link TimeUnit} for the timeout
+     * @param gauge An implementation of {@link Gauge}
+     */
+    public static <T> void cachedGauge(Level level, String name, String path, String identifier, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, path, identifier, timeout, timeoutUnit, gauge);
     }
 
     /**
@@ -154,9 +224,20 @@ public final class MetricManager {
      * @param timeout The timeout value in seconds
      * @param gauge An implementation of {@link Gauge}
      */
-    public static <T> void cachedGauge(Level level, String name, long timeout, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, timeout, TimeUnit.SECONDS,
-                gauge);
+    public static <T> void cachedGauge(Level level, String name, String identifier, long timeout, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, name, identifier, timeout, TimeUnit.SECONDS, gauge);
+    }
+
+    /**
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
+     *
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metrics
+     * @param timeout The timeout value in seconds
+     * @param gauge An implementation of {@link Gauge}
+     */
+    public static <T> void cachedGauge(Level level, String name, String path, String identifier, long timeout, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, path, identifier, timeout, TimeUnit.SECONDS, gauge);
     }
 
     public static void registerMXBean() {
@@ -191,8 +272,7 @@ public final class MetricManager {
             }
         } catch (JMException e) {
             if (logger.isErrorEnabled()) {
-                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME),
-                        e);
+                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME), e);
             }
         }
     }

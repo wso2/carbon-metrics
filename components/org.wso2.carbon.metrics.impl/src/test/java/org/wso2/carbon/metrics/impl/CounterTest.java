@@ -44,22 +44,31 @@ public class CounterTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass(), "test-counter"));
+        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass()), "test-counter");
         assertEquals("Initial count should be zero", 0, counter.getCount());
     }
 
-    public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-counter");
+    public void testParentCount() {
+        Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
+        Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
+        sub.inc(5);
+        main.dec(3);
+        assertEquals("Initial count should be zero", 5, sub.getCount());
+        assertEquals("Initial count should be zero", 2, main.getCount());
+    }
 
-        Counter counter = MetricManager.counter(Level.INFO, name);
+    public void testSameMetric() {
+        String name = MetricManager.name(this.getClass());
+
+        Counter counter = MetricManager.counter(Level.INFO, name, "test-same-counter");
         counter.inc();
         assertEquals("Count should be one", 1, counter.getCount());
-        Counter counter2 = MetricManager.counter(Level.INFO, name);
+        Counter counter2 = MetricManager.counter(Level.INFO, name, "test-same-counter");
         assertEquals("Count should be one", 1, counter2.getCount());
     }
 
     public void testIncrementByOne() {
-        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass(), "test-counter-inc1"));
+        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass()), "test-counter-inc1");
         counter.inc();
         assertEquals("Count should be one", 1, counter.getCount());
 
@@ -69,8 +78,7 @@ public class CounterTest extends TestCase {
     }
 
     public void testIncrementByRandomNumber() {
-        Counter counter = MetricManager.counter(Level.INFO,
-                MetricManager.name(this.getClass(), "test-counter-inc-rand"));
+        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass()), "test-counter-inc-rand");
         int n = randomGenerator.nextInt();
         counter.inc(n);
         assertEquals("Count should be " + n, n, counter.getCount());
@@ -81,7 +89,7 @@ public class CounterTest extends TestCase {
     }
 
     public void testDecrementByOne() {
-        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass(), "test-counter-dec1"));
+        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass()), "test-counter-dec1");
         counter.dec();
         assertEquals("Count should be -1", -1, counter.getCount());
 
@@ -91,8 +99,7 @@ public class CounterTest extends TestCase {
     }
 
     public void testDecrementByRandomNumber() {
-        Counter counter = MetricManager.counter(Level.INFO,
-                MetricManager.name(this.getClass(), "test-counter-dec-rand"));
+        Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass()), "test-counter-dec-rand");
         int n = randomGenerator.nextInt();
         counter.dec(n);
         assertEquals("Count should be " + n, 0 - n, counter.getCount());

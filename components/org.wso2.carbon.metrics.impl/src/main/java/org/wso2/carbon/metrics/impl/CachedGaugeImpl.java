@@ -29,8 +29,8 @@ public class CachedGaugeImpl<T> extends AbstractMetric implements com.codahale.m
 
     private CachedGauge<T> gauge;
 
-    public CachedGaugeImpl(Level level, String name, long timeout, TimeUnit timeoutUnit, final Gauge<T> gauge) {
-        super(level, name);
+    public CachedGaugeImpl(Level level, String name, String path, String identifier, long timeout, TimeUnit timeoutUnit, final Gauge<T> gauge) {
+        super(level, name, path, identifier);
         this.gauge = new CachedGauge<T>(timeout, timeoutUnit) {
             @Override
             protected T loadValue() {

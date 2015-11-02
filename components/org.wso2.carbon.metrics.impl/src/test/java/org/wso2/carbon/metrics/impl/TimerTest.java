@@ -44,22 +44,22 @@ public class TimerTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass(), "test-initial-count"));
+        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
         assertEquals("Initial count should be zero", 0, timer.getCount());
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-timer");
-        Timer timer = MetricManager.timer(Level.INFO, name);
+        String name = MetricManager.name(this.getClass());
+        Timer timer = MetricManager.timer(Level.INFO, name, "test-same-timer");
         timer.update(1, TimeUnit.SECONDS);
         assertEquals("Timer count should be one", 1, timer.getCount());
 
-        Timer timer2 = MetricManager.timer(Level.INFO, name);
+        Timer timer2 = MetricManager.timer(Level.INFO, name, "test-same-timer");
         assertEquals("Timer count should be one", 1, timer2.getCount());
     }
 
     public void testTime() {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass(), "test-timer-start"));
+        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-timer-start");
         Context context = timer.start();
         assertTrue("Timer works!", context.stop() > 0);
         assertEquals("Timer count should be one", 1, timer.getCount());
@@ -72,7 +72,7 @@ public class TimerTest extends TestCase {
     }
 
     public void testTimerUpdateCount() {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass(), "test-timer-update"));
+        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-timer-update");
         timer.update(1, TimeUnit.SECONDS);
         assertEquals("Timer count should be one", 1, timer.getCount());
 
@@ -82,7 +82,7 @@ public class TimerTest extends TestCase {
     }
 
     public void testTimerCallableInstances() throws Exception {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass(), "test-timer-callable"));
+        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-timer-callable");
         Callable<String> callable = new Callable<String>() {
             @Override
             public String call() throws Exception {

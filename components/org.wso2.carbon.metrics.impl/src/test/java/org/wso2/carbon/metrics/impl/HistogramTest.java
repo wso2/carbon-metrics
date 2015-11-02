@@ -44,24 +44,22 @@ public class HistogramTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Histogram histogram = MetricManager.histogram(Level.INFO,
-                MetricManager.name(this.getClass(), "test-initial-count"));
+        Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
         assertEquals("Initial count should be zero", 0, histogram.getCount());
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-histogram");
-        Histogram histogram = MetricManager.histogram(Level.INFO, name);
+        String name = MetricManager.name(this.getClass());
+        Histogram histogram = MetricManager.histogram(Level.INFO, name, "test-same-histogram");
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
-        Histogram histogram2 = MetricManager.histogram(Level.INFO, name);
+        Histogram histogram2 = MetricManager.histogram(Level.INFO, name, "test-same-histogram");
         assertEquals("Count should be one", 1, histogram2.getCount());
     }
 
     public void testUpdateInt() {
-        Histogram histogram = MetricManager.histogram(Level.INFO,
-                MetricManager.name(this.getClass(), "test-histogram-update-int"));
+        Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass()), "test-histogram-update-int");
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
@@ -71,8 +69,7 @@ public class HistogramTest extends TestCase {
     }
 
     public void testUpdateLong() {
-        Histogram histogram = MetricManager.histogram(Level.INFO,
-                MetricManager.name(this.getClass(), "test-histogram-update-long"));
+        Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass()), "test-histogram-update-long");
 
         histogram.update(randomGenerator.nextLong());
         assertEquals("Count should be one", 1, histogram.getCount());

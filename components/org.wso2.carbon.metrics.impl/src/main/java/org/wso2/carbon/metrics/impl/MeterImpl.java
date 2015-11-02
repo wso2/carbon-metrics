@@ -15,20 +15,27 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import org.wso2.carbon.metrics.manager.Level;
-
 import com.codahale.metrics.Meter;
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.MetricUpdater;
+import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
 
 /**
  * Implementation class wrapping {@link Meter} metric
  */
-public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Meter {
+public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Meter, MetricUpdater {
 
     private Meter meter;
+    private List<Meter> affected;
 
-    public MeterImpl(Level level, String name, Meter meter) {
-        super(level, name);
+    public MeterImpl(Level level, String name, String path, String identifier, Meter meter) {
+        super(level, name, path, identifier);
         this.meter = meter;
+        this.affected = getAffectedMetrics();
     }
 
     /*
@@ -40,6 +47,9 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     public void mark() {
         if (isEnabled()) {
             meter.mark();
+            for (Meter m : this.affected) {
+                m.mark();
+            }
         }
     }
 
@@ -52,6 +62,9 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     public void mark(long n) {
         if (isEnabled()) {
             meter.mark(n);
+            for (Meter m : this.affected) {
+                m.mark(n);
+            }
         }
     }
 
@@ -63,6 +76,38 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     @Override
     public long getCount() {
         return meter.getCount();
+    }
+
+    /*
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#getAffectedMetrics()
+     */
+    @Override
+    public List<Meter> getAffectedMetrics() {
+        SortedMap<String, Meter> availableMeters =
+                ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                        .getMetricRegistry().getMeters();
+        List<Meter> affectedMetrics = new ArrayList<Meter>();
+        String[] chunks = getPath().split("\\.");
+        StringBuilder builder = new StringBuilder();
+        String name;
+        for (String chunk : chunks) {
+            if (builder.length() > 0) {
+                builder.append('.');
+            }
+            builder.append(chunk);
+            if (chunk.contains("[+]")) {
+                name = builder.toString().replaceAll("\\[\\+\\]", "");
+                name = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                        .getAbsoluteName(getIdentifier(), name);
+                if (availableMeters.get(name) != null) {
+                    affectedMetrics.add(availableMeters.get(name));
+                } else {
+                    ServiceReferenceHolder.getInstance().getMetricService().meter(getLevel(), name, name, getIdentifier());
+                    return getAffectedMetrics();
+                }
+            }
+        }
+        return affectedMetrics;
     }
 
 }

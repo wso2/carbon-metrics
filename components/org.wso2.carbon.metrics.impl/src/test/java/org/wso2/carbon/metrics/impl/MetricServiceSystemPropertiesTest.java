@@ -42,7 +42,7 @@ public class MetricServiceSystemPropertiesTest extends TestCase {
     }
 
     public void testMetricServiceLevels() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-levels"));
+        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-levels");
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
     }

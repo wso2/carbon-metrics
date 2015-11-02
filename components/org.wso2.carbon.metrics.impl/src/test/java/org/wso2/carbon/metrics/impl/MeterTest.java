@@ -44,24 +44,24 @@ public class MeterTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-initial-count"));
+        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
         assertEquals("Initial count should be zero", 0, meter.getCount());
-        Meter meter2 = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-initial-count"));
+        Meter meter2 = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
         assertEquals("Initial count should be zero", 0, meter2.getCount());
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-meter");
-        Meter meter = MetricManager.meter(Level.INFO, name);
+        String name = MetricManager.name(this.getClass());
+        Meter meter = MetricManager.meter(Level.INFO, name, "test-same-meter");
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
-        Meter meter2 = MetricManager.meter(Level.INFO, name);
+        Meter meter2 = MetricManager.meter(Level.INFO, name, "test-same-meter");
         assertEquals("Count should be one", 1, meter2.getCount());
     }
 
     public void testMarkEvent() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-meter-mark"));
+        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-meter-mark");
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
@@ -71,7 +71,7 @@ public class MeterTest extends TestCase {
     }
 
     public void testMarkEventByRandomNumber() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-meter-mark-rand"));
+        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-meter-mark-rand");
         int n = randomGenerator.nextInt();
         meter.mark(n);
         assertEquals("Count should be " + n, n, meter.getCount());

@@ -42,7 +42,12 @@ public interface MetricService {
     /**
      * @return The {@link Level} for the given metric name
      */
-    Level getMetricLevel(String name);
+    Level getMetricLevel(String identifier);
+
+    /**
+     * @return The {@link Level} for the given metric name
+     */
+    Level getMetricLevel(String name, String identifier);
 
     /**
      * Set a new level to the given metric name
@@ -50,7 +55,15 @@ public interface MetricService {
      * @param name The name of the Metric
      * @param level New {@link Level} for the Metric
      */
-    void setMetricLevel(String name, Level level);
+    void setMetricLevel(String identifier, Level level);
+
+    /**
+     * Set a new level to the given metric name
+     *
+     * @param name The name of the Metric
+     * @param level New {@link Level} for the Metric
+     */
+    void setMetricLevel(String name, String identifier, Level level);
 
     /**
      * @return The current root {@link Level}
@@ -78,7 +91,7 @@ public interface MetricService {
      * @param name The name of the metric
      * @return a {@link Meter} instance
      */
-    Meter meter(Level level, String name);
+    Meter meter(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Counter} instance for the given name
@@ -87,7 +100,7 @@ public interface MetricService {
      * @param name The name of the metric
      * @return a {@link Counter} instance
      */
-    Counter counter(Level level, String name);
+    Counter counter(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Timer} instance for the given name
@@ -96,7 +109,7 @@ public interface MetricService {
      * @param name The name of the metric
      * @return a {@link Timer} instance
      */
-    Timer timer(Level level, String name);
+    Timer timer(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Histogram} instance for the given name
@@ -105,7 +118,7 @@ public interface MetricService {
      * @param name The name of the metric
      * @return a {@link Histogram} instance
      */
-    Histogram histogram(Level level, String name);
+    Histogram histogram(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Gauge} for the given name
@@ -114,7 +127,7 @@ public interface MetricService {
      * @param name The name of the metric
      * @param gauge An implementation of {@link Gauge}
      */
-    <T> void gauge(Level level, String name, Gauge<T> gauge);
+    <T> void gauge(Level level, String name, String path, String identifier, Gauge<T> gauge);
 
     /**
      * Get or create a cached {@link Gauge} for the given name
@@ -125,7 +138,7 @@ public interface MetricService {
      * @param timeoutUnit the unit of {@code timeout}
      * @param gauge An implementation of {@link Gauge}
      */
-    <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
+    <T> void cachedGauge(Level level, String name, String path, String identifier, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
 
     /**
      * Invoke report method of all scheduled reporters.

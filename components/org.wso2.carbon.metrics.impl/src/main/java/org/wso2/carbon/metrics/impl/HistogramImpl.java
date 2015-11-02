@@ -15,20 +15,27 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import org.wso2.carbon.metrics.manager.Level;
-
 import com.codahale.metrics.Histogram;
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.MetricUpdater;
+import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
 
 /**
  * Implementation class wrapping {@link Histogram} metric
  */
-public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Histogram {
+public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Histogram, MetricUpdater {
 
     private Histogram histogram;
+    private List<Histogram> affected;
 
-    public HistogramImpl(Level level, String name, Histogram histogram) {
-        super(level, name);
+    public HistogramImpl(Level level, String name, String path, String identifier, Histogram histogram) {
+        super(level, name, path, identifier);
         this.histogram = histogram;
+        this.affected = getAffectedMetrics();
     }
 
     /*
@@ -38,6 +45,9 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     public void update(int value) {
         if (isEnabled()) {
             histogram.update(value);
+            for (Histogram h : this.affected) {
+                h.update(value);
+            }
         }
     }
 
@@ -48,6 +58,9 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     public void update(long value) {
         if (isEnabled()) {
             histogram.update(value);
+            for (Histogram h : this.affected) {
+                h.update(value);
+            }
         }
     }
 
@@ -59,4 +72,35 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
         return histogram.getCount();
     }
 
+    /*
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#getAffectedMetrics()
+     */
+    @Override
+    public List<Histogram> getAffectedMetrics() {
+        SortedMap<String, Histogram> availableHistograms =
+                ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                        .getMetricRegistry().getHistograms();
+        List<Histogram> affectedMetrics = new ArrayList<Histogram>();
+        String[] chunks = getPath().split("\\.");
+        StringBuilder builder = new StringBuilder();
+        String name;
+        for (String chunk : chunks) {
+            if (builder.length() > 0) {
+                builder.append('.');
+            }
+            builder.append(chunk);
+            if (chunk.contains("[+]")) {
+                name = builder.toString().replaceAll("\\[\\+\\]", "");
+                name = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                        .getAbsoluteName(getIdentifier(), name);
+                if (availableHistograms.get(name) != null) {
+                    affectedMetrics.add(availableHistograms.get(name));
+                } else {
+                    ServiceReferenceHolder.getInstance().getMetricService().histogram(getLevel(), name, name, getIdentifier());
+                    return getAffectedMetrics();
+                }
+            }
+        }
+        return affectedMetrics;
+    }
 }
