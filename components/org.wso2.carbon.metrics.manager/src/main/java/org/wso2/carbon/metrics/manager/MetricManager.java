@@ -37,8 +37,6 @@ public final class MetricManager {
 
     private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 
-    private static final String DEFAULT_HIERARCHY_ROOT = "org.wso2";
-
     private MetricManager() {
     }
 
@@ -82,9 +80,10 @@ public final class MetricManager {
 
     /**
      * Return a {@link Meter} instance registered under given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Meter} instance
      */
     public static Meter meter(Level level, String name, String identifier) {
@@ -96,6 +95,8 @@ public final class MetricManager {
      *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Meter} instance
      */
     public static Meter meter(Level level, String name, String path, String identifier) {
@@ -104,9 +105,10 @@ public final class MetricManager {
 
     /**
      * Return a {@link Counter} instance registered under given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Counter} instance
      */
     public static Counter counter(Level level, String name, String identifier) {
@@ -118,6 +120,8 @@ public final class MetricManager {
      *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Counter} instance
      */
     public static Counter counter(Level level, String name, String path, String identifier) {
@@ -126,9 +130,10 @@ public final class MetricManager {
 
     /**
      * Return a {@link Timer} instance registered under given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Timer} instance
      */
     public static Timer timer(Level level, String name, String identifier) {
@@ -140,6 +145,8 @@ public final class MetricManager {
      *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Timer} instance
      */
     public static Timer timer(Level level, String name, String path, String identifier) {
@@ -148,9 +155,10 @@ public final class MetricManager {
 
     /**
      * Return a {@link Histogram} instance registered under given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Histogram} instance
      */
     public static Histogram histogram(Level level, String name, String identifier) {
@@ -162,6 +170,8 @@ public final class MetricManager {
      *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Histogram} instance
      */
     public static Histogram histogram(Level level, String name, String path, String identifier) {
@@ -170,9 +180,10 @@ public final class MetricManager {
 
     /**
      * Register a {@link Gauge} instance under given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void gauge(Level level, String name, String identifier, Gauge<T> gauge) {
@@ -184,6 +195,8 @@ public final class MetricManager {
      *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void gauge(Level level, String name, String path, String identifier, Gauge<T> gauge) {
@@ -192,9 +205,10 @@ public final class MetricManager {
 
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout
-     * 
+     *
      * @param level The {@link Level} used for metric
-     * @param name The name of the metrics
+     * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @param timeout The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the timeout
      * @param gauge An implementation of {@link Gauge}
@@ -207,7 +221,9 @@ public final class MetricManager {
      * Register a {@link Gauge} instance under given name with a configurable cache timeout
      *
      * @param level The {@link Level} used for metric
-     * @param name The name of the metrics
+     * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @param timeout The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the timeout
      * @param gauge An implementation of {@link Gauge}
@@ -218,9 +234,10 @@ public final class MetricManager {
 
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
-     * 
+     *
      * @param level The {@link Level} used for metric
-     * @param name The name of the metrics
+     * @param name The name of the metric
+     * @param identifier The identifier of the metric
      * @param timeout The timeout value in seconds
      * @param gauge An implementation of {@link Gauge}
      */
@@ -232,7 +249,9 @@ public final class MetricManager {
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
      *
      * @param level The {@link Level} used for metric
-     * @param name The name of the metrics
+     * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @param timeout The timeout value in seconds
      * @param gauge An implementation of {@link Gauge}
      */

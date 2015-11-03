@@ -38,14 +38,6 @@ public class MetricTreeNode implements Iterable<MetricTreeNode> {
         this.elementsIndex.put(name, this);
     }
 
-    public MetricTreeNode(String name, ConcurrentMap<String, AbstractMetric> metrics) {
-        this.name = name;
-        this.metrics = metrics;
-        this.children = new LinkedList<MetricTreeNode>();
-        this.elementsIndex = new ConcurrentHashMap<String, MetricTreeNode>();
-        this.elementsIndex.put(name, this);
-    }
-
     public boolean isRoot() {
         return parent == null;
     }
@@ -62,15 +54,6 @@ public class MetricTreeNode implements Iterable<MetricTreeNode> {
             this.children.add(childNode);
             this.registerChildForSearch(name, childNode);
         }
-        return childNode;
-    }
-
-    public MetricTreeNode addChild(String name,  ConcurrentMap<String, AbstractMetric> metrics) {
-        // TODO : remove this if there's no use
-        MetricTreeNode childNode = new MetricTreeNode(name, metrics);
-        childNode.parent = this;
-        this.children.add(childNode);
-        this.registerChildForSearch(name, childNode);
         return childNode;
     }
 
@@ -99,10 +82,6 @@ public class MetricTreeNode implements Iterable<MetricTreeNode> {
 
     public AbstractMetric addMetric(String identifier, AbstractMetric metric) {
         return metrics.putIfAbsent(identifier, metric);
-    }
-
-    public AbstractMetric getMetric(String identifier) {
-        return metrics.get(identifier);
     }
 
     public ConcurrentMap<String, AbstractMetric> getMetrics() {

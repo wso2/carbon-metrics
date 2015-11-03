@@ -27,8 +27,18 @@ public abstract class AbstractMetric implements Metric {
      * The level used when creating the metric
      */
     private final Level level;
+    /**
+     * The name of the metric
+     */
     private final String name;
+    /**
+     * The identifier of the metric
+     */
     private final String identifier;
+    /**
+     * The annotated path of the metric which represent
+     * affected parents when updating the current metric
+     */
     private String path;
     /**
      * A flag to indicate whether the metric is enabled

@@ -40,27 +40,33 @@ public interface MetricService {
     boolean isEnabled();
 
     /**
-     * @return The {@link Level} for the given metric name
+     * Get the {@link Level} for a given metric identifier
+     * @param identifier The name of the Metric
+     * @return {@link Level} for the given metric identifier
      */
     Level getMetricLevel(String identifier);
 
     /**
-     * @return The {@link Level} for the given metric name
+     * Get the {@link Level} for a given metric
+     * @param name The name of the Metric
+     * @param identifier The identifier of the Metric
+     * @return {@link Level} for the given metric identifier
      */
     Level getMetricLevel(String name, String identifier);
 
     /**
-     * Set a new level to the given metric name
+     * Set a new level to the given metric identifier
      * 
-     * @param name The name of the Metric
+     * @param identifier The name of the Metric
      * @param level New {@link Level} for the Metric
      */
     void setMetricLevel(String identifier, Level level);
 
     /**
-     * Set a new level to the given metric name
+     * Set a new level to the given metric (name & identifier)
      *
      * @param name The name of the Metric
+     * @param identifier The name of the Metric
      * @param level New {@link Level} for the Metric
      */
     void setMetricLevel(String name, String identifier, Level level);
@@ -85,55 +91,67 @@ public interface MetricService {
     int getMetricsCount();
 
     /**
-     * Get or create a {@link Meter} instance for the given name
+     * Get or create a {@link Meter} instance for the given identifier
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Meter} instance
      */
     Meter meter(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Counter} instance for the given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Counter} instance
      */
     Counter counter(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Timer} instance for the given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Timer} instance
      */
     Timer timer(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Histogram} instance for the given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @return a {@link Histogram} instance
      */
     Histogram histogram(Level level, String name, String path, String identifier);
 
     /**
      * Get or create a {@link Gauge} for the given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @param gauge An implementation of {@link Gauge}
      */
     <T> void gauge(Level level, String name, String path, String identifier, Gauge<T> gauge);
 
     /**
      * Get or create a cached {@link Gauge} for the given name
-     * 
+     *
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
+     * @param path The annotated path of the metric
+     * @param identifier The identifier of the metric
      * @param timeout the timeout
      * @param timeoutUnit the unit of {@code timeout}
      * @param gauge An implementation of {@link Gauge}

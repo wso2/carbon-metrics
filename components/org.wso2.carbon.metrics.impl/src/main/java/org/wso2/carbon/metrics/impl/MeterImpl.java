@@ -79,6 +79,8 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     }
 
     /*
+     * (non-Javadoc)
+     *
      * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override

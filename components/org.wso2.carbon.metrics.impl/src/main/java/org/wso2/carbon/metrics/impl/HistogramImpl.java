@@ -39,6 +39,8 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     }
 
     /*
+     * (non-Javadoc)
+     *
      * @see org.wso2.carbon.metrics.manager.Histogram#update(int)
      */
     @Override
@@ -52,6 +54,8 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     }
 
     /*
+     * (non-Javadoc)
+     *
      * @see org.wso2.carbon.metrics.manager.Histogram#update(long)
      */
     @Override
@@ -65,6 +69,8 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     }
 
     /*
+     * (non-Javadoc)
+     *
      * @see org.wso2.carbon.metrics.manager.Histogram#getCount()
      */
     @Override
@@ -73,6 +79,8 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     }
 
     /*
+     * (non-Javadoc)
+     *
      * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override

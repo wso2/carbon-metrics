@@ -18,6 +18,13 @@
 
 package org.wso2.carbon.metrics.manager;
 
-public interface MetricUpdater<T> {
+/**
+ * Metric which support hierarchical updating of their parents
+ */
+public interface MetricUpdater {
+    /**
+     * Update the list of affected parent metrics according to the given annotated path
+     * @param path annotated path of the metric
+     */
     void updateAffectedMetrics(String path);
 }

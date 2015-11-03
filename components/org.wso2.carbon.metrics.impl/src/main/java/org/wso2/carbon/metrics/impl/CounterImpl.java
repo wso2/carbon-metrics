@@ -109,6 +109,8 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
     }
 
     /*
+     * (non-Javadoc)
+     *
      * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override
