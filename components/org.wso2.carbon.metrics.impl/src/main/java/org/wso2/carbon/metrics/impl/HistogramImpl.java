@@ -35,7 +35,7 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     public HistogramImpl(Level level, String name, String path, String identifier, Histogram histogram) {
         super(level, name, path, identifier);
         this.histogram = histogram;
-        this.affected = getAffectedMetrics();
+        this.affected = new ArrayList<Histogram>();
     }
 
     /*
@@ -73,15 +73,16 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
     }
 
     /*
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#getAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override
-    public List<Histogram> getAffectedMetrics() {
+    public void updateAffectedMetrics(String path) {
+        affected.clear();
+        super.setPath(path);
         SortedMap<String, Histogram> availableHistograms =
                 ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getMetricRegistry().getHistograms();
-        List<Histogram> affectedMetrics = new ArrayList<Histogram>();
-        String[] chunks = getPath().split("\\.");
+        String[] chunks = path.split("\\.");
         StringBuilder builder = new StringBuilder();
         String name;
         for (String chunk : chunks) {
@@ -91,16 +92,15 @@ public class HistogramImpl extends AbstractMetric implements org.wso2.carbon.met
             builder.append(chunk);
             if (chunk.contains("[+]")) {
                 name = builder.toString().replaceAll("\\[\\+\\]", "");
-                name = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getAbsoluteName(getIdentifier(), name);
-                if (availableHistograms.get(name) != null) {
-                    affectedMetrics.add(availableHistograms.get(name));
+                if (availableHistograms.get(absoluteName) != null) {
+                    affected.add(availableHistograms.get(absoluteName));
                 } else {
                     ServiceReferenceHolder.getInstance().getMetricService().histogram(getLevel(), name, name, getIdentifier());
-                    return getAffectedMetrics();
+                    updateAffectedMetrics(path);
                 }
             }
         }
-        return affectedMetrics;
     }
 }

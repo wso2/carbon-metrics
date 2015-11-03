@@ -37,7 +37,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
     public TimerImpl(Level level, String name, String path, String identifier, Timer timer) {
         super(level, name, path, identifier);
         this.timer = timer;
-        this.affected = getAffectedMetrics();
+        this.affected = new ArrayList<Timer>();
     }
 
     /*
@@ -93,15 +93,16 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
     }
 
     /*
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#getAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override
-    public List<Timer> getAffectedMetrics() {
+    public void updateAffectedMetrics(String path) {
+        affected.clear();
+        super.setPath(path);
         SortedMap<String, Timer> availableTimers =
                 ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getMetricRegistry().getTimers();
-        List<Timer> affectedMetrics = new ArrayList<Timer>();
-        String[] chunks = getPath().split("\\.");
+        String[] chunks = path.split("\\.");
         StringBuilder builder = new StringBuilder();
         String name;
         for (String chunk : chunks) {
@@ -111,17 +112,16 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
             builder.append(chunk);
             if (chunk.contains("[+]")) {
                 name = builder.toString().replaceAll("\\[\\+\\]", "");
-                name = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getAbsoluteName(getIdentifier(), name);
-                if (availableTimers.get(name) != null) {
-                    affectedMetrics.add(availableTimers.get(name));
+                if (availableTimers.get(absoluteName) != null) {
+                    affected.add(availableTimers.get(absoluteName));
                 } else {
                     ServiceReferenceHolder.getInstance().getMetricService().timer(getLevel(), name, name, getIdentifier());
-                    return getAffectedMetrics();
+                    updateAffectedMetrics(path);
                 }
             }
         }
-        return affectedMetrics;
     }
 
     private static class ContextImpl implements Context {

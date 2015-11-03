@@ -48,6 +48,15 @@ public class TimerTest extends TestCase {
         assertEquals("Initial count should be zero", 0, timer.getCount());
     }
 
+    public void testParentCount() {
+        Timer main = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
+        Timer sub = MetricManager.timer(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-timer");
+        sub.update(1, TimeUnit.SECONDS);
+        main.update(1, TimeUnit.SECONDS);
+        assertEquals("Count should be one", 1, sub.getCount());
+        assertEquals("Count should be two", 2, main.getCount());
+    }
+
     public void testSameMetric() {
         String name = MetricManager.name(this.getClass());
         Timer timer = MetricManager.timer(Level.INFO, name, "test-same-timer");
@@ -56,6 +65,47 @@ public class TimerTest extends TestCase {
 
         Timer timer2 = MetricManager.timer(Level.INFO, name, "test-same-timer");
         assertEquals("Timer count should be one", 1, timer2.getCount());
+    }
+
+    public void testSameMetricWithParent() {
+        Timer main = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
+        Timer sub = MetricManager.timer(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-timer");
+
+        Timer main2 = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
+        Timer sub2 = MetricManager.timer(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-timer");
+
+        sub.update(1, TimeUnit.SECONDS);
+        assertEquals("Count should be one", 1, sub.getCount());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be one", 1, main.getCount());
+        assertEquals("Count should be one", 1, main2.getCount());
+
+        main.update(5, TimeUnit.SECONDS);
+        assertEquals("Count should be one", 1, sub.getCount());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be six", 2, main.getCount());
+        assertEquals("Count should be six", 2, main2.getCount());
+    }
+
+    public void testMetricWithNonExistingParents() {
+        Timer sub2 = MetricManager.timer(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "test-timer");
+        Timer sub1 = MetricManager.timer(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-timer");
+        Timer main = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
+
+        sub2.update(5, TimeUnit.SECONDS);
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be one", 1, sub1.getCount());
+        assertEquals("Count should be one", 1, main.getCount());
+
+        sub1.update(5, TimeUnit.SECONDS);
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be two", 2, sub1.getCount());
+        assertEquals("Count should be two", 2, main.getCount());
+
+        main.update(5, TimeUnit.SECONDS);
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be two", 2, sub1.getCount());
+        assertEquals("Count should be three", 3, main.getCount());
     }
 
     public void testTime() {

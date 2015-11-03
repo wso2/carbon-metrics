@@ -18,8 +18,6 @@
 
 package org.wso2.carbon.metrics.manager;
 
-import java.util.List;
-
 public interface MetricUpdater<T> {
-    List<T> getAffectedMetrics();
+    void updateAffectedMetrics(String path);
 }

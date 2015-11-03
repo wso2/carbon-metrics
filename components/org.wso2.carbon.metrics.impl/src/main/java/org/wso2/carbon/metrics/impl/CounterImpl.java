@@ -35,7 +35,7 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
     public CounterImpl(Level level, String name, String path, String identifier, Counter counter) {
         super(level, name, path, identifier);
         this.counter = counter;
-        this.affected = getAffectedMetrics();
+        this.affected = new ArrayList<Counter>();
     }
 
     /*
@@ -109,15 +109,16 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
     }
 
     /*
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#getAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override
-    public List<Counter> getAffectedMetrics() {
+    public void updateAffectedMetrics(String path) {
+        affected.clear();
+        super.setPath(path);
         SortedMap<String, Counter> availableCounters =
                 ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getMetricRegistry().getCounters();
-        List<Counter> affectedMetrics = new ArrayList<Counter>();
-        String[] chunks = getPath().split("\\.");
+        String[] chunks = path.split("\\.");
         StringBuilder builder = new StringBuilder();
         String name;
         for (String chunk : chunks) {
@@ -127,17 +128,16 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
             builder.append(chunk);
             if (chunk.contains("[+]")) {
                 name = builder.toString().replaceAll("\\[\\+\\]", "");
-                name = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getAbsoluteName(getIdentifier(), name);
-                if (availableCounters.get(name) != null) {
-                    affectedMetrics.add(availableCounters.get(name));
+                if (availableCounters.get(absoluteName) != null) {
+                    affected.add(availableCounters.get(absoluteName));
                 } else {
                     ServiceReferenceHolder.getInstance().getMetricService().counter(getLevel(), name, name, getIdentifier());
-                    return getAffectedMetrics();
+                    updateAffectedMetrics(path);
                 }
             }
         }
-        return affectedMetrics;
     }
 
 }

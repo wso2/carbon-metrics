@@ -28,8 +28,8 @@ public abstract class AbstractMetric implements Metric {
      */
     private final Level level;
     private final String name;
-    private final String path;
     private final String identifier;
+    private String path;
     /**
      * A flag to indicate whether the metric is enabled
      */
@@ -64,5 +64,9 @@ public abstract class AbstractMetric implements Metric {
 
     final void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    protected void setPath(String path) {
+        this.path = path;
     }
 }

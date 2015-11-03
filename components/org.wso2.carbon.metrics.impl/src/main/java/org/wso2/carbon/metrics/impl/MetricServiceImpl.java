@@ -404,6 +404,9 @@ public class MetricServiceImpl implements MetricService {
             AbstractMetric metric = metricWrapper.metric;
             if (metricBuilder.isInstance(metric)) {
                 if (level.equals(metricWrapper.level)) {
+                    if (metric instanceof MetricUpdater) {
+                        ((MetricUpdater) metric).updateAffectedMetrics(path);
+                    }
                     return (T) metric;
                 } else {
                     throw new IllegalArgumentException(absoluteName + " is already used with a different level");
@@ -419,6 +422,9 @@ public class MetricServiceImpl implements MetricService {
             metricWrapper.metric = newMetric;
             newMetric.setEnabled(enabled);
             addToMetricHierarchy(identifier, path, newMetric);
+            if (newMetric instanceof MetricUpdater) {
+                ((MetricUpdater) newMetric).updateAffectedMetrics(path);
+            }
             return newMetric;
         }
     }

@@ -15,8 +15,7 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import java.util.Random;
-
+import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
@@ -24,7 +23,7 @@ import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
-import junit.framework.TestCase;
+import java.util.Random;
 
 /**
  * Test Cases for {@link Counter}
@@ -53,18 +52,55 @@ public class CounterTest extends TestCase {
         Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
         sub.inc(5);
         main.dec(3);
-        assertEquals("Initial count should be zero", 5, sub.getCount());
-        assertEquals("Initial count should be zero", 2, main.getCount());
+        assertEquals("Count should be five", 5, sub.getCount());
+        assertEquals("Count should be two", 2, main.getCount());
     }
 
     public void testSameMetric() {
         String name = MetricManager.name(this.getClass());
-
         Counter counter = MetricManager.counter(Level.INFO, name, "test-same-counter");
         counter.inc();
         assertEquals("Count should be one", 1, counter.getCount());
         Counter counter2 = MetricManager.counter(Level.INFO, name, "test-same-counter");
         assertEquals("Count should be one", 1, counter2.getCount());
+    }
+
+    public void testSameMetricWithParent() {
+        Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
+        Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
+
+        Counter main2 = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
+        Counter sub2 = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
+
+        sub.inc(5l);
+        assertEquals("Count should be five", 5l, sub.getCount());
+        assertEquals("Count should be five", 5l, sub2.getCount());
+        assertEquals("Count should be five", 5l, main.getCount());
+        assertEquals("Count should be five", 5l, main2.getCount());
+
+        main.dec(3l);
+        assertEquals("Count should be two", 2l, main.getCount());
+        assertEquals("Count should be two", 2l, main2.getCount());
+    }
+
+    public void testMetricWithNonExistingParents() {
+        Counter sub2 = MetricManager.counter(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "throughput");
+        Counter sub1 = MetricManager.counter(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "throughput");
+        Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
+        sub2.inc(5l);
+        assertEquals("Count should be five", 5l, sub2.getCount());
+        assertEquals("Count should be five", 5l, sub1.getCount());
+        assertEquals("Count should be five", 5l, main.getCount());
+
+        sub1.dec(3l);
+        assertEquals("Count should be five", 5l, sub2.getCount());
+        assertEquals("Count should be two", 2l, sub1.getCount());
+        assertEquals("Count should be two", 2l, main.getCount());
+
+        main.inc(10l);
+        assertEquals("Count should be five", 5l, sub2.getCount());
+        assertEquals("Count should be two", 2l, sub1.getCount());
+        assertEquals("Count should be twelve", 12l, main.getCount());
     }
 
     public void testIncrementByOne() {

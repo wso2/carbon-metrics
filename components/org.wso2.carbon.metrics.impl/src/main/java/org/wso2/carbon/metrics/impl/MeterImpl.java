@@ -35,7 +35,7 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     public MeterImpl(Level level, String name, String path, String identifier, Meter meter) {
         super(level, name, path, identifier);
         this.meter = meter;
-        this.affected = getAffectedMetrics();
+        this.affected = new ArrayList<Meter>();
     }
 
     /*
@@ -79,15 +79,16 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     }
 
     /*
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#getAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
      */
     @Override
-    public List<Meter> getAffectedMetrics() {
+    public void updateAffectedMetrics(String path) {
+        affected.clear();
+        super.setPath(path);
         SortedMap<String, Meter> availableMeters =
                 ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getMetricRegistry().getMeters();
-        List<Meter> affectedMetrics = new ArrayList<Meter>();
-        String[] chunks = getPath().split("\\.");
+        String[] chunks = path.split("\\.");
         StringBuilder builder = new StringBuilder();
         String name;
         for (String chunk : chunks) {
@@ -97,17 +98,16 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
             builder.append(chunk);
             if (chunk.contains("[+]")) {
                 name = builder.toString().replaceAll("\\[\\+\\]", "");
-                name = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
+                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
                         .getAbsoluteName(getIdentifier(), name);
-                if (availableMeters.get(name) != null) {
-                    affectedMetrics.add(availableMeters.get(name));
+                if (availableMeters.get(absoluteName) != null) {
+                    affected.add(availableMeters.get(absoluteName));
                 } else {
                     ServiceReferenceHolder.getInstance().getMetricService().meter(getLevel(), name, name, getIdentifier());
-                    return getAffectedMetrics();
+                    updateAffectedMetrics(path);
                 }
             }
         }
-        return affectedMetrics;
     }
 
 }

@@ -18,10 +18,7 @@ package org.wso2.carbon.metrics.impl;
 import java.util.Random;
 
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.manager.Histogram;
-import org.wso2.carbon.metrics.manager.Level;
-import org.wso2.carbon.metrics.manager.MetricManager;
-import org.wso2.carbon.metrics.manager.MetricService;
+import org.wso2.carbon.metrics.manager.*;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import junit.framework.TestCase;
@@ -48,6 +45,15 @@ public class HistogramTest extends TestCase {
         assertEquals("Initial count should be zero", 0, histogram.getCount());
     }
 
+    public void testParentCount() {
+        Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
+        Histogram sub = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
+        sub.update(randomGenerator.nextInt());
+        main.update(randomGenerator.nextInt());
+        assertEquals("Count should be one", 1, sub.getCount());
+        assertEquals("Count should be two", 2, main.getCount());
+    }
+
     public void testSameMetric() {
         String name = MetricManager.name(this.getClass());
         Histogram histogram = MetricManager.histogram(Level.INFO, name, "test-same-histogram");
@@ -56,6 +62,47 @@ public class HistogramTest extends TestCase {
 
         Histogram histogram2 = MetricManager.histogram(Level.INFO, name, "test-same-histogram");
         assertEquals("Count should be one", 1, histogram2.getCount());
+    }
+
+    public void testSameMetricWithParent() {
+        Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
+        Histogram sub = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
+
+        Histogram main2 = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
+        Histogram sub2 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
+
+        sub.update(randomGenerator.nextInt());
+        assertEquals("Count should be one", 1, sub.getCount());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be one", 1, main.getCount());
+        assertEquals("Count should be one", 1, main2.getCount());
+
+        main.update(randomGenerator.nextInt());
+        assertEquals("Count should be one", 1, sub.getCount());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be two", 2, main.getCount());
+        assertEquals("Count should be two", 2, main2.getCount());
+    }
+
+    public void testMetricWithNonExistingParents() {
+        Histogram sub2 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "test-histogram");
+        Histogram sub1 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-histogram");
+        Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
+
+        sub2.update(randomGenerator.nextInt());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be one", 1, sub1.getCount());
+        assertEquals("Count should be one", 1, main.getCount());
+
+        sub1.update(randomGenerator.nextInt());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be two", 2, sub1.getCount());
+        assertEquals("Count should be two", 2, main.getCount());
+
+        main.update(randomGenerator.nextInt());
+        assertEquals("Count should be one", 1, sub2.getCount());
+        assertEquals("Count should be two", 2, sub1.getCount());
+        assertEquals("Count should be three", 3, main.getCount());
     }
 
     public void testUpdateInt() {
