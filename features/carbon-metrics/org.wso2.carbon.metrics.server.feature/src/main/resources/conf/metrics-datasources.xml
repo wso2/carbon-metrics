@@ -39,6 +39,7 @@
                     <testOnBorrow>true</testOnBorrow>
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
+                    <defaultAutoCommit>true</defaultAutoCommit>
                 </configuration>
             </definition>
         </datasource>
@@ -48,8 +49,9 @@
         <!--
         <datasource>
             <name>WSO2_METRICS_DB</name>
+            <description>The MySQL datasource used for WSO2 Carbon Metrics</description>
             <jndiConfig>
-                <name>The MySQL datasource used for WSO2 Carbon Metrics</name>
+                <name>jdbc/WSO2MetricsDB</name>
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
@@ -63,7 +65,7 @@
                     <testOnBorrow>true</testOnBorrow>
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
-                    <defaultAutoCommit>false</defaultAutoCommit>
+                    <defaultAutoCommit>true</defaultAutoCommit>
                 </configuration>
             </definition>
         </datasource>
@@ -73,8 +75,9 @@
         <!--
         <datasource>
             <name>WSO2_METRICS_DB</name>
+            <description>The MSSQL datasource used for WSO2 Carbon Metrics</description>
             <jndiConfig>
-                <name>The MSSQL datasource used for WSO2 Carbon Metrics</name>
+                <name>jdbc/WSO2MetricsDB</name>
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
@@ -88,7 +91,7 @@
                     <testOnBorrow>true</testOnBorrow>
                     <validationQuery>SELECT 1</validationQuery>
                     <validationInterval>30000</validationInterval>
-                    <defaultAutoCommit>false</defaultAutoCommit>
+                    <defaultAutoCommit>true</defaultAutoCommit>
                 </configuration>
             </definition>
         </datasource>
@@ -98,12 +101,13 @@
         <!--
         <datasource>
             <name>WSO2_METRICS_DB</name>
+            <description>The SQLServer XA datasource used for WSO2 Carbon Metrics</description>
             <jndiConfig>
-                <name>The SQLServer XA datasource used for WSO2 Carbon Metrics</name>
+                <name>jdbc/WSO2MetricsDB</name>
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
-                    <defaultAutoCommit>false</defaultAutoCommit>
+                    <defaultAutoCommit>true</defaultAutoCommit>
                     <dataSourceClassName>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</dataSourceClassName>
                     <dataSourceProps>
                         <property name="URL">jdbc:sqlserver://localhost/SQLExpress:1433</property>
@@ -120,8 +124,9 @@
         <!--
         <datasource>
             <name>WSO2_METRICS_DB</name>
+            <description>The Oracle datasource used for WSO2 Carbon Metrics</description>
             <jndiConfig>
-                <name>The Oracle datasource used for WSO2 Carbon Metrics</name>
+                <name>jdbc/WSO2MetricsDB</name>
             </jndiConfig>
             <definition type="RDBMS">
                 <configuration>
@@ -135,7 +140,7 @@
                     <testOnBorrow>true</testOnBorrow>
                     <validationQuery>SELECT 1 FROM DUAL</validationQuery>
                     <validationInterval>30000</validationInterval>
-                    <defaultAutoCommit>false</defaultAutoCommit>
+                    <defaultAutoCommit>true</defaultAutoCommit>
                     <databaseProps>
                         <property name="SetFloatAndDoubleUseBinary">true</property>
                     </databaseProps>
