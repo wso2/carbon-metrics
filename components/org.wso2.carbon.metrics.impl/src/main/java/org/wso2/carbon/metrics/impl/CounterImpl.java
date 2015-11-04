@@ -15,24 +15,24 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import com.codahale.metrics.Counter;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
+import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.Metric;
 import org.wso2.carbon.metrics.manager.MetricUpdater;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 /**
- * Implementation class wrapping {@link Counter} metric
+ * Implementation class wrapping {@link com.codahale.metrics.Counter} metric
  */
-public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Counter, MetricUpdater {
+public class CounterImpl extends AbstractMetric implements Counter, MetricUpdater {
 
-    private Counter counter;
+    private com.codahale.metrics.Counter counter;
     private List<Counter> affected;
 
-    public CounterImpl(Level level, String name, String path, String identifier, Counter counter) {
+    public CounterImpl(Level level, String name, String path, String identifier, com.codahale.metrics.Counter counter) {
         super(level, name, path, identifier);
         this.counter = counter;
         this.affected = new ArrayList<Counter>();
@@ -45,6 +45,18 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
      */
     @Override
     public void inc() {
+        if (isEnabled()) {
+            counter.inc();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#incAll()
+     */
+    @Override
+    public void incAll() {
         if (isEnabled()) {
             counter.inc();
             for (Counter c : this.affected) {
@@ -62,6 +74,18 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
     public void inc(long n) {
         if (isEnabled()) {
             counter.inc(n);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#incAll(long)
+     */
+    @Override
+    public void incAll(long n) {
+        if (isEnabled()) {
+            counter.inc(n);
             for (Counter c : this.affected) {
                 c.inc(n);
             }
@@ -77,6 +101,18 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
     public void dec() {
         if (isEnabled()) {
             counter.dec();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#decAll()
+     */
+    @Override
+    public void decAll() {
+        if (isEnabled()) {
+            counter.dec();
             for (Counter c : this.affected) {
                 c.dec();
             }
@@ -90,6 +126,18 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
      */
     @Override
     public void dec(long n) {
+        if (isEnabled()) {
+            counter.dec(n);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#decAll(long)
+     */
+    @Override
+    public void decAll(long n) {
         if (isEnabled()) {
             counter.dec(n);
             for (Counter c : this.affected) {
@@ -111,34 +159,15 @@ public class CounterImpl extends AbstractMetric implements org.wso2.carbon.metri
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        SortedMap<String, Counter> availableCounters =
-                ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
-                        .getMetricRegistry().getCounters();
-        String[] chunks = path.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        String name;
-        for (String chunk : chunks) {
-            if (builder.length() > 0) {
-                builder.append('.');
-            }
-            builder.append(chunk);
-            if (chunk.contains("[+]")) {
-                name = builder.toString().replaceAll("\\[\\+\\]", "");
-                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
-                        .getAbsoluteName(getIdentifier(), name);
-                if (availableCounters.get(absoluteName) != null) {
-                    affected.add(availableCounters.get(absoluteName));
-                } else {
-                    ServiceReferenceHolder.getInstance().getMetricService().counter(getLevel(), name, name, getIdentifier());
-                    updateAffectedMetrics(path);
-                }
-            }
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getIdentifier());
+        for (Metric metric : affectedMetrics) {
+            affected.add((Counter) metric);
         }
     }
 

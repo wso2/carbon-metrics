@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.manager;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -162,4 +163,10 @@ public interface MetricService {
      * Invoke report method of all scheduled reporters.
      */
     void report();
+
+    /**
+     * @return List of affected {@link Metric}s
+     */
+    List<Metric> getAffectedMetrics(Level level, String name, String path, String identifier);
+
 }

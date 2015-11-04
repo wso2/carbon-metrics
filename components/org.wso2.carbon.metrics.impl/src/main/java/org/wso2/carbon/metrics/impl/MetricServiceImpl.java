@@ -202,7 +202,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#enable()
      */
     @Override
@@ -212,7 +212,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#disable()
      */
     @Override
@@ -222,7 +222,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#isEnabled()
      */
     @Override
@@ -252,7 +252,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#getMetricLevel(java.lang.String)
      */
     @Override
@@ -277,7 +277,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#setMetricLevel(java.lang.String,
      * org.wso2.carbon.metrics.manager.Level)
      */
@@ -313,7 +313,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#getRootLevel()
      */
     @Override
@@ -323,7 +323,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#setRootLevel(org.wso2.carbon.metrics.manager.Level)
      */
     @Override
@@ -336,17 +336,42 @@ public class MetricServiceImpl implements MetricService {
         }
     }
 
-    protected MetricTreeNode getRootMetricNode() {
-        return rootNode;
+    @Override
+    public List<org.wso2.carbon.metrics.manager.Metric> getAffectedMetrics(Level level, String name, String path, String identifier) {
+        List<org.wso2.carbon.metrics.manager.Metric> affected = new ArrayList<>();
+        String[] chunks = path.split("\\.");
+        StringBuilder builder = new StringBuilder();
+        String affectedName;
+        for (String chunk : chunks) {
+            if (builder.length() > 0) {
+                builder.append('.');
+            }
+            builder.append(chunk);
+            if (chunk.contains("[+]")) {
+                affectedName = builder.toString().replaceAll("\\[\\+\\]", "");
+                String absoluteName = getAbsoluteName(identifier, affectedName);
+                if (metricsMap.get(absoluteName) != null) {
+                    affected.add(metricsMap.get(absoluteName).metric);
+                } else {
+                    MetricWrapper wrapper = metricsMap.get(name);
+                    if (wrapper.metric instanceof Counter) {
+                        counter(level, affectedName, affectedName, identifier);
+                    } else if (wrapper.metric instanceof Meter) {
+                        meter(level, affectedName, affectedName, identifier);
+                    } else if (wrapper.metric instanceof Histogram) {
+                        histogram(level, affectedName, affectedName, identifier);
+                    } else if (wrapper.metric instanceof Timer) {
+                        timer(level, affectedName, affectedName, identifier);
+                    }
+                    return getAffectedMetrics(level, name, path, identifier);
+                }
+            }
+        }
+        return affected;
     }
 
-    protected MetricRegistry getMetricRegistry() {
-        return metricRegistry;
-    }
-
-    protected String getAbsoluteName(String identifier, String name) {
-        // TODO : make sure to use non-annotated name
-        return new StringBuilder().append(identifier).append("@").append(name).toString();
+    private String getAbsoluteName(String identifier, String name) {
+        return new StringBuilder().append(identifier).append("@").append(name.replaceAll("\\[\\+\\]", "")).toString();
     }
 
     private boolean isMetricEnabled(String name, String path, String identifier, Level metricLevel, Level configLevel, boolean getFromCache) {
@@ -360,7 +385,7 @@ public class MetricServiceImpl implements MetricService {
 
     /**
      * Recursive method to check enabled status based on level hierarchy
-     * 
+     *
      * @param name Metric Name
      * @param metricLevel The {@code Level} associated with metric
      * @param configLevel The configured {@code Level} for the given metric
@@ -390,7 +415,7 @@ public class MetricServiceImpl implements MetricService {
 
     /**
      * Get or create a metric
-     * 
+     *
      * @param level The {@code Level} of Metric
      * @param name The name of the metric
      * @param metricBuilder A {@code MetricBuilder} instance used to create the relevant metric
@@ -446,8 +471,7 @@ public class MetricServiceImpl implements MetricService {
     }
 
     private void addToMetricHierarchy(String identifier, String name, AbstractMetric metric) {
-        // TODO : for now, it does not create non existing parent metrics
-        // though it's called "name" actual value passing in is path
+        // TODO : though it's called "name" actual value passing in is path
         name = name.replaceAll("\\[\\+\\]", "");
         MetricTreeNode treeNode = getOrCreateMetricTreeNode(name);
         treeNode.addMetric(identifier, metric);
@@ -579,7 +603,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#meter(org.wso2.carbon.metrics.manager.Level, java.lang.String)
      */
     @Override
@@ -589,7 +613,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#counter(org.wso2.carbon.metrics.manager.Level,
      * java.lang.String)
      */
@@ -600,7 +624,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#timer(org.wso2.carbon.metrics.manager.Level, java.lang.String)
      */
     @Override
@@ -610,7 +634,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#histogram(org.wso2.carbon.metrics.manager.Level,
      * java.lang.String)
      */
@@ -621,7 +645,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#gauge(org.wso2.carbon.metrics.manager.Level, java.lang.String,
      * org.wso2.carbon.metrics.manager.Gauge)
      */
@@ -632,7 +656,7 @@ public class MetricServiceImpl implements MetricService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.MetricService#cachedGauge(org.wso2.carbon.metrics.manager.Level,
      * java.lang.String, long, java.util.concurrent.TimeUnit, org.wso2.carbon.metrics.manager.Gauge)
      */

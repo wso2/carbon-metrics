@@ -28,11 +28,25 @@ public interface Histogram extends Metric {
     void update(int value);
 
     /**
+     * Adds a recorded value to all the affected metrics.
+     *
+     * @param value the length of the value
+     */
+    void updateAll(int value);
+
+    /**
      * Adds a recorded value.
      *
      * @param value the length of the value
      */
     void update(long value);
+
+    /**
+     * Adds a recorded value to all the affected metrics.
+     *
+     * @param value the length of the value
+     */
+    void updateAll(long value);
 
     /**
      * Returns the number of values recorded.

@@ -17,6 +17,7 @@ package org.wso2.carbon.metrics.impl;
 
 import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
@@ -40,6 +41,7 @@ public class CounterTest extends TestCase {
         MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
         metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
+        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     public void testInitialCount() {
@@ -50,7 +52,7 @@ public class CounterTest extends TestCase {
     public void testParentCount() {
         Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
         Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
-        sub.inc(5);
+        sub.incAll(5);
         main.dec(3);
         assertEquals("Count should be five", 5, sub.getCount());
         assertEquals("Count should be two", 2, main.getCount());
@@ -72,7 +74,7 @@ public class CounterTest extends TestCase {
         Counter main2 = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
         Counter sub2 = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
 
-        sub.inc(5l);
+        sub.incAll(5l);
         assertEquals("Count should be five", 5l, sub.getCount());
         assertEquals("Count should be five", 5l, sub2.getCount());
         assertEquals("Count should be five", 5l, main.getCount());
@@ -87,12 +89,12 @@ public class CounterTest extends TestCase {
         Counter sub2 = MetricManager.counter(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "throughput");
         Counter sub1 = MetricManager.counter(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "throughput");
         Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
-        sub2.inc(5l);
+        sub2.incAll(5l);
         assertEquals("Count should be five", 5l, sub2.getCount());
         assertEquals("Count should be five", 5l, sub1.getCount());
         assertEquals("Count should be five", 5l, main.getCount());
 
-        sub1.dec(3l);
+        sub1.decAll(3l);
         assertEquals("Count should be five", 5l, sub2.getCount());
         assertEquals("Count should be two", 2l, sub1.getCount());
         assertEquals("Count should be two", 2l, main.getCount());

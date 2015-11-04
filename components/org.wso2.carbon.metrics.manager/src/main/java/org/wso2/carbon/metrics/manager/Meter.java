@@ -26,11 +26,23 @@ public interface Meter extends Metric {
     void mark();
 
     /**
+     * Mark the occurrence of an event in all the affected metrics.
+     */
+    void markAll();
+
+    /**
      * Mark the occurrence of a given number of events.
      *
      * @param n the number of events
      */
     void mark(long n);
+
+    /**
+     * Mark the occurrence of a given number of events in all the affected metrics.
+     *
+     * @param n the number of events
+     */
+    void markAll(long n);
 
     /**
      * Returns the number of events which have been marked.

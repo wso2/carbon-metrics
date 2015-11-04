@@ -26,6 +26,11 @@ public interface Counter extends Metric {
     void inc();
 
     /**
+     * Increment all affected metric counters by one.
+     */
+    void incAll();
+
+    /**
      * Increment the counter by {@code n}.
      *
      * @param n the amount by which the counter will be increased
@@ -33,9 +38,21 @@ public interface Counter extends Metric {
     void inc(long n);
 
     /**
+     * Increment all affected metric counters by {@code n}.
+     *
+     * @param n the amount by which the counter will be increased
+     */
+    void incAll(long n);
+
+    /**
      * Decrement the counter by one.
      */
     void dec();
+
+    /**
+     * Decrement all affected metric counters by one.
+     */
+    void decAll();
 
     /**
      * Decrement the counter by {@code n}.
@@ -43,6 +60,13 @@ public interface Counter extends Metric {
      * @param n the amount by which the counter will be decreased
      */
     void dec(long n);
+
+    /**
+     * Decrement all affected metric counters by {@code n}.
+     *
+     * @param n the amount by which the counter will be decreased
+     */
+    void decAll(long n);
 
     /**
      * Returns the counter's current value.

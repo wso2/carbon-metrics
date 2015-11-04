@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
@@ -37,6 +38,7 @@ public class GaugeTest extends TestCase {
         MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
         metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
+        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     public void testSameMetric() {

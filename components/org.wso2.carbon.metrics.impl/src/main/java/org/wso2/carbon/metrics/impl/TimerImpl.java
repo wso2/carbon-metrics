@@ -15,26 +15,26 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import com.codahale.metrics.Timer;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.Metric;
 import org.wso2.carbon.metrics.manager.MetricUpdater;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+import org.wso2.carbon.metrics.manager.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implementation class wrapping {@link Timer} metric
+ * Implementation class wrapping {@link com.codahale.metrics.Timer} metric
  */
-public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Timer, MetricUpdater {
+public class TimerImpl extends AbstractMetric implements Timer, MetricUpdater {
 
-    private Timer timer;
+    private com.codahale.metrics.Timer timer;
     private List<Timer> affected;
 
-    public TimerImpl(Level level, String name, String path, String identifier, Timer timer) {
+    public TimerImpl(Level level, String name, String path, String identifier, com.codahale.metrics.Timer timer) {
         super(level, name, path, identifier);
         this.timer = timer;
         this.affected = new ArrayList<Timer>();
@@ -47,6 +47,18 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
      */
     @Override
     public void update(long duration, TimeUnit unit) {
+        if (isEnabled()) {
+            timer.update(duration, unit);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Timer#updateAll(long, java.util.concurrent.TimeUnit)
+     */
+    @Override
+    public void updateAll(long duration, TimeUnit unit) {
         if (isEnabled()) {
             timer.update(duration, unit);
             for (Timer t : this.affected) {
@@ -95,34 +107,15 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        SortedMap<String, Timer> availableTimers =
-                ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
-                        .getMetricRegistry().getTimers();
-        String[] chunks = path.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        String name;
-        for (String chunk : chunks) {
-            if (builder.length() > 0) {
-                builder.append('.');
-            }
-            builder.append(chunk);
-            if (chunk.contains("[+]")) {
-                name = builder.toString().replaceAll("\\[\\+\\]", "");
-                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
-                        .getAbsoluteName(getIdentifier(), name);
-                if (availableTimers.get(absoluteName) != null) {
-                    affected.add(availableTimers.get(absoluteName));
-                } else {
-                    ServiceReferenceHolder.getInstance().getMetricService().timer(getLevel(), name, name, getIdentifier());
-                    updateAffectedMetrics(path);
-                }
-            }
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getIdentifier());
+        for (Metric metric : affectedMetrics) {
+            affected.add((Timer) metric);
         }
     }
 

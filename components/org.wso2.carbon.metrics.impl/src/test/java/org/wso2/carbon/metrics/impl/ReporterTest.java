@@ -29,6 +29,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.impl.util.CsvReporterBuilder;
 import org.wso2.carbon.metrics.impl.util.JDBCReporterBuilder;
 import org.wso2.carbon.metrics.impl.util.JmxReporterBuilder;
@@ -106,6 +107,8 @@ public class ReporterTest extends TestCase {
                 .addReporterBuilder(new JDBCReporterBuilder().configure(configuration)).build(levelConfiguration);
         metricService.setRootLevel(Level.ALL);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
+        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
+
         // Register the MX Bean
         MetricManager.registerMXBean();
 

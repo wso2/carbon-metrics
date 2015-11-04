@@ -80,7 +80,7 @@ public class MetricsImplComponent {
 
         metricsServiceRegistration = componentContext.getBundleContext().registerService(MetricService.class.getName(),
                 metricService, null);
-
+        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     protected void deactivate(ComponentContext componentContext) {
@@ -90,6 +90,7 @@ public class MetricsImplComponent {
         // Disable Metric Service to stop reporters etc.
         metricService.disable();
         metricsServiceRegistration.unregister();
+        MetricServiceValueHolder.registerMetricServiceInstance(null);
     }
 
     // This service is required to lookup data source in MetricServiceImpl.

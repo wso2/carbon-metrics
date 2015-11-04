@@ -15,24 +15,24 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import com.codahale.metrics.Meter;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.Meter;
+import org.wso2.carbon.metrics.manager.Metric;
 import org.wso2.carbon.metrics.manager.MetricUpdater;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 /**
- * Implementation class wrapping {@link Meter} metric
+ * Implementation class wrapping {@link com.codahale.metrics.Meter} metric
  */
-public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Meter, MetricUpdater {
+public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
 
-    private Meter meter;
+    private com.codahale.metrics.Meter meter;
     private List<Meter> affected;
 
-    public MeterImpl(Level level, String name, String path, String identifier, Meter meter) {
+    public MeterImpl(Level level, String name, String path, String identifier, com.codahale.metrics.Meter meter) {
         super(level, name, path, identifier);
         this.meter = meter;
         this.affected = new ArrayList<Meter>();
@@ -45,6 +45,18 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
      */
     @Override
     public void mark() {
+        if (isEnabled()) {
+            meter.mark();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#markAll()
+     */
+    @Override
+    public void markAll() {
         if (isEnabled()) {
             meter.mark();
             for (Meter m : this.affected) {
@@ -60,6 +72,18 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
      */
     @Override
     public void mark(long n) {
+        if (isEnabled()) {
+            meter.mark(n);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#markAll(long)
+     */
+    @Override
+    public void markAll(long n) {
         if (isEnabled()) {
             meter.mark(n);
             for (Meter m : this.affected) {
@@ -81,34 +105,15 @@ public class MeterImpl extends AbstractMetric implements org.wso2.carbon.metrics
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics()
+     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        SortedMap<String, Meter> availableMeters =
-                ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
-                        .getMetricRegistry().getMeters();
-        String[] chunks = path.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        String name;
-        for (String chunk : chunks) {
-            if (builder.length() > 0) {
-                builder.append('.');
-            }
-            builder.append(chunk);
-            if (chunk.contains("[+]")) {
-                name = builder.toString().replaceAll("\\[\\+\\]", "");
-                String absoluteName = ((MetricServiceImpl) ServiceReferenceHolder.getInstance().getMetricService())
-                        .getAbsoluteName(getIdentifier(), name);
-                if (availableMeters.get(absoluteName) != null) {
-                    affected.add(availableMeters.get(absoluteName));
-                } else {
-                    ServiceReferenceHolder.getInstance().getMetricService().meter(getLevel(), name, name, getIdentifier());
-                    updateAffectedMetrics(path);
-                }
-            }
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getIdentifier());
+        for (Metric metric : affectedMetrics) {
+            affected.add((Meter) metric);
         }
     }
 

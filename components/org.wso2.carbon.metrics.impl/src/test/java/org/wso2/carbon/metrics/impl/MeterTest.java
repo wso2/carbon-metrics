@@ -18,6 +18,7 @@ package org.wso2.carbon.metrics.impl;
 import java.util.Random;
 
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
+import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.*;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
@@ -38,6 +39,7 @@ public class MeterTest extends TestCase {
         MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
         metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
+        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     public void testInitialCount() {
@@ -50,7 +52,7 @@ public class MeterTest extends TestCase {
     public void testParentCount() {
         Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
         Meter sub = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
-        sub.mark(5);
+        sub.markAll(5);
         main.mark(5);
         assertEquals("Count should be five", 5, sub.getCount());
         assertEquals("Count should be ten", 10, main.getCount());
@@ -73,7 +75,7 @@ public class MeterTest extends TestCase {
         Meter main2 = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
         Meter sub2 = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
 
-        sub.mark();
+        sub.markAll();
         assertEquals("Count should be one", 1, sub.getCount());
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be one", 1, main.getCount());
@@ -91,12 +93,12 @@ public class MeterTest extends TestCase {
         Meter sub1 = MetricManager.meter(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-meter");
         Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
 
-        sub2.mark();
+        sub2.markAll();
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be one", 1, sub1.getCount());
         assertEquals("Count should be one", 1, main.getCount());
 
-        sub1.mark(2);
+        sub1.markAll(2);
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be three", 3, sub1.getCount());
         assertEquals("Count should be three", 3, main.getCount());
