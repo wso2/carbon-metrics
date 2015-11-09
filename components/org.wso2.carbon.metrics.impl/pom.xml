@@ -50,6 +50,10 @@
             <artifactId>org.wso2.carbon.databridge.agent</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
@@ -123,6 +127,8 @@
                             org.osgi.framework,
                             org.apache.commons.io;version="${commons-io.wso2.version.range}",
                             org.wso2.carbon.registry.core.*;version="${carbon.registry.version.range}",
+                            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}",
+                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.version.range}",
                             org.wso2.carbon.utils.*;version="${carbon.kernel.version.range}",
                             org.wso2.carbon.metrics.common.*,
                             org.wso2.carbon.metrics.manager.*,
