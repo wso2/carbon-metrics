@@ -257,36 +257,12 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#getMetricLevel(java.lang.String)
      */
     @Override
-    public Level getMetricLevel(String statName) {
-        // TODO : default name should be a constant
-        return getMetricLevel("org.wso2", statName);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.wso2.carbon.metrics.manager.MetricService#getMetricLevel(java.lang.String)
-     */
-    @Override
     public Level getMetricLevel(String name, String statName) {
         String absoluteName = getAbsoluteName(statName, name);
         if (!metricsMap.containsKey(absoluteName)) {
             throw new IllegalArgumentException("Invalid Metric Name");
         }
         return levelConfiguration.getLevel(name);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.wso2.carbon.metrics.manager.MetricService#setMetricLevel(java.lang.String,
-     * org.wso2.carbon.metrics.manager.Level)
-     */
-    @Override
-    public void setMetricLevel(String statName, Level level) {
-        // TODO : This might have to be removed (default name might not work)
-        // TODO : default name should be a constant
-        setMetricLevel("org.wso2", statName, level);
     }
 
     /*

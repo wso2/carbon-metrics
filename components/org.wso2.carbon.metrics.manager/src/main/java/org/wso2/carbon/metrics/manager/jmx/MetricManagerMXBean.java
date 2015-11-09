@@ -46,7 +46,7 @@ public interface MetricManagerMXBean {
     /**
      * @return The Level for the given metric name
      */
-    String getMetricLevel(String name);
+    String getMetricLevel(String name, String statName);
 
     /**
      * Set a new level to the given metric name
@@ -54,7 +54,7 @@ public interface MetricManagerMXBean {
      * @param name The name of the Metric
      * @param level New Level for the Metric
      */
-    void setMetricLevel(String name, String level);
+    void setMetricLevel(String name, String statName, String level);
 
     /**
      * @return Get the current configured root level

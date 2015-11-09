@@ -41,27 +41,12 @@ public interface MetricService {
     boolean isEnabled();
 
     /**
-     * Get the {@link Level} for a given metric statName
-     * @param statName The name of the Metric
-     * @return {@link Level} for the given metric statName
-     */
-    Level getMetricLevel(String statName);
-
-    /**
      * Get the {@link Level} for a given metric
      * @param name The name of the Metric
      * @param statName The statName of the Metric
      * @return {@link Level} for the given metric statName
      */
     Level getMetricLevel(String name, String statName);
-
-    /**
-     * Set a new level to the given metric statName
-     * 
-     * @param statName The name of the Metric
-     * @param level New {@link Level} for the Metric
-     */
-    void setMetricLevel(String statName, Level level);
 
     /**
      * Set a new level to the given metric (name & statName)
