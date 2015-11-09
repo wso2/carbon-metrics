@@ -243,9 +243,9 @@ public class ReporterDAO {
                         // throw?
                     }
                     int index = absoluteName.lastIndexOf("@");
-                    String statType = absoluteName.substring(0, index);
+                    String statName = absoluteName.substring(0, index);
                     String name = absoluteName.substring(index + 1);
-                    processor.process(source, timestamp, metricType, name, statType, attributes.get(j), value);
+                    processor.process(source, timestamp, metricType, name, statName, attributes.get(j), value);
                 }
 
             }

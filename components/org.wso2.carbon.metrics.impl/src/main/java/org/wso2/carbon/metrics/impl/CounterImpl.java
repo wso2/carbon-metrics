@@ -32,8 +32,8 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
     private com.codahale.metrics.Counter counter;
     private List<Counter> affected;
 
-    public CounterImpl(Level level, String name, String path, String statType, com.codahale.metrics.Counter counter) {
-        super(level, name, path, statType);
+    public CounterImpl(Level level, String name, String path, String statName, com.codahale.metrics.Counter counter) {
+        super(level, name, path, statName);
         this.counter = counter;
         this.affected = new ArrayList<Counter>();
     }
@@ -165,7 +165,7 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatType());
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
             affected.add((Counter) metric);
         }

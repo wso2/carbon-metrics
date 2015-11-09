@@ -60,10 +60,10 @@ public class ReporterTest extends TestCase {
     private static final String DEFAULT_HIERARCHY_ROOT = "org.wso2";
 
     private String meterName = MetricManager.name(this.getClass());
-    private String meterStatType = "test-meter";
+    private String meterStatName = "test-meter";
 
     private String gaugeName = MetricManager.name(this.getClass());
-    private String gaugeStatType = "test-gauge";
+    private String gaugeStatName = "test-gauge";
 
     private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 
@@ -112,7 +112,7 @@ public class ReporterTest extends TestCase {
         // Register the MX Bean
         MetricManager.registerMXBean();
 
-        Meter meter = MetricManager.meter(Level.INFO, meterName, meterStatType);
+        Meter meter = MetricManager.meter(Level.INFO, meterName, meterStatName);
         meter.mark();
 
         Gauge<Integer> gauge = new Gauge<Integer>() {
@@ -122,7 +122,7 @@ public class ReporterTest extends TestCase {
             }
         };
 
-        MetricManager.gauge(Level.INFO, gaugeName, gaugeStatType, gauge);
+        MetricManager.gauge(Level.INFO, gaugeName, gaugeStatName, gauge);
 
         template.execute("DELETE FROM METRIC_GAUGE;");
         template.execute("DELETE FROM METRIC_TIMER;");
@@ -141,12 +141,12 @@ public class ReporterTest extends TestCase {
     }
 
     public void testJMXReporter() {
-        AttributeList meterAttributes = getAttributes(meterName, meterStatType, "Count");
+        AttributeList meterAttributes = getAttributes(meterName, meterStatName, "Count");
         SortedMap<String, Object> meterMap = values(meterAttributes);
         assertTrue("Meter is available", meterMap.containsKey("Count"));
         assertTrue("Meter count is one", meterMap.containsValue(1L));
 
-        AttributeList gaugeAttributes = getAttributes(gaugeName, gaugeStatType, "Value");
+        AttributeList gaugeAttributes = getAttributes(gaugeName, gaugeStatName, "Value");
         SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
         assertTrue("Gauge is available", gaugeMap.containsKey("Value"));
         assertTrue("Gauge value is one", gaugeMap.containsValue(1));
@@ -154,45 +154,45 @@ public class ReporterTest extends TestCase {
 
     public void testCSVReporter() {
         metricService.report();
-        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterStatType + "@" +
+        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterStatName + "@" +
                 meterName + ".csv").exists());
-        assertTrue("Gauge CSV file is created", new File("target/metrics-logs", gaugeStatType + "@" +
+        assertTrue("Gauge CSV file is created", new File("target/metrics-logs", gaugeStatName + "@" +
                 gaugeName + ".csv").exists());
     }
 
     public void testCSVReporterRestart() {
         metricService.report();
-        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterStatType + "@" + meterName + ".csv").exists());
+        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterStatName + "@" + meterName + ".csv").exists());
 
         metricService.disable();
         String meterName2 = MetricManager.name(this.getClass());
-        String meterStatType2 = "test-meter2";
-        Meter meter = MetricManager.meter(Level.INFO, meterName2, meterStatType2);
+        String meterStatName2 = "test-meter2";
+        Meter meter = MetricManager.meter(Level.INFO, meterName2, meterStatName2);
         meter.mark();
 
         metricService.report();
         metricService.enable();
         metricService.report();
 
-        assertTrue("Meter2 CSV file is created", new File("target/metrics-logs", meterStatType2 + "@" + meterName2 + ".csv").exists());
+        assertTrue("Meter2 CSV file is created", new File("target/metrics-logs", meterStatName2 + "@" + meterName2 + ".csv").exists());
     }
 
     public void testJDBCReporter() {
         metricService.report();
-        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatType + "@" + meterName);
+        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatName + "@" + meterName);
         assertEquals("There is one result", 1, meterResult.size());
-        assertEquals("Meter is available", meterStatType + "@" + meterName, meterResult.get(0).get("NAME"));
+        assertEquals("Meter is available", meterStatName + "@" + meterName, meterResult.get(0).get("NAME"));
         assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));
 
-        List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeStatType + "@" + gaugeName);
+        List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeStatName + "@" + gaugeName);
         assertEquals("There is one result", 1, gaugeResult.size());
-        assertEquals("Gauge is available", gaugeStatType + "@" + gaugeName, gaugeResult.get(0).get("NAME"));
+        assertEquals("Gauge is available", gaugeStatName + "@" + gaugeName, gaugeResult.get(0).get("NAME"));
         assertEquals("Gauge value is one", "1", gaugeResult.get(0).get("VALUE"));
     }
 
     public void testJDBCReporterRestart() {
         metricService.report();
-        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatType + "@" + meterName);
+        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatName + "@" + meterName);
         assertEquals("There is one result", 1, meterResult.size());
 
         metricService.disable();
@@ -200,18 +200,18 @@ public class ReporterTest extends TestCase {
         metricService.enable();
         metricService.report();
 
-        meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatType + "@" + meterName);
+        meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatName + "@" + meterName);
         assertEquals("There are two results", 2, meterResult.size());
     }
 
     public void testJVMMetricSetLevel() {
         // This test is to check restarting of listener reporters
         String name = "jvm.threads";
-        String statType = "runnable.count";
+        String statName = "runnable.count";
         // Initially this gauge is set to OFF and when changing the level, we need to restart JMXReporter
-        metricService.setMetricLevel(name, statType, Level.TRACE);
-        assertEquals("Configured level should be TRACE", Level.TRACE, metricService.getMetricLevel(name, statType));
-        AttributeList gaugeAttributes = getAttributes(name, statType, "Value");
+        metricService.setMetricLevel(name, statName, Level.TRACE);
+        assertEquals("Configured level should be TRACE", Level.TRACE, metricService.getMetricLevel(name, statName));
+        AttributeList gaugeAttributes = getAttributes(name, statName, "Value");
         SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
         assertTrue("Gauge is available", gaugeMap.containsKey("Value"));
         assertTrue("Gauge value is a positive number", ((Integer) gaugeMap.get("Value")) > 0);
@@ -219,9 +219,9 @@ public class ReporterTest extends TestCase {
 
     public void testJMXReport() {
         invokeJMXReportOperation();
-        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatType + "@" + meterName);
+        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterStatName + "@" + meterName);
         assertEquals("There is one result", 1, meterResult.size());
-        assertEquals("Meter is available", meterStatType + "@" + meterName, meterResult.get(0).get("NAME"));
+        assertEquals("Meter is available", meterStatName + "@" + meterName, meterResult.get(0).get("NAME"));
         assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));
     }
 
@@ -236,10 +236,10 @@ public class ReporterTest extends TestCase {
         }
     }
 
-    private AttributeList getAttributes(String name, String statType, String... attributeNames) {
+    private AttributeList getAttributes(String name, String statName, String... attributeNames) {
         ObjectName n;
         try {
-            String absoluteName = statType + "@" + name;
+            String absoluteName = statName + "@" + name;
             n = new ObjectName("org.wso2.carbon.metrics", "name", absoluteName);
             return mBeanServer.getAttributes(n, attributeNames);
         } catch (MalformedObjectNameException e) {

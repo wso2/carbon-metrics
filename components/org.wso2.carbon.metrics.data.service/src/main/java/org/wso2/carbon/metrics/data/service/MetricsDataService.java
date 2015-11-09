@@ -222,7 +222,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
 
         @Override
-        public void process(String source, long timestamp, MetricType metricType, String metricName, String statType,
+        public void process(String source, long timestamp, MetricType metricType, String metricName, String statName,
                 MetricAttribute metricAttribute, BigDecimal value) {
             BigDecimal[] data = dataMap.get(timestamp);
             if (data == null) {
@@ -233,7 +233,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 data[0] = BigDecimal.valueOf(timestamp);
             }
 
-            MetricGroup metricGroupKey = new MetricGroup(metricType, metricName, statType, metricAttribute);
+            MetricGroup metricGroupKey = new MetricGroup(metricType, metricName, statName, metricAttribute);
 
             MetricGroup metricGroup = metricGroupMap.get(metricGroupKey);
 
@@ -260,18 +260,18 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         private final MetricType metricType;
         private final String metricName;
-        private final String metricStatType;
+        private final String metricStatName;
         private final MetricAttribute metricAttribute;
 
         private int index;
         private String displayName;
         private ValueConverter valueConverter;
 
-        public MetricGroup(MetricType metricType, String metricName, String metricStatType, MetricAttribute metricAttribute) {
+        public MetricGroup(MetricType metricType, String metricName, String metricStatName, MetricAttribute metricAttribute) {
             super();
             this.metricType = metricType;
             this.metricName = metricName;
-            this.metricStatType = metricStatType;
+            this.metricStatName = metricStatName;
             this.metricAttribute = metricAttribute;
         }
 
@@ -282,7 +282,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             result = prime * result + ((metricAttribute == null) ? 0 : metricAttribute.hashCode());
             result = prime * result + ((metricType == null) ? 0 : metricType.hashCode());
             result = prime * result + ((metricName == null) ? 0 : metricName.hashCode());
-            result = prime * result + ((metricStatType == null) ? 0 : metricStatType.hashCode());
+            result = prime * result + ((metricStatName == null) ? 0 : metricStatName.hashCode());
             return result;
         }
 
@@ -311,11 +311,11 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             } else if (!metricName.equals(other.metricName)) {
                 return false;
             }
-            if (metricStatType == null) {
-                if (other.metricStatType != null) {
+            if (metricStatName == null) {
+                if (other.metricStatName != null) {
                     return false;
                 }
-            } else if (!metricStatType.equals(other.metricStatType)) {
+            } else if (!metricStatName.equals(other.metricStatName)) {
                 return false;
             }
             return true;
@@ -351,12 +351,12 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         Map<String, List<MetricAttribute>> nameGroupMap = new HashMap<String, List<MetricAttribute>>();
         Map<MetricAttribute, List<String>> attributeGroupMap = new HashMap<MetricAttribute, List<String>>();
         Map<String, String> namesMap = new HashMap<String, String>();
-        Map<String, String> statTypesMap = new HashMap<String, String>();
+        Map<String, String> statNamesMap = new HashMap<String, String>();
         int index = 0;
         for (int i = 0; i < list.length; i++) {
             Metric metric = list[i];
             String metricName = metric.getName();
-            String metricStatType = metric.getStatType();
+            String metricStatName = metric.getStatName();
             String displayName = metric.getDisplayName();
             MetricType metricType = MetricType.valueOf(metric.getType());
             MetricAttribute metricAttribute = MetricAttribute.valueOf(metric.getAttr());
@@ -365,13 +365,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 metricDataFormat = MetricDataFormat.valueOf(metric.getFormat());
             }
 
-            namesMap.put(metricStatType + "@" + metricName, metricName);
-            statTypesMap.put(metricStatType + "@" + metricName, metricStatType);
+            namesMap.put(metricStatName + "@" + metricName, metricName);
+            statNamesMap.put(metricStatName + "@" + metricName, metricStatName);
 
-            List<MetricAttribute> attributes = nameGroupMap.get(metricStatType + "@" + metricName);
+            List<MetricAttribute> attributes = nameGroupMap.get(metricStatName + "@" + metricName);
             if (attributes == null) {
                 attributes = new ArrayList<MetricAttribute>();
-                nameGroupMap.put(metricStatType + "@" + metricName, attributes);
+                nameGroupMap.put(metricStatName + "@" + metricName, attributes);
             }
             List<String> names = attributeGroupMap.get(metricAttribute);
             if (names == null) {
@@ -379,7 +379,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 attributeGroupMap.put(metricAttribute, names);
             }
             attributes.add(metricAttribute);
-            names.add(metricStatType + "@" + metricName);
+            names.add(metricStatName + "@" + metricName);
 
             ValueConverter valueConverter;
 
@@ -399,7 +399,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 valueConverter = DUMB_VALUE_CONVERTER;
             }
 
-            MetricGroup metricGroup = new MetricGroup(metricType, metricName, metricStatType, metricAttribute);
+            MetricGroup metricGroup = new MetricGroup(metricType, metricName, metricStatName, metricAttribute);
             if (!metricGroupMap.containsKey(metricGroup)) {
                 // Put only if there is no existing metric group. Important for determining correct index
                 metricGroupMap.put(metricGroup, metricGroup);
@@ -421,7 +421,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             if (!processedMetricGroups.contains(metricGroup)) {
                 MetricType metricType = metricGroup.metricType;
                 List<String> names = attributeGroupMap.get(metricGroup.metricAttribute);
-                List<MetricAttribute> attributes = nameGroupMap.get(metricGroup.metricStatType + "@" + metricGroup.metricName);
+                List<MetricAttribute> attributes = nameGroupMap.get(metricGroup.metricStatName + "@" + metricGroup.metricName);
 
                 List<String> absoluteMetricNames;
                 List<MetricAttribute> metricAttributes;
@@ -433,7 +433,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 } else {
                     metricAttributes = attributes;
                     absoluteMetricNames = new ArrayList<String>(1);
-                    absoluteMetricNames.add(metricGroup.metricStatType + "@" + metricGroup.metricName);
+                    absoluteMetricNames.add(metricGroup.metricStatName + "@" + metricGroup.metricName);
                 }
 
                 reporterDAO.queryMetrics(metricType, absoluteMetricNames, metricAttributes, source, startTime, endTime, processor);
@@ -444,7 +444,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                             logger.debug(String.format("Processed. Metric Type: %s, Name: %s, Attribute: %s",
                                     metricType, absoluteMetricName, metricAttribute));
                         }
-                        processedMetricGroups.add(new MetricGroup(metricType, namesMap.get(absoluteMetricName), statTypesMap.get(absoluteMetricName), metricAttribute));
+                        processedMetricGroups.add(new MetricGroup(metricType, namesMap.get(absoluteMetricName), statNamesMap.get(absoluteMetricName), metricAttribute));
                     }
                 }
 

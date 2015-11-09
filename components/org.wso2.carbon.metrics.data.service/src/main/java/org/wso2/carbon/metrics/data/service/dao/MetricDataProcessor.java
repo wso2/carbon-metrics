@@ -25,7 +25,7 @@ import org.wso2.carbon.metrics.data.common.MetricType;
  */
 public interface MetricDataProcessor<T> {
 
-    void process(String source, long timestamp, MetricType metricType, String name, String statType, MetricAttribute attribute,
+    void process(String source, long timestamp, MetricType metricType, String name, String statName, MetricAttribute attribute,
             BigDecimal value);
 
     T getResult();

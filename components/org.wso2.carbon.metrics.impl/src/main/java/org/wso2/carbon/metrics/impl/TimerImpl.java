@@ -34,8 +34,8 @@ public class TimerImpl extends AbstractMetric implements Timer, MetricUpdater {
     private com.codahale.metrics.Timer timer;
     private List<Timer> affected;
 
-    public TimerImpl(Level level, String name, String path, String statType, com.codahale.metrics.Timer timer) {
-        super(level, name, path, statType);
+    public TimerImpl(Level level, String name, String path, String statName, com.codahale.metrics.Timer timer) {
+        super(level, name, path, statName);
         this.timer = timer;
         this.affected = new ArrayList<Timer>();
     }
@@ -113,7 +113,7 @@ public class TimerImpl extends AbstractMetric implements Timer, MetricUpdater {
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatType());
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
             affected.add((Timer) metric);
         }

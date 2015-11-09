@@ -94,9 +94,9 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testSpecificData() {
         String gaugeName = "jvm.memory";
-        String gaugeStatType = "heap.init";
+        String gaugeStatName = "heap.init";
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?",
-                gaugeStatType + "@" + gaugeName);
+                gaugeStatName + "@" + gaugeName);
         assertEquals("There are two results", 2, gaugeResult.size());
     }
 

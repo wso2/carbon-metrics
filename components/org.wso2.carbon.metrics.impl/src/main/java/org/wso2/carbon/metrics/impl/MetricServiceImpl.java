@@ -107,12 +107,12 @@ public class MetricServiceImpl implements MetricService {
 
         private final String path;
 
-        private final String statType;
+        private final String statName;
 
-        private MetricWrapper(String name, String path, String statType, Level level, Boolean enabled) {
+        private MetricWrapper(String name, String path, String statName, Level level, Boolean enabled) {
             this.name = name;
             this.path = path;
-            this.statType = statType;
+            this.statName = statName;
             this.level = level;
             this.enabled = enabled;
         }
@@ -246,7 +246,7 @@ public class MetricServiceImpl implements MetricService {
     private void notifyEnabledStatus() {
         for (MetricWrapper metricWrapper : metricsMap.values()) {
             AbstractMetric metric = metricWrapper.metric;
-            metric.setEnabled(isMetricEnabled(metricWrapper.name, metricWrapper.path, metricWrapper.statType,
+            metric.setEnabled(isMetricEnabled(metricWrapper.name, metricWrapper.path, metricWrapper.statName,
                     metric.getLevel(), levelConfiguration.getLevel(metric.getName()), false));
         }
     }
@@ -257,9 +257,9 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#getMetricLevel(java.lang.String)
      */
     @Override
-    public Level getMetricLevel(String statType) {
+    public Level getMetricLevel(String statName) {
         // TODO : default name should be a constant
-        return getMetricLevel("org.wso2", statType);
+        return getMetricLevel("org.wso2", statName);
     }
 
     /*
@@ -268,8 +268,8 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#getMetricLevel(java.lang.String)
      */
     @Override
-    public Level getMetricLevel(String name, String statType) {
-        String absoluteName = getAbsoluteName(statType, name);
+    public Level getMetricLevel(String name, String statName) {
+        String absoluteName = getAbsoluteName(statName, name);
         if (!metricsMap.containsKey(absoluteName)) {
             throw new IllegalArgumentException("Invalid Metric Name");
         }
@@ -283,10 +283,10 @@ public class MetricServiceImpl implements MetricService {
      * org.wso2.carbon.metrics.manager.Level)
      */
     @Override
-    public void setMetricLevel(String statType, Level level) {
+    public void setMetricLevel(String statName, Level level) {
         // TODO : This might have to be removed (default name might not work)
         // TODO : default name should be a constant
-        setMetricLevel("org.wso2", statType, level);
+        setMetricLevel("org.wso2", statName, level);
     }
 
     /*
@@ -296,8 +296,8 @@ public class MetricServiceImpl implements MetricService {
      * org.wso2.carbon.metrics.manager.Level)
      */
     @Override
-    public void setMetricLevel(String name, String statType, Level level) {
-        String absoluteName = getAbsoluteName(statType, name);
+    public void setMetricLevel(String name, String statName, Level level) {
+        String absoluteName = getAbsoluteName(statName, name);
         MetricWrapper metricWrapper = metricsMap.get(absoluteName);
         if (metricWrapper == null) {
             throw new IllegalArgumentException("Invalid Metric Name");
@@ -307,7 +307,7 @@ public class MetricServiceImpl implements MetricService {
             // Set new level only if there is no existing level or the new level is different from existing level
             levelConfiguration.setLevel(name, level);
             AbstractMetric metric = metricWrapper.metric;
-            metric.setEnabled(isMetricEnabled(metricWrapper.name, metricWrapper.path, metricWrapper.statType,
+            metric.setEnabled(isMetricEnabled(metricWrapper.name, metricWrapper.path, metricWrapper.statName,
                     metric.getLevel(), level, false));
             restartListeningReporters();
         }
@@ -346,7 +346,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public List<org.wso2.carbon.metrics.manager.Metric> getAffectedMetrics(Level level, String name,
-                                                                           String path, String statType) {
+                                                                           String path, String statName) {
         List<org.wso2.carbon.metrics.manager.Metric> affected = new ArrayList<>();
         String[] chunks = path.split("\\.");
         StringBuilder builder = new StringBuilder();
@@ -358,34 +358,34 @@ public class MetricServiceImpl implements MetricService {
             builder.append(chunk);
             if (chunk.contains("[+]")) {
                 affectedName = builder.toString().replaceAll("\\[\\+\\]", "");
-                String absoluteName = getAbsoluteName(statType, affectedName);
+                String absoluteName = getAbsoluteName(statName, affectedName);
                 if (metricsMap.get(absoluteName) != null) {
                     affected.add(metricsMap.get(absoluteName).metric);
                 } else {
                     MetricWrapper wrapper = metricsMap.get(name);
                     if (wrapper.metric instanceof Counter) {
-                        counter(level, affectedName, affectedName, statType);
+                        counter(level, affectedName, affectedName, statName);
                     } else if (wrapper.metric instanceof Meter) {
-                        meter(level, affectedName, affectedName, statType);
+                        meter(level, affectedName, affectedName, statName);
                     } else if (wrapper.metric instanceof Histogram) {
-                        histogram(level, affectedName, affectedName, statType);
+                        histogram(level, affectedName, affectedName, statName);
                     } else if (wrapper.metric instanceof Timer) {
-                        timer(level, affectedName, affectedName, statType);
+                        timer(level, affectedName, affectedName, statName);
                     }
-                    return getAffectedMetrics(level, name, path, statType);
+                    return getAffectedMetrics(level, name, path, statName);
                 }
             }
         }
         return affected;
     }
 
-    private String getAbsoluteName(String statType, String name) {
-        return new StringBuilder().append(statType).append("@").append(name.replaceAll("\\[\\+\\]", "")).toString();
+    private String getAbsoluteName(String statName, String name) {
+        return new StringBuilder().append(statName).append("@").append(name.replaceAll("\\[\\+\\]", "")).toString();
     }
 
-    private boolean isMetricEnabled(String name, String path, String statType, Level metricLevel, Level configLevel,
+    private boolean isMetricEnabled(String name, String path, String statName, Level metricLevel, Level configLevel,
                                     boolean getFromCache) {
-        String absoluteName = getAbsoluteName(statType, name);
+        String absoluteName = getAbsoluteName(statName, name);
         MetricWrapper metricWrapper = metricsMap.get(absoluteName);
         if (!getFromCache || metricWrapper.enabled == null) {
             metricWrapper.enabled = isMetricEnabledBasedOnHierarchyLevel(name, metricLevel, configLevel);
@@ -432,9 +432,9 @@ public class MetricServiceImpl implements MetricService {
      * @return The created {@code AbstractMetric}
      */
     @SuppressWarnings("unchecked")
-    private <T extends AbstractMetric> T getOrCreateMetric(Level level, String name, String path, String statType,
+    private <T extends AbstractMetric> T getOrCreateMetric(Level level, String name, String path, String statName,
                                                            MetricBuilder<T> metricBuilder) {
-        String absoluteName = getAbsoluteName(statType, name);
+        String absoluteName = getAbsoluteName(statName, name);
         MetricWrapper metricWrapper = metricsMap.get(absoluteName);
         if (metricWrapper != null && metricWrapper.metric != null) {
             AbstractMetric metric = metricWrapper.metric;
@@ -452,12 +452,12 @@ public class MetricServiceImpl implements MetricService {
             }
         } else {
             boolean enabled = isMetricEnabledBasedOnHierarchyLevel(name, level, levelConfiguration.getLevel(name));
-            metricWrapper = new MetricWrapper(name, path, statType, level, enabled);
+            metricWrapper = new MetricWrapper(name, path, statName, level, enabled);
             metricsMap.put(absoluteName, metricWrapper);
-            T newMetric = metricBuilder.createMetric(level, absoluteName, path, statType);
+            T newMetric = metricBuilder.createMetric(level, absoluteName, path, statName);
             metricWrapper.metric = newMetric;
             newMetric.setEnabled(enabled);
-            addToMetricHierarchy(statType, path, newMetric);
+            addToMetricHierarchy(statName, path, newMetric);
             if (newMetric instanceof MetricUpdater) {
                 ((MetricUpdater) newMetric).updateAffectedMetrics(path);
             }
@@ -481,18 +481,18 @@ public class MetricServiceImpl implements MetricService {
         return treeNode;
     }
 
-    private void addToMetricHierarchy(String statType, String name, AbstractMetric metric) {
+    private void addToMetricHierarchy(String statName, String name, AbstractMetric metric) {
         // TODO : though it's called "name" actual value passing in is path
         name = name.replaceAll("\\[\\+\\]", "");
         MetricTreeNode treeNode = getOrCreateMetricTreeNode(name);
-        treeNode.addMetric(statType, metric);
+        treeNode.addMetric(statName, metric);
     }
 
     /**
      * An interface for creating a new metric
      */
     private interface MetricBuilder<T extends AbstractMetric> {
-        T createMetric(Level level, String absoluteName, String path, String statType);
+        T createMetric(Level level, String absoluteName, String path, String statName);
 
         boolean isInstance(AbstractMetric metric);
     }
@@ -502,8 +502,8 @@ public class MetricServiceImpl implements MetricService {
      */
     private final MetricBuilder<MeterImpl> METER_BUILDER = new MetricBuilder<MeterImpl>() {
         @Override
-        public MeterImpl createMetric(Level level, String absoluteName, String path, String statType) {
-            return new MeterImpl(level, absoluteName, path, statType, metricRegistry.meter(absoluteName));
+        public MeterImpl createMetric(Level level, String absoluteName, String path, String statName) {
+            return new MeterImpl(level, absoluteName, path, statName, metricRegistry.meter(absoluteName));
         }
 
         @Override
@@ -517,8 +517,8 @@ public class MetricServiceImpl implements MetricService {
      */
     private final MetricBuilder<CounterImpl> COUNTER_BUILDER = new MetricBuilder<CounterImpl>() {
         @Override
-        public CounterImpl createMetric(Level level, String absoluteName, String path, String statType) {
-            return new CounterImpl(level, absoluteName, path, statType, metricRegistry.counter(absoluteName));
+        public CounterImpl createMetric(Level level, String absoluteName, String path, String statName) {
+            return new CounterImpl(level, absoluteName, path, statName, metricRegistry.counter(absoluteName));
         }
 
         @Override
@@ -532,8 +532,8 @@ public class MetricServiceImpl implements MetricService {
      */
     private final MetricBuilder<TimerImpl> TIMER_BUILDER = new MetricBuilder<TimerImpl>() {
         @Override
-        public TimerImpl createMetric(Level level, String absoluteName, String path, String statType) {
-            return new TimerImpl(level, absoluteName, path, statType, metricRegistry.timer(absoluteName));
+        public TimerImpl createMetric(Level level, String absoluteName, String path, String statName) {
+            return new TimerImpl(level, absoluteName, path, statName, metricRegistry.timer(absoluteName));
         }
 
         @Override
@@ -547,8 +547,8 @@ public class MetricServiceImpl implements MetricService {
      */
     private final MetricBuilder<HistogramImpl> HISTOGRAM_BUILDER = new MetricBuilder<HistogramImpl>() {
         @Override
-        public HistogramImpl createMetric(Level level, String absoluteName, String path, String statType) {
-            return new HistogramImpl(level, absoluteName, path, statType, metricRegistry.histogram(absoluteName));
+        public HistogramImpl createMetric(Level level, String absoluteName, String path, String statName) {
+            return new HistogramImpl(level, absoluteName, path, statName, metricRegistry.histogram(absoluteName));
         }
 
         @Override
@@ -570,8 +570,8 @@ public class MetricServiceImpl implements MetricService {
         }
 
         @Override
-        public GaugeImpl<T> createMetric(Level level, String absoluteName, String path, String statType) {
-            GaugeImpl<T> gaugeImpl = new GaugeImpl<T>(level, absoluteName, path, statType, gauge);
+        public GaugeImpl<T> createMetric(Level level, String absoluteName, String path, String statName) {
+            GaugeImpl<T> gaugeImpl = new GaugeImpl<T>(level, absoluteName, path, statName, gauge);
             metricRegistry.register(absoluteName, gaugeImpl);
             return gaugeImpl;
         }
@@ -599,8 +599,8 @@ public class MetricServiceImpl implements MetricService {
         }
 
         @Override
-        public CachedGaugeImpl<T> createMetric(Level level, String absoluteName, String path, String statType) {
-            CachedGaugeImpl<T> gaugeImpl = new CachedGaugeImpl<T>(level, absoluteName, path, statType, timeout,
+        public CachedGaugeImpl<T> createMetric(Level level, String absoluteName, String path, String statName) {
+            CachedGaugeImpl<T> gaugeImpl = new CachedGaugeImpl<T>(level, absoluteName, path, statName, timeout,
                     timeoutUnit, gauge);
             metricRegistry.register(absoluteName, gaugeImpl);
             return gaugeImpl;
@@ -619,8 +619,8 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#meter(org.wso2.carbon.metrics.manager.Level, java.lang.String)
      */
     @Override
-    public Meter meter(Level level, String name, String path, String statType) {
-        return getOrCreateMetric(level, name, path, statType, METER_BUILDER);
+    public Meter meter(Level level, String name, String path, String statName) {
+        return getOrCreateMetric(level, name, path, statName, METER_BUILDER);
     }
 
     /*
@@ -630,8 +630,8 @@ public class MetricServiceImpl implements MetricService {
      * java.lang.String)
      */
     @Override
-    public Counter counter(Level level, String name, String path, String statType) {
-        return getOrCreateMetric(level, name, path, statType, COUNTER_BUILDER);
+    public Counter counter(Level level, String name, String path, String statName) {
+        return getOrCreateMetric(level, name, path, statName, COUNTER_BUILDER);
     }
 
     /*
@@ -640,8 +640,8 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#timer(org.wso2.carbon.metrics.manager.Level, java.lang.String)
      */
     @Override
-    public Timer timer(Level level, String name, String path, String statType) {
-        return getOrCreateMetric(level, name, path, statType, TIMER_BUILDER);
+    public Timer timer(Level level, String name, String path, String statName) {
+        return getOrCreateMetric(level, name, path, statName, TIMER_BUILDER);
     }
 
     /*
@@ -651,8 +651,8 @@ public class MetricServiceImpl implements MetricService {
      * java.lang.String)
      */
     @Override
-    public Histogram histogram(Level level, String name, String path, String statType) {
-        return getOrCreateMetric(level, name, path, statType, HISTOGRAM_BUILDER);
+    public Histogram histogram(Level level, String name, String path, String statName) {
+        return getOrCreateMetric(level, name, path, statName, HISTOGRAM_BUILDER);
     }
 
     /*
@@ -662,8 +662,8 @@ public class MetricServiceImpl implements MetricService {
      * org.wso2.carbon.metrics.manager.Gauge)
      */
     @Override
-    public <T> void gauge(Level level, String name, String path, String statType, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, path, statType, new GaugeBuilder<T>(gauge));
+    public <T> void gauge(Level level, String name, String path, String statName, Gauge<T> gauge) {
+        getOrCreateMetric(level, name, path, statName, new GaugeBuilder<T>(gauge));
     }
 
     /*
@@ -673,9 +673,9 @@ public class MetricServiceImpl implements MetricService {
      * java.lang.String, long, java.util.concurrent.TimeUnit, org.wso2.carbon.metrics.manager.Gauge)
      */
     @Override
-    public <T> void cachedGauge(Level level, String name, String path, String statType, long timeout,
+    public <T> void cachedGauge(Level level, String name, String path, String statName, long timeout,
                                 TimeUnit timeoutUnit, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, path, statType, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
+        getOrCreateMetric(level, name, path, statName, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
     }
 
     public int getMetricsCount() {
@@ -693,7 +693,7 @@ public class MetricServiceImpl implements MetricService {
                 new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
     }
 
-    private void registerAll(Level level, String prefix, String statType, MetricSet metrics)
+    private void registerAll(Level level, String prefix, String statName, MetricSet metrics)
             throws IllegalArgumentException {
         for (Map.Entry<String, com.codahale.metrics.Metric> entry : metrics.getMetrics().entrySet()) {
             if (entry.getValue() instanceof MetricSet) {
@@ -786,7 +786,7 @@ public class MetricServiceImpl implements MetricService {
         public boolean matches(String name, Metric metric) {
             MetricWrapper metricWrapper = metricsMap.get(name);
             if (metricWrapper != null) {
-                return isMetricEnabled(metricWrapper.name, metricWrapper.path, metricWrapper.statType,
+                return isMetricEnabled(metricWrapper.name, metricWrapper.path, metricWrapper.statName,
                         metricWrapper.level, levelConfiguration.getLevel(name), true);
             }
             return false;

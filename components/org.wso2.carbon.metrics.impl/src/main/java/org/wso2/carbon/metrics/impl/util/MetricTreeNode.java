@@ -80,8 +80,8 @@ public class MetricTreeNode implements Iterable<MetricTreeNode> {
         }
     }
 
-    public AbstractMetric addMetric(String statType, AbstractMetric metric) {
-        return metrics.putIfAbsent(statType, metric);
+    public AbstractMetric addMetric(String statName, AbstractMetric metric) {
+        return metrics.putIfAbsent(statName, metric);
     }
 
     public ConcurrentMap<String, AbstractMetric> getMetrics() {

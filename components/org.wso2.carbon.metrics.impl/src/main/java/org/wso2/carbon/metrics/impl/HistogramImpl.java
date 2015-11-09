@@ -32,8 +32,8 @@ public class HistogramImpl extends AbstractMetric implements Histogram, MetricUp
     private com.codahale.metrics.Histogram histogram;
     private List<Histogram> affected;
 
-    public HistogramImpl(Level level, String name, String path, String statType, com.codahale.metrics.Histogram histogram) {
-        super(level, name, path, statType);
+    public HistogramImpl(Level level, String name, String path, String statName, com.codahale.metrics.Histogram histogram) {
+        super(level, name, path, statName);
         this.histogram = histogram;
         this.affected = new ArrayList<Histogram>();
     }
@@ -111,7 +111,7 @@ public class HistogramImpl extends AbstractMetric implements Histogram, MetricUp
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatType());
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
             affected.add((Histogram) metric);
         }

@@ -32,8 +32,8 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
     private com.codahale.metrics.Meter meter;
     private List<Meter> affected;
 
-    public MeterImpl(Level level, String name, String path, String statType, com.codahale.metrics.Meter meter) {
-        super(level, name, path, statType);
+    public MeterImpl(Level level, String name, String path, String statName, com.codahale.metrics.Meter meter) {
+        super(level, name, path, statName);
         this.meter = meter;
         this.affected = new ArrayList<Meter>();
     }
@@ -111,7 +111,7 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
     public void updateAffectedMetrics(String path) {
         affected.clear();
         super.setPath(path);
-        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatType());
+        List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
             affected.add((Meter) metric);
         }
