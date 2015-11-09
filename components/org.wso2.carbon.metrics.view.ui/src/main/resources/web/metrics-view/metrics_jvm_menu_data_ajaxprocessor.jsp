@@ -54,40 +54,40 @@
         if ("Memory".equals(type)) {
             metrics = getMemoryMetrics();
         } else if ("CPU".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.process", "Process CPU Load",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "cpu.load.process", "Process CPU Load",
                     MetricAttribute.VALUE, MetricDataFormat.P));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.system", "System CPU Load",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "cpu.load.system", "System CPU Load",
                     MetricAttribute.VALUE, MetricDataFormat.P));
         } else if ("LoadAverage".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.system.load.average", "System Load Average",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "system.load.average", "System Load Average",
                     MetricAttribute.VALUE, null));
         } else if ("FileDescriptor".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.open.count",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "file.descriptor.open.count",
                     "Open File Descriptor Count", MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.max.count",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "file.descriptor.max.count",
                     "Max File Descriptor Count", MetricAttribute.VALUE, null));
         } else if ("PhysicalMemory".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.free.size",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "physical.memory.free.size",
                     "Free Physical Memory Size", MetricAttribute.VALUE, MetricDataFormat.B));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.total.size",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "physical.memory.total.size",
                     "Total Physical Memory Size", MetricAttribute.VALUE, MetricDataFormat.B));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.swap.space.free.size", "Free Swap Space Size",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "swap.space.free.size", "Free Swap Space Size",
                     MetricAttribute.VALUE, MetricDataFormat.B));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.swap.space.total.size", "Total Swap Space Size",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "swap.space.total.size", "Total Swap Space Size",
                     MetricAttribute.VALUE, MetricDataFormat.B));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.os.virtual.memory.committed.size",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "virtual.memory.committed.size",
                     "Committed Virtual Memory Size", MetricAttribute.VALUE, MetricDataFormat.B));
         } else if ("ClassLoading".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "loaded.current",
                     "Current Classes Loaded", MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.total", "Total Classes Loaded",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "loaded.total", "Total Classes Loaded",
                     MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "unloaded.total",
                     "Total Classes Unloaded", MetricAttribute.VALUE, null));
         } else if ("Threading".equals(type)) {
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.threads", "count", "Live Threads",
                     MetricAttribute.VALUE, null));
-            metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.daemon.count", "Daemon Threads",
+            metrics.add(new Metric(MetricType.GAUGE, "jvm.threads", "daemon.count", "Daemon Threads",
                     MetricAttribute.VALUE, null));
         }
 
@@ -119,13 +119,13 @@
 %>
 <%!
     private void addMemoryMetrics(ArrayList<Metric> metrics, String type, String displayType) {
-        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.init", type), String.format("%s Init",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.init", type), String.format("%s Init",
                 displayType), MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.used", type), String.format("%s Used",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.used", type), String.format("%s Used",
                 displayType), MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.committed", type), String.format(
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.committed", type), String.format(
                 "%s Committed", displayType), MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.max", type), String.format("%s Max",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.max", type), String.format("%s Max",
                 displayType), MetricAttribute.VALUE, MetricDataFormat.B));
 
     }

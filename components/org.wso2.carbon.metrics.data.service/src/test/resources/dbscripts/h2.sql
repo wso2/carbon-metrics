@@ -98,7 +98,7 @@ VALUES
   1,
   'carbon-server',
   1428567356013,
-  'jvm.class-loading.loaded.current',
+  'loaded.current@jvm.class-loading',
   '10159'
 );
 
@@ -115,7 +115,7 @@ VALUES
   2,
   'carbon-server',
   1428567356013,
-  'jvm.class-loading.loaded.total',
+  'loaded.total@jvm.class-loading',
   '10427'
 );
 
@@ -132,7 +132,7 @@ VALUES
   3,
   'carbon-server',
   1428567356013,
-  'jvm.class-loading.unloaded.total',
+  'unloaded.total@jvm.class-loading',
   '268'
 );
 
@@ -149,7 +149,7 @@ VALUES
   4,
   'carbon-server',
   1428567356013,
-  'jvm.gc.PS-MarkSweep.count',
+  'PS-MarkSweep.count@jvm.gc',
   '10'
 );
 
@@ -166,7 +166,7 @@ VALUES
   5,
   'carbon-server',
   1428567356013,
-  'jvm.gc.PS-MarkSweep.time',
+  'PS-MarkSweep.time@jvm.gc',
   '3101'
 );
 
@@ -183,7 +183,7 @@ VALUES
   6,
   'carbon-server',
   1428567356013,
-  'jvm.gc.PS-Scavenge.count',
+  'PS-Scavenge.count@jvm.gc',
   '37'
 );
 
@@ -200,7 +200,7 @@ VALUES
   7,
   'carbon-server',
   1428567356013,
-  'jvm.gc.PS-Scavenge.time',
+  'PS-Scavenge.time@jvm.gc',
   '898'
 );
 
@@ -217,7 +217,7 @@ VALUES
   8,
   'carbon-server',
   1428567356013,
-  'jvm.memory.heap.committed',
+  'heap.committed@jvm.memory',
   '425721856'
 );
 
@@ -234,7 +234,7 @@ VALUES
   9,
   'carbon-server',
   1428567356013,
-  'jvm.memory.heap.init',
+  'heap.init@jvm.memory',
   '268435456'
 );
 
@@ -251,7 +251,7 @@ VALUES
   10,
   'carbon-server',
   1428567356013,
-  'jvm.memory.heap.max',
+  'heap.max@jvm.memory',
   '954728448'
 );
 
@@ -268,7 +268,7 @@ VALUES
   11,
   'carbon-server',
   1428567356013,
-  'jvm.memory.heap.usage',
+  'heap.usage@jvm.memory',
   '0.18403085858398974'
 );
 
@@ -285,7 +285,7 @@ VALUES
   12,
   'carbon-server',
   1428567356013,
-  'jvm.memory.heap.used',
+  'heap.used@jvm.memory',
   '175699496'
 );
 
@@ -302,7 +302,7 @@ VALUES
   13,
   'carbon-server',
   1428567356013,
-  'jvm.memory.non-heap.committed',
+  'non-heap.committed@jvm.memory',
   '108986368'
 );
 
@@ -319,7 +319,7 @@ VALUES
   14,
   'carbon-server',
   1428567356013,
-  'jvm.memory.non-heap.init',
+  'non-heap.init@jvm.memory',
   '24576000'
 );
 
@@ -336,7 +336,7 @@ VALUES
   15,
   'carbon-server',
   1428567356013,
-  'jvm.memory.non-heap.max',
+  'non-heap.max@jvm.memory',
   '318767104'
 );
 
@@ -353,7 +353,7 @@ VALUES
   16,
   'carbon-server',
   1428567356013,
-  'jvm.memory.non-heap.usage',
+  'non-heap.usage@jvm.memory',
   '0.24130966788844058'
 );
 
@@ -370,7 +370,7 @@ VALUES
   17,
   'carbon-server',
   1428567356013,
-  'jvm.memory.non-heap.used',
+  'non-heap.used@jvm.memory',
   '76921584'
 );
 
@@ -387,7 +387,7 @@ VALUES
   18,
   'carbon-server',
   1428567356013,
-  'jvm.memory.total.committed',
+  'total.committed@jvm.memory',
   '534708224'
 );
 
@@ -404,7 +404,7 @@ VALUES
   19,
   'carbon-server',
   1428567356013,
-  'jvm.memory.total.init',
+  'total.init@jvm.memory',
   '293011456'
 );
 
@@ -421,7 +421,7 @@ VALUES
   20,
   'carbon-server',
   1428567356013,
-  'jvm.memory.total.max',
+  'total.max@jvm.memory',
   '1273495552'
 );
 
@@ -438,7 +438,7 @@ VALUES
   21,
   'carbon-server',
   1428567356013,
-  'jvm.memory.total.used',
+  'total.used@jvm.memory',
   '252621080'
 );
 
@@ -455,7 +455,7 @@ VALUES
   22,
   'carbon-server',
   1428567356013,
-  'jvm.os.cpu.load.process',
+  'cpu.load.process@jvm.os',
   '8.337154529159198E-4'
 );
 
@@ -472,7 +472,7 @@ VALUES
   23,
   'carbon-server',
   1428567356013,
-  'jvm.os.cpu.load.system',
+  'cpu.load.system@jvm.os',
   '0.2378590187169119'
 );
 
@@ -489,7 +489,7 @@ VALUES
   24,
   'carbon-server',
   1428567356013,
-  'jvm.os.file.descriptor.max.count',
+  'file.descriptor.max.count@jvm.os',
   '65535'
 );
 
@@ -506,7 +506,7 @@ VALUES
   25,
   'carbon-server',
   1428567356013,
-  'jvm.os.file.descriptor.open.count',
+  'file.descriptor.open.count@jvm.os',
   '313'
 );
 
@@ -523,7 +523,7 @@ VALUES
   26,
   'carbon-server',
   1428567356013,
-  'jvm.os.physical.memory.free.size',
+  'physical.memory.free.size@jvm.os',
   '4270161920'
 );
 
@@ -540,7 +540,7 @@ VALUES
   27,
   'carbon-server',
   1428567356013,
-  'jvm.os.physical.memory.total.size',
+  'physical.memory.total.size@jvm.os',
   '16514957312'
 );
 
@@ -557,7 +557,7 @@ VALUES
   28,
   'carbon-server',
   1428567356013,
-  'jvm.os.swap.space.free.size',
+  'swap.space.free.size@jvm.os',
   '7348232192'
 );
 
@@ -574,7 +574,7 @@ VALUES
   29,
   'carbon-server',
   1428567356013,
-  'jvm.os.swap.space.total.size',
+  'swap.space.total.size@jvm.os',
   '8270114816'
 );
 
@@ -591,7 +591,7 @@ VALUES
   30,
   'carbon-server',
   1428567356013,
-  'jvm.os.system.load.average',
+  'system.load.average@jvm.os',
   '0.99'
 );
 
@@ -608,7 +608,7 @@ VALUES
   31,
   'carbon-server',
   1428567356013,
-  'jvm.os.virtual.memory.committed.size',
+  'virtual.memory.committed.size@jvm.os',
   '3846098944'
 );
 
@@ -625,7 +625,7 @@ VALUES
   32,
   'carbon-server',
   1428567356013,
-  'jvm.threads.count',
+  'count@jvm.threads',
   '116'
 );
 
@@ -642,7 +642,7 @@ VALUES
   33,
   'carbon-server',
   1428567356013,
-  'jvm.threads.daemon.count',
+  'daemon.count@jvm.threads',
   '108'
 );
 
@@ -659,7 +659,7 @@ VALUES
   34,
   'carbon-server',
   1428567416013,
-  'jvm.class-loading.loaded.current',
+  'loaded.current@jvm.class-loading',
   '10159'
 );
 
@@ -676,7 +676,7 @@ VALUES
   35,
   'carbon-server',
   1428567416013,
-  'jvm.class-loading.loaded.total',
+  'loaded.total@jvm.class-loading',
   '10427'
 );
 
@@ -693,7 +693,7 @@ VALUES
   36,
   'carbon-server',
   1428567416013,
-  'jvm.class-loading.unloaded.total',
+  'unloaded.total@jvm.class-loading',
   '268'
 );
 
@@ -710,7 +710,7 @@ VALUES
   37,
   'carbon-server',
   1428567416013,
-  'jvm.gc.PS-MarkSweep.count',
+  'PS-MarkSweep.count@jvm.gc',
   '10'
 );
 
@@ -727,7 +727,7 @@ VALUES
   38,
   'carbon-server',
   1428567416013,
-  'jvm.gc.PS-MarkSweep.time',
+  'PS-MarkSweep.time@jvm.gc',
   '3101'
 );
 
@@ -744,7 +744,7 @@ VALUES
   39,
   'carbon-server',
   1428567416013,
-  'jvm.gc.PS-Scavenge.count',
+  'PS-Scavenge.count@jvm.gc',
   '38'
 );
 
@@ -761,7 +761,7 @@ VALUES
   40,
   'carbon-server',
   1428567416013,
-  'jvm.gc.PS-Scavenge.time',
+  'PS-Scavenge.time@jvm.gc',
   '905'
 );
 
@@ -778,7 +778,7 @@ VALUES
   41,
   'carbon-server',
   1428567416013,
-  'jvm.memory.heap.committed',
+  'heap.committed@jvm.memory',
   '487063552'
 );
 
@@ -795,7 +795,7 @@ VALUES
   42,
   'carbon-server',
   1428567416013,
-  'jvm.memory.heap.init',
+  'heap.init@jvm.memory',
   '268435456'
 );
 
@@ -812,7 +812,7 @@ VALUES
   43,
   'carbon-server',
   1428567416013,
-  'jvm.memory.heap.max',
+  'heap.max@jvm.memory',
   '954728448'
 );
 
@@ -829,7 +829,7 @@ VALUES
   44,
   'carbon-server',
   1428567416013,
-  'jvm.memory.heap.usage',
+  'heap.usage@jvm.memory',
   '0.2880009541728875'
 );
 
@@ -846,7 +846,7 @@ VALUES
   45,
   'carbon-server',
   1428567416013,
-  'jvm.memory.heap.used',
+  'heap.used@jvm.memory',
   '274962704'
 );
 
@@ -863,7 +863,7 @@ VALUES
   46,
   'carbon-server',
   1428567416013,
-  'jvm.memory.non-heap.committed',
+  'non-heap.committed@jvm.memory',
   '109117440'
 );
 
@@ -880,7 +880,7 @@ VALUES
   47,
   'carbon-server',
   1428567416013,
-  'jvm.memory.non-heap.init',
+  'non-heap.init@jvm.memory',
   '24576000'
 );
 
@@ -897,7 +897,7 @@ VALUES
   48,
   'carbon-server',
   1428567416013,
-  'jvm.memory.non-heap.max',
+  'non-heap.max@jvm.memory',
   '318767104'
 );
 
@@ -914,7 +914,7 @@ VALUES
   49,
   'carbon-server',
   1428567416013,
-  'jvm.memory.non-heap.usage',
+  'non-heap.usage@jvm.memory',
   '0.24154577757182874'
 );
 
@@ -931,7 +931,7 @@ VALUES
   50,
   'carbon-server',
   1428567416013,
-  'jvm.memory.non-heap.used',
+  'non-heap.used@jvm.memory',
   '76996848'
 );
 
@@ -948,7 +948,7 @@ VALUES
   51,
   'carbon-server',
   1428567416013,
-  'jvm.memory.total.committed',
+  'total.committed@jvm.memory',
   '596180992'
 );
 
@@ -965,7 +965,7 @@ VALUES
   52,
   'carbon-server',
   1428567416013,
-  'jvm.memory.total.init',
+  'total.init@jvm.memory',
   '293011456'
 );
 
@@ -982,7 +982,7 @@ VALUES
   53,
   'carbon-server',
   1428567416013,
-  'jvm.memory.total.max',
+  'total.max@jvm.memory',
   '1273495552'
 );
 
@@ -999,7 +999,7 @@ VALUES
   54,
   'carbon-server',
   1428567416013,
-  'jvm.memory.total.used',
+  'total.used@jvm.memory',
   '351959552'
 );
 
@@ -1016,7 +1016,7 @@ VALUES
   55,
   'carbon-server',
   1428567416013,
-  'jvm.os.cpu.load.process',
+  'cpu.load.process@jvm.os',
   '0.006559582877806745'
 );
 
@@ -1033,7 +1033,7 @@ VALUES
   56,
   'carbon-server',
   1428567416013,
-  'jvm.os.cpu.load.system',
+  'cpu.load.system@jvm.os',
   '0.24863342023379026'
 );
 
@@ -1050,7 +1050,7 @@ VALUES
   57,
   'carbon-server',
   1428567416013,
-  'jvm.os.file.descriptor.max.count',
+  'file.descriptor.max.count@jvm.os',
   '65535'
 );
 
@@ -1067,7 +1067,7 @@ VALUES
   58,
   'carbon-server',
   1428567416013,
-  'jvm.os.file.descriptor.open.count',
+  'file.descriptor.open.count@jvm.os',
   '315'
 );
 
@@ -1084,7 +1084,7 @@ VALUES
   59,
   'carbon-server',
   1428567416013,
-  'jvm.os.physical.memory.free.size',
+  'physical.memory.free.size@jvm.os',
   '4164788224'
 );
 
@@ -1101,7 +1101,7 @@ VALUES
   60,
   'carbon-server',
   1428567416013,
-  'jvm.os.physical.memory.total.size',
+  'physical.memory.total.size@jvm.os',
   '16514957312'
 );
 
@@ -1118,7 +1118,7 @@ VALUES
   61,
   'carbon-server',
   1428567416013,
-  'jvm.os.swap.space.free.size',
+  'swap.space.free.size@jvm.os',
   '7348236288'
 );
 
@@ -1135,7 +1135,7 @@ VALUES
   62,
   'carbon-server',
   1428567416013,
-  'jvm.os.swap.space.total.size',
+  'swap.space.total.size@jvm.os',
   '8270114816'
 );
 
@@ -1152,7 +1152,7 @@ VALUES
   63,
   'carbon-server',
   1428567416013,
-  'jvm.os.system.load.average',
+  'system.load.average@jvm.os',
   '1.01'
 );
 
@@ -1169,7 +1169,7 @@ VALUES
   64,
   'carbon-server',
   1428567416013,
-  'jvm.os.virtual.memory.committed.size',
+  'virtual.memory.committed.size@jvm.os',
   '3847151616'
 );
 
@@ -1186,7 +1186,7 @@ VALUES
   65,
   'carbon-server',
   1428567416013,
-  'jvm.threads.count',
+  'count@jvm.threads',
   '118'
 );
 
@@ -1203,7 +1203,7 @@ VALUES
   66,
   'carbon-server',
   1428567416013,
-  'jvm.threads.daemon.count',
+  'daemon.count@jvm.threads',
   '110'
 );
 
@@ -1234,7 +1234,7 @@ VALUES
 (
   'carbon-server',
   1428567356013,
-  'database.read',
+  'read@database',
   12,
   0.29952799999999996,
   0.14383174999999995,
@@ -1281,7 +1281,7 @@ VALUES
 (
   'carbon-server',
   1428567356013,
-  'database.write',
+  'write@database',
   9,
   1.190064,
   0.5374895555555554,
@@ -1328,7 +1328,7 @@ VALUES
 (
   'carbon-server',
   1428567416013,
-  'database.read',
+  'read@database',
   12,
   0.29952799999999996,
   0.14383174999999995,
@@ -1375,7 +1375,7 @@ VALUES
 (
   'carbon-server',
   1428567416013,
-  'database.write',
+  'write@database',
   9,
   1.190064,
   0.5374895555555554,

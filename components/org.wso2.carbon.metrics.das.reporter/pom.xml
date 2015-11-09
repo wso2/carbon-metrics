@@ -52,9 +52,8 @@
                             org.wso2.carbon.metrics.das.reporter.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.databridge.agent;version="${carbon.analytics.common.version.range}",
-                            com.codahale.metrics;
-                            version="${metrics.version.range}",
+                            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}",
+                            com.codahale.metrics;version="${metrics.version.range}",
                             org.slf4j;version="${slf4j.version.range}"
                         </Import-Package>
                     </instructions>

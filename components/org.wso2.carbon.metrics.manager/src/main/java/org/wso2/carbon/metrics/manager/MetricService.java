@@ -41,36 +41,36 @@ public interface MetricService {
     boolean isEnabled();
 
     /**
-     * Get the {@link Level} for a given metric identifier
-     * @param identifier The name of the Metric
-     * @return {@link Level} for the given metric identifier
+     * Get the {@link Level} for a given metric statType
+     * @param statType The name of the Metric
+     * @return {@link Level} for the given metric statType
      */
-    Level getMetricLevel(String identifier);
+    Level getMetricLevel(String statType);
 
     /**
      * Get the {@link Level} for a given metric
      * @param name The name of the Metric
-     * @param identifier The identifier of the Metric
-     * @return {@link Level} for the given metric identifier
+     * @param statType The statType of the Metric
+     * @return {@link Level} for the given metric statType
      */
-    Level getMetricLevel(String name, String identifier);
+    Level getMetricLevel(String name, String statType);
 
     /**
-     * Set a new level to the given metric identifier
+     * Set a new level to the given metric statType
      * 
-     * @param identifier The name of the Metric
+     * @param statType The name of the Metric
      * @param level New {@link Level} for the Metric
      */
-    void setMetricLevel(String identifier, Level level);
+    void setMetricLevel(String statType, Level level);
 
     /**
-     * Set a new level to the given metric (name & identifier)
+     * Set a new level to the given metric (name & statType)
      *
      * @param name The name of the Metric
-     * @param identifier The name of the Metric
+     * @param statType The name of the Metric
      * @param level New {@link Level} for the Metric
      */
-    void setMetricLevel(String name, String identifier, Level level);
+    void setMetricLevel(String name, String statType, Level level);
 
     /**
      * @return The current root {@link Level}
@@ -92,26 +92,27 @@ public interface MetricService {
     int getMetricsCount();
 
     /**
-     * Get or create a {@link Meter} instance for the given identifier
+     * Get or create a {@link Meter} instance for the given statType
      * 
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param path The annotated path of the metric
-     * @param identifier The identifier of the metric
+     * @param statType The statType of the metric
      * @return a {@link Meter} instance
      */
-    Meter meter(Level level, String name, String path, String identifier);
+    Meter meter(Level level, String name, String path, String statType);
 
     /**
      * Get or create a {@link Counter} instance for the given name
      *
+     * @param statType The statType of the metric
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param path The annotated path of the metric
-     * @param identifier The identifier of the metric
+     * @param statType
      * @return a {@link Counter} instance
      */
-    Counter counter(Level level, String name, String path, String identifier);
+    Counter counter(Level level, String name, String path, String statType);
 
     /**
      * Get or create a {@link Timer} instance for the given name
@@ -119,10 +120,10 @@ public interface MetricService {
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param path The annotated path of the metric
-     * @param identifier The identifier of the metric
+     * @param statType The statType of the metric
      * @return a {@link Timer} instance
      */
-    Timer timer(Level level, String name, String path, String identifier);
+    Timer timer(Level level, String name, String path, String statType);
 
     /**
      * Get or create a {@link Histogram} instance for the given name
@@ -130,10 +131,10 @@ public interface MetricService {
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param path The annotated path of the metric
-     * @param identifier The identifier of the metric
+     * @param statType The statType of the metric
      * @return a {@link Histogram} instance
      */
-    Histogram histogram(Level level, String name, String path, String identifier);
+    Histogram histogram(Level level, String name, String path, String statType);
 
     /**
      * Get or create a {@link Gauge} for the given name
@@ -141,23 +142,23 @@ public interface MetricService {
      * @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param path The annotated path of the metric
-     * @param identifier The identifier of the metric
+     * @param statType The statType of the metric
      * @param gauge An implementation of {@link Gauge}
      */
-    <T> void gauge(Level level, String name, String path, String identifier, Gauge<T> gauge);
+    <T> void gauge(Level level, String name, String path, String statType, Gauge<T> gauge);
 
     /**
      * Get or create a cached {@link Gauge} for the given name
-     *
-     * @param level The {@link Level} used for metric
+     *  @param level The {@link Level} used for metric
      * @param name The name of the metric
      * @param path The annotated path of the metric
-     * @param identifier The identifier of the metric
+     * @param statType The statType of the metric
      * @param timeout the timeout
      * @param timeoutUnit the unit of {@code timeout}
      * @param gauge An implementation of {@link Gauge}
      */
-    <T> void cachedGauge(Level level, String name, String path, String identifier, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
+    <T> void cachedGauge(Level level, String name, String path, String statType, long timeout, TimeUnit timeoutUnit,
+                         Gauge<T> gauge);
 
     /**
      * Invoke report method of all scheduled reporters.
@@ -167,6 +168,6 @@ public interface MetricService {
     /**
      * @return List of affected {@link Metric}s
      */
-    List<Metric> getAffectedMetrics(Level level, String name, String path, String identifier);
+    List<Metric> getAffectedMetrics(Level level, String name, String path, String statType);
 
 }

@@ -46,6 +46,10 @@
             <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.databridge.agent</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
