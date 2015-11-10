@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
+import org.wso2.carbon.metrics.impl.wrapper.CounterWrapper;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Metric;
@@ -30,25 +31,14 @@ import java.util.List;
 public class CounterImpl extends AbstractMetric implements Counter, MetricUpdater {
 
     private com.codahale.metrics.Counter counter;
-    private List<Counter> affected;
+    private List<CounterWrapper> affected;
 
     public CounterImpl(Level level, String name, String path, String statName, com.codahale.metrics.Counter counter) {
         super(level, name, path, statName);
         this.counter = counter;
-        this.affected = new ArrayList<Counter>();
+        this.affected = new ArrayList<CounterWrapper>();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.wso2.carbon.metrics.manager.Counter#inc()
-     */
-    @Override
-    public void inc() {
-        if (isEnabled()) {
-            counter.inc();
-        }
-    }
 
     /*
      * (non-Javadoc)
@@ -56,24 +46,12 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
      * @see org.wso2.carbon.metrics.manager.Counter#incAll()
      */
     @Override
-    public void incAll() {
+    public void inc() {
         if (isEnabled()) {
             counter.inc();
-            for (Counter c : this.affected) {
+            for (CounterWrapper c : this.affected) {
                 c.inc();
             }
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.wso2.carbon.metrics.manager.Counter#inc(long)
-     */
-    @Override
-    public void inc(long n) {
-        if (isEnabled()) {
-            counter.inc(n);
         }
     }
 
@@ -83,24 +61,12 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
      * @see org.wso2.carbon.metrics.manager.Counter#incAll(long)
      */
     @Override
-    public void incAll(long n) {
+    public void inc(long n) {
         if (isEnabled()) {
             counter.inc(n);
-            for (Counter c : this.affected) {
+            for (CounterWrapper c : this.affected) {
                 c.inc(n);
             }
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.wso2.carbon.metrics.manager.Counter#dec()
-     */
-    @Override
-    public void dec() {
-        if (isEnabled()) {
-            counter.dec();
         }
     }
 
@@ -110,24 +76,12 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
      * @see org.wso2.carbon.metrics.manager.Counter#decAll()
      */
     @Override
-    public void decAll() {
+    public void dec() {
         if (isEnabled()) {
             counter.dec();
-            for (Counter c : this.affected) {
+            for (CounterWrapper c : this.affected) {
                 c.dec();
             }
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.wso2.carbon.metrics.manager.Counter#dec(long)
-     */
-    @Override
-    public void dec(long n) {
-        if (isEnabled()) {
-            counter.dec(n);
         }
     }
 
@@ -137,10 +91,10 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
      * @see org.wso2.carbon.metrics.manager.Counter#decAll(long)
      */
     @Override
-    public void decAll(long n) {
+    public void dec(long n) {
         if (isEnabled()) {
             counter.dec(n);
-            for (Counter c : this.affected) {
+            for (CounterWrapper c : this.affected) {
                 c.dec(n);
             }
         }
@@ -167,7 +121,7 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
         super.setPath(path);
         List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
-            affected.add((Counter) metric);
+            affected.add((CounterWrapper) metric);
         }
     }
 

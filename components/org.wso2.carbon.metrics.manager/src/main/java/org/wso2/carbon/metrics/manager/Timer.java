@@ -38,7 +38,7 @@ public interface Timer extends Metric {
      * @param duration the length of the duration
      * @param unit the scale unit of {@code duration}
      */
-    void updateAll(long duration, TimeUnit unit);
+//    void updateAll(long duration, TimeUnit unit);
 
     /**
      * Times and records the duration of event.

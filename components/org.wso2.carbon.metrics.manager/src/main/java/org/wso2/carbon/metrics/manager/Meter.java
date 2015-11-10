@@ -28,7 +28,7 @@ public interface Meter extends Metric {
     /**
      * Mark the occurrence of an event in all the affected metrics.
      */
-    void markAll();
+//    void markAll();
 
     /**
      * Mark the occurrence of a given number of events.
@@ -42,7 +42,7 @@ public interface Meter extends Metric {
      *
      * @param n the number of events
      */
-    void markAll(long n);
+//    void markAll(long n);
 
     /**
      * Returns the number of events which have been marked.

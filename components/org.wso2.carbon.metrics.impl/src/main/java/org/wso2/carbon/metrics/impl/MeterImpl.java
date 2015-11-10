@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
+import org.wso2.carbon.metrics.impl.wrapper.MeterWrapper;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.Metric;
@@ -30,25 +31,14 @@ import java.util.List;
 public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
 
     private com.codahale.metrics.Meter meter;
-    private List<Meter> affected;
+    private List<MeterWrapper> affected;
 
     public MeterImpl(Level level, String name, String path, String statName, com.codahale.metrics.Meter meter) {
         super(level, name, path, statName);
         this.meter = meter;
-        this.affected = new ArrayList<Meter>();
+        this.affected = new ArrayList<MeterWrapper>();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.wso2.carbon.metrics.manager.Meter#mark()
-     */
-    @Override
-    public void mark() {
-        if (isEnabled()) {
-            meter.mark();
-        }
-    }
 
     /*
      * (non-Javadoc)
@@ -56,24 +46,12 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
      * @see org.wso2.carbon.metrics.manager.Meter#markAll()
      */
     @Override
-    public void markAll() {
+    public void mark() {
         if (isEnabled()) {
             meter.mark();
-            for (Meter m : this.affected) {
+            for (MeterWrapper m : this.affected) {
                 m.mark();
             }
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.wso2.carbon.metrics.manager.Meter#mark(long)
-     */
-    @Override
-    public void mark(long n) {
-        if (isEnabled()) {
-            meter.mark(n);
         }
     }
 
@@ -83,10 +61,10 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
      * @see org.wso2.carbon.metrics.manager.Meter#markAll(long)
      */
     @Override
-    public void markAll(long n) {
+    public void mark(long n) {
         if (isEnabled()) {
             meter.mark(n);
-            for (Meter m : this.affected) {
+            for (MeterWrapper m : this.affected) {
                 m.mark(n);
             }
         }
@@ -113,7 +91,7 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
         super.setPath(path);
         List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
-            affected.add((Meter) metric);
+            affected.add((MeterWrapper) metric);
         }
     }
 

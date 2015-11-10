@@ -52,7 +52,7 @@ public class MeterTest extends TestCase {
     public void testParentCount() {
         Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
         Meter sub = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
-        sub.markAll(5);
+        sub.mark(5);
         main.mark(5);
         assertEquals("Count should be five", 5, sub.getCount());
         assertEquals("Count should be ten", 10, main.getCount());
@@ -75,7 +75,7 @@ public class MeterTest extends TestCase {
         Meter main2 = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
         Meter sub2 = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
 
-        sub.markAll();
+        sub.mark();
         assertEquals("Count should be one", 1, sub.getCount());
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be one", 1, main.getCount());
@@ -93,12 +93,12 @@ public class MeterTest extends TestCase {
         Meter sub1 = MetricManager.meter(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-meter");
         Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
 
-        sub2.markAll();
+        sub2.mark();
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be one", 1, sub1.getCount());
         assertEquals("Count should be one", 1, main.getCount());
 
-        sub1.markAll(2);
+        sub1.mark(2);
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be three", 3, sub1.getCount());
         assertEquals("Count should be three", 3, main.getCount());

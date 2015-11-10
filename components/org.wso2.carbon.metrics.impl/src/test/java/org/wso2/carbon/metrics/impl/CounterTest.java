@@ -52,7 +52,7 @@ public class CounterTest extends TestCase {
     public void testParentCount() {
         Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
         Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
-        sub.incAll(5);
+        sub.inc(5);
         main.dec(3);
         assertEquals("Count should be five", 5, sub.getCount());
         assertEquals("Count should be two", 2, main.getCount());
@@ -74,7 +74,7 @@ public class CounterTest extends TestCase {
         Counter main2 = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
         Counter sub2 = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
 
-        sub.incAll(5l);
+        sub.inc(5l);
         assertEquals("Count should be five", 5l, sub.getCount());
         assertEquals("Count should be five", 5l, sub2.getCount());
         assertEquals("Count should be five", 5l, main.getCount());
@@ -89,12 +89,12 @@ public class CounterTest extends TestCase {
         Counter sub2 = MetricManager.counter(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "throughput");
         Counter sub1 = MetricManager.counter(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "throughput");
         Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
-        sub2.incAll(5l);
+        sub2.inc(5l);
         assertEquals("Count should be five", 5l, sub2.getCount());
         assertEquals("Count should be five", 5l, sub1.getCount());
         assertEquals("Count should be five", 5l, main.getCount());
 
-        sub1.decAll(3l);
+        sub1.dec(3l);
         assertEquals("Count should be five", 5l, sub2.getCount());
         assertEquals("Count should be two", 2l, sub1.getCount());
         assertEquals("Count should be two", 2l, main.getCount());

@@ -32,7 +32,7 @@ public interface Histogram extends Metric {
      *
      * @param value the length of the value
      */
-    void updateAll(int value);
+    // void updateAll(int value);
 
     /**
      * Adds a recorded value.
@@ -46,7 +46,7 @@ public interface Histogram extends Metric {
      *
      * @param value the length of the value
      */
-    void updateAll(long value);
+    // void updateAll(long value);
 
     /**
      * Returns the number of values recorded.

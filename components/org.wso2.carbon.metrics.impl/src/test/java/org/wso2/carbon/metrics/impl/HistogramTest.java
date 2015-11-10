@@ -50,7 +50,7 @@ public class HistogramTest extends TestCase {
     public void testParentCount() {
         Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
         Histogram sub = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
-        sub.updateAll(randomGenerator.nextInt());
+        sub.update(randomGenerator.nextInt());
         main.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub.getCount());
         assertEquals("Count should be two", 2, main.getCount());
@@ -73,7 +73,7 @@ public class HistogramTest extends TestCase {
         Histogram main2 = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
         Histogram sub2 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
 
-        sub.updateAll(randomGenerator.nextInt());
+        sub.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub.getCount());
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be one", 1, main.getCount());
@@ -91,12 +91,12 @@ public class HistogramTest extends TestCase {
         Histogram sub1 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-histogram");
         Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
 
-        sub2.updateAll(randomGenerator.nextInt());
+        sub2.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be one", 1, sub1.getCount());
         assertEquals("Count should be one", 1, main.getCount());
 
-        sub1.updateAll(randomGenerator.nextInt());
+        sub1.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub2.getCount());
         assertEquals("Count should be two", 2, sub1.getCount());
         assertEquals("Count should be two", 2, main.getCount());
