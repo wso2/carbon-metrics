@@ -58,6 +58,19 @@ public class CounterTest extends TestCase {
         assertEquals("Count should be two", 2, main.getCount());
     }
 
+    public void testParentCount2() {
+        Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
+        Counter sub1 = MetricManager.counter(Level.INFO, "org.wso2.main.sub.sub1", "org.wso2.main.sub[+].sub1", "throughput");
+        Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
+        sub.inc(3);
+        assertEquals("Count should be three", 3, sub.getCount());
+        assertEquals("Count should be three", 3, main.getCount());
+        sub1.inc(2);
+        assertEquals("Count should be three", 3, main.getCount());
+        assertEquals("Count should be three", 5, sub.getCount());
+        assertEquals("Count should be five", 2, sub1.getCount());
+    }
+
     public void testSameMetric() {
         String name = MetricManager.name(this.getClass());
         Counter counter = MetricManager.counter(Level.INFO, name, "test-same-counter");

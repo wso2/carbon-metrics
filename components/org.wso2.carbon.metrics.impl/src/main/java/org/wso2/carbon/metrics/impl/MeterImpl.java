@@ -16,11 +16,10 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.impl.wrapper.MeterWrapper;
+import org.wso2.carbon.metrics.impl.updater.MeterUpdater;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.Metric;
-import org.wso2.carbon.metrics.manager.MetricUpdater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,29 +27,28 @@ import java.util.List;
 /**
  * Implementation class wrapping {@link com.codahale.metrics.Meter} metric
  */
-public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
+public class MeterImpl extends AbstractMetric implements Meter, MeterUpdater {
 
     private com.codahale.metrics.Meter meter;
-    private List<MeterWrapper> affected;
+    private List<MeterUpdater> affected;
 
     public MeterImpl(Level level, String name, String path, String statName, com.codahale.metrics.Meter meter) {
         super(level, name, path, statName);
         this.meter = meter;
-        this.affected = new ArrayList<MeterWrapper>();
+        this.affected = new ArrayList<MeterUpdater>();
     }
-
 
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Meter#markAll()
+     * @see org.wso2.carbon.metrics.manager.Meter#mark()
      */
     @Override
     public void mark() {
         if (isEnabled()) {
             meter.mark();
-            for (MeterWrapper m : this.affected) {
-                m.mark();
+            for (MeterUpdater m : this.affected) {
+                m.markSelf();
             }
         }
     }
@@ -58,15 +56,39 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Meter#markAll(long)
+     * @see org.wso2.carbon.metrics.impl.updater.MeterUpdater#markSelf()
+     */
+    @Override
+    public void markSelf() {
+        if (isEnabled()) {
+            meter.mark();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#mark(long)
      */
     @Override
     public void mark(long n) {
         if (isEnabled()) {
             meter.mark(n);
-            for (MeterWrapper m : this.affected) {
-                m.mark(n);
+            for (MeterUpdater m : this.affected) {
+                m.markSelf(n);
             }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.impl.updater.MeterUpdater#markSelf(long)
+     */
+    @Override
+    public void markSelf(long n) {
+        if (isEnabled()) {
+            meter.mark(n);
         }
     }
 
@@ -83,7 +105,7 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
+     * @see org.wso2.carbon.metrics.impl.updater.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
@@ -91,7 +113,7 @@ public class MeterImpl extends AbstractMetric implements Meter, MetricUpdater {
         super.setPath(path);
         List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
-            affected.add((MeterWrapper) metric);
+            affected.add((MeterUpdater) metric);
         }
     }
 

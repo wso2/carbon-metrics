@@ -30,13 +30,10 @@ import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
+import org.wso2.carbon.metrics.impl.updater.MetricUpdater;
 import org.wso2.carbon.metrics.impl.util.MetricTreeNode;
 import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
-import org.wso2.carbon.metrics.impl.wrapper.CounterWrapper;
-import org.wso2.carbon.metrics.impl.wrapper.HistogramWrapper;
-import org.wso2.carbon.metrics.impl.wrapper.MeterWrapper;
-import org.wso2.carbon.metrics.impl.wrapper.TimerWrapper;
 import org.wso2.carbon.metrics.manager.*;
 
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
@@ -47,7 +44,6 @@ import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
 import org.wso2.carbon.metrics.manager.Meter;
-import org.wso2.carbon.metrics.manager.Metric;
 import org.wso2.carbon.metrics.manager.Timer;
 
 /**
@@ -329,7 +325,6 @@ public class MetricServiceImpl implements MetricService {
     @Override
     public List<org.wso2.carbon.metrics.manager.Metric> getAffectedMetrics(Level level, String name,
                                                                            String path, String statName) {
-        Map<String, com.codahale.metrics.Metric> availableMetrics = metricRegistry.getMetrics();
         List<org.wso2.carbon.metrics.manager.Metric> affected = new ArrayList<>();
         String[] chunks = path.split("\\.");
         StringBuilder builder = new StringBuilder();
@@ -342,17 +337,8 @@ public class MetricServiceImpl implements MetricService {
             if (chunk.contains("[+]")) {
                 affectedName = builder.toString().replaceAll("\\[\\+\\]", "");
                 String absoluteName = getAbsoluteName(statName, affectedName);
-                com.codahale.metrics.Metric metric = availableMetrics.get(absoluteName);
-                if (metric != null) {
-                    if (metric instanceof com.codahale.metrics.Counter) {
-                        affected.add(new CounterWrapper((com.codahale.metrics.Counter) availableMetrics.get(absoluteName)));
-                    } else if (metric instanceof com.codahale.metrics.Meter) {
-                        affected.add(new MeterWrapper((com.codahale.metrics.Meter) availableMetrics.get(absoluteName)));
-                    } else if (metric instanceof com.codahale.metrics.Histogram) {
-                        affected.add(new HistogramWrapper((com.codahale.metrics.Histogram) availableMetrics.get(absoluteName)));
-                    } else if (metric instanceof com.codahale.metrics.Timer) {
-                        affected.add(new TimerWrapper((com.codahale.metrics.Timer) availableMetrics.get(absoluteName)));
-                    }
+                if (metricsMap.get(absoluteName) != null) {
+                    affected.add(metricsMap.get(absoluteName).metric);
                 } else {
                     MetricWrapper wrapper = metricsMap.get(name);
                     if (wrapper.metric instanceof Counter) {

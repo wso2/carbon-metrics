@@ -16,11 +16,10 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.impl.wrapper.CounterWrapper;
+import org.wso2.carbon.metrics.impl.updater.CounterUpdater;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Metric;
-import org.wso2.carbon.metrics.manager.MetricUpdater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,29 +27,28 @@ import java.util.List;
 /**
  * Implementation class wrapping {@link com.codahale.metrics.Counter} metric
  */
-public class CounterImpl extends AbstractMetric implements Counter, MetricUpdater {
+public class CounterImpl extends AbstractMetric implements Counter, CounterUpdater {
 
     private com.codahale.metrics.Counter counter;
-    private List<CounterWrapper> affected;
+    private List<CounterUpdater> affected;
 
     public CounterImpl(Level level, String name, String path, String statName, com.codahale.metrics.Counter counter) {
         super(level, name, path, statName);
         this.counter = counter;
-        this.affected = new ArrayList<CounterWrapper>();
+        this.affected = new ArrayList<CounterUpdater>();
     }
-
 
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Counter#incAll()
+     * @see org.wso2.carbon.metrics.manager.Counter#inc()
      */
     @Override
     public void inc() {
         if (isEnabled()) {
             counter.inc();
-            for (CounterWrapper c : this.affected) {
-                c.inc();
+            for (CounterUpdater c : this.affected) {
+                c.incSelf();
             }
         }
     }
@@ -58,14 +56,26 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Counter#incAll(long)
+     * @see org.wso2.carbon.metrics.impl.updater.CounterUpdater#incSelf()
+     */
+    @Override
+    public void incSelf() {
+        if (isEnabled()) {
+            counter.inc();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#inc(long)
      */
     @Override
     public void inc(long n) {
         if (isEnabled()) {
             counter.inc(n);
-            for (CounterWrapper c : this.affected) {
-                c.inc(n);
+            for (CounterUpdater c : this.affected) {
+                c.incSelf(n);
             }
         }
     }
@@ -73,14 +83,26 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Counter#decAll()
+     * @see org.wso2.carbon.metrics.impl.updater.CounterUpdater#incSelf(long)
+     */
+    @Override
+    public void incSelf(long n) {
+        if (isEnabled()) {
+            counter.inc(n);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#dec()
      */
     @Override
     public void dec() {
         if (isEnabled()) {
             counter.dec();
-            for (CounterWrapper c : this.affected) {
-                c.dec();
+            for (CounterUpdater c : this.affected) {
+                c.decSelf();
             }
         }
     }
@@ -88,15 +110,39 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Counter#decAll(long)
+     * @see org.wso2.carbon.metrics.impl.updater.CounterUpdater#decSelf()
+     */
+    @Override
+    public void decSelf() {
+        if (isEnabled()) {
+            counter.dec();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Counter#dec(long)
      */
     @Override
     public void dec(long n) {
         if (isEnabled()) {
             counter.dec(n);
-            for (CounterWrapper c : this.affected) {
-                c.dec(n);
+            for (CounterUpdater c : this.affected) {
+                c.decSelf(n);
             }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.impl.updater.CounterUpdater#decSelf(long)
+     */
+    @Override
+    public void decSelf(long n) {
+        if (isEnabled()) {
+            counter.dec(n);
         }
     }
 
@@ -113,7 +159,7 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
+     * @see org.wso2.carbon.metrics.impl.updater.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
@@ -121,7 +167,7 @@ public class CounterImpl extends AbstractMetric implements Counter, MetricUpdate
         super.setPath(path);
         List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
-            affected.add((CounterWrapper) metric);
+            affected.add((CounterUpdater) metric);
         }
     }
 

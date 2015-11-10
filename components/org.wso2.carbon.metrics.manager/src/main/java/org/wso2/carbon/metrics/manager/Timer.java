@@ -33,14 +33,6 @@ public interface Timer extends Metric {
     void update(long duration, TimeUnit unit);
 
     /**
-     * Adds a recorded duration to all the affected metrics
-     *
-     * @param duration the length of the duration
-     * @param unit the scale unit of {@code duration}
-     */
-//    void updateAll(long duration, TimeUnit unit);
-
-    /**
      * Times and records the duration of event.
      *
      * @param event a {@link Callable} whose {@link Callable#call()} method implements a process whose duration should

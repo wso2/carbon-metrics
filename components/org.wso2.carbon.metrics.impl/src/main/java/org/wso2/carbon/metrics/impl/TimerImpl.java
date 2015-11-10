@@ -16,10 +16,9 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.impl.wrapper.TimerWrapper;
+import org.wso2.carbon.metrics.impl.updater.TimerUpdater;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Metric;
-import org.wso2.carbon.metrics.manager.MetricUpdater;
 import org.wso2.carbon.metrics.manager.Timer;
 
 import java.util.ArrayList;
@@ -30,29 +29,41 @@ import java.util.concurrent.TimeUnit;
 /**
  * Implementation class wrapping {@link com.codahale.metrics.Timer} metric
  */
-public class TimerImpl extends AbstractMetric implements Timer, MetricUpdater {
+public class TimerImpl extends AbstractMetric implements Timer, TimerUpdater {
 
     private com.codahale.metrics.Timer timer;
-    private List<TimerWrapper> affected;
+    private List<TimerUpdater> affected;
 
     public TimerImpl(Level level, String name, String path, String statName, com.codahale.metrics.Timer timer) {
         super(level, name, path, statName);
         this.timer = timer;
-        this.affected = new ArrayList<TimerWrapper>();
+        this.affected = new ArrayList<TimerUpdater>();
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Timer#updateAll(long, java.util.concurrent.TimeUnit)
+     * @see org.wso2.carbon.metrics.manager.Timer#update(long, java.util.concurrent.TimeUnit)
      */
     @Override
     public void update(long duration, TimeUnit unit) {
         if (isEnabled()) {
             timer.update(duration, unit);
-            for (TimerWrapper t : this.affected) {
-                t.update(duration, unit);
+            for (TimerUpdater t : this.affected) {
+                t.updateSelf(duration, unit);
             }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.impl.updater.TimerUpdater#updateSelf(long, java.util.concurrent.TimeUnit)
+     */
+    @Override
+    public void updateSelf(long duration, TimeUnit unit) {
+        if (isEnabled()) {
+            timer.update(duration, unit);
         }
     }
 
@@ -96,7 +107,7 @@ public class TimerImpl extends AbstractMetric implements Timer, MetricUpdater {
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
+     * @see org.wso2.carbon.metrics.impl.updater.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
@@ -104,7 +115,7 @@ public class TimerImpl extends AbstractMetric implements Timer, MetricUpdater {
         super.setPath(path);
         List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
-            affected.add((TimerWrapper) metric);
+            affected.add((TimerUpdater) metric);
         }
     }
 

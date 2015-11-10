@@ -16,11 +16,10 @@
 package org.wso2.carbon.metrics.impl;
 
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.impl.wrapper.HistogramWrapper;
+import org.wso2.carbon.metrics.impl.updater.HistogramUpdater;
 import org.wso2.carbon.metrics.manager.Histogram;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Metric;
-import org.wso2.carbon.metrics.manager.MetricUpdater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,28 +27,28 @@ import java.util.List;
 /**
  * Implementation class wrapping {@link com.codahale.metrics.Histogram} metric
  */
-public class HistogramImpl extends AbstractMetric implements Histogram, MetricUpdater {
+public class HistogramImpl extends AbstractMetric implements Histogram, HistogramUpdater {
 
     private com.codahale.metrics.Histogram histogram;
-    private List<HistogramWrapper> affected;
+    private List<HistogramUpdater> affected;
 
     public HistogramImpl(Level level, String name, String path, String statName, com.codahale.metrics.Histogram histogram) {
         super(level, name, path, statName);
         this.histogram = histogram;
-        this.affected = new ArrayList<HistogramWrapper>();
+        this.affected = new ArrayList<HistogramUpdater>();
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Histogram#updateAll(int)
+     * @see org.wso2.carbon.metrics.manager.Histogram#update(int)
      */
     @Override
     public void update(int value) {
         if (isEnabled()) {
             histogram.update(value);
-            for (HistogramWrapper h : this.affected) {
-                h.update(value);
+            for (HistogramUpdater h : this.affected) {
+                h.updateSelf(value);
             }
         }
     }
@@ -57,15 +56,39 @@ public class HistogramImpl extends AbstractMetric implements Histogram, MetricUp
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.Histogram#updateAll(long)
+     * @see org.wso2.carbon.metrics.impl.updater.HistogramUpdater#updateSelf(int)
+     */
+    @Override
+    public void updateSelf(int value) {
+        if (isEnabled()) {
+            histogram.update(value);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Histogram#update(long)
      */
     @Override
     public void update(long value) {
         if (isEnabled()) {
             histogram.update(value);
-            for (HistogramWrapper h : this.affected) {
-                h.update(value);
+            for (HistogramUpdater h : this.affected) {
+                h.updateSelf(value);
             }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.impl.updater.HistogramUpdater#updateSelf(long)
+     */
+    @Override
+    public void updateSelf(long value) {
+        if (isEnabled()) {
+            histogram.update(value);
         }
     }
 
@@ -82,7 +105,7 @@ public class HistogramImpl extends AbstractMetric implements Histogram, MetricUp
     /*
      * (non-Javadoc)
      *
-     * @see org.wso2.carbon.metrics.manager.MetricUpdater#updateAffectedMetrics(String)
+     * @see org.wso2.carbon.metrics.impl.updater.MetricUpdater#updateAffectedMetrics(String)
      */
     @Override
     public void updateAffectedMetrics(String path) {
@@ -90,7 +113,7 @@ public class HistogramImpl extends AbstractMetric implements Histogram, MetricUp
         super.setPath(path);
         List<Metric> affectedMetrics = MetricServiceValueHolder.getMetricServiceInstance().getAffectedMetrics(getLevel(), getName(), path, getStatName());
         for (Metric metric : affectedMetrics) {
-            affected.add((HistogramWrapper) metric);
+            affected.add((HistogramUpdater) metric);
         }
     }
 }

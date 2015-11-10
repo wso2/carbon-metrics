@@ -15,16 +15,21 @@
  *
  *
  */
+package org.wso2.carbon.metrics.impl.updater;
 
-package org.wso2.carbon.metrics.manager;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Metric which support hierarchical updating of their parents
+ * A metric for measuring the duration of a particular piece of code
  */
-public interface MetricUpdater {
+public interface TimerUpdater extends MetricUpdater {
+
     /**
-     * Update the list of affected parent metrics according to the given annotated path
-     * @param path annotated path of the metric
+     * Adds a recorded duration.
+     *
+     * @param duration the length of the duration
+     * @param unit     the scale unit of {@code duration}
      */
-    void updateAffectedMetrics(String path);
+    void updateSelf(long duration, TimeUnit unit);
+
 }
