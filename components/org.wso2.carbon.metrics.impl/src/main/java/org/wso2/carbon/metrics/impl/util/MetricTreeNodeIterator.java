@@ -16,16 +16,18 @@
 
 package org.wso2.carbon.metrics.impl.util;
 
+import org.wso2.carbon.metrics.manager.MetricHierarchy;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class MetricTreeNodeIterator implements Iterator<MetricTreeNode> {
+public class MetricTreeNodeIterator implements Iterator<MetricHierarchy> {
 
     private MetricTreeNode metricTreeNode;
     private ProcessStages doNext;
-    private MetricTreeNode next;
-    private Iterator<MetricTreeNode> childrenCurNodeIter;
-    private Iterator<MetricTreeNode> childrenSubNodeIter;
+    private MetricHierarchy next;
+    private Iterator<MetricHierarchy> childrenCurNodeIter;
+    private Iterator<MetricHierarchy> childrenSubNodeIter;
 
     public MetricTreeNodeIterator(MetricTreeNode metricTreeNode) {
         this.metricTreeNode = metricTreeNode;
@@ -43,7 +45,7 @@ public class MetricTreeNodeIterator implements Iterator<MetricTreeNode> {
 
         if (this.doNext == ProcessStages.ProcessChildCurNode) {
             if (childrenCurNodeIter.hasNext()) {
-                MetricTreeNode childDirect = childrenCurNodeIter.next();
+                MetricHierarchy childDirect = childrenCurNodeIter.next();
                 childrenSubNodeIter = childDirect.iterator();
                 this.doNext = ProcessStages.ProcessChildSubNode;
                 return hasNext();
@@ -67,7 +69,7 @@ public class MetricTreeNodeIterator implements Iterator<MetricTreeNode> {
     }
 
     @Override
-    public MetricTreeNode next() {
+    public MetricHierarchy next() {
         if (this.next != null) {
             return this.next;
         } else {

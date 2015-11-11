@@ -158,7 +158,7 @@ public interface MetricService {
     List<Metric> getAffectedMetrics(Level level, String name, String path, String statName);
 
     /**
-     * @return List of affected {@link Metric}s
+     * @return The generated {@link MetricHierarchy}
      */
     MetricHierarchy getMetricHierarchy();
 

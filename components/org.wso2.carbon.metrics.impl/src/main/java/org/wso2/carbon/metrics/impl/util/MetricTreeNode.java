@@ -25,18 +25,18 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class MetricTreeNode implements MetricHierarchy<MetricTreeNode> {
+public class MetricTreeNode implements MetricHierarchy {
 
     public String name;
     public MetricTreeNode parent;
-    public List<MetricTreeNode> children;
+    public List<MetricHierarchy> children;
     private ConcurrentMap<String, Metric> metrics;
     private ConcurrentMap<String, MetricTreeNode> elementsIndex;
 
     public MetricTreeNode(String name) {
         this.name = name;
         this.metrics = new ConcurrentHashMap<String, Metric>();
-        this.children = new LinkedList<MetricTreeNode>();
+        this.children = new LinkedList<MetricHierarchy>();
         this.elementsIndex = new ConcurrentHashMap<String, MetricTreeNode>();
         this.elementsIndex.put(name, this);
     }
@@ -97,7 +97,7 @@ public class MetricTreeNode implements MetricHierarchy<MetricTreeNode> {
     }
 
     @Override
-    public Iterator<MetricTreeNode> iterator() {
+    public Iterator<MetricHierarchy> iterator() {
         return new MetricTreeNodeIterator(this);
     }
 }

@@ -20,10 +20,14 @@ package org.wso2.carbon.metrics.manager;
 
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * Created by grainier on 11/11/15.
- */
-public interface MetricHierarchy<T> extends Iterable<T> {
+public interface MetricHierarchy extends Iterable<MetricHierarchy> {
+    /**
+     * @return The level (depth) of the current node.
+     */
     int getLevel();
+
+    /**
+     * @return The map of available {@link Metric}s for current node.
+     */
     ConcurrentMap<String, Metric> getMetrics();
 }

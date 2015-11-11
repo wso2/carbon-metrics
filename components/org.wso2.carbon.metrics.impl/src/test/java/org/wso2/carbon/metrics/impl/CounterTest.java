@@ -47,7 +47,7 @@ public class CounterTest extends TestCase {
         Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
         sub.inc(3);
 
-        MetricHierarchy<MetricHierarchy> hierarchy = MetricManager.metricHierarchy();
+        MetricHierarchy hierarchy = MetricManager.metricHierarchy();
         for (MetricHierarchy node : hierarchy) {
             String indent = createIndent(node.getLevel());
             System.out.println(indent + node);
