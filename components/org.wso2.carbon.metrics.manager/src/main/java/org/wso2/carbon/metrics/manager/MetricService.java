@@ -162,4 +162,9 @@ public interface MetricService {
      */
     MetricHierarchy getMetricHierarchy();
 
+    /**
+     * @return The generated {@link MetricHierarchy} for a given path
+     */
+    MetricHierarchy getMetricHierarchy(String path);
+
 }

@@ -35,6 +35,11 @@ public class MetricTreeNodeIterator implements Iterator<MetricHierarchy> {
         this.childrenCurNodeIter = metricTreeNode.children.iterator();
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.util.Iterator#hasNext()
+     */
     @Override
     public boolean hasNext() {
         if (this.doNext == ProcessStages.ProcessParent) {
@@ -68,6 +73,11 @@ public class MetricTreeNodeIterator implements Iterator<MetricHierarchy> {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.util.Iterator#next()
+     */
     @Override
     public MetricHierarchy next() {
         if (this.next != null) {
@@ -77,6 +87,11 @@ public class MetricTreeNodeIterator implements Iterator<MetricHierarchy> {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.util.Iterator#remove()
+     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException();

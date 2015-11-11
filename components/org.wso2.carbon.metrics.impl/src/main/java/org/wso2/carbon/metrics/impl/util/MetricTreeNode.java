@@ -60,6 +60,10 @@ public class MetricTreeNode implements MetricHierarchy {
         return childNode;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public int getLevel() {
         if (parent != null) {
             return parent.getLevel() + 1;

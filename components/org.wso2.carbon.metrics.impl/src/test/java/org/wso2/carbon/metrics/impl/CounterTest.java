@@ -52,7 +52,12 @@ public class CounterTest extends TestCase {
             String indent = createIndent(node.getLevel());
             System.out.println(indent + node);
         }
-        System.out.println("");
+
+        MetricHierarchy wso2Only = MetricManager.metricHierarchy("org.wso2");
+        for (MetricHierarchy node : wso2Only) {
+            String indent = createIndent(node.getLevel());
+            System.out.println(indent + node);
+        }
     }
 
     private static String createIndent(int depth) {

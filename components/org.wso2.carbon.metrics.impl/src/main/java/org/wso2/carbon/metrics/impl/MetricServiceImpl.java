@@ -362,6 +362,11 @@ public class MetricServiceImpl implements MetricService {
         return this.rootNode;
     }
 
+    @Override
+    public MetricHierarchy getMetricHierarchy(String path) {
+        return this.rootNode.getNodeByName(path);
+    }
+
     private String getAbsoluteName(String statName, String name) {
         return new StringBuilder().append(statName).append("@").append(name.replaceAll("\\[\\+\\]", "")).toString();
     }
@@ -456,7 +461,7 @@ public class MetricServiceImpl implements MetricService {
                 String parentName = name.substring(0, i);
                 String childName = name.substring(i + 1);
                 MetricTreeNode parent = getOrCreateMetricTreeNode(parentName);
-                treeNode = parent.addChild(childName);
+                treeNode = parent.addChild(parent.getName() + "." + childName);
             } else {
                 treeNode = rootNode.addChild(name);
             }

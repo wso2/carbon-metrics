@@ -265,6 +265,13 @@ public final class MetricManager {
         return ServiceReferenceHolder.getInstance().getMetricService().getMetricHierarchy();
     }
 
+    /**
+     * @return the Metric Hierarchy for a given path
+     */
+    public static MetricHierarchy metricHierarchy(String path) {
+        return ServiceReferenceHolder.getInstance().getMetricService().getMetricHierarchy(path);
+    }
+
     public static void registerMXBean() {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
