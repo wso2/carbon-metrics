@@ -357,6 +357,11 @@ public class MetricServiceImpl implements MetricService {
         return affected;
     }
 
+    @Override
+    public MetricHierarchy getMetricHierarchy() {
+        return this.rootNode;
+    }
+
     private String getAbsoluteName(String statName, String name) {
         return new StringBuilder().append(statName).append("@").append(name.replaceAll("\\[\\+\\]", "")).toString();
     }
@@ -459,10 +464,9 @@ public class MetricServiceImpl implements MetricService {
         return treeNode;
     }
 
-    private void addToMetricHierarchy(String statName, String name, AbstractMetric metric) {
-        // TODO : though it's called "name" actual value passing in is path
-        name = name.replaceAll("\\[\\+\\]", "");
-        MetricTreeNode treeNode = getOrCreateMetricTreeNode(name);
+    private void addToMetricHierarchy(String statName, String path, AbstractMetric metric) {
+        path = path.replaceAll("\\[\\+\\]", "");
+        MetricTreeNode treeNode = getOrCreateMetricTreeNode(path);
         treeNode.addMetric(statName, metric);
     }
 
@@ -661,7 +665,6 @@ public class MetricServiceImpl implements MetricService {
     }
 
     private void registerJVMMetrics() {
-        // TODO : Hardcoded path???
         registerAll(Level.INFO, "jvm.memory", "org.wso2", new MemoryUsageGaugeSet());
         registerAll(Level.INFO, "jvm.os", "org.wso2", new OperatingSystemMetricSet());
         registerAll(Level.INFO, "jvm.class-loading", "org.wso2", new ClassLoadingGaugeSet());

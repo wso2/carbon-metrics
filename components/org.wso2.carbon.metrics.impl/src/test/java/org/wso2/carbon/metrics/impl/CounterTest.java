@@ -18,10 +18,7 @@ package org.wso2.carbon.metrics.impl;
 import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.manager.Counter;
-import org.wso2.carbon.metrics.manager.Level;
-import org.wso2.carbon.metrics.manager.MetricManager;
-import org.wso2.carbon.metrics.manager.MetricService;
+import org.wso2.carbon.metrics.manager.*;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import java.util.Random;
@@ -43,6 +40,29 @@ public class CounterTest extends TestCase {
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
         MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
+
+    public void testMetricHierarchy() {
+        Counter sub = MetricManager.counter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "throughput");
+        Counter sub1 = MetricManager.counter(Level.INFO, "org.wso2.main.sub.sub1", "org.wso2.main.sub[+].sub1", "throughput");
+        Counter main = MetricManager.counter(Level.INFO, "org.wso2.main", "throughput");
+        sub.inc(3);
+
+        MetricHierarchy<MetricHierarchy> hierarchy = MetricManager.metricHierarchy();
+        for (MetricHierarchy node : hierarchy) {
+            String indent = createIndent(node.getLevel());
+            System.out.println(indent + node);
+        }
+        System.out.println("");
+    }
+
+    private static String createIndent(int depth) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            sb.append('\t');
+        }
+        return sb.toString();
+    }
+
 
     public void testInitialCount() {
         Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass()), "test-counter");

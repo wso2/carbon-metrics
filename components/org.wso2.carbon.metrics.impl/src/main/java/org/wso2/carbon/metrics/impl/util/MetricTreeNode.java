@@ -16,23 +16,26 @@
 
 package org.wso2.carbon.metrics.impl.util;
 
-import org.wso2.carbon.metrics.impl.AbstractMetric;
+import org.wso2.carbon.metrics.manager.Metric;
+import org.wso2.carbon.metrics.manager.MetricHierarchy;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class MetricTreeNode implements Iterable<MetricTreeNode> {
+public class MetricTreeNode implements MetricHierarchy<MetricTreeNode> {
 
     public String name;
-    private ConcurrentMap<String, AbstractMetric> metrics;
     public MetricTreeNode parent;
     public List<MetricTreeNode> children;
+    private ConcurrentMap<String, Metric> metrics;
     private ConcurrentMap<String, MetricTreeNode> elementsIndex;
 
     public MetricTreeNode(String name) {
         this.name = name;
-        this.metrics = new ConcurrentHashMap<String, AbstractMetric>();
+        this.metrics = new ConcurrentHashMap<String, Metric>();
         this.children = new LinkedList<MetricTreeNode>();
         this.elementsIndex = new ConcurrentHashMap<String, MetricTreeNode>();
         this.elementsIndex.put(name, this);
@@ -80,11 +83,11 @@ public class MetricTreeNode implements Iterable<MetricTreeNode> {
         }
     }
 
-    public AbstractMetric addMetric(String statName, AbstractMetric metric) {
+    public Metric addMetric(String statName, Metric metric) {
         return metrics.putIfAbsent(statName, metric);
     }
 
-    public ConcurrentMap<String, AbstractMetric> getMetrics() {
+    public ConcurrentMap<String, Metric> getMetrics() {
         return metrics;
     }
 

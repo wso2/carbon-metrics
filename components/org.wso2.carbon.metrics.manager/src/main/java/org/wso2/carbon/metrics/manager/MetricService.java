@@ -35,14 +35,15 @@ public interface MetricService {
 
     /**
      * Get the current status of Metrics (Enabled/Disabled)
-     * 
+     *
      * @return {@code true} if the Metrics feature is enabled
      */
     boolean isEnabled();
 
     /**
      * Get the {@link Level} for a given metric
-     * @param name The name of the Metric
+     *
+     * @param name     The name of the Metric
      * @param statName The statName of the Metric
      * @return {@link Level} for the given metric statName
      */
@@ -51,9 +52,9 @@ public interface MetricService {
     /**
      * Set a new level to the given metric (name & statName)
      *
-     * @param name The name of the Metric
+     * @param name     The name of the Metric
      * @param statName The name of the Metric
-     * @param level New {@link Level} for the Metric
+     * @param level    New {@link Level} for the Metric
      */
     void setMetricLevel(String name, String statName, Level level);
 
@@ -64,24 +65,24 @@ public interface MetricService {
 
     /**
      * Set a new root level to the Metrics Service
-     * 
+     *
      * @param level New Root {@link Level}
      */
     void setRootLevel(Level level);
 
     /**
      * Return the number of metrics used
-     * 
+     *
      * @return The metrics count
      */
     int getMetricsCount();
 
     /**
      * Get or create a {@link Meter} instance for the given statName
-     * 
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     *
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Meter} instance
      */
@@ -91,9 +92,9 @@ public interface MetricService {
      * Get or create a {@link Counter} instance for the given name
      *
      * @param statName The statName of the metric
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName
      * @return a {@link Counter} instance
      */
@@ -102,9 +103,9 @@ public interface MetricService {
     /**
      * Get or create a {@link Timer} instance for the given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Timer} instance
      */
@@ -113,9 +114,9 @@ public interface MetricService {
     /**
      * Get or create a {@link Histogram} instance for the given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Histogram} instance
      */
@@ -124,23 +125,24 @@ public interface MetricService {
     /**
      * Get or create a {@link Gauge} for the given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
-     * @param gauge An implementation of {@link Gauge}
+     * @param gauge    An implementation of {@link Gauge}
      */
     <T> void gauge(Level level, String name, String path, String statName, Gauge<T> gauge);
 
     /**
      * Get or create a cached {@link Gauge} for the given name
-     *  @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
-     * @param statName The statName of the metric
-     * @param timeout the timeout
+     *
+     * @param level       The {@link Level} used for metric
+     * @param name        The name of the metric
+     * @param path        The annotated path of the metric
+     * @param statName    The statName of the metric
+     * @param timeout     the timeout
      * @param timeoutUnit the unit of {@code timeout}
-     * @param gauge An implementation of {@link Gauge}
+     * @param gauge       An implementation of {@link Gauge}
      */
     <T> void cachedGauge(Level level, String name, String path, String statName, long timeout, TimeUnit timeoutUnit,
                          Gauge<T> gauge);
@@ -154,5 +156,10 @@ public interface MetricService {
      * @return List of affected {@link Metric}s
      */
     List<Metric> getAffectedMetrics(Level level, String name, String path, String statName);
+
+    /**
+     * @return List of affected {@link Metric}s
+     */
+    MetricHierarchy getMetricHierarchy();
 
 }

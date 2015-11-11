@@ -15,18 +15,17 @@
  */
 package org.wso2.carbon.metrics.manager;
 
-import java.lang.management.ManagementFactory;
-import java.util.concurrent.TimeUnit;
-
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
+
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
 
 /**
  * MetricManager is a static utility class providing various metrics.
@@ -43,7 +42,7 @@ public final class MetricManager {
     /**
      * Concatenates elements to form a dotted name
      *
-     * @param name the first element of the name
+     * @param name  the first element of the name
      * @param names the remaining elements of the name
      * @return {@code name} and {@code names} concatenated by periods
      */
@@ -81,8 +80,8 @@ public final class MetricManager {
     /**
      * Return a {@link Meter} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
      * @param statName The statName of the metric
      * @return a {@link Meter} instance
      */
@@ -93,9 +92,9 @@ public final class MetricManager {
     /**
      * Return a {@link Meter} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Meter} instance
      */
@@ -106,8 +105,8 @@ public final class MetricManager {
     /**
      * Return a {@link Counter} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
      * @param statName The statName of the metric
      * @return a {@link Counter} instance
      */
@@ -118,9 +117,9 @@ public final class MetricManager {
     /**
      * Return a {@link Counter} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Counter} instance
      */
@@ -131,8 +130,8 @@ public final class MetricManager {
     /**
      * Return a {@link Timer} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
      * @param statName The statName of the metric
      * @return a {@link Timer} instance
      */
@@ -143,9 +142,9 @@ public final class MetricManager {
     /**
      * Return a {@link Timer} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Timer} instance
      */
@@ -156,8 +155,8 @@ public final class MetricManager {
     /**
      * Return a {@link Histogram} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
      * @param statName The statName of the metric
      * @return a {@link Histogram} instance
      */
@@ -168,9 +167,9 @@ public final class MetricManager {
     /**
      * Return a {@link Histogram} instance registered under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
      * @return a {@link Histogram} instance
      */
@@ -181,10 +180,10 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
      * @param statName The statName of the metric
-     * @param gauge An implementation of {@link Gauge}
+     * @param gauge    An implementation of {@link Gauge}
      */
     public static <T> void gauge(Level level, String name, String statName, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, name, statName, gauge);
@@ -193,11 +192,11 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
-     * @param gauge An implementation of {@link Gauge}
+     * @param gauge    An implementation of {@link Gauge}
      */
     public static <T> void gauge(Level level, String name, String path, String statName, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, path, statName, gauge);
@@ -206,12 +205,12 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param statName The statName of the metric
-     * @param timeout The timeout value
+     * @param level       The {@link Level} used for metric
+     * @param name        The name of the metric
+     * @param statName    The statName of the metric
+     * @param timeout     The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the timeout
-     * @param gauge An implementation of {@link Gauge}
+     * @param gauge       An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, String statName, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, name, statName, timeout, timeoutUnit, gauge);
@@ -220,13 +219,13 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
-     * @param statName The statName of the metric
-     * @param timeout The timeout value
+     * @param level       The {@link Level} used for metric
+     * @param name        The name of the metric
+     * @param path        The annotated path of the metric
+     * @param statName    The statName of the metric
+     * @param timeout     The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the timeout
-     * @param gauge An implementation of {@link Gauge}
+     * @param gauge       An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, String path, String statName, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, path, statName, timeout, timeoutUnit, gauge);
@@ -235,11 +234,11 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
      * @param statName The statName of the metric
-     * @param timeout The timeout value in seconds
-     * @param gauge An implementation of {@link Gauge}
+     * @param timeout  The timeout value in seconds
+     * @param gauge    An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, String statName, long timeout, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, name, statName, timeout, TimeUnit.SECONDS, gauge);
@@ -248,15 +247,22 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
      *
-     * @param level The {@link Level} used for metric
-     * @param name The name of the metric
-     * @param path The annotated path of the metric
+     * @param level    The {@link Level} used for metric
+     * @param name     The name of the metric
+     * @param path     The annotated path of the metric
      * @param statName The statName of the metric
-     * @param timeout The timeout value in seconds
-     * @param gauge An implementation of {@link Gauge}
+     * @param timeout  The timeout value in seconds
+     * @param gauge    An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(Level level, String name, String path, String statName, long timeout, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, path, statName, timeout, TimeUnit.SECONDS, gauge);
+    }
+
+    /**
+     * @return the Metric Hierarchy
+     */
+    public static MetricHierarchy metricHierarchy() {
+        return ServiceReferenceHolder.getInstance().getMetricService().getMetricHierarchy();
     }
 
     public static void registerMXBean() {

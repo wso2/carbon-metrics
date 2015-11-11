@@ -68,7 +68,7 @@ public class MetricTreeNodeIterator implements Iterator<MetricTreeNode> {
 
     @Override
     public MetricTreeNode next() {
-        if (hasNext()) {
+        if (this.next != null) {
             return this.next;
         } else {
             throw new NoSuchElementException();
