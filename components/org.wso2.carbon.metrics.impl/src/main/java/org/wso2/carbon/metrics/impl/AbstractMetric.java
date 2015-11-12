@@ -36,19 +36,13 @@ public abstract class AbstractMetric implements Metric {
      */
     private final String statName;
     /**
-     * The annotated path of the metric which represent
-     * affected parents when updating the current metric
-     */
-    private String path;
-    /**
      * A flag to indicate whether the metric is enabled
      */
     private volatile boolean enabled;
 
-    public AbstractMetric(Level level, String name, String path, String statName) {
+    public AbstractMetric(Level level, String name, String statName) {
         this.level = level;
         this.name = name;
-        this.path = path;
         this.statName = statName;
     }
 
@@ -58,10 +52,6 @@ public abstract class AbstractMetric implements Metric {
 
     public String getName() {
         return name;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     public String getStatName() {

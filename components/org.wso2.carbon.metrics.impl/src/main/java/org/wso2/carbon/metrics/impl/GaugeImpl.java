@@ -25,8 +25,8 @@ public class GaugeImpl<T> extends AbstractMetric implements com.codahale.metrics
 
     private Gauge<T> gauge;
 
-    public GaugeImpl(Level level, String name, String path, String statName, Gauge<T> gauge) {
-        super(level, name, path, statName);
+    public GaugeImpl(Level level, String name, String statName, Gauge<T> gauge) {
+        super(level, name, statName);
         this.gauge = gauge;
     }
 

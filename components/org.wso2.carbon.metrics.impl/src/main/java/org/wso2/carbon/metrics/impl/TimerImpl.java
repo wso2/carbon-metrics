@@ -28,8 +28,8 @@ public class TimerImpl extends AbstractMetric implements Timer {
 
     private com.codahale.metrics.Timer timer;
 
-    public TimerImpl(Level level, String name, String path, String statName, com.codahale.metrics.Timer timer) {
-        super(level, name, path, statName);
+    public TimerImpl(Level level, String name, String statName, com.codahale.metrics.Timer timer) {
+        super(level, name, statName);
         this.timer = timer;
     }
 
