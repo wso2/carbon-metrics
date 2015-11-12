@@ -75,8 +75,4 @@ public abstract class AbstractMetric implements Metric {
     final void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    protected void setPath(String path) {
-        this.path = path;
-    }
 }

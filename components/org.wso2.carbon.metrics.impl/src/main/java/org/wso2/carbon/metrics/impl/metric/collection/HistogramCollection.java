@@ -1,33 +1,38 @@
 /*
- * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
- * 
+ * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.impl;
+package org.wso2.carbon.metrics.impl.metric.collection;
 
 import org.wso2.carbon.metrics.manager.Histogram;
-import org.wso2.carbon.metrics.manager.Level;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Implementation class wrapping {@link com.codahale.metrics.Histogram} metric
+ * Implementation class wrapping {@link List<Histogram>} metrics
  */
-public class HistogramImpl extends AbstractMetric implements Histogram {
+public class HistogramCollection implements Histogram {
 
-    private com.codahale.metrics.Histogram histogram;
+    private Histogram histogram;
+    private List<Histogram> affected;
 
-    public HistogramImpl(Level level, String name, String path, String statName, com.codahale.metrics.Histogram histogram) {
-        super(level, name, path, statName);
+    public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
         this.histogram = histogram;
+        this.affected = new ArrayList<Histogram>();
+        this.affected.add(histogram);
+        this.affected.addAll(affectedHistograms);
     }
 
     /*
@@ -37,8 +42,8 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
      */
     @Override
     public void update(int value) {
-        if (isEnabled()) {
-            histogram.update(value);
+        for (Histogram h : this.affected) {
+            h.update(value);
         }
     }
 
@@ -49,8 +54,8 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
      */
     @Override
     public void update(long value) {
-        if (isEnabled()) {
-            histogram.update(value);
+        for (Histogram h : this.affected) {
+            h.update(value);
         }
     }
 

@@ -27,10 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
+import org.wso2.carbon.metrics.impl.metric.collection.*;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
-import org.wso2.carbon.metrics.impl.updater.MetricUpdater;
 import org.wso2.carbon.metrics.impl.util.MetricTreeNode;
 import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
@@ -44,6 +44,7 @@ import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Histogram;
 import org.wso2.carbon.metrics.manager.Meter;
+import org.wso2.carbon.metrics.manager.Metric;
 import org.wso2.carbon.metrics.manager.Timer;
 
 /**
@@ -58,6 +59,11 @@ public class MetricServiceImpl implements MetricService {
      * Keep all metrics created via this service
      */
     private final ConcurrentMap<String, MetricWrapper> metricsMap = new ConcurrentHashMap<String, MetricWrapper>();
+
+    /**
+     * Keep all metric collections created via this service
+     */
+    private final ConcurrentMap<String, Metric> metricsCollections = new ConcurrentHashMap<String, Metric>();
 
     private final MetricTreeNode rootNode = new MetricTreeNode("root");
 
@@ -316,47 +322,6 @@ public class MetricServiceImpl implements MetricService {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.wso2.carbon.metrics.manager.MetricService#getAffectedMetrics(org.wso2.carbon.metrics.manager.Level,
-     * java.lang.String, java.lang.String, java.lang.String)
-     */
-    @Override
-    public List<org.wso2.carbon.metrics.manager.Metric> getAffectedMetrics(Level level, String name,
-                                                                           String path, String statName) {
-        List<org.wso2.carbon.metrics.manager.Metric> affected = new ArrayList<>();
-        String[] chunks = path.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        String affectedName;
-        for (String chunk : chunks) {
-            if (builder.length() > 0) {
-                builder.append('.');
-            }
-            builder.append(chunk);
-            if (chunk.contains("[+]")) {
-                affectedName = builder.toString().replaceAll("\\[\\+\\]", "");
-                String absoluteName = getAbsoluteName(statName, affectedName);
-                if (metricsMap.get(absoluteName) != null) {
-                    affected.add(metricsMap.get(absoluteName).metric);
-                } else {
-                    MetricWrapper wrapper = metricsMap.get(name);
-                    if (wrapper.metric instanceof Counter) {
-                        counter(level, affectedName, affectedName, statName);
-                    } else if (wrapper.metric instanceof Meter) {
-                        meter(level, affectedName, affectedName, statName);
-                    } else if (wrapper.metric instanceof Histogram) {
-                        histogram(level, affectedName, affectedName, statName);
-                    } else if (wrapper.metric instanceof Timer) {
-                        timer(level, affectedName, affectedName, statName);
-                    }
-                    return getAffectedMetrics(level, name, path, statName);
-                }
-            }
-        }
-        return affected;
-    }
-
     @Override
     public MetricHierarchy getMetricHierarchy() {
         return this.rootNode;
@@ -428,9 +393,6 @@ public class MetricServiceImpl implements MetricService {
             AbstractMetric metric = metricWrapper.metric;
             if (metricBuilder.isInstance(metric)) {
                 if (level.equals(metricWrapper.level)) {
-                    if (metric instanceof MetricUpdater) {
-                        ((MetricUpdater) metric).updateAffectedMetrics(path);
-                    }
                     return (T) metric;
                 } else {
                     throw new IllegalArgumentException(absoluteName + " is already used with a different level");
@@ -446,11 +408,35 @@ public class MetricServiceImpl implements MetricService {
             metricWrapper.metric = newMetric;
             newMetric.setEnabled(enabled);
             addToMetricHierarchy(statName, path, newMetric);
-            if (newMetric instanceof MetricUpdater) {
-                ((MetricUpdater) newMetric).updateAffectedMetrics(path);
-            }
             return newMetric;
         }
+    }
+
+    private <T extends AbstractMetric> Metric getOrCreateMetricCollection(Level level, String name,
+                                                                          String path, String statName,
+                                                                          MetricBuilder<T> metricBuilder) {
+        boolean annotated = path.contains("[+]");
+        Metric metricCollection = metricsCollections.get(path);
+        if (metricCollection == null) {
+            Metric metric = getOrCreateMetric(level, name, path, statName, metricBuilder);
+            List<?> affected = getAffectedMetrics(level, name, path, statName, metricBuilder);
+            if (annotated && metric instanceof Counter) {
+                metricCollection = new CounterCollection((Counter) metric, (List<Counter>) affected);
+                metricsCollections.put(path, metricCollection);
+            } else if (annotated && metric instanceof Histogram) {
+                metricCollection = new HistogramCollection((Histogram) metric, (List<Histogram>) affected);
+                metricsCollections.put(path, metricCollection);
+            } else if (annotated && metric instanceof Meter) {
+                metricCollection = new MeterCollection((Meter) metric, (List<Meter>) affected);
+                metricsCollections.put(path, metricCollection);
+            } else if (annotated && metric instanceof Timer) {
+                metricCollection = new TimerCollection((Timer) metric, (List<Timer>) affected);
+                metricsCollections.put(path, metricCollection);
+            } else {
+                metricCollection = metric;
+            }
+        }
+        return metricCollection;
     }
 
     private MetricTreeNode getOrCreateMetricTreeNode(String name) {
@@ -473,6 +459,31 @@ public class MetricServiceImpl implements MetricService {
         path = path.replaceAll("\\[\\+\\]", "");
         MetricTreeNode treeNode = getOrCreateMetricTreeNode(path);
         treeNode.addMetric(statName, metric);
+    }
+
+    private <T extends AbstractMetric> List<?> getAffectedMetrics(Level level, String name, String path, String statName,
+                                                                  MetricBuilder<T> metricBuilder) {
+        List<T> affected = new ArrayList<>();
+        String[] chunks = path.split("\\.");
+        StringBuilder builder = new StringBuilder();
+        String affectedName;
+        for (String chunk : chunks) {
+            if (builder.length() > 0) {
+                builder.append('.');
+            }
+            builder.append(chunk);
+            if (chunk.contains("[+]")) {
+                affectedName = builder.toString().replaceAll("\\[\\+\\]", "");
+                String absoluteName = getAbsoluteName(statName, affectedName);
+                if (metricsMap.get(absoluteName) != null) {
+                    affected.add((T) metricsMap.get(absoluteName).metric);
+                } else {
+                    getOrCreateMetric(level, affectedName, affectedName, statName, metricBuilder);
+                    return getAffectedMetrics(level, name, path, statName, metricBuilder);
+                }
+            }
+        }
+        return affected;
     }
 
     /**
@@ -607,7 +618,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public Meter meter(Level level, String name, String path, String statName) {
-        return getOrCreateMetric(level, name, path, statName, METER_BUILDER);
+        return (Meter) getOrCreateMetricCollection(level, name, path, statName, METER_BUILDER);
     }
 
     /*
@@ -618,7 +629,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public Counter counter(Level level, String name, String path, String statName) {
-        return getOrCreateMetric(level, name, path, statName, COUNTER_BUILDER);
+        return (Counter) getOrCreateMetricCollection(level, name, path, statName, COUNTER_BUILDER);
     }
 
     /*
@@ -628,7 +639,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public Timer timer(Level level, String name, String path, String statName) {
-        return getOrCreateMetric(level, name, path, statName, TIMER_BUILDER);
+        return (Timer) getOrCreateMetricCollection(level, name, path, statName, TIMER_BUILDER);
     }
 
     /*
@@ -639,7 +650,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public Histogram histogram(Level level, String name, String path, String statName) {
-        return getOrCreateMetric(level, name, path, statName, HISTOGRAM_BUILDER);
+        return (Histogram) getOrCreateMetricCollection(level, name, path, statName, HISTOGRAM_BUILDER);
     }
 
     /*
@@ -650,7 +661,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public <T> void gauge(Level level, String name, String path, String statName, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, path, statName, new GaugeBuilder<T>(gauge));
+        getOrCreateMetricCollection(level, name, path, statName, new GaugeBuilder<T>(gauge));
     }
 
     /*
@@ -662,7 +673,7 @@ public class MetricServiceImpl implements MetricService {
     @Override
     public <T> void cachedGauge(Level level, String name, String path, String statName, long timeout,
                                 TimeUnit timeoutUnit, Gauge<T> gauge) {
-        getOrCreateMetric(level, name, path, statName, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
+        getOrCreateMetricCollection(level, name, path, statName, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
     }
 
     public int getMetricsCount() {
