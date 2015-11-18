@@ -43,13 +43,13 @@ public class HistogramTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
+        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, histogram.getCount());
     }
 
     public void testParentCount() {
-        Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
-        Histogram sub = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
+        Histogram main = MetricManager.histogram("org.wso2.main.test-histogram", Level.INFO);
+        Histogram sub = MetricManager.histogram("org.wso2.main[+].sub.test-histogram", Level.INFO, Level.INFO);
         sub.update(randomGenerator.nextInt());
         main.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub.getCount());
@@ -57,21 +57,20 @@ public class HistogramTest extends TestCase {
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass());
-        Histogram histogram = MetricManager.histogram(Level.INFO, name, "test-same-histogram");
+        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
-        Histogram histogram2 = MetricManager.histogram(Level.INFO, name, "test-same-histogram");
+        Histogram histogram2 = MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
         assertEquals("Count should be one", 1, histogram2.getCount());
     }
 
     public void testSameMetricWithParent() {
-        Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
-        Histogram sub = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
+        Histogram main = MetricManager.histogram("org.wso2.main.test-histogram", Level.INFO);
+        Histogram sub = MetricManager.histogram("org.wso2.main[+].sub.test-histogram", Level.INFO, Level.INFO);
 
-        Histogram main2 = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
-        Histogram sub2 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-histogram");
+        Histogram main2 = MetricManager.histogram("org.wso2.main.test-histogram", Level.INFO);
+        Histogram sub2 = MetricManager.histogram("org.wso2.main[+].sub.test-histogram", Level.INFO, Level.INFO);
 
         sub.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub.getCount());
@@ -87,9 +86,9 @@ public class HistogramTest extends TestCase {
     }
 
     public void testMetricWithNonExistingParents() {
-        Histogram sub2 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "test-histogram");
-        Histogram sub1 = MetricManager.histogram(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-histogram");
-        Histogram main = MetricManager.histogram(Level.INFO, "org.wso2.main", "test-histogram");
+        Histogram sub2 = MetricManager.histogram("org.wso2.main[+].sub1[+].sub2.test-histogram", Level.INFO, Level.INFO, Level.INFO);
+        Histogram sub1 = MetricManager.histogram("org.wso2.main[+].sub1.test-histogram", Level.INFO, Level.INFO);
+        Histogram main = MetricManager.histogram("org.wso2.main.test-histogram", Level.INFO);
 
         sub2.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, sub2.getCount());
@@ -108,7 +107,7 @@ public class HistogramTest extends TestCase {
     }
 
     public void testUpdateInt() {
-        Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass()), "test-histogram-update-int");
+        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-int"), Level.INFO);
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
@@ -118,7 +117,7 @@ public class HistogramTest extends TestCase {
     }
 
     public void testUpdateLong() {
-        Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass()), "test-histogram-update-long");
+        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-long"), Level.INFO);
 
         histogram.update(randomGenerator.nextLong());
         assertEquals("Count should be one", 1, histogram.getCount());

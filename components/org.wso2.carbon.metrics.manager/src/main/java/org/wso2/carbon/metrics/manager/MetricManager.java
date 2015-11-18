@@ -85,22 +85,18 @@ public final class MetricManager {
      * @param statName The statName of the metric
      * @return a {@link Meter} instance
      */
-    public static Meter meter(Level level, String name, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().meter(level, name, name, statName);
+    public static Meter meter(String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(name);
     }
 
-    /**
-     * Return a {@link Meter} instance registered under given name
-     *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @return a {@link Meter} instance
-     */
-    public static Meter meter(Level level, String name, String path, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().meter(level, name, path, statName);
+    public static Meter meter(String name, Level level) {
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(name, level);
     }
+
+    public static Meter meter(String name, Level... levels) {
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(name, levels);
+    }
+
 
     /**
      * Return a {@link Counter} instance registered under given name
@@ -110,21 +106,16 @@ public final class MetricManager {
      * @param statName The statName of the metric
      * @return a {@link Counter} instance
      */
-    public static Counter counter(Level level, String name, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().counter(level, name, name, statName);
+    public static Counter counter(String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(name);
     }
 
-    /**
-     * Return a {@link Counter} instance registered under given name
-     *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @return a {@link Counter} instance
-     */
-    public static Counter counter(Level level, String name, String path, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().counter(level, name, path, statName);
+    public static Counter counter(String name, Level level) {
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(name, level);
+    }
+
+    public static Counter counter(String name, Level... levels) {
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(name, levels);
     }
 
     /**
@@ -135,21 +126,16 @@ public final class MetricManager {
      * @param statName The statName of the metric
      * @return a {@link Timer} instance
      */
-    public static Timer timer(Level level, String name, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().timer(level, name, name, statName);
+    public static Timer timer(String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(name);
     }
 
-    /**
-     * Return a {@link Timer} instance registered under given name
-     *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @return a {@link Timer} instance
-     */
-    public static Timer timer(Level level, String name, String path, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().timer(level, name, path, statName);
+    public static Timer timer(String name, Level level) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(name, level);
+    }
+
+    public static Timer timer(String name, Level... levels) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(name, levels);
     }
 
     /**
@@ -160,21 +146,16 @@ public final class MetricManager {
      * @param statName The statName of the metric
      * @return a {@link Histogram} instance
      */
-    public static Histogram histogram(Level level, String name, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().histogram(level, name, name, statName);
+    public static Histogram histogram(String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(name);
     }
 
-    /**
-     * Return a {@link Histogram} instance registered under given name
-     *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @return a {@link Histogram} instance
-     */
-    public static Histogram histogram(Level level, String name, String path, String statName) {
-        return ServiceReferenceHolder.getInstance().getMetricService().histogram(level, name, path, statName);
+    public static Histogram histogram(String name, Level level) {
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(name, level);
+    }
+
+    public static Histogram histogram(String name, Level... levels) {
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(name, levels);
     }
 
     /**
@@ -185,21 +166,8 @@ public final class MetricManager {
      * @param statName The statName of the metric
      * @param gauge    An implementation of {@link Gauge}
      */
-    public static <T> void gauge(Level level, String name, String statName, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, name, statName, gauge);
-    }
-
-    /**
-     * Register a {@link Gauge} instance under given name
-     *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @param gauge    An implementation of {@link Gauge}
-     */
-    public static <T> void gauge(Level level, String name, String path, String statName, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().gauge(level, name, path, statName, gauge);
+    public static <T> void gauge(String name, Level level, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().gauge(name, level, gauge);
     }
 
     /**
@@ -212,23 +180,8 @@ public final class MetricManager {
      * @param timeoutUnit The {@link TimeUnit} for the timeout
      * @param gauge       An implementation of {@link Gauge}
      */
-    public static <T> void cachedGauge(Level level, String name, String statName, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, name, statName, timeout, timeoutUnit, gauge);
-    }
-
-    /**
-     * Register a {@link Gauge} instance under given name with a configurable cache timeout
-     *
-     * @param level       The {@link Level} used for metric
-     * @param name        The name of the metric
-     * @param path        The annotated path of the metric
-     * @param statName    The statName of the metric
-     * @param timeout     The timeout value
-     * @param timeoutUnit The {@link TimeUnit} for the timeout
-     * @param gauge       An implementation of {@link Gauge}
-     */
-    public static <T> void cachedGauge(Level level, String name, String path, String statName, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, path, statName, timeout, timeoutUnit, gauge);
+    public static <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, timeoutUnit, gauge);
     }
 
     /**
@@ -240,22 +193,8 @@ public final class MetricManager {
      * @param timeout  The timeout value in seconds
      * @param gauge    An implementation of {@link Gauge}
      */
-    public static <T> void cachedGauge(Level level, String name, String statName, long timeout, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, name, statName, timeout, TimeUnit.SECONDS, gauge);
-    }
-
-    /**
-     * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
-     *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @param timeout  The timeout value in seconds
-     * @param gauge    An implementation of {@link Gauge}
-     */
-    public static <T> void cachedGauge(Level level, String name, String path, String statName, long timeout, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(level, name, path, statName, timeout, TimeUnit.SECONDS, gauge);
+    public static <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
     }
 
     /**

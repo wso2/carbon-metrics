@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.metrics.manager;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,19 +43,17 @@ public interface MetricService {
      * Get the {@link Level} for a given metric
      *
      * @param name     The name of the Metric
-     * @param statName The statName of the Metric
      * @return {@link Level} for the given metric statName
      */
-    Level getMetricLevel(String name, String statName);
+    Level getMetricLevel(String name);
 
     /**
      * Set a new level to the given metric (name & statName)
      *
-     * @param name     The name of the Metric
-     * @param statName The name of the Metric
-     * @param level    New {@link Level} for the Metric
+     * @param name  The name of the Metric
+     * @param level New {@link Level} for the Metric
      */
-    void setMetricLevel(String name, String statName, Level level);
+    void setMetricLevel(String name, Level level);
 
     /**
      * @return The current root {@link Level}
@@ -80,72 +77,74 @@ public interface MetricService {
     /**
      * Get or create a {@link Meter} instance for the given statName
      *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
      * @return a {@link Meter} instance
      */
-    Meter meter(Level level, String name, String path, String statName);
+    Meter meter(String name);
+
+    Meter meter(String name, Level level);
+
+    Meter meter(String name, Level... levels);
 
     /**
      * Get or create a {@link Counter} instance for the given name
      *
-     * @param statName The statName of the metric
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
      * @return a {@link Counter} instance
      */
-    Counter counter(Level level, String name, String path, String statName);
+    Counter counter(String name);
+
+    Counter counter(String name, Level level);
+
+    Counter counter(String name, Level... levels);
 
     /**
      * Get or create a {@link Timer} instance for the given name
      *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
      * @return a {@link Timer} instance
      */
-    Timer timer(Level level, String name, String path, String statName);
+    Timer timer(String name);
+
+    Timer timer(String name, Level level);
+
+    Timer timer(String name, Level... levels);
 
     /**
      * Get or create a {@link Histogram} instance for the given name
      *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
      * @return a {@link Histogram} instance
      */
-    Histogram histogram(Level level, String name, String path, String statName);
+    Histogram histogram(String name);
+
+    Histogram histogram(String name, Level level);
+
+    Histogram histogram(String name, Level... levels);
 
     /**
      * Get or create a {@link Gauge} for the given name
      *
-     * @param level    The {@link Level} used for metric
-     * @param name     The name of the metric
-     * @param path     The annotated path of the metric
-     * @param statName The statName of the metric
-     * @param gauge    An implementation of {@link Gauge}
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
+     * @param gauge An implementation of {@link Gauge}
      */
-    <T> void gauge(Level level, String name, String path, String statName, Gauge<T> gauge);
+    <T> void gauge(String name, Level level, Gauge<T> gauge);
 
     /**
      * Get or create a cached {@link Gauge} for the given name
      *
      * @param level       The {@link Level} used for metric
      * @param name        The name of the metric
-     * @param path        The annotated path of the metric
-     * @param statName    The statName of the metric
      * @param timeout     the timeout
      * @param timeoutUnit the unit of {@code timeout}
      * @param gauge       An implementation of {@link Gauge}
      */
-    <T> void cachedGauge(Level level, String name, String path, String statName, long timeout, TimeUnit timeoutUnit,
-                         Gauge<T> gauge);
+    <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
 
     /**
      * Invoke report method of all scheduled reporters.

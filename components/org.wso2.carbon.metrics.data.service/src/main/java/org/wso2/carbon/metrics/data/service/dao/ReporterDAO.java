@@ -232,7 +232,7 @@ public class ReporterDAO {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                String absoluteName = rs.getString(1);
+                String name = rs.getString(1);
                 long timestamp = rs.getLong(2);
                 for (int j = 0; j < attributes.size(); j++) {
                     BigDecimal value;
@@ -242,10 +242,7 @@ public class ReporterDAO {
                         value = BigDecimal.ZERO;
                         // throw?
                     }
-                    int index = absoluteName.lastIndexOf("@");
-                    String statName = absoluteName.substring(0, index);
-                    String name = absoluteName.substring(index + 1);
-                    processor.process(source, timestamp, metricType, name, statName, attributes.get(j), value);
+                    processor.process(source, timestamp, metricType, name, attributes.get(j), value);
                 }
 
             }

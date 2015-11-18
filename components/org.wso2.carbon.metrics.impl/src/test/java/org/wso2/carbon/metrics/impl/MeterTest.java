@@ -43,15 +43,15 @@ public class MeterTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, meter.getCount());
-        Meter meter2 = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
+        Meter meter2 = MetricManager.meter(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, meter2.getCount());
     }
 
     public void testParentCount() {
-        Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
-        Meter sub = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
+        Meter main = MetricManager.meter("org.wso2.main.test-meter", Level.INFO);
+        Meter sub = MetricManager.meter("org.wso2.main[+].sub.test-meter", Level.INFO, Level.INFO);
         sub.mark(5);
         main.mark(5);
         assertEquals("Count should be five", 5, sub.getCount());
@@ -60,20 +60,20 @@ public class MeterTest extends TestCase {
 
     public void testSameMetric() {
         String name = MetricManager.name(this.getClass());
-        Meter meter = MetricManager.meter(Level.INFO, name, "test-same-meter");
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-same-meter"), Level.INFO);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
-        Meter meter2 = MetricManager.meter(Level.INFO, name, "test-same-meter");
+        Meter meter2 = MetricManager.meter(MetricManager.name(this.getClass(), "test-same-meter"), Level.INFO);
         assertEquals("Count should be one", 1, meter2.getCount());
     }
 
     public void testSameMetricWithParent() {
-        Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
-        Meter sub = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
+        Meter main = MetricManager.meter("org.wso2.main.test-meter", Level.INFO);
+        Meter sub = MetricManager.meter("org.wso2.main[+].sub.test-meter", Level.INFO, Level.INFO);
 
-        Meter main2 = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
-        Meter sub2 = MetricManager.meter(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-meter");
+        Meter main2 = MetricManager.meter("org.wso2.main.test-meter", Level.INFO);
+        Meter sub2 = MetricManager.meter("org.wso2.main[+].sub.test-meter", Level.INFO, Level.INFO);
 
         sub.mark();
         assertEquals("Count should be one", 1, sub.getCount());
@@ -89,9 +89,9 @@ public class MeterTest extends TestCase {
     }
 
     public void testMetricWithNonExistingParents() {
-        Meter sub2 = MetricManager.meter(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "test-meter");
-        Meter sub1 = MetricManager.meter(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-meter");
-        Meter main = MetricManager.meter(Level.INFO, "org.wso2.main", "test-meter");
+        Meter sub2 = MetricManager.meter("org.wso2.main[+].sub1[+].sub2.test-meter", Level.INFO, Level.INFO, Level.INFO);
+        Meter sub1 = MetricManager.meter("org.wso2.main[+].sub1.test-meter", Level.INFO, Level.INFO);
+        Meter main = MetricManager.meter("org.wso2.main.test-meter", Level.INFO);
 
         sub2.mark();
         assertEquals("Count should be one", 1, sub2.getCount());
@@ -110,7 +110,7 @@ public class MeterTest extends TestCase {
     }
 
     public void testMarkEvent() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-meter-mark");
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-meter-mark"), Level.INFO);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
@@ -120,7 +120,7 @@ public class MeterTest extends TestCase {
     }
 
     public void testMarkEventByRandomNumber() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass()), "test-meter-mark-rand");
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-meter-mark-rand"), Level.INFO);
         int n = randomGenerator.nextInt();
         meter.mark(n);
         assertEquals("Count should be " + n, n, meter.getCount());

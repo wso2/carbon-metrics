@@ -32,18 +32,13 @@ public abstract class AbstractMetric implements Metric {
      */
     private final String name;
     /**
-     * The statName of the metric
-     */
-    private final String statName;
-    /**
      * A flag to indicate whether the metric is enabled
      */
     private volatile boolean enabled;
 
-    public AbstractMetric(Level level, String name, String statName) {
-        this.level = level;
+    public AbstractMetric(String name, Level level) {
         this.name = name;
-        this.statName = statName;
+        this.level = level;
     }
 
     public Level getLevel() {
@@ -52,10 +47,6 @@ public abstract class AbstractMetric implements Metric {
 
     public String getName() {
         return name;
-    }
-
-    public String getStatName() {
-        return statName;
     }
 
     protected final boolean isEnabled() {

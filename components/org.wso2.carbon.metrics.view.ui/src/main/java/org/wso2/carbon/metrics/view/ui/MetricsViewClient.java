@@ -90,7 +90,6 @@ public class MetricsViewClient {
             xsdMetric.setFormat(metric.getFormat());
             xsdMetric.setName(metric.getName());
             xsdMetric.setType(metric.getType());
-            xsdMetric.setStatName(metric.getStatName());
         }
         return xsdMetricList;
     }

@@ -25,8 +25,8 @@ public class CounterImpl extends AbstractMetric implements Counter {
 
     private com.codahale.metrics.Counter counter;
 
-    public CounterImpl(Level level, String name, String statName, com.codahale.metrics.Counter counter) {
-        super(level, name, statName);
+    public CounterImpl(String name, Level level, com.codahale.metrics.Counter counter) {
+        super(name, level);
         this.counter = counter;
     }
 

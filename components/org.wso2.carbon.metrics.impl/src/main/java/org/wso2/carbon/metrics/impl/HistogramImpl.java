@@ -25,8 +25,8 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
 
     private com.codahale.metrics.Histogram histogram;
 
-    public HistogramImpl(Level level, String name, String statName, com.codahale.metrics.Histogram histogram) {
-        super(level, name, statName);
+    public HistogramImpl(String name, Level level, com.codahale.metrics.Histogram histogram) {
+        super(name, level);
         this.histogram = histogram;
     }
 

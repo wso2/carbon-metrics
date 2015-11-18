@@ -31,11 +31,6 @@ public class Metric {
     private String name;
 
     /**
-     * Metric StatName
-     */
-    private String statName;
-
-    /**
      * Metric Display Name
      */
     private String displayName;
@@ -53,16 +48,13 @@ public class Metric {
     public Metric() {
     }
 
-    public Metric(MetricType type, String name, String statName, String displayName, MetricAttribute attr, MetricDataFormat format) {
+    public Metric(MetricType type, String name, String displayName, MetricAttribute attr, MetricDataFormat format) {
         super();
         if (type == null) {
             throw new IllegalArgumentException("Type cannot be null");
         }
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
-        }
-        if (statName == null) {
-            throw new IllegalArgumentException("StatName cannot be null");
         }
         if (displayName == null) {
             throw new IllegalArgumentException("Display Name cannot be null");
@@ -72,7 +64,6 @@ public class Metric {
         }
         this.type = type.name();
         this.name = name;
-        this.statName = statName;
         this.displayName = displayName;
         this.attr = attr.name();
         if (format != null) {
@@ -94,14 +85,6 @@ public class Metric {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getStatName() {
-        return statName;
-    }
-
-    public void setStatName(String statName) {
-        this.statName = statName;
     }
 
     public String getDisplayName() {

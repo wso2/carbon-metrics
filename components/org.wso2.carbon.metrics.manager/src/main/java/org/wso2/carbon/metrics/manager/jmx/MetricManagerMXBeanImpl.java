@@ -51,14 +51,14 @@ public class MetricManagerMXBeanImpl implements MetricManagerMXBean {
     }
 
     @Override
-    public String getMetricLevel(String name, String statName) {
-        Level level = metricService.getMetricLevel(name, statName);
+    public String getMetricLevel(String name) {
+        Level level = metricService.getMetricLevel(name);
         return level != null ? level.name() : null;
     }
 
     @Override
-    public void setMetricLevel(String name, String statName, String level) {
-        metricService.setMetricLevel(name, statName, Level.valueOf(level));
+    public void setMetricLevel(String name, String level) {
+        metricService.setMetricLevel(name, Level.valueOf(level));
     }
 
     @Override

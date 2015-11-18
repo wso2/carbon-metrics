@@ -93,10 +93,9 @@ public class MetricsDataServiceTest extends TestCase {
     }
 
     public void testSpecificData() {
-        String gaugeName = "jvm.memory";
-        String gaugeStatName = "heap.init";
+        String gaugeName = "jvm.memory.heap.init";
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?",
-                gaugeStatName + "@" + gaugeName);
+                gaugeName);
         assertEquals("There are two results", 2, gaugeResult.size());
     }
 
@@ -155,22 +154,22 @@ public class MetricsDataServiceTest extends TestCase {
     }
 
     private void addMemoryMetrics(List<Metric> metrics, String type, String displayType) {
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.init", type), String.format("%s Init",
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.init", type), String.format("%s Init",
                 displayType), MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.used", type), String.format("%s Used",
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.used", type), String.format("%s Used",
                 displayType), MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.committed", type), String.format(
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.committed", type), String.format(
                 "%s Committed", displayType), MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.memory", String.format("%s.max", type), String.format("%s Max",
+        metrics.add(new Metric(MetricType.GAUGE, String.format("jvm.memory.%s.max", type), String.format("%s Max",
                 displayType), MetricAttribute.VALUE, MetricDataFormat.B));
 
     }
 
     public void testJMXCPULoadMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "cpu.load.process", "Process CPU Load", MetricAttribute.VALUE,
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.process", "Process CPU Load", MetricAttribute.VALUE,
                 MetricDataFormat.P));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "cpu.load.system", "System CPU Load", MetricAttribute.VALUE,
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.system", "System CPU Load", MetricAttribute.VALUE,
                 MetricDataFormat.P));
 
         MetricList metricList = new MetricList();
@@ -194,7 +193,7 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testJMXLoadAverageMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "system.load.average", "System Load Average",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.system.load.average", "System Load Average",
                 MetricAttribute.VALUE, null));
 
         MetricList metricList = new MetricList();
@@ -216,9 +215,9 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testJMXFileDescriptorMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "file.descriptor.open.count", "Open File Descriptor Count",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.open.count", "Open File Descriptor Count",
                 MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "file.descriptor.max.count", "Max File Descriptor Count",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.max.count", "Max File Descriptor Count",
                 MetricAttribute.VALUE, null));
 
         MetricList metricList = new MetricList();
@@ -239,15 +238,15 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testJMXPhysicalMemoryMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "physical.memory.free.size", "Free Physical Memory Size",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.free.size", "Free Physical Memory Size",
                 MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "physical.memory.total.size", "Total Physical Memory Size",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.total.size", "Total Physical Memory Size",
                 MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "swap.space.free.size", "Free Swap Space Size",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.swap.space.free.size", "Free Swap Space Size",
                 MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "swap.space.total.size", "Total Swap Space Size",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.swap.space.total.size", "Total Swap Space Size",
                 MetricAttribute.VALUE, MetricDataFormat.B));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.os", "virtual.memory.committed.size",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.os.virtual.memory.committed.size",
                 "Committed Virtual Memory Size", MetricAttribute.VALUE, MetricDataFormat.B));
 
         MetricList metricList = new MetricList();
@@ -268,8 +267,8 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testJMXThreadingMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads", "count", "Live Threads", MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads", "daemon.count", "Daemon Threads", MetricAttribute.VALUE,
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads", MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.daemon.count", "Daemon Threads", MetricAttribute.VALUE,
                 null));
 
         MetricList metricList = new MetricList();
@@ -290,11 +289,11 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testJMXClassLoadingMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "loaded.current", "Current Classes Loaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current", "Current Classes Loaded",
                 MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "loaded.total", "Total Classes Loaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.total", "Total Classes Loaded",
                 MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "unloaded.total", "Total Classes Unloaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total", "Total Classes Unloaded",
                 MetricAttribute.VALUE, null));
 
         MetricList metricList = new MetricList();
@@ -318,81 +317,81 @@ public class MetricsDataServiceTest extends TestCase {
         // This test will check the metric find queries
         List<Metric> metrics = new ArrayList<Metric>();
         // Read Metrics
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Minimum Database Read Time", MetricAttribute.MIN,
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Minimum Database Read Time", MetricAttribute.MIN,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Mean Database Read Time", MetricAttribute.MEAN, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Maximum Database Read Time", MetricAttribute.MAX,
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Mean Database Read Time", MetricAttribute.MEAN, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Maximum Database Read Time", MetricAttribute.MAX,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Standard Deviation of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Standard Deviation of Database Read Time",
                 MetricAttribute.STDDEV, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "50th Percentile of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "50th Percentile of Database Read Time",
                 MetricAttribute.P50, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "75th Percentile of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "75th Percentile of Database Read Time",
                 MetricAttribute.P75, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "95th Percentile of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "95th Percentile of Database Read Time",
                 MetricAttribute.P95, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "98th Percentile of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "98th Percentile of Database Read Time",
                 MetricAttribute.P98, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "99th Percentile of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "99th Percentile of Database Read Time",
                 MetricAttribute.P99, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "99.9th Percentile of Database Read Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "99.9th Percentile of Database Read Time",
                 MetricAttribute.P999, null));
 
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Database Read Mean Rate", MetricAttribute.MEAN_RATE,
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Mean Rate", MetricAttribute.MEAN_RATE,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Database Read Last Minute Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Last Minute Rate",
                 MetricAttribute.M1_RATE, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Database Read Last 5 Minutes Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Last 5 Minutes Rate",
                 MetricAttribute.M5_RATE, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "read", "Database Read Last 15 Minutes Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Database Read Last 15 Minutes Rate",
                 MetricAttribute.M15_RATE, null));
 
         // JMX Thread
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads", "count", "Live Threads", MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads", "daemon.count", "Daemon Threads", MetricAttribute.VALUE,
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads", MetricAttribute.VALUE, null));
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.daemon.count", "Daemon Threads", MetricAttribute.VALUE,
                 null));
 
         // Write Metrics
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Minimum Database Write Time", MetricAttribute.MIN,
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Minimum Database Write Time", MetricAttribute.MIN,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Mean Database Write Time", MetricAttribute.MEAN,
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Mean Database Write Time", MetricAttribute.MEAN,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Maximum Database Write Time", MetricAttribute.MAX,
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Maximum Database Write Time", MetricAttribute.MAX,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Standard Deviation of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Standard Deviation of Database Write Time",
                 MetricAttribute.STDDEV, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "50th Percentile of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "50th Percentile of Database Write Time",
                 MetricAttribute.P50, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "75th Percentile of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "75th Percentile of Database Write Time",
                 MetricAttribute.P75, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "95th Percentile of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "95th Percentile of Database Write Time",
                 MetricAttribute.P95, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "98th Percentile of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "98th Percentile of Database Write Time",
                 MetricAttribute.P98, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "99th Percentile of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "99th Percentile of Database Write Time",
                 MetricAttribute.P99, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "99.9th Percentile of Database Write Time",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "99.9th Percentile of Database Write Time",
                 MetricAttribute.P999, null));
 
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Database Write Mean Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Mean Rate",
                 MetricAttribute.MEAN_RATE, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Database Write Last Minute Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Last Minute Rate",
                 MetricAttribute.M1_RATE, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Database Write Last 5 Minutes Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Last 5 Minutes Rate",
                 MetricAttribute.M5_RATE, null));
-        metrics.add(new Metric(MetricType.TIMER, "database", "write", "Database Write Last 15 Minutes Rate",
+        metrics.add(new Metric(MetricType.TIMER, "database.write", "Database Write Last 15 Minutes Rate",
                 MetricAttribute.M15_RATE, null));
 
         // JMX Class Loading
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "loaded.current", "Current Classes Loaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current", "Current Classes Loaded",
                 MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "loaded.total", "Total Classes Loaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.total", "Total Classes Loaded",
                 MetricAttribute.VALUE, null));
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "unloaded.total", "Total Classes Unloaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total", "Total Classes Unloaded",
                 MetricAttribute.VALUE, null));
 
         // Duplicate Metric
-        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading", "unloaded.total", "Total Classes Unloaded",
+        metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.unloaded.total", "Total Classes Unloaded",
                 MetricAttribute.VALUE, null));
 
         MetricList metricList = new MetricList();
