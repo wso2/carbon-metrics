@@ -33,7 +33,9 @@ public class TimerCollection implements Timer {
     public TimerCollection(Timer timer, List<Timer> affectedTimers) {
         this.timer = timer;
         this.affected = new ArrayList<Timer>();
-        this.affected.add(timer);
+        if (!this.affected.contains(timer)) {
+            this.affected.add(timer);
+        }
         this.affected.addAll(affectedTimers);
     }
 

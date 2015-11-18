@@ -46,13 +46,13 @@ public class TimerTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-initial-count");
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, timer.getCount());
     }
 
     public void testParentCount() {
-        Timer main = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
-        Timer sub = MetricManager.timer(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-timer");
+        Timer main = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
+        Timer sub = MetricManager.timer("org.wso2.main[+].sub.test-timer", Level.INFO, Level.INFO);
         sub.update(1, TimeUnit.SECONDS);
         main.update(1, TimeUnit.SECONDS);
         assertEquals("Count should be one", 1, sub.getCount());
@@ -60,21 +60,20 @@ public class TimerTest extends TestCase {
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass());
-        Timer timer = MetricManager.timer(Level.INFO, name, "test-same-timer");
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
         assertEquals("Timer count should be one", 1, timer.getCount());
 
-        Timer timer2 = MetricManager.timer(Level.INFO, name, "test-same-timer");
+        Timer timer2 = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
         assertEquals("Timer count should be one", 1, timer2.getCount());
     }
 
     public void testSameMetricWithParent() {
-        Timer main = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
-        Timer sub = MetricManager.timer(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-timer");
+        Timer main = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
+        Timer sub = MetricManager.timer("org.wso2.main[+].sub.test-timer", Level.INFO, Level.INFO);
 
-        Timer main2 = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
-        Timer sub2 = MetricManager.timer(Level.INFO, "org.wso2.main.sub", "org.wso2.main[+].sub", "test-timer");
+        Timer main2 = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
+        Timer sub2 = MetricManager.timer("org.wso2.main[+].sub.test-timer", Level.INFO, Level.INFO);
 
         sub.update(1, TimeUnit.SECONDS);
         assertEquals("Count should be one", 1, sub.getCount());
@@ -90,9 +89,9 @@ public class TimerTest extends TestCase {
     }
 
     public void testMetricWithNonExistingParents() {
-        Timer sub2 = MetricManager.timer(Level.INFO, "org.wso2.main.sub1.sub2", "org.wso2.main[+].sub1[+].sub2", "test-timer");
-        Timer sub1 = MetricManager.timer(Level.INFO, "org.wso2.main.sub1", "org.wso2.main[+].sub1", "test-timer");
-        Timer main = MetricManager.timer(Level.INFO, "org.wso2.main", "test-timer");
+        Timer sub2 = MetricManager.timer("org.wso2.main[+].sub1[+].sub2.test-timer", Level.INFO, Level.INFO, Level.INFO);
+        Timer sub1 = MetricManager.timer("org.wso2.main[+].sub1.test-timer", Level.INFO, Level.INFO);
+        Timer main = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
 
         sub2.update(5, TimeUnit.SECONDS);
         assertEquals("Count should be one", 1, sub2.getCount());
@@ -111,7 +110,7 @@ public class TimerTest extends TestCase {
     }
 
     public void testTime() {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-timer-start");
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-start"), Level.INFO);
         Context context = timer.start();
         assertTrue("Timer works!", context.stop() > 0);
         assertEquals("Timer count should be one", 1, timer.getCount());
@@ -124,7 +123,7 @@ public class TimerTest extends TestCase {
     }
 
     public void testTimerUpdateCount() {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-timer-update");
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-update"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
         assertEquals("Timer count should be one", 1, timer.getCount());
 
@@ -134,7 +133,7 @@ public class TimerTest extends TestCase {
     }
 
     public void testTimerCallableInstances() throws Exception {
-        Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass()), "test-timer-callable");
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-callable"), Level.INFO);
         Callable<String> callable = new Callable<String>() {
             @Override
             public String call() throws Exception {

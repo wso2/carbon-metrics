@@ -25,8 +25,8 @@ public class MeterImpl extends AbstractMetric implements Meter {
 
     private com.codahale.metrics.Meter meter;
 
-    public MeterImpl(Level level, String name, String statName, com.codahale.metrics.Meter meter) {
-        super(level, name, statName);
+    public MeterImpl(String name, Level level, com.codahale.metrics.Meter meter) {
+        super(name, level);
         this.meter = meter;
     }
 
