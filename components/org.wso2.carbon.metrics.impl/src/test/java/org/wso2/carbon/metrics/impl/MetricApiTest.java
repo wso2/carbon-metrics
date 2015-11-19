@@ -18,8 +18,8 @@
 package org.wso2.carbon.metrics.impl;
 
 import junit.framework.TestCase;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
+import org.hamcrest.core.IsInstanceOf;
+import org.junit.Assert;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.*;
@@ -31,9 +31,6 @@ import java.util.NoSuchElementException;
  * Test Cases for {@link Counter}
  */
 public class MetricApiTest extends TestCase {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private MetricService metricService;
 
@@ -79,27 +76,43 @@ public class MetricApiTest extends TestCase {
         assertEquals("Count should be three", 1, subCounter2.getCount());
         assertEquals("Count should be three", 1, mainCounter2.getCount());
     }
-//
-//    public void testGetUndefinedCounter() {
-//        thrown.expect(NoSuchElementException.class);
-//        Counter counter = MetricManager.counter("org.wso2.main.throughput");
-//    }
-//
-//    public void testGetWrongMetricType() {
-//        Counter counter = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
-//        thrown.expect(IllegalArgumentException.class);
-//        Meter meter = MetricManager.meter("org.wso2.main.throughput");
-//    }
-//
-//    public void testAnnotatedNameToCreateSingleMetric() {
-//        thrown.expect(IllegalArgumentException.class);
-//        Counter counter = MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO);
-//    }
-//
-//    public void testGetMetricWithDifferentLevel() {
-//        Counter counter1 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
-//        thrown.expect(IllegalArgumentException.class);
-//        Counter counter2 = MetricManager.counter("org.wso2.main.throughput", Level.DEBUG);
-//    }
 
+    public void testGetUndefinedCounter() {
+        try {
+            Counter counter = MetricManager.counter("org.wso2.main.throughput");
+            fail("Should throw an exception, cannot retrieve undefined metric");
+        } catch (Exception e) {
+            Assert.assertThat(e, IsInstanceOf.instanceOf(NoSuchElementException.class));
+        }
+    }
+
+    public void testGetWrongMetricType() {
+        try {
+            Counter counter = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
+            Meter meter = MetricManager.meter("org.wso2.main.throughput");
+            fail("Should throw an exception, cannot retrieve metric when the metric type is different");
+        } catch (Exception e) {
+            Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+        }
+    }
+
+    public void testAnnotatedNameToCreateSingleMetric() {
+        try {
+            Counter counter = MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO);
+            fail("Should throw an exception, cannot retrieve metric when there's no sufficient Levels" +
+                    " to suite annotated name");
+        } catch (Exception e) {
+            Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+        }
+    }
+
+    public void testGetMetricWithDifferentLevel() {
+        try {
+            Counter counter1 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
+            Counter counter2 = MetricManager.counter("org.wso2.main.throughput", Level.DEBUG);
+            fail("Should throw an exception, cannot retrieve metric when the metric level is different");
+        } catch (Exception e) {
+            Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+        }
+    }
 }
