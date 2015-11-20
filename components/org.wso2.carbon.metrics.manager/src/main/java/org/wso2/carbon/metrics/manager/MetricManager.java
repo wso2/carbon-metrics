@@ -241,20 +241,6 @@ public final class MetricManager {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
     }
 
-    /**
-     * @return the Metric Hierarchy
-     */
-    public static MetricHierarchy metricHierarchy() {
-        return ServiceReferenceHolder.getInstance().getMetricService().getMetricHierarchy();
-    }
-
-    /**
-     * @return the Metric Hierarchy for a given path
-     */
-    public static MetricHierarchy metricHierarchy(String path) {
-        return ServiceReferenceHolder.getInstance().getMetricService().getMetricHierarchy(path);
-    }
-
     public static void registerMXBean() {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {

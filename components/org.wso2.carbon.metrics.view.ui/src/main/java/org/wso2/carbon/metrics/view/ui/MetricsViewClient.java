@@ -55,6 +55,26 @@ public class MetricsViewClient {
         }
     }
 
+    public String[] getAllChildren(String source, String path) throws RemoteException {
+        try {
+            return stub.getAllChildren(source, path);
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricHierarchyDataWrapper getHierarchy(String source, String path) throws RemoteException {
+        try {
+            return new MetricHierarchyDataWrapper(stub.getHierarchy(source, path));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
     public MetricDataWrapper findLastMetrics(org.wso2.carbon.metrics.data.common.MetricList metrics, String source, String from) throws RemoteException {
         try {
             return new MetricDataWrapper(stub.findLastMetrics(convert(metrics), source, from));
