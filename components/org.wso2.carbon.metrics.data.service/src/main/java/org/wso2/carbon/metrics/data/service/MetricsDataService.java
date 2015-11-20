@@ -17,13 +17,7 @@ package org.wso2.carbon.metrics.data.service;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,6 +183,43 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
             sourcesList.addAll(sources);
         }
         return sourcesList.toArray(new String[sourcesList.size()]);
+    }
+
+    public String[] getAllChildren(String source, String path) {
+        MetricHierarchyData hierarchyData = getHierarchy(source, path);
+        return hierarchyData.getChildren();
+    }
+
+    public MetricHierarchyData getHierarchy(String source, String path) {
+        Map<String, MetricType> hierarchicalMetrics = reporterDAO.queryHierarchicalMetrics(source);
+        Set<String> childrenNames = new TreeSet<>();
+        List<MetricMeta> metrics = new ArrayList<>();
+        path = (path != null && !path.isEmpty()) ? path : "";
+
+        for (Map.Entry<String, MetricType> entry : hierarchicalMetrics.entrySet()) {
+            String metric = entry.getKey();
+            MetricType type = entry.getValue();
+            if (metric.startsWith(path)) {
+                String suffix = (!"".equals(path)) ? metric.replaceFirst(path + "\\.", "") : metric;
+                int chunks = suffix.length() - suffix.replace(".", "").length();
+                if (chunks == 0) {
+                    // metrics
+                    metrics.add(new MetricMeta(metric, type.name()));
+                } else if (chunks == 1) {
+                    // immediate child remove stat name and keep only path
+                    childrenNames.add(metric.substring(0, metric.lastIndexOf('.')));
+                } else if (chunks > 1) {
+                    // child with further hierarchy
+                    if (!"".equals(path)) {
+                        childrenNames.add(path + "." + suffix.substring(0, suffix.indexOf('.')));
+                    } else {
+                        childrenNames.add(suffix.substring(0, suffix.indexOf('.')));
+                    }
+                }
+            }
+        }
+        return new MetricHierarchyData(path, childrenNames.toArray(new String[childrenNames.size()]),
+                metrics.toArray(new MetricMeta[metrics.size()]));
     }
 
     private static class JVMMetricDataProcessor implements MetricDataProcessor<MetricData> {

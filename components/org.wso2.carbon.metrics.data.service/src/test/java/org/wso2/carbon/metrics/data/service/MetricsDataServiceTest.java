@@ -105,6 +105,12 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("The source is " + SOURCE, SOURCE, sources[0]);
     }
 
+    public void testHierarchy() {
+        MetricHierarchyData hierarchyData1 = metricsDataService.getHierarchy(SOURCE, "");
+        MetricHierarchyData hierarchyData2 = metricsDataService.getHierarchy(SOURCE, "jvm.memory");
+        MetricHierarchyData hierarchyData3 = metricsDataService.getHierarchy(SOURCE, "jvm.memory.non-heap");
+    }
+
     public void testLast1MinuteJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1m");
         assertNotNull("Metric Data is not null", metricData);

@@ -1,4 +1,3 @@
-
 <%
     /*
      * Copyright 2015 WSO2 Inc. (http://wso2.org)
@@ -16,19 +15,18 @@
      * limitations under the License.
      */
 %>
-<%@page import="java.io.OutputStreamWriter"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="org.wso2.carbon.metrics.view.ui.ChartView"%>
+<%@page import="org.wso2.carbon.metrics.view.ui.ChartView" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
+<%@ page import="java.util.Map" %>
 
 
 <%
     request.setAttribute("chartBundle", "org.wso2.carbon.metrics.view.ui.i18n.Resources");
     Map<String, ChartView> viewMap = (Map<String, ChartView>) request.getAttribute("viewMap");
-    viewMap.put("CPUView", new ChartView(true, new String[] { "CPU", "LoadAverage" }));
-    viewMap.put("MemoryView", new ChartView(true, new String[] { "Memory", "PhysicalMemory" }));
-    viewMap.put("ThreadingView", new ChartView(false, new String[] { "Threading" }));
-    viewMap.put("ClassLoadingView", new ChartView(false, new String[] { "ClassLoading" }));
-    viewMap.put("FileDescriptorView", new ChartView(false, new String[] { "FileDescriptor" }));
+    viewMap.put("CPUView", new ChartView(true, new String[]{"CPU", "LoadAverage"}));
+    viewMap.put("MemoryView", new ChartView(true, new String[]{"Memory", "PhysicalMemory"}));
+    viewMap.put("ThreadingView", new ChartView(false, new String[]{"Threading"}));
+    viewMap.put("ClassLoadingView", new ChartView(false, new String[]{"ClassLoading"}));
+    viewMap.put("FileDescriptorView", new ChartView(false, new String[]{"FileDescriptor"}));
 %>
