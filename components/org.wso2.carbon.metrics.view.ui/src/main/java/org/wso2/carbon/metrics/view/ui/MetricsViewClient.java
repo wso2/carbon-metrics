@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.data.service.stub.Metric;
 import org.wso2.carbon.metrics.data.service.stub.MetricList;
+import org.wso2.carbon.metrics.data.service.stub.MetricMeta;
 import org.wso2.carbon.metrics.data.service.stub.MetricsDataServiceStub;
 
 public class MetricsViewClient {
@@ -48,16 +49,6 @@ public class MetricsViewClient {
     public String[] getAllSources() throws RemoteException {
         try {
             return stub.getAllSources();
-        } catch (RemoteException e) {
-            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
-            logger.error(msg, e);
-            throw e;
-        }
-    }
-
-    public String[] getAllChildren(String source, String path) throws RemoteException {
-        try {
-            return stub.getAllChildren(source, path);
         } catch (RemoteException e) {
             String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
             logger.error(msg, e);

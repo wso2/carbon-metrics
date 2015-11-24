@@ -185,11 +185,6 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return sourcesList.toArray(new String[sourcesList.size()]);
     }
 
-    public String[] getAllChildren(String source, String path) {
-        MetricHierarchyData hierarchyData = getHierarchy(source, path);
-        return hierarchyData.getChildren();
-    }
-
     public MetricHierarchyData getHierarchy(String source, String path) {
         Map<String, MetricType> hierarchicalMetrics = reporterDAO.queryHierarchicalMetrics(source);
         Set<String> childrenNames = new TreeSet<>();
@@ -254,7 +249,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         @Override
         public void process(String source, long timestamp, MetricType metricType, String metricName,
-                MetricAttribute metricAttribute, BigDecimal value) {
+                            MetricAttribute metricAttribute, BigDecimal value) {
             BigDecimal[] data = dataMap.get(timestamp);
             if (data == null) {
                 data = new BigDecimal[metricGroupMap.size() + 1];
@@ -400,15 +395,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
             if (metricDataFormat != null) {
                 switch (metricDataFormat) {
-                case P:
-                    valueConverter = PERCENTAGE_VALUE_CONVERTER;
-                    break;
-                case B:
-                    valueConverter = MEMORY_VALUE_CONVERTER;
-                    break;
-                default:
-                    valueConverter = DUMB_VALUE_CONVERTER;
-                    break;
+                    case P:
+                        valueConverter = PERCENTAGE_VALUE_CONVERTER;
+                        break;
+                    case B:
+                        valueConverter = MEMORY_VALUE_CONVERTER;
+                        break;
+                    default:
+                        valueConverter = DUMB_VALUE_CONVERTER;
+                        break;
                 }
             } else {
                 valueConverter = DUMB_VALUE_CONVERTER;

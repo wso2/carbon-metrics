@@ -27,6 +27,7 @@
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricMetaWrapper" %>
+<%@ page import="java.util.List" %>
 
 <%
     String source = request.getParameter("source");
@@ -35,6 +36,7 @@
     String path = request.getParameter("path");
     String type = request.getParameter("type");
     path = (path != null && path.trim().length() > 0) ? path : "";
+    type = (type != null && type.trim().length() > 0) ? type : "";
 
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
     ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(
@@ -45,7 +47,7 @@
         metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
         Gson gson = new Gson();
         MetricDataWrapper metricData = null;
-        ArrayList<Metric> metrics = getMetrics(metricsViewClient, source, path);
+        ArrayList<Metric> metrics = getMetrics(metricsViewClient, source, path, type);
         MetricList metricList = new MetricList();
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
         if (to != null && to.trim().length() > 0) {
@@ -76,12 +78,13 @@
 %>
 
 <%!
-    private ArrayList<Metric> getMetrics(MetricsViewClient client, String source, String path) {
+    private ArrayList<Metric> getMetrics(MetricsViewClient client, String source, String path, String type) {
         MetricHierarchyDataWrapper hierarchyData = getHierarchyData(client, source, path);
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         for (MetricMetaWrapper metricMeta : hierarchyData.getMetrics()) {
-            metrics.add(new Metric(getMetricType(metricMeta.getType()), metricMeta.getName(),
-                    metricMeta.getDisplayName(), MetricAttribute.VALUE, MetricDataFormat.B));
+            if (type.equalsIgnoreCase(metricMeta.getDisplayName())) {
+                metrics.addAll(getMetricsForChart(metricMeta));
+            }
         }
         return metrics;
     }
@@ -102,5 +105,32 @@
         } else {
             return null;
         }
+    }
+%>
+
+<%!
+    private List<Metric> getMetricsForChart(MetricMetaWrapper metricMeta) {
+        // TODO : add MetricDataFormat for GAUGE
+        String type = metricMeta.getType();
+        ArrayList<Metric> metrics = new ArrayList<Metric>();
+        MetricAttribute[] attributes;
+        if ("GAUGE".equals(type)) {
+            attributes = new MetricAttribute[]{MetricAttribute.VALUE};
+        } else if ("COUNTER".equals(type)) {
+            attributes = new MetricAttribute[]{MetricAttribute.COUNT};
+        } else if ("METER".equals(type)) {
+            attributes = new MetricAttribute[]{MetricAttribute.COUNT, MetricAttribute.MEAN_RATE, MetricAttribute.M1_RATE, MetricAttribute.M5_RATE, MetricAttribute.M15_RATE};
+        } else if ("HISTOGRAM".equals(type)) {
+            attributes = new MetricAttribute[]{MetricAttribute.COUNT, MetricAttribute.MAX, MetricAttribute.MEAN, MetricAttribute.MIN, MetricAttribute.STDDEV, MetricAttribute.P50, MetricAttribute.P75, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99, MetricAttribute.P999};
+        } else if ("TIMER".equals(type)) {
+            attributes = new MetricAttribute[]{MetricAttribute.COUNT, MetricAttribute.MEAN_RATE, MetricAttribute.M1_RATE, MetricAttribute.M5_RATE, MetricAttribute.M15_RATE, MetricAttribute.MAX, MetricAttribute.MEAN, MetricAttribute.MIN, MetricAttribute.STDDEV, MetricAttribute.P50, MetricAttribute.P75, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99, MetricAttribute.P999};
+        } else {
+            attributes = new MetricAttribute[0];
+        }
+
+        for (MetricAttribute attribute : attributes) {
+            metrics.add(new Metric(getMetricType(type), metricMeta.getName(), String.format("%s [%s]", metricMeta.getDisplayName(), attribute), attribute, MetricDataFormat.B));
+        }
+        return metrics;
     }
 %>

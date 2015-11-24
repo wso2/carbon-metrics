@@ -21,7 +21,24 @@
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricHierarchyDataWrapper" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.ChartView" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.LinkedHashMap" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricMetaWrapper" %>
 
+<%!
+    private Map<String, ChartView> getViewMap(MetricMetaWrapper[] metas) {
+        Map<String, ChartView> viewMap = new LinkedHashMap<String, ChartView>();
+        int metasLength = metas.length;
+        String[] charts = new String[metasLength];
+        for (int i = 0; i < metasLength; i++) {
+            charts[i] = metas[i].getDisplayName();
+        }
+        viewMap.put("Metrics Hierarchy", new ChartView(true, charts));
+        return viewMap;
+    }
+%>
 
 <div>
     <!-- Removed head tag. This page is rendered within the body tag in Management Console -->
@@ -45,7 +62,9 @@
         String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
         ConfigurationContext configContext = (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
         String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
+        Map<String, ChartView> viewMap;
         MetricsViewClient metricsViewClient;
+        MetricHierarchyDataWrapper hierarchy;
         String[] sources = null;
         String[] subLevels = null;
         try {
@@ -53,7 +72,9 @@
             sources = metricsViewClient.getAllSources();
             path = (path != null && path.trim().length() > 0) ? path : "";
             source = (source != null && source.trim().length() > 0) ? source : sources[0];
-            subLevels = metricsViewClient.getAllChildren(source, path);
+            hierarchy = metricsViewClient.getHierarchy(source, path);
+            subLevels = hierarchy.getChildren();
+            viewMap = getViewMap(hierarchy.getMetrics());
         } catch (Exception e) {
             CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
     %>
@@ -252,21 +273,35 @@
 
     <!-- Initialize scripts for charts -->
     <script id="initialSetup" type="text/javascript">
-        <%
-            request.setAttribute("chartBundle", "org.wso2.carbon.metrics.view.ui.i18n.Resources");
-        %>
+        var views = {};
         var dataPageUrl = 'metrics_hierarchy_menu_data_ajaxprocessor.jsp';
-        var views = {
-            "Metrics": {
-                "name": "Metrics",
-                "charts": ["Metrics"],
-                "titles": ["Metrics"],
-                "visible": true
-            }
+        <fmt:bundle basename="org.wso2.carbon.metrics.view.ui.i18n.Resources">
+        <%
+        for (String key : viewMap.keySet()) {
+            ChartView chartView = viewMap.get(key);
+        %>
+        chartNames = [];
+        chartTitles = [];
+        chartViewName = "<%=key%>";
+        views["<%=key%>"] = {
+            name: chartViewName,
+            charts: chartNames,
+            titles: chartTitles,
+            visible: <%=chartView.isVisible()%>
         };
-        <fmt:bundle basename="${chartBundle}">
+        <%
+            String[] charts = chartView.getCharts();
+            for (String chart : charts) {
+        %>
+        chartNames.push('<%=chart%>');
+        chartTitles.push('<%=chart%>');
+        <%
+            }
+        }
+        %>
         </fmt:bundle>
     </script>
+
     <!-- Scripts required for charts -->
     <script src="plugins/d3/d3.min.js"></script>
     <script src="plugins/vega/vega.min.js"></script>
