@@ -88,17 +88,6 @@ public final class MetricManager {
     }
 
     /**
-     * Get or create a {@link Meter} registered under given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Meter} instance
-     */
-    public static Meter meter(String name, Level level) {
-        return ServiceReferenceHolder.getInstance().getMetricService().meter(name, level);
-    }
-
-    /**
      * Get or create a {@link Meter} instances registered under a annotated name and levels
      *
      * @param name   The annotated name of the metric
@@ -117,17 +106,6 @@ public final class MetricManager {
      */
     public static Counter counter(String name) {
         return ServiceReferenceHolder.getInstance().getMetricService().counter(name);
-    }
-
-    /**
-     * Get or create a {@link Counter} registered under given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Counter} instance
-     */
-    public static Counter counter(String name, Level level) {
-        return ServiceReferenceHolder.getInstance().getMetricService().counter(name, level);
     }
 
     /**
@@ -152,17 +130,6 @@ public final class MetricManager {
     }
 
     /**
-     * Get or create a {@link Timer} registered under given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Timer} instance
-     */
-    public static Timer timer(String name, Level level) {
-        return ServiceReferenceHolder.getInstance().getMetricService().timer(name, level);
-    }
-
-    /**
      * Get or create a {@link Timer} instances registered under a annotated name and levels
      *
      * @param name   The annotated name of the metric
@@ -181,17 +148,6 @@ public final class MetricManager {
      */
     public static Histogram histogram(String name) {
         return ServiceReferenceHolder.getInstance().getMetricService().histogram(name);
-    }
-
-    /**
-     * Get or create a {@link Histogram} registered under given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Histogram} instance
-     */
-    public static Histogram histogram(String name, Level level) {
-        return ServiceReferenceHolder.getInstance().getMetricService().histogram(name, level);
     }
 
     /**

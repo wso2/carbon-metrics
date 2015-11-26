@@ -83,15 +83,6 @@ public interface MetricService {
     Meter meter(String name);
 
     /**
-     * Get or create a {@link Meter} instance for the given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Meter} instance
-     */
-    Meter meter(String name, Level level);
-
-    /**
      * Get or create a {@link Meter} instance for the given annotated name
      *
      * @param name   The annotated name of the metric
@@ -107,15 +98,6 @@ public interface MetricService {
      * @return a {@link Counter} instance
      */
     Counter counter(String name);
-
-    /**
-     * Get or create a {@link Counter} instance for the given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Counter} instance
-     */
-    Counter counter(String name, Level level);
 
     /**
      * Get or create a {@link Counter} instance for the given annotated name
@@ -135,15 +117,6 @@ public interface MetricService {
     Timer timer(String name);
 
     /**
-     * Get or create a {@link Timer} instance for the given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Timer} instance
-     */
-    Timer timer(String name, Level level);
-
-    /**
      * Get or create a {@link Timer} instance for the given annotated name
      *
      * @param name   The annotated name of the metric
@@ -159,15 +132,6 @@ public interface MetricService {
      * @return a {@link Histogram} instance
      */
     Histogram histogram(String name);
-
-    /**
-     * Get or create a {@link Histogram} instance for the given name and level
-     *
-     * @param name  The name of the metric
-     * @param level The {@link Level} used for metric
-     * @return a {@link Histogram} instance
-     */
-    Histogram histogram(String name, Level level);
 
     /**
      * Get or create a {@link Histogram} instance for the given annotated name
