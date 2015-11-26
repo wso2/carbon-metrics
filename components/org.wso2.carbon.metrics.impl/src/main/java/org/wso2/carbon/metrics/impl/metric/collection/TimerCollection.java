@@ -33,8 +33,8 @@ public class TimerCollection implements Timer {
     public TimerCollection(Timer timer, List<Timer> affectedTimers) {
         this.timer = timer;
         this.affected = new ArrayList<Timer>();
-        if (!this.affected.contains(timer)) {
-            this.affected.add(timer);
+        if (affectedTimers.contains(timer)) {
+            affectedTimers.remove(timer);
         }
         this.affected.addAll(affectedTimers);
     }
@@ -46,6 +46,7 @@ public class TimerCollection implements Timer {
      */
     @Override
     public void update(long duration, TimeUnit unit) {
+        this.timer.update(duration, unit);
         for (Timer t : this.affected) {
             t.update(duration, unit);
         }
@@ -68,7 +69,8 @@ public class TimerCollection implements Timer {
      */
     @Override
     public Context start() {
-        return timer.start();
+        return new CollectionContextImpl(timer.start(), affected);
+
     }
 
     /*
@@ -81,4 +83,43 @@ public class TimerCollection implements Timer {
         return timer.getCount();
     }
 
+    private static class CollectionContextImpl implements Context {
+
+        private Context context;
+        private List<Timer> affected;
+
+        private CollectionContextImpl(Context context, List<Timer> affected) {
+            this.context = context;
+            this.affected = affected;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see org.wso2.carbon.metrics.manager.Timer.Context#stop()
+         */
+        @Override
+        public long stop() {
+            long elapsed = context.stop();
+            for (Timer t : this.affected) {
+                if (elapsed > 0) {
+                    // if the metric is not enabled, it'll return 0
+                    // marking 0 several times will affect the rate values
+                    // therefore, don't mark if it's 0
+                    t.update(elapsed, TimeUnit.NANOSECONDS);
+                }
+            }
+            return elapsed;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see org.wso2.carbon.metrics.manager.Timer.Context#close()
+         */
+        @Override
+        public void close() {
+            context.close();
+        }
+    }
 }

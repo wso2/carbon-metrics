@@ -81,3 +81,7 @@ Align month and year dropdowns
     padding: .2em 0;
     top: 0px;
 }
+
+#chartHolder table thead tr th {
+    text-transform: capitalize;
+}

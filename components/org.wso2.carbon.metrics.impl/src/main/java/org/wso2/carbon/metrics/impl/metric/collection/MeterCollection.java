@@ -31,7 +31,7 @@ public class MeterCollection implements Meter {
     public MeterCollection(Meter meter, List<Meter> affectedMeters) {
         this.meter = meter;
         this.affected = new ArrayList<Meter>();
-        if (!this.affected.contains(meter)) {
+        if (!affectedMeters.contains(meter)) {
             this.affected.add(meter);
         }
         this.affected.addAll(affectedMeters);

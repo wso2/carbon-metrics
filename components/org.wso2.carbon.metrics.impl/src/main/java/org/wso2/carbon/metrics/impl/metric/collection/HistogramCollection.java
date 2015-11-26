@@ -31,7 +31,7 @@ public class HistogramCollection implements Histogram {
     public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
         this.histogram = histogram;
         this.affected = new ArrayList<Histogram>();
-        if (!this.affected.contains(histogram)) {
+        if (!affectedHistograms.contains(histogram)) {
             this.affected.add(histogram);
         }
         this.affected.addAll(affectedHistograms);

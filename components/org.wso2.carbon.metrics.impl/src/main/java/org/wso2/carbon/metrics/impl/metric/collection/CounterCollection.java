@@ -31,7 +31,7 @@ public class CounterCollection implements Counter {
     public CounterCollection(Counter counter, List<Counter> affectedCounters) {
         this.counter = counter;
         this.affected = new ArrayList<Counter>();
-        if (!this.affected.contains(counter)) {
+        if (!affectedCounters.contains(counter)) {
             this.affected.add(counter);
         }
         this.affected.addAll(affectedCounters);
