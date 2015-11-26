@@ -22,11 +22,11 @@
 <%@ page import="org.wso2.carbon.metrics.data.common.*" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricDataWrapper" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricHierarchyDataWrapper" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricMetaWrapper" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="org.wso2.carbon.metrics.view.ui.MetricMetaWrapper" %>
 <%@ page import="java.util.List" %>
 
 <%
@@ -129,8 +129,48 @@
         }
 
         for (MetricAttribute attribute : attributes) {
-            metrics.add(new Metric(getMetricType(type), metricMeta.getName(), String.format("%s [%s]", metricMeta.getDisplayName(), attribute), attribute, MetricDataFormat.B));
+            metrics.add(new Metric(getMetricType(type), metricMeta.getName(), getDisplayName(attribute), attribute, null));
         }
         return metrics;
+    }
+%>
+
+<%!
+    private String getDisplayName(MetricAttribute attribute) {
+        String prefix = "";
+        if (MetricAttribute.VALUE == attribute) {
+            prefix = "Value";
+        } else if (MetricAttribute.COUNT == attribute) {
+            prefix = "Count";
+        } else if (MetricAttribute.MEAN_RATE == attribute) {
+            prefix = "Mean Rate";
+        } else if (MetricAttribute.M1_RATE == attribute) {
+            prefix = "Last Minute Rate";
+        } else if (MetricAttribute.M5_RATE == attribute) {
+            prefix = "Last 5 Minutes Rate";
+        } else if (MetricAttribute.M15_RATE == attribute) {
+            prefix = "Last 15 Minutes Rate";
+        } else if (MetricAttribute.MAX == attribute) {
+            prefix = "Maximum";
+        } else if (MetricAttribute.MEAN == attribute) {
+            prefix = "Mean";
+        } else if (MetricAttribute.MIN == attribute) {
+            prefix = "Minimum";
+        } else if (MetricAttribute.STDDEV == attribute) {
+            prefix = "Standard Deviation";
+        } else if (MetricAttribute.P50 == attribute) {
+            prefix = "50th Percentile";
+        } else if (MetricAttribute.P75 == attribute) {
+            prefix = "75th Percentile";
+        } else if (MetricAttribute.P95 == attribute) {
+            prefix = "95th Percentile";
+        } else if (MetricAttribute.P98 == attribute) {
+            prefix = "98th Percentile";
+        } else if (MetricAttribute.P99 == attribute) {
+            prefix = "99th Percentile";
+        } else if (MetricAttribute.P999 == attribute) {
+            prefix = "999th Percentile";
+        }
+        return prefix;
     }
 %>

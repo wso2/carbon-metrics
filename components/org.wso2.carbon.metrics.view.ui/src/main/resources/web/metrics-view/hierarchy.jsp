@@ -146,16 +146,16 @@
                                         <td style="width: 20%; text-align: right;">
                                             <fmt:message key="metrics.fromselect.tip" var="msgKeyFromSelectTip"/>
                                             <select name="from" id="from" title="${msgKeyFromSelectTip}">
-                                                <option value="-5m" selected="selected">Last 5 minutes</option>
-                                                <option value="-15m">Last 15 minutes</option>
-                                                <option value="-1h">Last 1 hour</option>
-                                                <option value="-2h">Last 2 hours</option>
-                                                <option value="-6h">Last 6 hours</option>
-                                                <option value="-12h">Last 12 hours</option>
-                                                <option value="-24h">Last 24 hours</option>
-                                                <option value="-2d">Last 2 days</option>
-                                                <option value="-7d">Last 7 days</option>
-                                                <option value="custom">Custom</option>
+                                                <option value="-5m" selected="selected">View last 5 minutes</option>
+                                                <option value="-15m">View last 15 minutes</option>
+                                                <option value="-1h">View last 1 hour</option>
+                                                <option value="-2h">View last 2 hours</option>
+                                                <option value="-6h">View last 6 hours</option>
+                                                <option value="-12h">View last 12 hours</option>
+                                                <option value="-24h">View last 24 hours</option>
+                                                <option value="-2d">View last 2 days</option>
+                                                <option value="-7d">View last 7 days</option>
+                                                <option value="custom">View custom time frame</option>
                                             </select>
                                         </td>
                                         <td style="width: 10%; text-align: right;">
