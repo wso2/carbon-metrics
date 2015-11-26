@@ -33,7 +33,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.codahale.metrics.Clock;
 import com.codahale.metrics.Counter;
@@ -61,6 +65,8 @@ public class JDBCReporterTest {
 
     private static JdbcTemplate template;
 
+    private static TransactionTemplate transactionTemplate;
+
     @BeforeClass
     public static void setupDatasource() throws Exception {
         dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "");
@@ -68,6 +74,8 @@ public class JDBCReporterTest {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("dbscripts/h2.sql"));
         populator.populate(dataSource.getConnection());
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource);
+        transactionTemplate = new TransactionTemplate(dataSourceTransactionManager);
     }
 
     @Before
@@ -78,11 +86,17 @@ public class JDBCReporterTest {
                 .convertDurationsTo(TimeUnit.NANOSECONDS).withClock(clock).filter(MetricFilter.ALL)
                 .build(SOURCE, dataSource);
 
-        template.execute("DELETE FROM METRIC_GAUGE;");
-        template.execute("DELETE FROM METRIC_TIMER;");
-        template.execute("DELETE FROM METRIC_METER;");
-        template.execute("DELETE FROM METRIC_HISTOGRAM;");
-        template.execute("DELETE FROM METRIC_COUNTER;");
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                template.execute("DELETE FROM METRIC_GAUGE;");
+                template.execute("DELETE FROM METRIC_TIMER;");
+                template.execute("DELETE FROM METRIC_METER;");
+                template.execute("DELETE FROM METRIC_HISTOGRAM;");
+                template.execute("DELETE FROM METRIC_COUNTER;");
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("rawtypes")

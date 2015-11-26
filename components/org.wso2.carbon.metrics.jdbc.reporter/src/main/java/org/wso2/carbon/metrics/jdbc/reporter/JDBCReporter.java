@@ -43,8 +43,6 @@ import com.codahale.metrics.Timer;
  */
 public class JDBCReporter extends ScheduledReporter {
 
-    // Note: This class uses small methods to be more JIT-friendly.
-
     /**
      * Returns a new {@link Builder} for {@link JDBCReporter}.
      *
@@ -210,6 +208,7 @@ public class JDBCReporter extends ScheduledReporter {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             ps = connection.prepareStatement(INSERT_GAUGE_QUERY);
 
             for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
@@ -220,11 +219,13 @@ public class JDBCReporter extends ScheduledReporter {
             }
 
             ps.executeBatch();
+            connection.commit();
             ps.close();
-            connection.close();
             ps = null;
+            connection.close();
             connection = null;
         } catch (SQLException e) {
+            rollbackTransaction(connection);
             LOGGER.error("Error when reporting gauges", e);
         } finally {
             closeQuietly(connection, ps);
@@ -245,6 +246,7 @@ public class JDBCReporter extends ScheduledReporter {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             ps = connection.prepareStatement(INSERT_COUNTER_QUERY);
 
             for (Map.Entry<String, Counter> entry : counters.entrySet()) {
@@ -255,11 +257,13 @@ public class JDBCReporter extends ScheduledReporter {
             }
 
             ps.executeBatch();
+            connection.commit();
             ps.close();
-            connection.close();
             ps = null;
+            connection.close();
             connection = null;
         } catch (SQLException e) {
+            rollbackTransaction(connection);
             LOGGER.error("Error when reporting counters", e);
         } finally {
             closeQuietly(connection, ps);
@@ -280,6 +284,7 @@ public class JDBCReporter extends ScheduledReporter {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             ps = connection.prepareStatement(INSERT_HISTOGRAM_QUERY);
 
             for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
@@ -290,11 +295,13 @@ public class JDBCReporter extends ScheduledReporter {
             }
 
             ps.executeBatch();
+            connection.commit();
             ps.close();
-            connection.close();
             ps = null;
+            connection.close();
             connection = null;
         } catch (SQLException e) {
+            rollbackTransaction(connection);
             LOGGER.error("Error when reporting histograms", e);
         } finally {
             closeQuietly(connection, ps);
@@ -327,6 +334,7 @@ public class JDBCReporter extends ScheduledReporter {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             ps = connection.prepareStatement(INSERT_METER_QUERY);
 
             for (Map.Entry<String, Meter> entry : meters.entrySet()) {
@@ -337,11 +345,13 @@ public class JDBCReporter extends ScheduledReporter {
             }
 
             ps.executeBatch();
+            connection.commit();
             ps.close();
-            connection.close();
             ps = null;
+            connection.close();
             connection = null;
         } catch (SQLException e) {
+            rollbackTransaction(connection);
             LOGGER.error("Error when reporting meters", e);
         } finally {
             closeQuietly(connection, ps);
@@ -366,6 +376,7 @@ public class JDBCReporter extends ScheduledReporter {
 
         try {
             connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
             ps = connection.prepareStatement(INSERT_TIMER_QUERY);
 
             for (Map.Entry<String, Timer> entry : timers.entrySet()) {
@@ -376,11 +387,13 @@ public class JDBCReporter extends ScheduledReporter {
             }
 
             ps.executeBatch();
+            connection.commit();
             ps.close();
-            connection.close();
             ps = null;
+            connection.close();
             connection = null;
         } catch (SQLException e) {
+            rollbackTransaction(connection);
             LOGGER.error("Error when reporting timers", e);
         } finally {
             closeQuietly(connection, ps);
@@ -410,6 +423,18 @@ public class JDBCReporter extends ScheduledReporter {
         ps.setDouble(18, convertRate(timer.getFifteenMinuteRate()));
         ps.setString(19, String.format("calls/%s", getRateUnit()));
         ps.setString(20, getDurationUnit());
+    }
+
+    private void rollbackTransaction(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Error when rolling back the transaction", e);
+                }
+            }
+        }
     }
 
     private void closeQuietly(Connection connection, PreparedStatement ps) {
