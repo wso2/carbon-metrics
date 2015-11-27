@@ -34,7 +34,6 @@ import org.wso2.carbon.metrics.impl.metric.collection.TimerCollection;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
-import org.wso2.carbon.metrics.impl.util.MetricTreeNode;
 import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
 import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.manager.*;
@@ -73,7 +72,6 @@ public class MetricServiceImpl implements MetricService {
      * Keep all metric collections created via this service
      */
     private final ConcurrentMap<String, Metric> metricsCollections = new ConcurrentHashMap<String, Metric>();
-    private final MetricTreeNode rootNode = new MetricTreeNode("root");
     /**
      * The {@link MetricRegistry} instance from the Metrics Implementation
      */
@@ -300,16 +298,6 @@ public class MetricServiceImpl implements MetricService {
         }
     }
 
-    @Override
-    public MetricHierarchy getMetricHierarchy() {
-        return this.rootNode;
-    }
-
-    @Override
-    public MetricHierarchy getMetricHierarchy(String path) {
-        return this.rootNode.getNodeByName(path);
-    }
-
     private boolean isMetricEnabled(String name, Level metricLevel, Level configLevel,
                                     boolean getFromCache) {
         MetricWrapper metricWrapper = metricsMap.get(name);
@@ -403,7 +391,6 @@ public class MetricServiceImpl implements MetricService {
             T newMetric = metricBuilder.createMetric(name, level);
             metricWrapper.metric = newMetric;
             newMetric.setEnabled(enabled);
-            addToMetricHierarchy(name, newMetric);
             return newMetric;
         }
     }
@@ -467,43 +454,6 @@ public class MetricServiceImpl implements MetricService {
         }
         // Levels count should be equals to affected metrics + current metric
         return levels.length == affectedMetrics + 1;
-    }
-
-    /**
-     * Get or create a {@link MetricTreeNode} for the given name
-     *
-     * @param name The name of the {@link MetricTreeNode}
-     * @return the created {@link MetricTreeNode}
-     */
-    private MetricTreeNode getOrCreateMetricTreeNode(String name) {
-        MetricTreeNode treeNode = rootNode.getNodeByName(name);
-        if (treeNode == null) {
-            if (name.contains(".")) {
-                int i = name.lastIndexOf(".");
-                String parentName = name.substring(0, i);
-                String childName = name.substring(i + 1);
-                MetricTreeNode parent = getOrCreateMetricTreeNode(parentName);
-                treeNode = parent.addChild(parent.getName() + "." + childName);
-            } else {
-                treeNode = rootNode.addChild(name);
-            }
-        }
-        return treeNode;
-    }
-
-    /**
-     * Add given metrics to a specified {@link MetricTreeNode}
-     *
-     * @param name   The name of the metric
-     * @param metric {@link AbstractMetric} object to be added
-     */
-    private void addToMetricHierarchy(String name, AbstractMetric metric) {
-        name = name.replaceAll("\\[\\+\\]", "");
-        int index = name.lastIndexOf(".");
-        String path = name.substring(0, index);
-        String statName = name.substring(index + 1);
-        MetricTreeNode treeNode = getOrCreateMetricTreeNode(path);
-        treeNode.addMetric(statName, metric);
     }
 
     /**

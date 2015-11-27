@@ -166,15 +166,4 @@ public interface MetricService {
      * Invoke report method of all scheduled reporters.
      */
     void report();
-
-    /**
-     * @return The generated {@link MetricHierarchy}
-     */
-    MetricHierarchy getMetricHierarchy();
-
-    /**
-     * @return The generated {@link MetricHierarchy} for a given path
-     */
-    MetricHierarchy getMetricHierarchy(String path);
-
 }
