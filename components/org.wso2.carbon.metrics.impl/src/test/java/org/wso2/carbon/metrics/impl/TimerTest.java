@@ -122,6 +122,20 @@ public class TimerTest extends TestCase {
         context.close();
     }
 
+    public void testTimeInHierarchy() throws InterruptedException {
+        Timer subTimer = MetricManager.timer("org.wso2.main[+].sub.timer", Level.INFO, Level.INFO);
+        Timer mainTimer = MetricManager.timer("org.wso2.main.timer", Level.INFO);
+
+        Context context = subTimer.start();
+        Thread.sleep(2000);
+
+        // context.stop() returns nano second time
+        assertTrue("Timer works!", context.stop() >= 2000 * 1000000);
+        assertEquals("Timer count should be one", 1, subTimer.getCount());
+        assertEquals("Timer count should be one", 1, mainTimer.getCount());
+        context.close();
+    }
+
     public void testTimerUpdateCount() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-update"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
