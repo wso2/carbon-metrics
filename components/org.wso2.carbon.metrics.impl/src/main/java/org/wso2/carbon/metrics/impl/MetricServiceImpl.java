@@ -30,7 +30,6 @@ import org.wso2.carbon.metrics.impl.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.impl.metric.collection.CounterCollection;
 import org.wso2.carbon.metrics.impl.metric.collection.HistogramCollection;
 import org.wso2.carbon.metrics.impl.metric.collection.MeterCollection;
-import org.wso2.carbon.metrics.impl.metric.collection.TimerCollection;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
@@ -431,9 +430,6 @@ public class MetricServiceImpl implements MetricService {
             } else if (annotated && metric instanceof Meter) {
                 metricCollection = new MeterCollection((Meter) metric, (List<Meter>) affected);
                 metricsCollections.put(annotatedName, metricCollection);
-            } else if (annotated && metric instanceof Timer) {
-                metricCollection = new TimerCollection((Timer) metric, (List<Timer>) affected);
-                metricsCollections.put(annotatedName, metricCollection);
             } else {
                 metricCollection = metric;
             }
@@ -564,11 +560,7 @@ public class MetricServiceImpl implements MetricService {
      */
     @Override
     public Timer timer(String name) {
-        if (isAnnotated(name)) {
-            return (Timer) getOrCreateMetricCollection(name, null, TIMER_BUILDER);
-        } else {
-            return getMetric(name, TIMER_BUILDER);
-        }
+        return getMetric(name, TIMER_BUILDER);
     }
 
     /*
@@ -578,12 +570,8 @@ public class MetricServiceImpl implements MetricService {
      * org.wso2.carbon.metrics.manager.Level[])
      */
     @Override
-    public Timer timer(String name, Level... levels) {
-        if (levels.length == 1) {
-            return getOrCreateMetric(name, levels[0], TIMER_BUILDER);
-        } else {
-            return (Timer) getOrCreateMetricCollection(name, levels, TIMER_BUILDER);
-        }
+    public Timer timer(String name, Level level) {
+        return getOrCreateMetric(name, level, TIMER_BUILDER);
     }
 
     /*

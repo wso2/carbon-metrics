@@ -89,6 +89,7 @@ public interface MetricService {
      * @param levels The {@link Level}s used for each annotated metric
      * @return a {@link Meter} instance (which wraps a collection of {@link Meter}s)
      */
+    // TODO : explain annotated, levels, etc in comments for all interfaces
     Meter meter(String name, Level... levels);
 
     /**
@@ -97,6 +98,7 @@ public interface MetricService {
      * @param name The name of the metric (name can be annotated)
      * @return a {@link Counter} instance
      */
+    // TODO : rename it to getCounter(String)
     Counter counter(String name);
 
     /**
@@ -117,13 +119,13 @@ public interface MetricService {
     Timer timer(String name);
 
     /**
-     * Get or create a {@link Timer} instance for the given annotated name
+     * Get or create a {@link Timer} instance for the given name
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Timer} instance (which wraps a collection of {@link Timer}s)
+     * @param name   The name of the metric
+     * @param level The {@link Level} used for metric
+     * @return a {@link Timer} instance
      */
-    Timer timer(String name, Level... levels);
+    Timer timer(String name, Level level);
 
     /**
      * Get the {@link Histogram} instance for the given metric name

@@ -50,15 +50,6 @@ public class TimerTest extends TestCase {
         assertEquals("Initial count should be zero", 0, timer.getCount());
     }
 
-    public void testParentCount() {
-        Timer main = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
-        Timer sub = MetricManager.timer("org.wso2.main[+].sub.test-timer", Level.INFO, Level.INFO);
-        sub.update(1, TimeUnit.SECONDS);
-        main.update(1, TimeUnit.SECONDS);
-        assertEquals("Count should be one", 1, sub.getCount());
-        assertEquals("Count should be two", 2, main.getCount());
-    }
-
     public void testSameMetric() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
@@ -66,47 +57,6 @@ public class TimerTest extends TestCase {
 
         Timer timer2 = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
         assertEquals("Timer count should be one", 1, timer2.getCount());
-    }
-
-    public void testSameMetricWithParent() {
-        Timer main = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
-        Timer sub = MetricManager.timer("org.wso2.main[+].sub.test-timer", Level.INFO, Level.INFO);
-
-        Timer main2 = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
-        Timer sub2 = MetricManager.timer("org.wso2.main[+].sub.test-timer", Level.INFO, Level.INFO);
-
-        sub.update(1, TimeUnit.SECONDS);
-        assertEquals("Count should be one", 1, sub.getCount());
-        assertEquals("Count should be one", 1, sub2.getCount());
-        assertEquals("Count should be one", 1, main.getCount());
-        assertEquals("Count should be one", 1, main2.getCount());
-
-        main.update(5, TimeUnit.SECONDS);
-        assertEquals("Count should be one", 1, sub.getCount());
-        assertEquals("Count should be one", 1, sub2.getCount());
-        assertEquals("Count should be six", 2, main.getCount());
-        assertEquals("Count should be six", 2, main2.getCount());
-    }
-
-    public void testMetricWithNonExistingParents() {
-        Timer sub2 = MetricManager.timer("org.wso2.main[+].sub1[+].sub2.test-timer", Level.INFO, Level.INFO, Level.INFO);
-        Timer sub1 = MetricManager.timer("org.wso2.main[+].sub1.test-timer", Level.INFO, Level.INFO);
-        Timer main = MetricManager.timer("org.wso2.main.test-timer", Level.INFO);
-
-        sub2.update(5, TimeUnit.SECONDS);
-        assertEquals("Count should be one", 1, sub2.getCount());
-        assertEquals("Count should be one", 1, sub1.getCount());
-        assertEquals("Count should be one", 1, main.getCount());
-
-        sub1.update(5, TimeUnit.SECONDS);
-        assertEquals("Count should be one", 1, sub2.getCount());
-        assertEquals("Count should be two", 2, sub1.getCount());
-        assertEquals("Count should be two", 2, main.getCount());
-
-        main.update(5, TimeUnit.SECONDS);
-        assertEquals("Count should be one", 1, sub2.getCount());
-        assertEquals("Count should be two", 2, sub1.getCount());
-        assertEquals("Count should be three", 3, main.getCount());
     }
 
     public void testTime() {
@@ -119,20 +69,6 @@ public class TimerTest extends TestCase {
         metricService.setRootLevel(Level.OFF);
         context = timer.start();
         assertEquals("Timer should not work", 0, context.stop());
-        context.close();
-    }
-
-    public void testTimeInHierarchy() throws InterruptedException {
-        Timer subTimer = MetricManager.timer("org.wso2.main[+].sub.timer", Level.INFO, Level.INFO);
-        Timer mainTimer = MetricManager.timer("org.wso2.main.timer", Level.INFO);
-
-        Context context = subTimer.start();
-        Thread.sleep(2000);
-
-        // context.stop() returns nano second time
-        assertTrue("Timer works!", context.stop() >= 2000 * 1000000);
-        assertEquals("Timer count should be one", 1, subTimer.getCount());
-        assertEquals("Timer count should be one", 1, mainTimer.getCount());
         context.close();
     }
 

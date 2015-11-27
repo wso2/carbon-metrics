@@ -132,12 +132,12 @@ public final class MetricManager {
     /**
      * Get or create a {@link Timer} instances registered under a annotated name and levels
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Timer} instance (which wraps a collection of {@link Timer}s)
+     * @param name   The name of the metric
+     * @param level The {@link Level} used for metric
+     * @return a {@link Timer} instance
      */
-    public static Timer timer(String name, Level... levels) {
-        return ServiceReferenceHolder.getInstance().getMetricService().timer(name, levels);
+    public static Timer timer(String name, Level level) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(name, level);
     }
 
     /**
