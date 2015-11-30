@@ -30,11 +30,7 @@ public class HistogramCollection implements Histogram {
 
     public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
         this.histogram = histogram;
-        this.affected = new ArrayList<Histogram>();
-        if (!affectedHistograms.contains(histogram)) {
-            this.affected.add(histogram);
-        }
-        this.affected.addAll(affectedHistograms);
+        this.affected = affectedHistograms;
     }
 
     /*
@@ -44,7 +40,8 @@ public class HistogramCollection implements Histogram {
      */
     @Override
     public void update(int value) {
-        for (Histogram h : this.affected) {
+        histogram.update(value);
+        for (Histogram h : affected) {
             h.update(value);
         }
     }
@@ -56,7 +53,8 @@ public class HistogramCollection implements Histogram {
      */
     @Override
     public void update(long value) {
-        for (Histogram h : this.affected) {
+        histogram.update(value);
+        for (Histogram h : affected) {
             h.update(value);
         }
     }

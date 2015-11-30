@@ -30,12 +30,7 @@ public class CounterCollection implements Counter {
 
     public CounterCollection(Counter counter, List<Counter> affectedCounters) {
         this.counter = counter;
-        this.affected = new ArrayList<Counter>();
-        // TODO get rid of this if condition
-        if (!affectedCounters.contains(counter)) {
-            this.affected.add(counter);
-        }
-        this.affected.addAll(affectedCounters);
+        this.affected = affectedCounters;
     }
 
     /*
@@ -45,7 +40,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void inc() {
-        for (Counter c : this.affected) {
+        counter.inc();
+        for (Counter c : affected) {
             c.inc();
         }
     }
@@ -57,7 +53,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void inc(long n) {
-        for (Counter c : this.affected) {
+        counter.inc(n);
+        for (Counter c : affected) {
             c.inc(n);
         }
     }
@@ -69,7 +66,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void dec() {
-        for (Counter c : this.affected) {
+        counter.dec();
+        for (Counter c : affected) {
             c.dec();
         }
     }
@@ -81,7 +79,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void dec(long n) {
-        for (Counter c : this.affected) {
+        counter.dec(n);
+        for (Counter c : affected) {
             c.dec(n);
         }
     }

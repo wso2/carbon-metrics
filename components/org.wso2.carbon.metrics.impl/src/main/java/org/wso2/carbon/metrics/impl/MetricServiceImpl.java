@@ -473,7 +473,10 @@ public class MetricServiceImpl implements MetricService {
         String[] chunks = annotatedPath.split("\\.");
         StringBuilder builder = new StringBuilder();
         String affectedName;
-        for (String chunk : chunks) {
+        // i < chunksLength - 1, cause affected metrics for path org.wso2.product.stat-name
+        // will be searched only in org.stat-name, org.wso2.stat-name.
+        for (int i = 0, chunksLength = chunks.length; i < chunksLength - 1; i++) {
+            String chunk = chunks[i];
             if (builder.length() > 0) {
                 builder.append('.');
             }

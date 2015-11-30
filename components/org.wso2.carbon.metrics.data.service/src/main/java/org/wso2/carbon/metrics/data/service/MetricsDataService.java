@@ -186,13 +186,10 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     public MetricHierarchyData getHierarchy(String source, String path) {
-        // TODO : use LIKE and use the path var
-        // TODO : optimise the query
-        Map<String, MetricType> hierarchicalMetrics = reporterDAO.queryHierarchicalMetrics(source);
+        Map<String, MetricType> hierarchicalMetrics = reporterDAO.queryHierarchicalMetrics(source, path);
         Set<String> childrenNames = new TreeSet<>();
         List<MetricMeta> metrics = new ArrayList<>();
         path = (path != null && !path.isEmpty()) ? path : "";
-
         for (Map.Entry<String, MetricType> entry : hierarchicalMetrics.entrySet()) {
             String metric = entry.getKey();
             MetricType type = entry.getValue();

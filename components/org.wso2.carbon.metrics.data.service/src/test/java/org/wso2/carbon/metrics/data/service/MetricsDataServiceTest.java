@@ -109,12 +109,17 @@ public class MetricsDataServiceTest extends TestCase {
         MetricHierarchyData hierarchyData1 = metricsDataService.getHierarchy(SOURCE, "");
         MetricHierarchyData hierarchyData2 = metricsDataService.getHierarchy(SOURCE, "jvm.memory");
         MetricHierarchyData hierarchyData3 = metricsDataService.getHierarchy(SOURCE, "jvm.memory.non-heap");
+        assertEquals("There are zero metrics", 0, hierarchyData1.getMetrics().length);
+        assertEquals("There are zero metrics", 0, hierarchyData2.getMetrics().length);
+        assertTrue("There are multiple metrics", hierarchyData3.getMetrics().length > 0);
+        assertTrue("There are multiple sub levels", hierarchyData1.getChildren().length > 0);
+        assertTrue("There are multiple sub levels", hierarchyData2.getChildren().length > 0);
+        assertEquals("There are no sub levels", 0, hierarchyData3.getChildren().length);
     }
 
     public void testLast1MinuteJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1m");
         assertNotNull("Metric Data is not null", metricData);
-
     }
 
     public void testLast1HourJMXMemoryMetrics() {

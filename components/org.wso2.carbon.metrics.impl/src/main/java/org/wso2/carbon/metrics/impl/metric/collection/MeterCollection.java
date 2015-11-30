@@ -17,7 +17,6 @@ package org.wso2.carbon.metrics.impl.metric.collection;
 
 import org.wso2.carbon.metrics.manager.Meter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,11 +29,7 @@ public class MeterCollection implements Meter {
 
     public MeterCollection(Meter meter, List<Meter> affectedMeters) {
         this.meter = meter;
-        this.affected = new ArrayList<Meter>();
-        if (!affectedMeters.contains(meter)) {
-            this.affected.add(meter);
-        }
-        this.affected.addAll(affectedMeters);
+        this.affected = affectedMeters;
     }
 
     /*
@@ -44,7 +39,8 @@ public class MeterCollection implements Meter {
      */
     @Override
     public void mark() {
-        for (Meter m : this.affected) {
+        meter.mark();
+        for (Meter m : affected) {
             m.mark();
         }
     }
@@ -56,7 +52,8 @@ public class MeterCollection implements Meter {
      */
     @Override
     public void mark(long n) {
-        for (Meter m : this.affected) {
+        meter.mark(n);
+        for (Meter m : affected) {
             m.mark(n);
         }
     }

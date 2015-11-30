@@ -75,46 +75,61 @@ public interface MetricService {
     int getMetricsCount();
 
     /**
-     * Get the {@link Meter} instance for the given metric name
+     * Get an existing {@link Meter} instance or {@link Meter}s bundle registered under a given name. If the name is not
+     * annotated, it'll return a single {@link Meter} instance. Otherwise it'll return a {@link Meter} bundle. Moreover,
+     * if the name is annotated, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in
+     * updating all the {@link Meter}s denoted by the annotated name.
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Meter} instance
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Meter} instance or a {@link Meter} bundle.
      */
     Meter meter(String name);
 
     /**
-     * Get or create a {@link Meter} instance for the given annotated name
+     * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
+     * {@link #meter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
+     * all the {@link Meter}s denoted by the annotated name.
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Meter} instance (which wraps a collection of {@link Meter}s)
+     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
+     *               should be equal)
+     * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
      */
-    // TODO : explain annotated, levels, etc in comments for all interfaces
     Meter meter(String name, Level... levels);
 
     /**
-     * Get the {@link Counter} instance for the given metric name
+     * Get an existing {@link Counter} instance or {@link Counter}s bundle registered under a given name. If the name
+     * is not annotated, it'll return a single {@link Counter} instance. Otherwise it'll return a {@link Counter}
+     * bundle. Moreover, if the name is annotated, performing actions (i.e {@link Counter#inc()}) in the returned
+     * bundle will result in updating all the {@link Counter}s denoted by the annotated name.
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Counter} instance
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Counter} instance or a {@link Counter} bundle.
      */
-    // TODO : rename it to getCounter(String)
     Counter counter(String name);
 
     /**
-     * Get or create a {@link Counter} instance for the given annotated name
+     * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike
+     * {@link #counter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * Moreover, performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating
+     * all the {@link Counter}s denoted by the annotated name.
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Counter} instance (which wraps a collection of {@link Counter}s)
+     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
+     *               should be equal)
+     * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
      */
     Counter counter(String name, Level... levels);
 
     /**
-     * Get the {@link Timer} instance for the given metric name
+     * Get an existing {@link Timer} instance or {@link Timer}s bundle registered under a given name. If the name is not
+     * annotated, it'll return a single {@link Timer} instance. Otherwise it'll return a {@link Timer} bundle. Moreover,
+     * if the name is annotated, performing actions (i.e {@link Timer#update(long, TimeUnit)}) in the returned bundle
+     * will result in updating all the {@link Timer}s denoted by the annotated name.
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Timer} instance
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Timer} instance or a {@link Timer} bundle.
      */
     Timer timer(String name);
 
@@ -128,19 +143,27 @@ public interface MetricService {
     Timer timer(String name, Level level);
 
     /**
-     * Get the {@link Histogram} instance for the given metric name
+     * Get an existing {@link Histogram} instance or {@link Histogram}s bundle registered under a given name. If the
+     * name is not annotated, it'll return a single {@link Histogram} instance. Otherwise it'll return a
+     * {@link Histogram} bundle. Moreover, if the name is annotated, performing actions
+     * (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating all the {@link Histogram}s
+     * denoted by the annotated name.
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Histogram} instance
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
      */
     Histogram histogram(String name);
 
     /**
-     * Get or create a {@link Histogram} instance for the given annotated name
+     * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike
+     * {@link #histogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
+     * all the {@link Histogram}s denoted by the annotated name.
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Histogram} instance (which wraps a collection of {@link Histogram}s)
+     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
+     *               should be equal)
+     * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
      */
     Histogram histogram(String name, Level... levels);
 

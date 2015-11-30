@@ -78,45 +78,117 @@ public final class MetricManager {
     }
 
     /**
-     * Get the {@link Meter} instance registered under given name
+     * Get an existing {@link Meter} instance or {@link Meter}s bundle registered under a given name. If the name is not
+     * annotated, it'll return a single {@link Meter} instance. Otherwise it'll return a {@link Meter} bundle. Moreover,
+     * if the name is annotated, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in
+     * updating all the {@link Meter}s denoted by the annotated name. i.e.
+     * <pre>
+     * {@code
+     *     Meter m = MetricManager.meter("org.wso2.cep[+].executionPlan.statName");
+     *     m.mark();
+     * }
+     * </pre>
+     * Above example will internally call {@link Meter#mark()} on both {@link Meter}s registered under
+     * org.wso2.cep.statName and org.wso2.cep.executionPlan.statName
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Meter} instance
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Meter} instance or a {@link Meter} bundle.
      */
     public static Meter meter(String name) {
         return ServiceReferenceHolder.getInstance().getMetricService().meter(name);
     }
 
     /**
-     * Get or create a {@link Meter} instances registered under a annotated name and levels
+     * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
+     * {@link #meter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
+     * all the {@link Meter}s denoted by the annotated name. i.e.
+     * <pre>
+     * {@code
+     *     Meter m = MetricManager.meter("org.wso2.cep[+].executionPlan.statName", Level.INFO, Level.INFO);
+     *     m.mark();
+     * }
+     * </pre>
+     * Above example will get or create two {@link Meter}s registered under org.wso2.cep.statName and
+     * org.wso2.cep.executionPlan.statName with {@link Level#INFO}. Furthermore, it will internally call
+     * {@link Meter#mark()} on both retrieved (or created) {@link Meter}s.
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Meter} instance (which wraps a collection of {@link Meter}s)
+     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
+     *               should be equal)
+     * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
      */
     public static Meter meter(String name, Level... levels) {
         return ServiceReferenceHolder.getInstance().getMetricService().meter(name, levels);
     }
 
     /**
-     * Get the {@link Counter} instance registered under given name
+     * Return a {@link Meter} instance registered under given name
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Counter} instance
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
+     * @return a {@link Meter} instance
+     */
+    @Deprecated
+    public static Meter meter(Level level, String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().meter(name, level);
+    }
+
+    /**
+     * Get an existing {@link Counter} instance or {@link Counter}s bundle registered under a given name. If the name
+     * is not annotated, it'll return a single {@link Counter} instance. Otherwise it'll return a {@link Counter}
+     * bundle. Moreover, if the name is annotated, performing actions (i.e {@link Counter#inc()}) in the returned bundle
+     * will result in updating all the {@link Counter}s denoted by the annotated name. i.e.
+     * <pre>
+     * {@code
+     *     Counter c = MetricManager.Counter("org.wso2.cep[+].executionPlan.statName");
+     *     c.inc();
+     * }
+     * </pre>
+     * Above example will internally call {@link Counter#inc()} on both {@link Counter}s registered under
+     * org.wso2.cep.statName and org.wso2.cep.executionPlan.statName
+     *
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Counter} instance or a {@link Counter} bundle.
      */
     public static Counter counter(String name) {
         return ServiceReferenceHolder.getInstance().getMetricService().counter(name);
     }
 
     /**
-     * Get or create a {@link Counter} instances registered under a annotated name and levels
+     * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike
+     * {@link #counter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * Moreover, performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating
+     * all the {@link Counter}s denoted by the annotated name. i.e.
+     * <pre>
+     * {@code
+     *     Counter c = MetricManager.counter("org.wso2.cep[+].executionPlan.statName", Level.INFO, Level.INFO);
+     *     c.inc();
+     * }
+     * </pre>
+     * Above example will get or create two {@link Counter}s registered under org.wso2.cep.statName and
+     * org.wso2.cep.executionPlan.statName with {@link Level#INFO}. Furthermore, it will internally call
+     * {@link Counter#inc()} on both retrieved (or created) {@link Counter}s.
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Counter} instance (which wraps a collection of {@link Counter}s)
+     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
+     *               should be equal)
+     * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
      */
     public static Counter counter(String name, Level... levels) {
         return ServiceReferenceHolder.getInstance().getMetricService().counter(name, levels);
+    }
+
+    /**
+     * Return a {@link Counter} instance registered under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
+     * @return a {@link Counter} instance
+     */
+    @Deprecated
+    public static Counter counter(Level level, String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().counter(name, level);
     }
 
     /**
@@ -132,7 +204,7 @@ public final class MetricManager {
     /**
      * Get or create a {@link Timer} instances registered under a annotated name and levels
      *
-     * @param name   The name of the metric
+     * @param name  The name of the metric
      * @param level The {@link Level} used for metric
      * @return a {@link Timer} instance
      */
@@ -141,24 +213,72 @@ public final class MetricManager {
     }
 
     /**
-     * Get the {@link Histogram} instance registered under given name
+     * Get or create a {@link Timer} instances registered under a annotated name and levels
      *
-     * @param name The name of the metric (name can be annotated)
-     * @return a {@link Histogram} instance
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
+     * @return a {@link Timer} instance
+     */
+    @Deprecated
+    public static Timer timer(Level level, String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().timer(name, level);
+    }
+
+    /**
+     * Get an existing {@link Histogram} instance or {@link Histogram}s bundle registered under a given name. If the
+     * name is not
+     * annotated, it'll return a single {@link Histogram} instance. Otherwise it'll return a {@link Histogram} bundle. Moreover,
+     * if the name is annotated, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in
+     * updating all the {@link Histogram}s denoted by the annotated name. i.e.
+     * <pre>
+     * {@code
+     *     Histogram c = MetricManager.Histogram("org.wso2.cep[+].executionPlan.statName");
+     *     c.update(5);
+     * }
+     * </pre>
+     * Above example will internally call {@link Histogram#update(int)} on both {@link Histogram}s registered under
+     * org.wso2.cep.statName and org.wso2.cep.executionPlan.statName
+     *
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
      */
     public static Histogram histogram(String name) {
         return ServiceReferenceHolder.getInstance().getMetricService().histogram(name);
     }
 
     /**
-     * Get or create a {@link Histogram} instances registered under a annotated name and levels
+     * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike
+     * {@link #histogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
+     * all the {@link Histogram}s denoted by the annotated name. i.e.
+     * <pre>
+     * {@code
+     *     Histogram c = MetricManager.histogram("org.wso2.cep[+].executionPlan.statName", Level.INFO, Level.INFO);
+     *     c.update(5);
+     * }
+     * </pre>
+     * Above example will get or create two {@link Histogram}s registered under org.wso2.cep.statName and
+     * org.wso2.cep.executionPlan.statName with {@link Level#INFO}. Furthermore, it will internally call
+     * {@link Histogram#update(int)} on both retrieved (or created) {@link Histogram}s.
      *
-     * @param name   The annotated name of the metric
-     * @param levels The {@link Level}s used for each annotated metric
-     * @return a {@link Histogram} instance (which wraps a collection of {@link Histogram}s)
+     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count should be equal)
+     * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
      */
     public static Histogram histogram(String name, Level... levels) {
         return ServiceReferenceHolder.getInstance().getMetricService().histogram(name, levels);
+    }
+
+    /**
+     * Return a {@link Histogram} instance registered under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
+     * @return a {@link Histogram} instance
+     */
+    @Deprecated
+    public static Histogram histogram(Level level, String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().histogram(name, level);
     }
 
     /**
@@ -169,6 +289,19 @@ public final class MetricManager {
      * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void gauge(String name, Level level, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().gauge(name, level, gauge);
+    }
+
+
+    /**
+     * Register a {@link Gauge} instance under given name
+     *
+     * @param level The {@link Level} used for metric
+     * @param name  The name of the metric
+     * @param gauge An implementation of {@link Gauge}
+     */
+    @Deprecated
+    public static <T> void gauge(Level level, String name, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().gauge(name, level, gauge);
     }
 
@@ -186,6 +319,20 @@ public final class MetricManager {
     }
 
     /**
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout
+     *
+     * @param level       The {@link Level} used for metric
+     * @param name        The name of the metrics
+     * @param timeout     The timeout value
+     * @param timeoutUnit The {@link TimeUnit} for the {@code timeout}
+     * @param gauge       An implementation of {@link Gauge}
+     */
+    @Deprecated
+    public static <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, timeoutUnit, gauge);
+    }
+
+    /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
      *
      * @param name    The name of the metric
@@ -195,6 +342,20 @@ public final class MetricManager {
      */
     public static <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
+    }
+
+    /**
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
+     *
+     * @param level   The {@link Level} used for metric
+     * @param name    The name of the metrics
+     * @param timeout The timeout value in seconds
+     * @param gauge   An implementation of {@link Gauge}
+     */
+    @Deprecated
+    public static <T> void cachedGauge(Level level, String name, long timeout, Gauge<T> gauge) {
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, TimeUnit.SECONDS,
+                gauge);
     }
 
     public static void registerMXBean() {

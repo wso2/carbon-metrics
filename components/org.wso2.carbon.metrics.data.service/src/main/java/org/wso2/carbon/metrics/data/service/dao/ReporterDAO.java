@@ -176,13 +176,13 @@ public class ReporterDAO {
         return results;
     }
 
-    public Map<String, MetricType> queryHierarchicalMetrics(String source) {
+    public Map<String, MetricType> queryHierarchicalMetrics(String source, String path) {
         Map<String, MetricType> results = new HashMap<>();
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             for (MetricType metricType : MetricType.values()) {
-                List<String> names = getHierarchicalMetricNames(connection, source, metricType);
+                List<String> names = getHierarchicalMetricNames(connection, source, path, metricType);
                 if (!names.isEmpty()) {
                     for (String name : names) {
                         results.put(name, metricType);
@@ -200,17 +200,23 @@ public class ReporterDAO {
     }
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
-    private List<String> getHierarchicalMetricNames(Connection connection, String source, MetricType metricType) {
+    private List<String> getHierarchicalMetricNames(Connection connection, String source, String path, MetricType metricType) {
         List<String> results = new ArrayList<String>();
         StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT NAME FROM ");
         queryBuilder.append(getTableName(metricType));
         queryBuilder.append(" WHERE SOURCE = ?");
+        if (path != null && !path.isEmpty()) {
+            queryBuilder.append(" AND NAME LIKE ?");
+        }
         String query = queryBuilder.toString();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             ps = connection.prepareStatement(query);
             ps.setString(1, source);
+            if (path != null && !path.isEmpty()) {
+                ps.setString(2, path + "%");
+            }
             rs = ps.executeQuery();
             while (rs.next()) {
                 String name = rs.getString("NAME");
