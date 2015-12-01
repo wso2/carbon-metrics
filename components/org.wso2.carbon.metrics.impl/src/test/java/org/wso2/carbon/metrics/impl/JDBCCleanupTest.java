@@ -15,19 +15,7 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
-
-import javax.sql.DataSource;
-
+import com.codahale.metrics.*;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -39,37 +27,33 @@ import org.springframework.jdbc.datasource.init.ScriptException;
 import org.wso2.carbon.metrics.impl.task.ScheduledJDBCMetricsCleanupTask;
 import org.wso2.carbon.metrics.jdbc.reporter.JDBCReporter;
 
-import com.codahale.metrics.Clock;
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Histogram;
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Snapshot;
-import com.codahale.metrics.Timer;
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link ScheduledJDBCMetricsCleanupTask}
  */
 public class JDBCCleanupTest {
 
+    private static final String SOURCE = JDBCCleanupTest.class.getSimpleName();
+    private static DataSource dataSource;
+    private static JdbcTemplate template;
     private final MetricRegistry registry = mock(MetricRegistry.class);
     private final Clock clock = mock(Clock.class);
-
-    private static DataSource dataSource;
-
-    private JDBCReporter reporter;
-
-    private static final String SOURCE = JDBCCleanupTest.class.getSimpleName();
-
-    private static JdbcTemplate template;
-
     private final int DAYS = 7;
-
     // Timestamp in database is in seconds. There are 86400 seconds for a day (24 hours).
     // Adding one more second to satisfy the condition in cleanup task
     private final int SUBSTRACT_MILLIS = (DAYS * 86400 * 1000) + 1000;
+    private JDBCReporter reporter;
 
     @BeforeClass
     public static void setupDatasource() throws ScriptException, SQLException {
@@ -114,13 +98,13 @@ public class JDBCCleanupTest {
         final Gauge gauge = mock(Gauge.class);
         when(gauge.getValue()).thenReturn(1);
 
-        reporter.report(map("gauge", gauge), this.<Counter> map(), this.<Histogram> map(), this.<Meter> map(),
-                this.<Timer> map());
+        reporter.report(map("gauge", gauge), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
+                this.<Timer>map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBSTRACT_MILLIS);
 
-        reporter.report(map("gauge", gauge), this.<Counter> map(), this.<Histogram> map(), this.<Meter> map(),
-                this.<Timer> map());
+        reporter.report(map("gauge", gauge), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
+                this.<Timer>map());
 
         cleanValues("METRIC_GAUGE");
     }
@@ -131,13 +115,13 @@ public class JDBCCleanupTest {
         final Counter counter = mock(Counter.class);
         when(counter.getCount()).thenReturn(100L);
 
-        reporter.report(this.<Gauge> map(), map("test.counter", counter), this.<Histogram> map(), this.<Meter> map(),
-                this.<Timer> map());
+        reporter.report(this.<Gauge>map(), map("test.counter", counter), this.<Histogram>map(), this.<Meter>map(),
+                this.<Timer>map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBSTRACT_MILLIS);
 
-        reporter.report(this.<Gauge> map(), map("test.counter", counter), this.<Histogram> map(), this.<Meter> map(),
-                this.<Timer> map());
+        reporter.report(this.<Gauge>map(), map("test.counter", counter), this.<Histogram>map(), this.<Meter>map(),
+                this.<Timer>map());
 
         cleanValues("METRIC_COUNTER");
     }
@@ -162,13 +146,13 @@ public class JDBCCleanupTest {
 
         when(histogram.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.<Gauge> map(), this.<Counter> map(), map("test.histogram", histogram), this.<Meter> map(),
-                this.<Timer> map());
+        reporter.report(this.<Gauge>map(), this.<Counter>map(), map("test.histogram", histogram), this.<Meter>map(),
+                this.<Timer>map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBSTRACT_MILLIS);
 
-        reporter.report(this.<Gauge> map(), this.<Counter> map(), map("test.histogram", histogram), this.<Meter> map(),
-                this.<Timer> map());
+        reporter.report(this.<Gauge>map(), this.<Counter>map(), map("test.histogram", histogram), this.<Meter>map(),
+                this.<Timer>map());
 
         cleanValues("METRIC_HISTOGRAM");
     }
@@ -183,13 +167,13 @@ public class JDBCCleanupTest {
         when(meter.getFiveMinuteRate()).thenReturn(4.0);
         when(meter.getFifteenMinuteRate()).thenReturn(5.0);
 
-        reporter.report(this.<Gauge> map(), this.<Counter> map(), this.<Histogram> map(), map("test.meter", meter),
-                this.<Timer> map());
+        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), map("test.meter", meter),
+                this.<Timer>map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBSTRACT_MILLIS);
 
-        reporter.report(this.<Gauge> map(), this.<Counter> map(), this.<Histogram> map(), map("test.meter", meter),
-                this.<Timer> map());
+        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), map("test.meter", meter),
+                this.<Timer>map());
 
         cleanValues("METRIC_METER");
     }
@@ -218,12 +202,12 @@ public class JDBCCleanupTest {
 
         when(timer.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.<Gauge> map(), this.<Counter> map(), this.<Histogram> map(), this.<Meter> map(),
+        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
                 map("test.timer", timer));
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBSTRACT_MILLIS);
 
-        reporter.report(this.<Gauge> map(), this.<Counter> map(), this.<Histogram> map(), this.<Meter> map(),
+        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
                 map("test.timer", timer));
 
         cleanValues("METRIC_TIMER");

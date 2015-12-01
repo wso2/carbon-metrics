@@ -15,14 +15,15 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import java.util.Random;
-
+import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.manager.*;
+import org.wso2.carbon.metrics.manager.Histogram;
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.MetricManager;
+import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
-import junit.framework.TestCase;
+import java.util.Random;
 
 /**
  * Test Cases for {@link Histogram}
@@ -39,7 +40,6 @@ public class HistogramTest extends TestCase {
         MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
         metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
-        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     public void testInitialCount() {

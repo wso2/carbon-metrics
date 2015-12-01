@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
 import org.wso2.carbon.metrics.manager.*;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
@@ -40,7 +39,6 @@ public class MetricApiTest extends TestCase {
         MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
         metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
-        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     public void testCreateSingleCounter() {

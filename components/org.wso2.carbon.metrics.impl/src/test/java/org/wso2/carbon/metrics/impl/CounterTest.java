@@ -17,8 +17,10 @@ package org.wso2.carbon.metrics.impl;
 
 import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.impl.internal.MetricServiceValueHolder;
-import org.wso2.carbon.metrics.manager.*;
+import org.wso2.carbon.metrics.manager.Counter;
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.MetricManager;
+import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import java.util.Random;
@@ -38,7 +40,6 @@ public class CounterTest extends TestCase {
         MetricsLevelConfiguration levelConfiguration = Utils.getLevelConfiguration();
         metricService = new MetricServiceImpl.Builder().configure(configuration).build(levelConfiguration);
         ServiceReferenceHolder.getInstance().setMetricService(metricService);
-        MetricServiceValueHolder.registerMetricServiceInstance(metricService);
     }
 
     public void testInitialCount() {
