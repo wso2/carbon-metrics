@@ -15,6 +15,8 @@
  */
 package org.wso2.carbon.metrics.manager;
 
+import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -83,7 +85,7 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Meter} instance or a {@link Meter} bundle.
      */
-    Meter meter(String name);
+    Meter meter(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
@@ -107,7 +109,7 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Counter} instance or a {@link Counter} bundle.
      */
-    Counter counter(String name);
+    Counter counter(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike
@@ -131,12 +133,12 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Timer} instance or a {@link Timer} bundle.
      */
-    Timer timer(String name);
+    Timer timer(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Timer} instance for the given name
      *
-     * @param name   The name of the metric
+     * @param name  The name of the metric
      * @param level The {@link Level} used for metric
      * @return a {@link Timer} instance
      */
@@ -152,7 +154,7 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
      */
-    Histogram histogram(String name);
+    Histogram histogram(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike

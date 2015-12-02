@@ -37,6 +37,7 @@ import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
 import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.manager.*;
 import org.wso2.carbon.metrics.manager.Timer;
+import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
 
 import java.lang.management.ManagementFactory;
 import java.util.*;
@@ -344,7 +345,7 @@ public class MetricServiceImpl implements MetricService {
      * @return The existing {@code AbstractMetric}
      */
     @SuppressWarnings("unchecked")
-    private <T extends AbstractMetric> T getMetric(String name, MetricBuilder<T> metricBuilder) {
+    private <T extends AbstractMetric> T getMetric(String name, MetricBuilder<T> metricBuilder) throws MetricNotFoundException {
         MetricWrapper metricWrapper = metricsMap.get(name);
         if (metricWrapper != null && metricWrapper.metric != null) {
             AbstractMetric metric = metricWrapper.metric;
@@ -354,7 +355,7 @@ public class MetricServiceImpl implements MetricService {
                 throw new IllegalArgumentException(name + " is used for a different type of metric");
             }
         } else {
-            throw new NoSuchElementException("metric \"" + name + "\" is not defined");
+            throw new MetricNotFoundException("metric \"" + name + "\" is not found");
         }
     }
 
@@ -403,7 +404,7 @@ public class MetricServiceImpl implements MetricService {
      * @return The created {@link Metric} collection
      */
     private <T extends AbstractMetric> Metric getOrCreateMetricCollection(String annotatedName, Level[] levels,
-                                                                          MetricBuilder<T> metricBuilder) {
+                                                                          MetricBuilder<T> metricBuilder) throws MetricNotFoundException {
         Level level = null;
         if (levels != null && !isLevelsMatch(annotatedName, levels)) {
             throw new IllegalArgumentException("number of metric levels doesn't match the annotated name");
@@ -462,7 +463,8 @@ public class MetricServiceImpl implements MetricService {
      */
     @SuppressWarnings("unchecked")
     private <T extends AbstractMetric> List<?> getAffectedMetrics(String annotatedName, Level[] levels,
-                                                                  MetricBuilder<T> metricBuilder) {
+                                                                  MetricBuilder<T> metricBuilder)
+            throws MetricNotFoundException {
         boolean getOrCreate = (levels != null) && (levels.length > 0);
         int levelIndex = 0;
         int index = annotatedName.lastIndexOf(".");
@@ -502,7 +504,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#meter(java.lang.String)
      */
     @Override
-    public Meter meter(String name) {
+    public Meter meter(String name) throws MetricNotFoundException {
         if (isAnnotated(name)) {
             return (Meter) getOrCreateMetricCollection(name, null, METER_BUILDER);
         } else {
@@ -521,7 +523,13 @@ public class MetricServiceImpl implements MetricService {
         if (levels.length == 1) {
             return getOrCreateMetric(name, levels[0], METER_BUILDER);
         } else {
-            return (Meter) getOrCreateMetricCollection(name, levels, METER_BUILDER);
+            try {
+                return (Meter) getOrCreateMetricCollection(name, levels, METER_BUILDER);
+            } catch (MetricNotFoundException ignored) {
+                // since levels passed to getOrCreateMetricCollection
+                // MetricNotFoundException could not occur, therefore ignored
+                return null;
+            }
         }
     }
 
@@ -531,7 +539,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#counter(java.lang.String)
      */
     @Override
-    public Counter counter(String name) {
+    public Counter counter(String name) throws MetricNotFoundException {
         if (isAnnotated(name)) {
             return (Counter) getOrCreateMetricCollection(name, null, COUNTER_BUILDER);
         } else {
@@ -550,7 +558,13 @@ public class MetricServiceImpl implements MetricService {
         if (levels.length == 1) {
             return getOrCreateMetric(name, levels[0], COUNTER_BUILDER);
         } else {
-            return (Counter) getOrCreateMetricCollection(name, levels, COUNTER_BUILDER);
+            try {
+                return (Counter) getOrCreateMetricCollection(name, levels, COUNTER_BUILDER);
+            } catch (MetricNotFoundException ignored) {
+                // since levels passed to getOrCreateMetricCollection
+                // MetricNotFoundException could not occur, therefore ignored
+                return null;
+            }
         }
     }
 
@@ -562,7 +576,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#timer(java.lang.String)
      */
     @Override
-    public Timer timer(String name) {
+    public Timer timer(String name) throws MetricNotFoundException {
         return getMetric(name, TIMER_BUILDER);
     }
 
@@ -583,7 +597,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#histogram(java.lang.String)
      */
     @Override
-    public Histogram histogram(String name) {
+    public Histogram histogram(String name) throws MetricNotFoundException {
         if (isAnnotated(name)) {
             return (Histogram) getOrCreateMetricCollection(name, null, HISTOGRAM_BUILDER);
         } else {
@@ -602,7 +616,13 @@ public class MetricServiceImpl implements MetricService {
         if (levels.length == 1) {
             return getOrCreateMetric(name, levels[0], HISTOGRAM_BUILDER);
         } else {
-            return (Histogram) getOrCreateMetricCollection(name, levels, HISTOGRAM_BUILDER);
+            try {
+                return (Histogram) getOrCreateMetricCollection(name, levels, HISTOGRAM_BUILDER);
+            } catch (MetricNotFoundException ignored) {
+                // since levels passed to getOrCreateMetricCollection
+                // MetricNotFoundException could not occur, therefore ignored
+                return null;
+            }
         }
     }
 

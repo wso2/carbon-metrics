@@ -22,9 +22,8 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.*;
+import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
-
-import java.util.NoSuchElementException;
 
 /**
  * Test Cases for {@link Counter}
@@ -45,10 +44,17 @@ public class MetricApiTest extends TestCase {
         // create new counter
         Counter counter1 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
         // retrieve created counter
-        Counter counter2 = MetricManager.counter("org.wso2.main.throughput");
+        Counter counter2 = null;
+        try {
+            counter2 = MetricManager.getCounter("org.wso2.main.throughput");
+        } catch (MetricNotFoundException ignored) {
+
+        }
         // get or create counter
         Counter counter3 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
         counter1.inc();
+
+        assertTrue("Counter should not be null", counter2 != null);
         assertEquals("Count should be one", 1, counter1.getCount());
         assertEquals("Count should be one", 1, counter2.getCount());
         assertEquals("Count should be one", 1, counter3.getCount());
@@ -58,36 +64,42 @@ public class MetricApiTest extends TestCase {
         // create new counters
         Counter subCounterCollection1 = MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
         // retrieve created counters
-        Counter subCounterCollection2 = MetricManager.counter("org.wso2.main[+].sub.throughput");
-        Counter subCounter1 = MetricManager.counter("org.wso2.main.sub.throughput");
-        Counter mainCounter1 = MetricManager.counter("org.wso2.main.throughput");
-        // get or create counters
-        Counter subCounter2 = MetricManager.counter("org.wso2.main.sub.throughput", Level.INFO);
-        Counter mainCounter2 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
+        Counter subCounterCollection2 = null;
+        try {
+            subCounterCollection2 = MetricManager.getCounter("org.wso2.main[+].sub.throughput");
+            Counter subCounter1 = MetricManager.getCounter("org.wso2.main.sub.throughput");
+            Counter mainCounter1 = MetricManager.getCounter("org.wso2.main.throughput");
 
-        subCounterCollection1.inc(1);
+            // get or create counters
+            Counter subCounter2 = MetricManager.counter("org.wso2.main.sub.throughput", Level.INFO);
+            Counter mainCounter2 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
 
-        assertEquals("Count should be three", 1, subCounterCollection1.getCount());
-        assertEquals("Count should be three", 1, subCounterCollection2.getCount());
-        assertEquals("Count should be three", 1, subCounter1.getCount());
-        assertEquals("Count should be three", 1, mainCounter1.getCount());
-        assertEquals("Count should be three", 1, subCounter2.getCount());
-        assertEquals("Count should be three", 1, mainCounter2.getCount());
+            subCounterCollection1.inc(1);
+
+            assertEquals("Count should be three", 1, subCounterCollection1.getCount());
+            assertEquals("Count should be three", 1, subCounterCollection2.getCount());
+            assertEquals("Count should be three", 1, subCounter1.getCount());
+            assertEquals("Count should be three", 1, mainCounter1.getCount());
+            assertEquals("Count should be three", 1, subCounter2.getCount());
+            assertEquals("Count should be three", 1, mainCounter2.getCount());
+        } catch (MetricNotFoundException e) {
+            fail("Metric should exist");
+        }
     }
 
     public void testGetUndefinedCounter() {
         try {
-            Counter counter = MetricManager.counter("org.wso2.main.throughput");
+            Counter counter = MetricManager.getCounter("org.wso2.main.throughput");
             fail("Should throw an exception, cannot retrieve undefined metric");
         } catch (Exception e) {
-            Assert.assertThat(e, IsInstanceOf.instanceOf(NoSuchElementException.class));
+            Assert.assertThat(e, IsInstanceOf.instanceOf(MetricNotFoundException.class));
         }
     }
 
     public void testGetWrongMetricType() {
         try {
             Counter counter = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
-            Meter meter = MetricManager.meter("org.wso2.main.throughput");
+            Meter meter = MetricManager.getMeter("org.wso2.main.throughput");
             fail("Should throw an exception, cannot retrieve metric when the metric type is different");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));

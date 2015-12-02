@@ -17,6 +17,7 @@ package org.wso2.carbon.metrics.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
@@ -94,13 +95,13 @@ public final class MetricManager {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Meter} instance or a {@link Meter} bundle.
      */
-    public static Meter meter(String name) {
+    public static Meter getMeter(String name) throws MetricNotFoundException {
         return ServiceReferenceHolder.getInstance().getMetricService().meter(name);
     }
 
     /**
      * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #meter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getMeter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
      * all the {@link Meter}s denoted by the annotated name. i.e.
      * <pre>
@@ -128,6 +129,7 @@ public final class MetricManager {
      * @param level The {@link Level} used for metric
      * @param name  The name of the metric
      * @return a {@link Meter} instance
+     * @deprecated Use {@link #meter(String, Level...)} instead
      */
     @Deprecated
     public static Meter meter(Level level, String name) {
@@ -151,13 +153,13 @@ public final class MetricManager {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Counter} instance or a {@link Counter} bundle.
      */
-    public static Counter counter(String name) {
+    public static Counter getCounter(String name) throws MetricNotFoundException {
         return ServiceReferenceHolder.getInstance().getMetricService().counter(name);
     }
 
     /**
      * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #counter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getCounter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating
      * all the {@link Counter}s denoted by the annotated name. i.e.
      * <pre>
@@ -185,6 +187,7 @@ public final class MetricManager {
      * @param level The {@link Level} used for metric
      * @param name  The name of the metric
      * @return a {@link Counter} instance
+     * @deprecated Use {@link #counter(String, Level...)} instead
      */
     @Deprecated
     public static Counter counter(Level level, String name) {
@@ -197,7 +200,7 @@ public final class MetricManager {
      * @param name The name of the metric (name can be annotated)
      * @return a {@link Timer} instance
      */
-    public static Timer timer(String name) {
+    public static Timer getTimer(String name) throws MetricNotFoundException {
         return ServiceReferenceHolder.getInstance().getMetricService().timer(name);
     }
 
@@ -218,6 +221,7 @@ public final class MetricManager {
      * @param level The {@link Level} used for metric
      * @param name  The name of the metric
      * @return a {@link Timer} instance
+     * @deprecated Use {@link #timer(String, Level)} instead
      */
     @Deprecated
     public static Timer timer(Level level, String name) {
@@ -242,13 +246,13 @@ public final class MetricManager {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
      */
-    public static Histogram histogram(String name) {
+    public static Histogram getHistogram(String name) throws MetricNotFoundException {
         return ServiceReferenceHolder.getInstance().getMetricService().histogram(name);
     }
 
     /**
      * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #histogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getHistogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
      * all the {@link Histogram}s denoted by the annotated name. i.e.
      * <pre>
@@ -275,6 +279,7 @@ public final class MetricManager {
      * @param level The {@link Level} used for metric
      * @param name  The name of the metric
      * @return a {@link Histogram} instance
+     * @deprecated Use {@link #histogram(String, Level...)} instead
      */
     @Deprecated
     public static Histogram histogram(Level level, String name) {
@@ -299,6 +304,7 @@ public final class MetricManager {
      * @param level The {@link Level} used for metric
      * @param name  The name of the metric
      * @param gauge An implementation of {@link Gauge}
+     * @deprecated Use {@link #gauge(String, Level, Gauge)} instead
      */
     @Deprecated
     public static <T> void gauge(Level level, String name, Gauge<T> gauge) {
@@ -326,6 +332,7 @@ public final class MetricManager {
      * @param timeout     The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the {@code timeout}
      * @param gauge       An implementation of {@link Gauge}
+     * @deprecated Use {@link #cachedGauge(String, Level, long, TimeUnit, Gauge)} instead
      */
     @Deprecated
     public static <T> void cachedGauge(Level level, String name, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
@@ -351,6 +358,7 @@ public final class MetricManager {
      * @param name    The name of the metrics
      * @param timeout The timeout value in seconds
      * @param gauge   An implementation of {@link Gauge}
+     * @deprecated Use {@link #cachedGauge(String, Level, long, Gauge)} instead
      */
     @Deprecated
     public static <T> void cachedGauge(Level level, String name, long timeout, Gauge<T> gauge) {
