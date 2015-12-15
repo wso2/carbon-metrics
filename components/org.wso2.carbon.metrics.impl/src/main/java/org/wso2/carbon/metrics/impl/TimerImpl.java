@@ -15,11 +15,11 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import org.wso2.carbon.metrics.manager.Level;
-import org.wso2.carbon.metrics.manager.Timer;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.Timer;
 
 /**
  * Implementation class wrapping {@link com.codahale.metrics.Timer} metric
@@ -31,6 +31,49 @@ public class TimerImpl extends AbstractMetric implements Timer {
     public TimerImpl(String name, Level level, com.codahale.metrics.Timer timer) {
         super(name, level);
         this.timer = timer;
+    }
+
+    private static class ContextImpl implements Context {
+
+        private com.codahale.metrics.Timer.Context context;
+
+        private ContextImpl(com.codahale.metrics.Timer.Context context) {
+            this.context = context;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see org.wso2.carbon.metrics.manager.Timer.Context#stop()
+         */
+        @Override
+        public long stop() {
+            return context.stop();
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see org.wso2.carbon.metrics.manager.Timer.Context#close()
+         */
+        @Override
+        public void close() {
+            context.close();
+        }
+
+    }
+
+    private static class DummyContextImpl implements Context {
+
+        @Override
+        public long stop() {
+            return 0;
+        }
+
+        @Override
+        public void close() {
+        }
+
     }
 
     /*
@@ -80,49 +123,6 @@ public class TimerImpl extends AbstractMetric implements Timer {
     @Override
     public long getCount() {
         return timer.getCount();
-    }
-
-    private static class ContextImpl implements Context {
-
-        private com.codahale.metrics.Timer.Context context;
-
-        private ContextImpl(com.codahale.metrics.Timer.Context context) {
-            this.context = context;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.wso2.carbon.metrics.manager.Timer.Context#stop()
-         */
-        @Override
-        public long stop() {
-            return context.stop();
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.wso2.carbon.metrics.manager.Timer.Context#close()
-         */
-        @Override
-        public void close() {
-            context.close();
-        }
-
-    }
-
-    private static class DummyContextImpl implements Context {
-
-        @Override
-        public long stop() {
-            return 0;
-        }
-
-        @Override
-        public void close() {
-        }
-
     }
 
 }
