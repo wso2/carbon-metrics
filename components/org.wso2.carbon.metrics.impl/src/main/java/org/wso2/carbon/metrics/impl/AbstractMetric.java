@@ -24,20 +24,21 @@ import org.wso2.carbon.metrics.manager.Metric;
 public abstract class AbstractMetric implements Metric {
 
     /**
+     * The level used when creating the metric
+     */
+    private final Level level;
+    /**
+     * The name of the metric
+     */
+    private final String name;
+    /**
      * A flag to indicate whether the metric is enabled
      */
     private volatile boolean enabled;
 
-    /**
-     * The level used when creating the metric
-     */
-    private final Level level;
-
-    private final String name;
-
-    public AbstractMetric(Level level, String name) {
-        this.level = level;
+    public AbstractMetric(String name, Level level) {
         this.name = name;
+        this.level = level;
     }
 
     public Level getLevel() {

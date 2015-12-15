@@ -19,18 +19,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.wso2.carbon.metrics.manager.Level;
-
-import com.codahale.metrics.Timer;
+import org.wso2.carbon.metrics.manager.Timer;
 
 /**
- * Implementation class wrapping {@link Timer} metric
+ * Implementation class wrapping {@link com.codahale.metrics.Timer} metric
  */
-public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics.manager.Timer {
+public class TimerImpl extends AbstractMetric implements Timer {
 
-    private Timer timer;
+    private com.codahale.metrics.Timer timer;
 
-    public TimerImpl(Level level, String name, Timer timer) {
-        super(level, name);
+    public TimerImpl(String name, Level level, com.codahale.metrics.Timer timer) {
+        super(name, level);
         this.timer = timer;
     }
 
@@ -44,7 +43,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.wso2.carbon.metrics.manager.Timer.Context#stop()
          */
         @Override
@@ -54,7 +53,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see org.wso2.carbon.metrics.manager.Timer.Context#close()
          */
         @Override
@@ -79,7 +78,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.Timer#update(long, java.util.concurrent.TimeUnit)
      */
     @Override
@@ -91,7 +90,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.Timer#time(java.util.concurrent.Callable)
      */
     @Override
@@ -105,7 +104,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.Timer#time()
      */
     @Override
@@ -118,7 +117,7 @@ public class TimerImpl extends AbstractMetric implements org.wso2.carbon.metrics
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.Timer#getCount()
      */
     @Override

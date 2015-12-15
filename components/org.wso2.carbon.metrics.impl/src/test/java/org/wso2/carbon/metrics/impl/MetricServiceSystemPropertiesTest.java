@@ -15,14 +15,13 @@
  */
 package org.wso2.carbon.metrics.impl;
 
+import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
-
-import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link MetricService}
@@ -42,7 +41,7 @@ public class MetricServiceSystemPropertiesTest extends TestCase {
     }
 
     public void testMetricServiceLevels() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-levels"));
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-levels"), Level.INFO);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
     }
