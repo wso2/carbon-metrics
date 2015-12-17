@@ -67,8 +67,8 @@ public abstract class ScheduledTask implements Closeable, Runnable {
      * @param name the task's name
      */
     protected ScheduledTask(String name) {
-        this(Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(name + '-'
-                + FACTORY_ID.incrementAndGet())));
+        this(Executors
+                .newSingleThreadScheduledExecutor(new NamedThreadFactory(name + '-' + FACTORY_ID.incrementAndGet())));
     }
 
     /**

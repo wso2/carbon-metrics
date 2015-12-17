@@ -15,9 +15,9 @@
  */
 package org.wso2.carbon.metrics.manager;
 
-import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
-
 import java.util.concurrent.TimeUnit;
+
+import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
 
 /**
  * Main interface for the service creating various metrics
@@ -52,7 +52,7 @@ public interface MetricService {
     /**
      * Set a new level to the given metric
      *
-     * @param name  The name of the Metric
+     * @param name The name of the Metric
      * @param level New {@link Level} for the Metric
      */
     void setMetricLevel(String name, Level level);
@@ -93,9 +93,9 @@ public interface MetricService {
      * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
      * all the {@link Meter}s denoted by the annotated name.
      *
-     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The annotated name of the metric (i.e org.wso2.cep[+].executionPlan.statName)
      * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
+     *            should be equal)
      * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
      */
     Meter meter(String name, Level... levels);
@@ -117,9 +117,9 @@ public interface MetricService {
      * Moreover, performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating
      * all the {@link Counter}s denoted by the annotated name.
      *
-     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The annotated name of the metric (i.e org.wso2.cep[+].executionPlan.statName)
      * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
+     *            should be equal)
      * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
      */
     Counter counter(String name, Level... levels);
@@ -138,7 +138,7 @@ public interface MetricService {
     /**
      * Get or create a {@link Timer} instance for the given name
      *
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @param level The {@link Level} used for metric
      * @return a {@link Timer} instance
      */
@@ -162,9 +162,9 @@ public interface MetricService {
      * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
      * all the {@link Histogram}s denoted by the annotated name.
      *
-     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The annotated name of the metric (i.e org.wso2.cep[+].executionPlan.statName)
      * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
+     *            should be equal)
      * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
      */
     Histogram histogram(String name, Level... levels);
@@ -172,7 +172,7 @@ public interface MetricService {
     /**
      * Get or create a {@link Gauge} for the given name
      *
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @param level The {@link Level} used for metric
      * @param gauge An implementation of {@link Gauge}
      */
@@ -181,11 +181,11 @@ public interface MetricService {
     /**
      * Get or create a cached {@link Gauge} for the given name
      *
-     * @param name        The name of the metric
-     * @param level       The {@link Level} used for metric
-     * @param timeout     the timeout
+     * @param name The name of the metric
+     * @param level The {@link Level} used for metric
+     * @param timeout the timeout
      * @param timeoutUnit the unit of {@code timeout}
-     * @param gauge       An implementation of {@link Gauge}
+     * @param gauge An implementation of {@link Gauge}
      */
     <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
 

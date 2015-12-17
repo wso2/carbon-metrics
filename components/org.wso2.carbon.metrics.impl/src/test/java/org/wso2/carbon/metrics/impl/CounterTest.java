@@ -15,7 +15,8 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
+import java.util.Random;
+
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
@@ -23,7 +24,7 @@ import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
-import java.util.Random;
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Counter}
@@ -96,7 +97,8 @@ public class CounterTest extends TestCase {
     }
 
     public void testMetricWithNonExistingParents() {
-        Counter sub2 = MetricManager.counter("org.wso2.main[+].sub1[+].sub2.throughput", Level.INFO, Level.INFO, Level.INFO);
+        Counter sub2 =
+                MetricManager.counter("org.wso2.main[+].sub1[+].sub2.throughput", Level.INFO, Level.INFO, Level.INFO);
         Counter sub1 = MetricManager.counter("org.wso2.main[+].sub1.throughput", Level.INFO, Level.INFO);
         Counter main = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
         sub2.inc(5l);
@@ -126,7 +128,8 @@ public class CounterTest extends TestCase {
     }
 
     public void testIncrementByRandomNumber() {
-        Counter counter = MetricManager.counter(MetricManager.name(this.getClass(), "test-counter-inc-rand"), Level.INFO);
+        Counter counter =
+                MetricManager.counter(MetricManager.name(this.getClass(), "test-counter-inc-rand"), Level.INFO);
         int n = randomGenerator.nextInt();
         counter.inc(n);
         assertEquals("Count should be " + n, n, counter.getCount());
@@ -147,7 +150,8 @@ public class CounterTest extends TestCase {
     }
 
     public void testDecrementByRandomNumber() {
-        Counter counter = MetricManager.counter(MetricManager.name(this.getClass(), "test-counter-dec-rand"), Level.INFO);
+        Counter counter =
+                MetricManager.counter(MetricManager.name(this.getClass(), "test-counter-dec-rand"), Level.INFO);
         int n = randomGenerator.nextInt();
         counter.dec(n);
         assertEquals("Count should be " + n, 0 - n, counter.getCount());

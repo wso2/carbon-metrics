@@ -17,7 +17,14 @@ package org.wso2.carbon.metrics.data.service;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -248,7 +255,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         @Override
         public void process(String source, long timestamp, MetricType metricType, String metricName,
-                            MetricAttribute metricAttribute, BigDecimal value) {
+                MetricAttribute metricAttribute, BigDecimal value) {
             BigDecimal[] data = dataMap.get(timestamp);
             if (data == null) {
                 data = new BigDecimal[metricGroupMap.size() + 1];
@@ -394,15 +401,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
             if (metricDataFormat != null) {
                 switch (metricDataFormat) {
-                    case P:
-                        valueConverter = PERCENTAGE_VALUE_CONVERTER;
-                        break;
-                    case B:
-                        valueConverter = MEMORY_VALUE_CONVERTER;
-                        break;
-                    default:
-                        valueConverter = DUMB_VALUE_CONVERTER;
-                        break;
+                case P:
+                    valueConverter = PERCENTAGE_VALUE_CONVERTER;
+                    break;
+                case B:
+                    valueConverter = MEMORY_VALUE_CONVERTER;
+                    break;
+                default:
+                    valueConverter = DUMB_VALUE_CONVERTER;
+                    break;
                 }
             } else {
                 valueConverter = DUMB_VALUE_CONVERTER;

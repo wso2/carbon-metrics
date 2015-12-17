@@ -15,7 +15,8 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
+import java.util.Random;
+
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
@@ -23,7 +24,7 @@ import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
-import java.util.Random;
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Meter}
@@ -59,12 +60,12 @@ public class MeterTest extends TestCase {
     }
 
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass());
-        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-same-meter"), Level.INFO);
+        String name = MetricManager.name(this.getClass(), "test-same-meter");
+        Meter meter = MetricManager.meter(name, Level.INFO);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
-        Meter meter2 = MetricManager.meter(MetricManager.name(this.getClass(), "test-same-meter"), Level.INFO);
+        Meter meter2 = MetricManager.meter(name, Level.INFO);
         assertEquals("Count should be one", 1, meter2.getCount());
     }
 
@@ -89,7 +90,8 @@ public class MeterTest extends TestCase {
     }
 
     public void testMetricWithNonExistingParents() {
-        Meter sub2 = MetricManager.meter("org.wso2.main[+].sub1[+].sub2.test-meter", Level.INFO, Level.INFO, Level.INFO);
+        Meter sub2 =
+                MetricManager.meter("org.wso2.main[+].sub1[+].sub2.test-meter", Level.INFO, Level.INFO, Level.INFO);
         Meter sub1 = MetricManager.meter("org.wso2.main[+].sub1.test-meter", Level.INFO, Level.INFO);
         Meter main = MetricManager.meter("org.wso2.main.test-meter", Level.INFO);
 

@@ -40,7 +40,8 @@ public class CsvReporterImpl extends AbstractReporter implements ScheduledReport
 
     private CsvReporter csvReporter;
 
-    public CsvReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, File directory, long pollingPeriod) {
+    public CsvReporterImpl(MetricRegistry metricRegistry, MetricFilter metricFilter, File directory,
+            long pollingPeriod) {
         super("CSV");
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;

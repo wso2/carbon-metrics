@@ -78,8 +78,8 @@ public class MetricsImplComponent {
                 .addReporterBuilder(new JDBCReporterBuilder().configure(configuration))
                 .addReporterBuilder(new DASReporterBuilder().configure(configuration)).build(levelConfiguration);
 
-        metricsServiceRegistration = componentContext.getBundleContext().registerService(MetricService.class.getName(),
-                metricService, null);
+        metricsServiceRegistration =
+                componentContext.getBundleContext().registerService(MetricService.class.getName(), metricService, null);
 
     }
 
