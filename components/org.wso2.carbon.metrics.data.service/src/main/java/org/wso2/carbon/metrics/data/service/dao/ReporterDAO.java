@@ -199,8 +199,8 @@ public class ReporterDAO {
         return results;
     }
 
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
-    private List<String> getHierarchicalMetricNames(Connection connection, String source, String path, MetricType metricType) {
+    private List<String> getHierarchicalMetricNames(Connection connection, String source, String path,
+            MetricType metricType) {
         List<String> results = new ArrayList<String>();
         StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT NAME FROM ");
         queryBuilder.append(getTableName(metricType));
