@@ -647,7 +647,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#meter(java.lang.String)
      */
     @Override
-    public Meter meter(String name) throws MetricNotFoundException {
+    public Meter getMeter(String name) throws MetricNotFoundException {
         if (isAnnotated(name)) {
             return (Meter) getOrCreateMetricCollection(name, null, METER_BUILDER);
         } else {
@@ -682,7 +682,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#counter(java.lang.String)
      */
     @Override
-    public Counter counter(String name) throws MetricNotFoundException {
+    public Counter getCounter(String name) throws MetricNotFoundException {
         if (isAnnotated(name)) {
             return (Counter) getOrCreateMetricCollection(name, null, COUNTER_BUILDER);
         } else {
@@ -738,7 +738,7 @@ public class MetricServiceImpl implements MetricService {
      * @see org.wso2.carbon.metrics.manager.MetricService#histogram(java.lang.String)
      */
     @Override
-    public Histogram histogram(String name) throws MetricNotFoundException {
+    public Histogram getHistogram(String name) throws MetricNotFoundException {
         if (isAnnotated(name)) {
             return (Histogram) getOrCreateMetricCollection(name, null, HISTOGRAM_BUILDER);
         } else {

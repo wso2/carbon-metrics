@@ -15,18 +15,19 @@
  */
 package org.wso2.carbon.metrics.manager;
 
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
+
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
-
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-import java.util.concurrent.TimeUnit;
 
 /**
  * MetricManager is a static utility class providing various metrics.
@@ -43,7 +44,7 @@ public final class MetricManager {
     /**
      * Concatenates elements to form a dotted name
      *
-     * @param name  the first element of the name
+     * @param name the first element of the name
      * @param names the remaining elements of the name
      * @return {@code name} and {@code names} concatenated by periods
      */
@@ -83,40 +84,44 @@ public final class MetricManager {
      * annotated, it'll return a single {@link Meter} instance. Otherwise it'll return a {@link Meter} bundle. Moreover,
      * if the name is annotated, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in
      * updating all the {@link Meter}s denoted by the annotated name. i.e.
+     * 
      * <pre>
      * {@code
-     *     Meter m = MetricManager.meter("org.wso2.cep[+].executionPlan.statName");
-     *     m.mark();
+     * Meter m = MetricManager.meter("org.wso2.parent[+].child.metric");
+     * m.mark();
      * }
      * </pre>
+     * 
      * Above example will internally call {@link Meter#mark()} on both {@link Meter}s registered under
-     * org.wso2.cep.statName and org.wso2.cep.executionPlan.statName
+     * org.wso2.parent.metric and org.wso2.parent.child.metric
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.parent[+].child.metric)
      * @return a single {@link Meter} instance or a {@link Meter} bundle.
      */
     public static Meter getMeter(String name) throws MetricNotFoundException {
-        return ServiceReferenceHolder.getInstance().getMetricService().meter(name);
+        return ServiceReferenceHolder.getInstance().getMetricService().getMeter(name);
     }
 
     /**
      * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #getMeter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getMeter(String)}, this will create the metrics denoted by the annotated name if they do not exist.
      * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
      * all the {@link Meter}s denoted by the annotated name. i.e.
+     * 
      * <pre>
      * {@code
-     *     Meter m = MetricManager.meter("org.wso2.cep[+].executionPlan.statName", Level.INFO, Level.INFO);
-     *     m.mark();
+     * Meter m = MetricManager.meter("org.wso2.parent[+].child.metric", Level.INFO, Level.INFO);
+     * m.mark();
      * }
      * </pre>
-     * Above example will get or create two {@link Meter}s registered under org.wso2.cep.statName and
-     * org.wso2.cep.executionPlan.statName with {@link Level#INFO}. Furthermore, it will internally call
+     * 
+     * Above example will get or create two {@link Meter}s registered under org.wso2.parent.metric and
+     * org.wso2.parent.child.metric with {@link Level#INFO}. Furthermore, it will internally call
      * {@link Meter#mark()} on both retrieved (or created) {@link Meter}s.
      *
-     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The annotated name of the metric (i.e org.wso2.parent[+].child.metric)
      * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
+     *            should be equal)
      * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
      */
     public static Meter meter(String name, Level... levels) {
@@ -127,7 +132,7 @@ public final class MetricManager {
      * Return a {@link Meter} instance registered under given name
      *
      * @param level The {@link Level} used for metric
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @return a {@link Meter} instance
      * @deprecated Use {@link #meter(String, Level...)} instead
      */
@@ -141,40 +146,44 @@ public final class MetricManager {
      * is not annotated, it'll return a single {@link Counter} instance. Otherwise it'll return a {@link Counter}
      * bundle. Moreover, if the name is annotated, performing actions (i.e {@link Counter#inc()}) in the returned bundle
      * will result in updating all the {@link Counter}s denoted by the annotated name. i.e.
+     * 
      * <pre>
      * {@code
-     *     Counter c = MetricManager.Counter("org.wso2.cep[+].executionPlan.statName");
-     *     c.inc();
+     * Counter c = MetricManager.getCounter("org.wso2.parent[+].child.metric");
+     * c.inc();
      * }
      * </pre>
+     * 
      * Above example will internally call {@link Counter#inc()} on both {@link Counter}s registered under
-     * org.wso2.cep.statName and org.wso2.cep.executionPlan.statName
+     * org.wso2.parent.metric and org.wso2.parent.child.metric
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.parent[+].child.metric)
      * @return a single {@link Counter} instance or a {@link Counter} bundle.
      */
     public static Counter getCounter(String name) throws MetricNotFoundException {
-        return ServiceReferenceHolder.getInstance().getMetricService().counter(name);
+        return ServiceReferenceHolder.getInstance().getMetricService().getCounter(name);
     }
 
     /**
      * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #getCounter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getCounter(String)}, this will create the metrics denoted by the annotated name if they do not exist.
      * Moreover, performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating
      * all the {@link Counter}s denoted by the annotated name. i.e.
+     * 
      * <pre>
-     * {@code
-     *     Counter c = MetricManager.counter("org.wso2.cep[+].executionPlan.statName", Level.INFO, Level.INFO);
-     *     c.inc();
+     *
+     * Counter c = MetricManager.counter("org.wso2.parent[+].child.metric", Level.INFO, Level.INFO);
+     * c.inc();
      * }
      * </pre>
-     * Above example will get or create two {@link Counter}s registered under org.wso2.cep.statName and
-     * org.wso2.cep.executionPlan.statName with {@link Level#INFO}. Furthermore, it will internally call
+     * 
+     * Above example will get or create two {@link Counter}s registered under org.wso2.parent.metric and
+     * org.wso2.parent.child.metric with {@link Level#INFO}. Furthermore, it will internally call
      * {@link Counter#inc()} on both retrieved (or created) {@link Counter}s.
      *
-     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The annotated name of the metric (i.e org.wso2.parent[+].child.metric)
      * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
+     *            should be equal)
      * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
      */
     public static Counter counter(String name, Level... levels) {
@@ -185,7 +194,7 @@ public final class MetricManager {
      * Return a {@link Counter} instance registered under given name
      *
      * @param level The {@link Level} used for metric
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @return a {@link Counter} instance
      * @deprecated Use {@link #counter(String, Level...)} instead
      */
@@ -207,7 +216,7 @@ public final class MetricManager {
     /**
      * Get or create a {@link Timer} instances registered under a annotated name and levels
      *
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @param level The {@link Level} used for metric
      * @return a {@link Timer} instance
      */
@@ -219,7 +228,7 @@ public final class MetricManager {
      * Get or create a {@link Timer} instances registered under a annotated name and levels
      *
      * @param level The {@link Level} used for metric
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @return a {@link Timer} instance
      * @deprecated Use {@link #timer(String, Level)} instead
      */
@@ -231,42 +240,49 @@ public final class MetricManager {
     /**
      * Get an existing {@link Histogram} instance or {@link Histogram}s bundle registered under a given name. If the
      * name is not
-     * annotated, it'll return a single {@link Histogram} instance. Otherwise it'll return a {@link Histogram} bundle. Moreover,
-     * if the name is annotated, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in
+     * annotated, it'll return a single {@link Histogram} instance. Otherwise it'll return a {@link Histogram} bundle.
+     * Moreover,
+     * if the name is annotated, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will
+     * result in
      * updating all the {@link Histogram}s denoted by the annotated name. i.e.
+     * 
      * <pre>
      * {@code
-     *     Histogram c = MetricManager.Histogram("org.wso2.cep[+].executionPlan.statName");
-     *     c.update(5);
+     * Histogram c = MetricManager.Histogram("org.wso2.parent[+].child.metric");
+     * c.update(5);
      * }
      * </pre>
+     * 
      * Above example will internally call {@link Histogram#update(int)} on both {@link Histogram}s registered under
-     * org.wso2.cep.statName and org.wso2.cep.executionPlan.statName
+     * org.wso2.parent.metric and org.wso2.parent.child.metric
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.parent[+].child.metric)
      * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
      */
     public static Histogram getHistogram(String name) throws MetricNotFoundException {
-        return ServiceReferenceHolder.getInstance().getMetricService().histogram(name);
+        return ServiceReferenceHolder.getInstance().getMetricService().getHistogram(name);
     }
 
     /**
      * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #getHistogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getHistogram(String)}, this will create the metrics denoted by the annotated name if they do not exist.
      * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
      * all the {@link Histogram}s denoted by the annotated name. i.e.
+     * 
      * <pre>
      * {@code
-     *     Histogram c = MetricManager.histogram("org.wso2.cep[+].executionPlan.statName", Level.INFO, Level.INFO);
-     *     c.update(5);
+     * Histogram c = MetricManager.histogram("org.wso2.parent[+].child.metric", Level.INFO, Level.INFO);
+     * c.update(5);
      * }
      * </pre>
-     * Above example will get or create two {@link Histogram}s registered under org.wso2.cep.statName and
-     * org.wso2.cep.executionPlan.statName with {@link Level#INFO}. Furthermore, it will internally call
+     * 
+     * Above example will get or create two {@link Histogram}s registered under org.wso2.parent.metric and
+     * org.wso2.parent.child.metric with {@link Level#INFO}. Furthermore, it will internally call
      * {@link Histogram#update(int)} on both retrieved (or created) {@link Histogram}s.
      *
-     * @param name   The annotated name of the metric  (i.e org.wso2.cep[+].executionPlan.statName)
-     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count should be equal)
+     * @param name The annotated name of the metric (i.e org.wso2.parent[+].child.metric)
+     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
+     *            should be equal)
      * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
      */
     public static Histogram histogram(String name, Level... levels) {
@@ -277,7 +293,7 @@ public final class MetricManager {
      * Return a {@link Histogram} instance registered under given name
      *
      * @param level The {@link Level} used for metric
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @return a {@link Histogram} instance
      * @deprecated Use {@link #histogram(String, Level...)} instead
      */
@@ -289,7 +305,7 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name
      *
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @param level The {@link Level} used for metric
      * @param gauge An implementation of {@link Gauge}
      */
@@ -297,12 +313,11 @@ public final class MetricManager {
         ServiceReferenceHolder.getInstance().getMetricService().gauge(name, level, gauge);
     }
 
-
     /**
      * Register a {@link Gauge} instance under given name
      *
      * @param level The {@link Level} used for metric
-     * @param name  The name of the metric
+     * @param name The name of the metric
      * @param gauge An implementation of {@link Gauge}
      * @deprecated Use {@link #gauge(String, Level, Gauge)} instead
      */
@@ -314,11 +329,11 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout
      *
-     * @param name        The name of the metric
-     * @param level       The {@link Level} used for metric
-     * @param timeout     The timeout value
+     * @param name The name of the metric
+     * @param level The {@link Level} used for metric
+     * @param timeout The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the timeout
-     * @param gauge       An implementation of {@link Gauge}
+     * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
         ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, timeoutUnit, gauge);
@@ -327,11 +342,11 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout
      *
-     * @param level       The {@link Level} used for metric
-     * @param name        The name of the metrics
-     * @param timeout     The timeout value
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metrics
+     * @param timeout The timeout value
      * @param timeoutUnit The {@link TimeUnit} for the {@code timeout}
-     * @param gauge       An implementation of {@link Gauge}
+     * @param gauge An implementation of {@link Gauge}
      * @deprecated Use {@link #cachedGauge(String, Level, long, TimeUnit, Gauge)} instead
      */
     @Deprecated
@@ -342,22 +357,23 @@ public final class MetricManager {
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
      *
-     * @param name    The name of the metric
-     * @param level   The {@link Level} used for metric
+     * @param name The name of the metric
+     * @param level The {@link Level} used for metric
      * @param timeout The timeout value in seconds
-     * @param gauge   An implementation of {@link Gauge}
+     * @param gauge An implementation of {@link Gauge}
      */
     public static <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge) {
-        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
+        ServiceReferenceHolder.getInstance().getMetricService().cachedGauge(name, level, timeout, TimeUnit.SECONDS,
+                gauge);
     }
 
     /**
      * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
      *
-     * @param level   The {@link Level} used for metric
-     * @param name    The name of the metrics
+     * @param level The {@link Level} used for metric
+     * @param name The name of the metrics
      * @param timeout The timeout value in seconds
-     * @param gauge   An implementation of {@link Gauge}
+     * @param gauge An implementation of {@link Gauge}
      * @deprecated Use {@link #cachedGauge(String, Level, long, Gauge)} instead
      */
     @Deprecated
@@ -398,7 +414,8 @@ public final class MetricManager {
             }
         } catch (JMException e) {
             if (logger.isErrorEnabled()) {
-                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME), e);
+                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME),
+                        e);
             }
         }
     }

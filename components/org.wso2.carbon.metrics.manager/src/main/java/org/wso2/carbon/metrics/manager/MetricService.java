@@ -85,11 +85,11 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Meter} instance or a {@link Meter} bundle.
      */
-    Meter meter(String name) throws MetricNotFoundException;
+    Meter getMeter(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #meter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getMeter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
      * all the {@link Meter}s denoted by the annotated name.
      *
@@ -109,11 +109,11 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Counter} instance or a {@link Counter} bundle.
      */
-    Counter counter(String name) throws MetricNotFoundException;
+    Counter getCounter(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #counter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getCounter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating
      * all the {@link Counter}s denoted by the annotated name.
      *
@@ -154,11 +154,11 @@ public interface MetricService {
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
      */
-    Histogram histogram(String name) throws MetricNotFoundException;
+    Histogram getHistogram(String name) throws MetricNotFoundException;
 
     /**
      * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #histogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
+     * {@link #getHistogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
      * all the {@link Histogram}s denoted by the annotated name.
      *
