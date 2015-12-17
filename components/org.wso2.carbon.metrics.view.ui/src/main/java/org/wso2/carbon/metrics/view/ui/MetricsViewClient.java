@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.data.service.stub.Metric;
 import org.wso2.carbon.metrics.data.service.stub.MetricList;
-import org.wso2.carbon.metrics.data.service.stub.MetricMeta;
 import org.wso2.carbon.metrics.data.service.stub.MetricsDataServiceStub;
 
 public class MetricsViewClient {
@@ -66,7 +65,8 @@ public class MetricsViewClient {
         }
     }
 
-    public MetricDataWrapper findLastMetrics(org.wso2.carbon.metrics.data.common.MetricList metrics, String source, String from) throws RemoteException {
+    public MetricDataWrapper findLastMetrics(org.wso2.carbon.metrics.data.common.MetricList metrics, String source,
+            String from) throws RemoteException {
         try {
             return new MetricDataWrapper(stub.findLastMetrics(convert(metrics), source, from));
         } catch (RemoteException e) {
@@ -76,8 +76,8 @@ public class MetricsViewClient {
         }
     }
 
-    public MetricDataWrapper findMetricsByTimePeriod(org.wso2.carbon.metrics.data.common.MetricList metrics, String source, long from, long to)
-            throws RemoteException {
+    public MetricDataWrapper findMetricsByTimePeriod(org.wso2.carbon.metrics.data.common.MetricList metrics,
+            String source, long from, long to) throws RemoteException {
         try {
             return new MetricDataWrapper(stub.findMetricsByTimePeriod(convert(metrics), source, from, to));
         } catch (RemoteException e) {
