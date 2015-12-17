@@ -15,13 +15,14 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Gauge}

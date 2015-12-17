@@ -15,11 +15,12 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import com.codahale.metrics.CachedGauge;
+import java.util.concurrent.TimeUnit;
+
 import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Level;
 
-import java.util.concurrent.TimeUnit;
+import com.codahale.metrics.CachedGauge;
 
 /**
  * Implementation of cached {@link Gauge} metric

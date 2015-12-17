@@ -15,7 +15,8 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
+import java.util.Random;
+
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Histogram;
 import org.wso2.carbon.metrics.manager.Level;
@@ -23,7 +24,7 @@ import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
-import java.util.Random;
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Histogram}
@@ -43,7 +44,8 @@ public class HistogramTest extends TestCase {
     }
 
     public void testInitialCount() {
-        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
+        Histogram histogram =
+                MetricManager.histogram(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, histogram.getCount());
     }
 
@@ -57,11 +59,13 @@ public class HistogramTest extends TestCase {
     }
 
     public void testSameMetric() {
-        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
+        Histogram histogram =
+                MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
-        Histogram histogram2 = MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
+        Histogram histogram2 =
+                MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
         assertEquals("Count should be one", 1, histogram2.getCount());
     }
 
@@ -86,7 +90,8 @@ public class HistogramTest extends TestCase {
     }
 
     public void testMetricWithNonExistingParents() {
-        Histogram sub2 = MetricManager.histogram("org.wso2.main[+].sub1[+].sub2.test-histogram", Level.INFO, Level.INFO, Level.INFO);
+        Histogram sub2 = MetricManager.histogram("org.wso2.main[+].sub1[+].sub2.test-histogram", Level.INFO, Level.INFO,
+                Level.INFO);
         Histogram sub1 = MetricManager.histogram("org.wso2.main[+].sub1.test-histogram", Level.INFO, Level.INFO);
         Histogram main = MetricManager.histogram("org.wso2.main.test-histogram", Level.INFO);
 
@@ -107,7 +112,8 @@ public class HistogramTest extends TestCase {
     }
 
     public void testUpdateInt() {
-        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-int"), Level.INFO);
+        Histogram histogram =
+                MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-int"), Level.INFO);
         histogram.update(randomGenerator.nextInt());
         assertEquals("Count should be one", 1, histogram.getCount());
 
@@ -117,7 +123,8 @@ public class HistogramTest extends TestCase {
     }
 
     public void testUpdateLong() {
-        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-long"), Level.INFO);
+        Histogram histogram =
+                MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-long"), Level.INFO);
 
         histogram.update(randomGenerator.nextLong());
         assertEquals("Count should be one", 1, histogram.getCount());

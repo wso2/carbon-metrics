@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.metrics.manager.jmx;
 
-
 /**
  * Interface for JMX Managed Metric Manager Bean
  */

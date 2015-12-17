@@ -15,7 +15,9 @@
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
@@ -24,8 +26,7 @@ import org.wso2.carbon.metrics.manager.Timer;
 import org.wso2.carbon.metrics.manager.Timer.Context;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import junit.framework.TestCase;
 
 /**
  * Test Cases for {@link Timer}

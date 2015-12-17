@@ -15,11 +15,11 @@
  */
 package org.wso2.carbon.metrics.impl;
 
+import java.net.URL;
+
 import org.wso2.carbon.metrics.common.MetricsConfigException;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.common.MetricsXMLConfiguration;
-
-import java.net.URL;
 
 /**
  * Utility class for Tests

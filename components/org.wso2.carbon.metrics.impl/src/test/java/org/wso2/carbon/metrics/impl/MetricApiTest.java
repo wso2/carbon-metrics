@@ -1,32 +1,34 @@
 /*
- * Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
- *
+ * Copyright 2015 WSO2 Inc. (http://wso2.org)
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *
  */
 package org.wso2.carbon.metrics.impl;
 
-import junit.framework.TestCase;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.manager.*;
+import org.wso2.carbon.metrics.manager.Counter;
+import org.wso2.carbon.metrics.manager.Level;
+import org.wso2.carbon.metrics.manager.MetricManager;
+import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
 import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
+import junit.framework.TestCase;
+
 /**
- * Test Cases for {@link Counter}
+ * Test Cases for Metric Manager API
  */
 public class MetricApiTest extends TestCase {
 
@@ -62,7 +64,8 @@ public class MetricApiTest extends TestCase {
 
     public void testCreateMultipleCounters() {
         // create new counters
-        Counter subCounterCollection1 = MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
+        Counter subCounterCollection1 =
+                MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
         // retrieve created counters
         Counter subCounterCollection2 = null;
         try {
@@ -89,7 +92,7 @@ public class MetricApiTest extends TestCase {
 
     public void testGetUndefinedCounter() {
         try {
-            Counter counter = MetricManager.getCounter("org.wso2.main.throughput");
+            MetricManager.getCounter("org.wso2.main.throughput");
             fail("Should throw an exception, cannot retrieve undefined metric");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(MetricNotFoundException.class));
@@ -98,8 +101,8 @@ public class MetricApiTest extends TestCase {
 
     public void testGetWrongMetricType() {
         try {
-            Counter counter = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
-            Meter meter = MetricManager.getMeter("org.wso2.main.throughput");
+            MetricManager.counter("org.wso2.main.throughput", Level.INFO);
+            MetricManager.getMeter("org.wso2.main.throughput");
             fail("Should throw an exception, cannot retrieve metric when the metric type is different");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
@@ -108,9 +111,9 @@ public class MetricApiTest extends TestCase {
 
     public void testAnnotatedNameToCreateSingleMetric() {
         try {
-            Counter counter = MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO);
-            fail("Should throw an exception, cannot retrieve metric when there's no sufficient Levels" +
-                    " to suite annotated name");
+            MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO);
+            fail("Should throw an exception, cannot retrieve metric when there's no sufficient Levels"
+                    + " to suite annotated name");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
         }
@@ -118,8 +121,8 @@ public class MetricApiTest extends TestCase {
 
     public void testGetMetricWithDifferentLevel() {
         try {
-            Counter counter1 = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
-            Counter counter2 = MetricManager.counter("org.wso2.main.throughput", Level.DEBUG);
+            MetricManager.counter("org.wso2.main.throughput", Level.INFO);
+            MetricManager.counter("org.wso2.main.throughput", Level.DEBUG);
             fail("Should throw an exception, cannot retrieve metric when the metric level is different");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
