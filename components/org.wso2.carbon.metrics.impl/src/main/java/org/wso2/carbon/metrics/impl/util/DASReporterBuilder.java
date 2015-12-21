@@ -156,7 +156,7 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
 
         if (logger.isInfoEnabled()) {
             logger.info(String.format(
-                    "Creating DAS reporter for Metrics with source '%s', data source '%s' and %d seconds polling period",
+                    "Creating DAS reporter for Metrics with source '%s', protocol '%s' and %d seconds polling period",
                     source, type, dasReporterPollingPeriod));
         }
 
