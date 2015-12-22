@@ -154,6 +154,10 @@ public class DASReporterBuilder implements ReporterBuilder<DASReporterImpl> {
             throw new ReporterBuildException("Password is not specified for DAS Reporting.");
         }
 
+        if (dataAgentConfigPath == null || dataAgentConfigPath.trim().length() == 0) {
+            throw new ReporterBuildException("Data Agent config path is not specified for DAS Reporting.");
+        }
+
         if (logger.isInfoEnabled()) {
             logger.info(String.format(
                     "Creating DAS reporter for Metrics with source '%s', protocol '%s' and %d seconds polling period",
