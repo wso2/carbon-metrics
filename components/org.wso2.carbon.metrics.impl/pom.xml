@@ -125,16 +125,16 @@
                             javax.sql,
                             org.osgi.service.component,
                             org.osgi.framework,
-                            org.apache.commons.io;version="${commons-io.wso2.version.range}",
-                            org.wso2.carbon.registry.core.*;version="${carbon.registry.version.range}",
-                            org.wso2.carbon.utils.*;version="${carbon.kernel.version.range}",
                             org.wso2.carbon.metrics.common.*,
                             org.wso2.carbon.metrics.manager.*,
-                            org.wso2.carbon.metrics.jdbc.reporter.*,
-                            org.wso2.carbon.metrics.das.reporter.*,
+                            org.wso2.carbon.metrics.jdbc.reporter.*;resolution:=optional,
+                            org.wso2.carbon.metrics.das.reporter.*;resolution:=optional,
                             com.codahale.metrics;version="${metrics.version.range}",
                             com.codahale.metrics.jvm;version="${metrics.version.range}",
-                            org.slf4j;version="${slf4j.version.range}"
+                            org.slf4j;version="${slf4j.version.range}",
+                            org.apache.commons.io;version="${commons-io.wso2.version.range}";resolution:=optional,
+                            org.wso2.carbon.registry.core.*;version="${carbon.registry.version.range}";resolution:=optional,
+                            org.wso2.carbon.utils.*;version="${carbon.kernel.version.range}";resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>
