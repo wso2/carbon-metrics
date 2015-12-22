@@ -22,8 +22,8 @@ import org.wso2.carbon.metrics.manager.Counter;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
+import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import junit.framework.TestCase;
 

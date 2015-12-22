@@ -22,9 +22,9 @@ import org.wso2.carbon.metrics.common.MetricsConfiguration;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
+import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.Timer;
 import org.wso2.carbon.metrics.manager.Timer.Context;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 
 import junit.framework.TestCase;
 
