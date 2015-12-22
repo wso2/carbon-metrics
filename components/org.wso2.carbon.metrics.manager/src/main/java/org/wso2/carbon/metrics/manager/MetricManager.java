@@ -25,7 +25,6 @@ import javax.management.ObjectName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBeanImpl;
 
