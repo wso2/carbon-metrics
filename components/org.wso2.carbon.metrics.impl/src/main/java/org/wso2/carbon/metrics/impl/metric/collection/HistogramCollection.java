@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
+ * Copyright 2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.impl;
+package org.wso2.carbon.metrics.impl.metric.collection;
+
+import java.util.List;
 
 import org.wso2.carbon.metrics.manager.Histogram;
-import org.wso2.carbon.metrics.manager.Level;
 
 /**
- * Implementation class wrapping {@link com.codahale.metrics.Histogram} metric
+ * Implementation class wrapping {@link List<Histogram>} metrics
  */
-public class HistogramImpl extends AbstractMetric implements Histogram {
+public class HistogramCollection implements Histogram {
 
-    private com.codahale.metrics.Histogram histogram;
+    private Histogram histogram;
+    private List<Histogram> affected;
 
-    public HistogramImpl(String name, Level level, com.codahale.metrics.Histogram histogram) {
-        super(name, level);
+    public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
         this.histogram = histogram;
+        this.affected = affectedHistograms;
     }
 
     /*
@@ -37,8 +39,9 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
      */
     @Override
     public void update(int value) {
-        if (isEnabled()) {
-            histogram.update(value);
+        histogram.update(value);
+        for (Histogram h : affected) {
+            h.update(value);
         }
     }
 
@@ -49,8 +52,9 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
      */
     @Override
     public void update(long value) {
-        if (isEnabled()) {
-            histogram.update(value);
+        histogram.update(value);
+        for (Histogram h : affected) {
+            h.update(value);
         }
     }
 

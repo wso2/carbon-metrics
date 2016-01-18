@@ -47,7 +47,7 @@ import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.jmx.MetricManagerMXBean;
 
 import junit.extensions.TestSetup;
@@ -115,7 +115,7 @@ public class ReporterTest extends TestCase {
         // Register the MX Bean
         MetricManager.registerMXBean();
 
-        Meter meter = MetricManager.meter(Level.INFO, meterName);
+        Meter meter = MetricManager.meter(meterName, Level.INFO);
         meter.mark();
 
         Gauge<Integer> gauge = new Gauge<Integer>() {
@@ -125,7 +125,7 @@ public class ReporterTest extends TestCase {
             }
         };
 
-        MetricManager.gauge(Level.INFO, gaugeName, gauge);
+        MetricManager.gauge(gaugeName, Level.INFO, gauge);
 
         template.execute("DELETE FROM METRIC_GAUGE;");
         template.execute("DELETE FROM METRIC_TIMER;");
@@ -167,7 +167,7 @@ public class ReporterTest extends TestCase {
 
         metricService.disable();
         String meterName2 = MetricManager.name(this.getClass(), "test-meter2");
-        Meter meter = MetricManager.meter(Level.INFO, meterName2);
+        Meter meter = MetricManager.meter(meterName2, Level.INFO);
         meter.mark();
 
         metricService.report();
@@ -179,14 +179,14 @@ public class ReporterTest extends TestCase {
 
     public void testJDBCReporter() {
         metricService.report();
-        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?",
-                meterName);
+        List<Map<String, Object>> meterResult =
+                template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         assertEquals("There is one result", 1, meterResult.size());
         assertEquals("Meter is available", meterName, meterResult.get(0).get("NAME"));
         assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));
 
-        List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?",
-                gaugeName);
+        List<Map<String, Object>> gaugeResult =
+                template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
         assertEquals("There is one result", 1, gaugeResult.size());
         assertEquals("Gauge is available", gaugeName, gaugeResult.get(0).get("NAME"));
         assertEquals("Gauge value is one", "1", gaugeResult.get(0).get("VALUE"));
@@ -194,8 +194,8 @@ public class ReporterTest extends TestCase {
 
     public void testJDBCReporterRestart() {
         metricService.report();
-        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?",
-                meterName);
+        List<Map<String, Object>> meterResult =
+                template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         assertEquals("There is one result", 1, meterResult.size());
 
         metricService.disable();
@@ -221,8 +221,8 @@ public class ReporterTest extends TestCase {
 
     public void testJMXReport() {
         invokeJMXReportOperation();
-        List<Map<String, Object>> meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?",
-                meterName);
+        List<Map<String, Object>> meterResult =
+                template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         assertEquals("There is one result", 1, meterResult.size());
         assertEquals("Meter is available", meterName, meterResult.get(0).get("NAME"));
         assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));

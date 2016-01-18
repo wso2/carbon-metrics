@@ -176,6 +176,64 @@ public class ReporterDAO {
         return results;
     }
 
+    public Map<String, MetricType> queryHierarchicalMetrics(String source, String path) {
+        Map<String, MetricType> results = new HashMap<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            for (MetricType metricType : MetricType.values()) {
+                List<String> names = getHierarchicalMetricNames(connection, source, path, metricType);
+                if (!names.isEmpty()) {
+                    for (String name : names) {
+                        results.put(name, metricType);
+                    }
+                }
+            }
+            connection.close();
+            connection = null;
+        } catch (SQLException e) {
+            logger.error("Error when querying sources.", e);
+        } finally {
+            closeQuietly(connection);
+        }
+        return results;
+    }
+
+    private List<String> getHierarchicalMetricNames(Connection connection, String source, String path,
+            MetricType metricType) {
+        List<String> results = new ArrayList<String>();
+        StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT NAME FROM ");
+        queryBuilder.append(getTableName(metricType));
+        queryBuilder.append(" WHERE SOURCE = ?");
+        if (path != null && !path.isEmpty()) {
+            queryBuilder.append(" AND NAME LIKE ?");
+        }
+        String query = queryBuilder.toString();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = connection.prepareStatement(query);
+            ps.setString(1, source);
+            if (path != null && !path.isEmpty()) {
+                ps.setString(2, path + "%");
+            }
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("NAME");
+                results.add(name);
+            }
+            rs.close();
+            rs = null;
+            ps.close();
+            ps = null;
+        } catch (SQLException e) {
+            logger.error(String.format("Error when querying metrics. SQL %s", query), e);
+        } finally {
+            closeQuietly(null, ps, rs);
+        }
+        return results;
+    }
+
     public <T> void queryMetrics(MetricType metricType, List<String> names, List<MetricAttribute> attributes,
             String source, long startTime, long endTime, MetricDataProcessor<T> processor) {
         validateMetricAttributes(metricType, attributes);

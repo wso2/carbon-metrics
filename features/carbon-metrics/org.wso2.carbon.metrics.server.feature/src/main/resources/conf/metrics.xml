@@ -78,7 +78,7 @@
             </ScheduledCleanup>
         </JDBC>
         <DAS>
-            <Enabled>true</Enabled>
+            <Enabled>false</Enabled>
             <!-- Source of Metrics, which will be used to
                 identify each metric sent in the streams -->
             <!-- Commented to use the hostname

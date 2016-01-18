@@ -1,26 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-    # Copyright 2015 WSO2 Inc. (http://wso2.org)
-    #
-    # Licensed under the Apache License, Version 2.0 (the "License");
-    # you may not use this file except in compliance with the License.
-    # You may obtain a copy of the License at
-    #
-    # http://www.apache.org/licenses/LICENSE-2.0
-    #
-    # Unless required by applicable law or agreed to in writing, software
-    # distributed under the License is distributed on an "AS IS" BASIS,
-    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    # See the License for the specific language governing permissions and
-    # limitations under the License.
--->
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.data.metrics.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax23="http://service.data.metrics.carbon.wso2.org/xsd" xmlns:ax21="http://common.data.metrics.carbon.wso2.org/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.data.metrics.carbon.wso2.org">
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ax215="http://common.data.metrics.carbon.wso2.org/xsd" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.data.metrics.carbon.wso2.org" xmlns:ax213="http://service.data.metrics.carbon.wso2.org/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.data.metrics.carbon.wso2.org">
     <wsdl:types>
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org/xsd">
+            <xs:complexType name="MetricHierarchyData">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="children" nillable="true" type="xs:string"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metrics" nillable="true" type="ax213:MetricMeta"/>
+                    <xs:element minOccurs="0" name="path" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MetricMeta">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="type" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
             <xs:complexType name="MetricData">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="data" nillable="true" type="ax23:ArrayOfBigDecimal"/>
-                    <xs:element minOccurs="0" name="metadata" nillable="true" type="ax23:Metadata"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="data" nillable="true" type="ax213:ArrayOfBigDecimal"/>
+                    <xs:element minOccurs="0" name="metadata" nillable="true" type="ax213:Metadata"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="ArrayOfBigDecimal">
@@ -38,7 +35,7 @@
         <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://common.data.metrics.carbon.wso2.org/xsd">
             <xs:complexType name="MetricList">
                 <xs:sequence>
-                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metric" nillable="true" type="ax21:Metric"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="metric" nillable="true" type="ax215:Metric"/>
                 </xs:sequence>
             </xs:complexType>
             <xs:complexType name="Metric">
@@ -51,25 +48,28 @@
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>
-        <xs:schema xmlns:ax24="http://service.data.metrics.carbon.wso2.org/xsd" xmlns:ax22="http://common.data.metrics.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org">
-            <xs:import namespace="http://common.data.metrics.carbon.wso2.org/xsd"/>
+        <xs:schema xmlns:ax214="http://service.data.metrics.carbon.wso2.org/xsd" xmlns:ax216="http://common.data.metrics.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.data.metrics.carbon.wso2.org">
             <xs:import namespace="http://service.data.metrics.carbon.wso2.org/xsd"/>
-            <xs:element name="getAllSources">
-                <xs:complexType>
-                    <xs:sequence/>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAllSourcesResponse">
+            <xs:import namespace="http://common.data.metrics.carbon.wso2.org/xsd"/>
+            <xs:element name="getHierarchy">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="path" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getHierarchyResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax214:MetricHierarchyData"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="findLastMetrics">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="metrics" nillable="true" type="ax21:MetricList"/>
+                        <xs:element minOccurs="0" name="metrics" nillable="true" type="ax215:MetricList"/>
                         <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
                         <xs:element minOccurs="0" name="from" nillable="true" type="xs:string"/>
                     </xs:sequence>
@@ -78,14 +78,14 @@
             <xs:element name="findLastMetricsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax23:MetricData"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax214:MetricData"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="findMetricsByTimePeriod">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="metrics" nillable="true" type="ax21:MetricList"/>
+                        <xs:element minOccurs="0" name="metrics" nillable="true" type="ax215:MetricList"/>
                         <xs:element minOccurs="0" name="source" nillable="true" type="xs:string"/>
                         <xs:element minOccurs="0" name="startTime" type="xs:long"/>
                         <xs:element minOccurs="0" name="endTime" type="xs:long"/>
@@ -95,7 +95,19 @@
             <xs:element name="findMetricsByTimePeriodResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax23:MetricData"/>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax214:MetricData"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllSources">
+                <xs:complexType>
+                    <xs:sequence/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAllSourcesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -119,6 +131,12 @@
     <wsdl:message name="findMetricsByTimePeriodResponse">
         <wsdl:part name="parameters" element="ns:findMetricsByTimePeriodResponse"/>
     </wsdl:message>
+    <wsdl:message name="getHierarchyRequest">
+        <wsdl:part name="parameters" element="ns:getHierarchy"/>
+    </wsdl:message>
+    <wsdl:message name="getHierarchyResponse">
+        <wsdl:part name="parameters" element="ns:getHierarchyResponse"/>
+    </wsdl:message>
     <wsdl:portType name="MetricsDataServicePortType">
         <wsdl:operation name="getAllSources">
             <wsdl:input message="ns:getAllSourcesRequest" wsaw:Action="urn:getAllSources"/>
@@ -131,6 +149,10 @@
         <wsdl:operation name="findMetricsByTimePeriod">
             <wsdl:input message="ns:findMetricsByTimePeriodRequest" wsaw:Action="urn:findMetricsByTimePeriod"/>
             <wsdl:output message="ns:findMetricsByTimePeriodResponse" wsaw:Action="urn:findMetricsByTimePeriodResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="getHierarchy">
+            <wsdl:input message="ns:getHierarchyRequest" wsaw:Action="urn:getHierarchy"/>
+            <wsdl:output message="ns:getHierarchyResponse" wsaw:Action="urn:getHierarchyResponse"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="MetricsDataServiceSoap11Binding" type="ns:MetricsDataServicePortType">
@@ -155,6 +177,15 @@
         </wsdl:operation>
         <wsdl:operation name="findMetricsByTimePeriod">
             <soap:operation soapAction="urn:findMetricsByTimePeriod" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getHierarchy">
+            <soap:operation soapAction="urn:getHierarchy" style="document"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
@@ -192,6 +223,15 @@
                 <soap12:body use="literal"/>
             </wsdl:output>
         </wsdl:operation>
+        <wsdl:operation name="getHierarchy">
+            <soap12:operation soapAction="urn:getHierarchy" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="MetricsDataServiceHttpBinding" type="ns:MetricsDataServicePortType">
         <http:binding verb="POST"/>
@@ -215,6 +255,15 @@
         </wsdl:operation>
         <wsdl:operation name="findMetricsByTimePeriod">
             <http:operation location="findMetricsByTimePeriod"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getHierarchy">
+            <http:operation location="getHierarchy"/>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"/>
             </wsdl:input>

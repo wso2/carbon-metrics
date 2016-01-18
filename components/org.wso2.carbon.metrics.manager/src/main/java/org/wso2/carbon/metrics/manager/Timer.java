@@ -53,7 +53,7 @@ public interface Timer extends Metric {
 
     long getCount();
 
-    public static interface Context extends Closeable {
+    interface Context extends Closeable {
 
         /**
          * Updates the timer with the difference between current and start time. Call to this method will not reset the

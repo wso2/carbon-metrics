@@ -20,7 +20,7 @@ import org.wso2.carbon.metrics.manager.Gauge;
 import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 
 import junit.framework.TestCase;
 
@@ -49,10 +49,10 @@ public class GaugeTest extends TestCase {
             }
         };
 
-        MetricManager.gauge(Level.INFO, name, gauge);
+        MetricManager.gauge(name, Level.INFO, gauge);
 
         // This call also should be successful as we are getting the same gauge
-        MetricManager.gauge(Level.INFO, name, gauge);
+        MetricManager.gauge(name, Level.INFO, gauge);
     }
 
     public void testSameCachedMetric() {
@@ -65,9 +65,9 @@ public class GaugeTest extends TestCase {
             }
         };
 
-        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+        MetricManager.cachedGauge(name, Level.INFO, 5, gauge);
 
-        MetricManager.cachedGauge(Level.INFO, name, 5, gauge);
+        MetricManager.cachedGauge(name, Level.INFO, 5, gauge);
     }
 
 }

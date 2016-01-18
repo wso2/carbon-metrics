@@ -15,14 +15,14 @@
  */
 package org.wso2.carbon.metrics.impl.metric;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricSet;
-
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricSet;
 
 /**
  * A set of gauges for JVM classloader usage.
@@ -49,7 +49,7 @@ public class ClassLoadingGaugeSet implements MetricSet {
                 return mxBean.getTotalLoadedClassCount();
             }
         });
-        
+
         gauges.put("loaded.current", new Gauge<Integer>() {
             @Override
             public Integer getValue() {

@@ -37,6 +37,10 @@
             <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.databridge.agent</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -52,9 +56,9 @@
                             org.wso2.carbon.metrics.das.reporter.*,
                         </Export-Package>
                         <Import-Package>
-                            org.wso2.carbon.databridge.agent;version="${carbon.analytics.common.version.range}",
-                            com.codahale.metrics;
-                            version="${metrics.version.range}",
+                            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
+                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
+                            com.codahale.metrics;version="${metrics.version.range}",
                             org.slf4j;version="${slf4j.version.range}"
                         </Import-Package>
                     </instructions>

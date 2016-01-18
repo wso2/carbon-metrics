@@ -43,5 +43,18 @@
             <require-permission>/permission/admin/monitor/metrics</require-permission>
             <require-super-tenant>true</require-super-tenant>
         </menu>
+        <menu>
+            <id>metrics_hierarchy_menu</id>
+            <i18n-key>metrics.hierarchy.menu.text</i18n-key>
+            <i18n-bundle>org.wso2.carbon.metrics.view.ui.i18n.Resources</i18n-bundle>
+            <parent-menu>metrics_menu</parent-menu>
+            <link>../metrics-view/hierarchy.jsp</link>
+            <region>region4</region>
+            <order>2</order>
+            <style-class>monitor</style-class>
+            <icon>../metrics-view/images/icon_hierarchy.png</icon>
+            <require-permission>/permission/admin/monitor/metrics</require-permission>
+            <require-super-tenant>true</require-super-tenant>
+        </menu>
     </menus>
 </component>

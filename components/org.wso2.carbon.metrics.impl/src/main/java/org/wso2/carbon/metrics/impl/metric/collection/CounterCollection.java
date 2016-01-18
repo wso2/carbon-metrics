@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 WSO2 Inc. (http://wso2.org)
+ * Copyright 2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.impl;
+package org.wso2.carbon.metrics.impl.metric.collection;
+
+import java.util.List;
 
 import org.wso2.carbon.metrics.manager.Counter;
-import org.wso2.carbon.metrics.manager.Level;
 
 /**
- * Implementation class wrapping {@link com.codahale.metrics.Counter} metric
+ * Implementation class wrapping a list of {@link Counter} metrics
  */
-public class CounterImpl extends AbstractMetric implements Counter {
+public class CounterCollection implements Counter {
 
-    private com.codahale.metrics.Counter counter;
+    private Counter counter;
+    private List<Counter> affected;
 
-    public CounterImpl(String name, Level level, com.codahale.metrics.Counter counter) {
-        super(name, level);
+    public CounterCollection(Counter counter, List<Counter> affectedCounters) {
         this.counter = counter;
+        this.affected = affectedCounters;
     }
 
     /*
@@ -37,8 +39,9 @@ public class CounterImpl extends AbstractMetric implements Counter {
      */
     @Override
     public void inc() {
-        if (isEnabled()) {
-            counter.inc();
+        counter.inc();
+        for (Counter c : affected) {
+            c.inc();
         }
     }
 
@@ -49,8 +52,9 @@ public class CounterImpl extends AbstractMetric implements Counter {
      */
     @Override
     public void inc(long n) {
-        if (isEnabled()) {
-            counter.inc(n);
+        counter.inc(n);
+        for (Counter c : affected) {
+            c.inc(n);
         }
     }
 
@@ -61,8 +65,9 @@ public class CounterImpl extends AbstractMetric implements Counter {
      */
     @Override
     public void dec() {
-        if (isEnabled()) {
-            counter.dec();
+        counter.dec();
+        for (Counter c : affected) {
+            c.dec();
         }
     }
 
@@ -73,8 +78,9 @@ public class CounterImpl extends AbstractMetric implements Counter {
      */
     @Override
     public void dec(long n) {
-        if (isEnabled()) {
-            counter.dec(n);
+        counter.dec(n);
+        for (Counter c : affected) {
+            c.dec(n);
         }
     }
 
@@ -87,4 +93,5 @@ public class CounterImpl extends AbstractMetric implements Counter {
     public long getCount() {
         return counter.getCount();
     }
+
 }

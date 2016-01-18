@@ -55,7 +55,18 @@ public class MetricsViewClient {
         }
     }
 
-    public MetricDataWrapper findLastMetrics(MetricList metrics, String source, String from) throws RemoteException {
+    public MetricHierarchyDataWrapper getHierarchy(String source, String path) throws RemoteException {
+        try {
+            return new MetricHierarchyDataWrapper(stub.getHierarchy(source, path));
+        } catch (RemoteException e) {
+            String msg = "Error occurred while accessing Metrics Data Service. Backend service may be unavailable";
+            logger.error(msg, e);
+            throw e;
+        }
+    }
+
+    public MetricDataWrapper findLastMetrics(org.wso2.carbon.metrics.data.common.MetricList metrics, String source,
+            String from) throws RemoteException {
         try {
             return new MetricDataWrapper(stub.findLastMetrics(convert(metrics), source, from));
         } catch (RemoteException e) {
@@ -65,8 +76,8 @@ public class MetricsViewClient {
         }
     }
 
-    public MetricDataWrapper findMetricsByTimePeriod(MetricList metrics, String source, long from, long to)
-            throws RemoteException {
+    public MetricDataWrapper findMetricsByTimePeriod(org.wso2.carbon.metrics.data.common.MetricList metrics,
+            String source, long from, long to) throws RemoteException {
         try {
             return new MetricDataWrapper(stub.findMetricsByTimePeriod(convert(metrics), source, from, to));
         } catch (RemoteException e) {
@@ -76,14 +87,14 @@ public class MetricsViewClient {
         }
     }
 
-    private org.wso2.carbon.metrics.data.service.stub.MetricList convert(MetricList list) {
-        org.wso2.carbon.metrics.data.service.stub.MetricList xsdMetricList = new org.wso2.carbon.metrics.data.service.stub.MetricList();
-        Metric[] metrics = list.getMetric();
-        org.wso2.carbon.metrics.data.service.stub.Metric[] xsdMetrics = new org.wso2.carbon.metrics.data.service.stub.Metric[metrics.length];
+    private MetricList convert(org.wso2.carbon.metrics.data.common.MetricList list) {
+        MetricList xsdMetricList = new MetricList();
+        org.wso2.carbon.metrics.data.common.Metric[] metrics = list.getMetric();
+        Metric[] xsdMetrics = new Metric[metrics.length];
         xsdMetricList.setMetric(xsdMetrics);
         for (int i = 0; i < metrics.length; i++) {
-            Metric metric = metrics[i];
-            org.wso2.carbon.metrics.data.service.stub.Metric xsdMetric = new org.wso2.carbon.metrics.data.service.stub.Metric();
+            org.wso2.carbon.metrics.data.common.Metric metric = metrics[i];
+            Metric xsdMetric = new Metric();
             xsdMetrics[i] = xsdMetric;
             xsdMetric.setAttr(metric.getAttr());
             xsdMetric.setDisplayName(metric.getDisplayName());

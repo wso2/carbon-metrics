@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
+import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 
 /**
  * @scr.component name="org.wso2.carbon.metrics.manager.internal.MetricManagerComponent" immediate="true"

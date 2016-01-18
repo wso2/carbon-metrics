@@ -38,6 +38,12 @@
     </Match>
 
     <Match>
+        <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
+        <Class name="org.wso2.carbon.metrics.data.service.dao.ReporterDAO" />
+        <Method name="getHierarchicalMetricNames" />
+    </Match>
+
+    <Match>
         <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
         <Class name="org.wso2.carbon.metrics.data.service.dao.ReporterDAO" />
         <Method name="querySources" />

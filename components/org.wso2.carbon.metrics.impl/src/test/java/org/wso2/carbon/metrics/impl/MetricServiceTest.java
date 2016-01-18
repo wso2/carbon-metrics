@@ -20,7 +20,7 @@ import org.wso2.carbon.metrics.manager.Level;
 import org.wso2.carbon.metrics.manager.Meter;
 import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
-import org.wso2.carbon.metrics.manager.internal.ServiceReferenceHolder;
+import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 
 import junit.framework.TestCase;
 
@@ -41,18 +41,18 @@ public class MetricServiceTest extends TestCase {
     }
 
     public void testMeterInitialCount() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-initial-count"));
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, meter.getCount());
         assertTrue("Metrics Count is not zero", metricService.getMetricsCount() > 0);
     }
 
     public void testDuplicateMetric() {
         String name = "test-name";
-        MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), name));
+        MetricManager.meter(MetricManager.name(this.getClass(), name), Level.INFO);
 
         try {
             // Different Level
-            MetricManager.meter(Level.DEBUG, MetricManager.name(this.getClass(), name));
+            MetricManager.meter(MetricManager.name(this.getClass(), name), Level.DEBUG);
             fail("Meter should not be created");
         } catch (IllegalArgumentException e) {
             // Ignore
@@ -60,7 +60,7 @@ public class MetricServiceTest extends TestCase {
 
         try {
             // Different Metric Type
-            MetricManager.counter(Level.INFO, MetricManager.name(this.getClass(), name));
+            MetricManager.counter(MetricManager.name(this.getClass(), name), Level.INFO);
             fail("Counter should not be created");
         } catch (IllegalArgumentException e) {
             // Ignore
@@ -69,7 +69,7 @@ public class MetricServiceTest extends TestCase {
 
     public void testEnableDisable() {
         assertTrue("Metric Service is enabled", metricService.isEnabled());
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-enabled"));
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-enabled"), Level.INFO);
 
         metricService.setRootLevel(Level.TRACE);
         meter.mark();
@@ -88,7 +88,7 @@ public class MetricServiceTest extends TestCase {
 
     public void testMetricSetLevel() {
         String name = MetricManager.name(this.getClass(), "test-metric-level");
-        Meter meter = MetricManager.meter(Level.INFO, name);
+        Meter meter = MetricManager.meter(name, Level.INFO);
         assertNull("There should no configured level", metricService.getMetricLevel(name));
 
         metricService.setRootLevel(Level.TRACE);
@@ -127,7 +127,7 @@ public class MetricServiceTest extends TestCase {
     }
 
     public void testMetricServiceLevels() {
-        Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-levels"));
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-levels"), Level.INFO);
         meter.mark();
         // This is required as we need to check whether level changes are applied to existing metrics
         assertEquals("Count should be zero", 0, meter.getCount());
@@ -155,7 +155,7 @@ public class MetricServiceTest extends TestCase {
     }
 
     public void testMetricLevels() {
-        Meter meter = MetricManager.meter(Level.OFF, MetricManager.name(this.getClass(), "test1"));
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test1"), Level.OFF);
         meter.mark();
         assertEquals("Count should be zero", 0, meter.getCount());
         metricService.setRootLevel(Level.OFF);
@@ -163,20 +163,20 @@ public class MetricServiceTest extends TestCase {
         assertEquals("Count should be zero", 0, meter.getCount());
 
         metricService.setRootLevel(Level.TRACE);
-        meter = MetricManager.meter(Level.TRACE, MetricManager.name(this.getClass(), "test2"));
+        meter = MetricManager.meter(MetricManager.name(this.getClass(), "test2"), Level.TRACE);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
-        meter = MetricManager.meter(Level.DEBUG, MetricManager.name(this.getClass(), "test3"));
+        meter = MetricManager.meter(MetricManager.name(this.getClass(), "test3"), Level.DEBUG);
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
 
         metricService.setRootLevel(Level.DEBUG);
-        meter = MetricManager.meter(Level.TRACE, MetricManager.name(this.getClass(), "test4"));
+        meter = MetricManager.meter(MetricManager.name(this.getClass(), "test4"), Level.TRACE);
         meter.mark();
         assertEquals("Count should be zero", 0, meter.getCount());
 
-        meter = MetricManager.meter(Level.DEBUG, MetricManager.name(this.getClass(), "test5"));
+        meter = MetricManager.meter(MetricManager.name(this.getClass(), "test5"), Level.DEBUG);
         meter.mark(100);
         assertEquals("Corg.wso2.carbon.metrics.impl.MetricServiceTestount should be one hundred", 100,
                 meter.getCount());
