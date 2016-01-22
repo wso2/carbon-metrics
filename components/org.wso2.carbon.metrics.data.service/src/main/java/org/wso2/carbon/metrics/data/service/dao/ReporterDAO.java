@@ -15,6 +15,12 @@
  */
 package org.wso2.carbon.metrics.data.service.dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricType;
+
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,22 +35,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.sql.DataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.data.common.MetricAttribute;
-import org.wso2.carbon.metrics.data.common.MetricType;
-
 /**
- * Querying Metric Data via JDBC
+ * Querying Metric Data via JDBC.
  */
 public class ReporterDAO {
-
     private static final Logger logger = LoggerFactory.getLogger(ReporterDAO.class);
-
     private final DataSource dataSource;
-
     private final Map<MetricType, Set<MetricAttribute>> validMetricAttributeMap;
 
     public ReporterDAO(final DataSource dataSource) {
@@ -121,27 +117,20 @@ public class ReporterDAO {
 
     public Set<String> queryAllSources() {
         Set<String> results = new TreeSet<String>();
-
         Connection connection = null;
-
         try {
             connection = dataSource.getConnection();
-
             for (MetricType metricType : MetricType.values()) {
                 List<String> list = querySources(connection, metricType);
                 if (!list.isEmpty()) {
                     results.addAll(list);
                 }
             }
-
-            connection.close();
-            connection = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources.", e);
         } finally {
             closeQuietly(connection);
         }
-
         return results;
     }
 
@@ -149,30 +138,20 @@ public class ReporterDAO {
         List<String> results = new ArrayList<String>();
         StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT SOURCE FROM ");
         queryBuilder.append(getTableName(metricType));
-
         Statement statement = null;
         ResultSet rs = null;
-
         try {
             statement = connection.createStatement();
-
             rs = statement.executeQuery(queryBuilder.toString());
-
             while (rs.next()) {
                 String source = rs.getString("SOURCE");
                 results.add(source);
             }
-
-            rs.close();
-            rs = null;
-            statement.close();
-            statement = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources. Metric Type: " + metricType, e);
         } finally {
             closeQuietly(null, statement, rs);
         }
-
         return results;
     }
 
@@ -189,8 +168,6 @@ public class ReporterDAO {
                     }
                 }
             }
-            connection.close();
-            connection = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources.", e);
         } finally {
@@ -200,7 +177,7 @@ public class ReporterDAO {
     }
 
     private List<String> getHierarchicalMetricNames(Connection connection, String source, String path,
-            MetricType metricType) {
+                                                    MetricType metricType) {
         List<String> results = new ArrayList<String>();
         StringBuilder queryBuilder = new StringBuilder("SELECT DISTINCT NAME FROM ");
         queryBuilder.append(getTableName(metricType));
@@ -222,10 +199,6 @@ public class ReporterDAO {
                 String name = rs.getString("NAME");
                 results.add(name);
             }
-            rs.close();
-            rs = null;
-            ps.close();
-            ps = null;
         } catch (SQLException e) {
             logger.error(String.format("Error when querying metrics. SQL %s", query), e);
         } finally {
@@ -235,7 +208,7 @@ public class ReporterDAO {
     }
 
     public <T> void queryMetrics(MetricType metricType, List<String> names, List<MetricAttribute> attributes,
-            String source, long startTime, long endTime, MetricDataProcessor<T> processor) {
+                                 String source, long startTime, long endTime, MetricDataProcessor<T> processor) {
         validateMetricAttributes(metricType, attributes);
         StringBuilder queryBuilder = new StringBuilder("SELECT NAME, TIMESTAMP, ");
         for (int i = 0; i < attributes.size(); i++) {
@@ -262,22 +235,19 @@ public class ReporterDAO {
         queryBuilder.append(" AND TIMESTAMP >= ? AND TIMESTAMP <= ?");
         queryBuilder.append(" AND SOURCE = ?");
         queryBuilder.append(" ORDER BY TIMESTAMP");
-
         String query = queryBuilder.toString();
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format(
-                    "Metric Search Query: %s Parameters: Metric Type: %s, Names: %s, Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
+            logger.debug(String.format("Metric Search Query: %s Parameters: Metric Type: %s, Names: %s," +
+                            " Attributes: %s, Source: %s, Start Time: %d, End Time: %d",
                     query, metricType, names, attributes, source, startTime, endTime));
         }
 
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         try {
             connection = dataSource.getConnection();
-
             ps = connection.prepareStatement(query);
             int i;
             for (i = 0; i < names.size(); i++) {
@@ -288,7 +258,6 @@ public class ReporterDAO {
             ps.setString(++i, source);
 
             rs = ps.executeQuery();
-
             while (rs.next()) {
                 String name = rs.getString(1);
                 long timestamp = rs.getLong(2);
@@ -298,19 +267,10 @@ public class ReporterDAO {
                         value = rs.getBigDecimal(3 + j);
                     } catch (NumberFormatException e) {
                         value = BigDecimal.ZERO;
-                        // throw?
                     }
                     processor.process(source, timestamp, metricType, name, attributes.get(j), value);
                 }
-
             }
-
-            rs.close();
-            rs = null;
-            ps.close();
-            ps = null;
-            connection.close();
-            connection = null;
         } catch (SQLException e) {
             logger.error(String.format("Error when querying metrics. SQL %s", queryBuilder.toString()), e);
         } finally {
@@ -320,16 +280,16 @@ public class ReporterDAO {
 
     private String getTableName(MetricType metricType) {
         switch (metricType) {
-        case COUNTER:
-            return "METRIC_COUNTER";
-        case GAUGE:
-            return "METRIC_GAUGE";
-        case HISTOGRAM:
-            return "METRIC_HISTOGRAM";
-        case METER:
-            return "METRIC_METER";
-        case TIMER:
-            return "METRIC_TIMER";
+            case COUNTER:
+                return "METRIC_COUNTER";
+            case GAUGE:
+                return "METRIC_GAUGE";
+            case HISTOGRAM:
+                return "METRIC_HISTOGRAM";
+            case METER:
+                return "METRIC_METER";
+            case TIMER:
+                return "METRIC_TIMER";
         }
         throw new IllegalStateException("Invalid Metric Type");
     }

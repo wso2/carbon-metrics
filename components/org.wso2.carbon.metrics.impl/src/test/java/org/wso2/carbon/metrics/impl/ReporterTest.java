@@ -146,24 +146,24 @@ public class ReporterTest extends TestCase {
     public void testJMXReporter() {
         AttributeList meterAttributes = getAttributes(meterName, "Count");
         SortedMap<String, Object> meterMap = values(meterAttributes);
-        assertTrue("Meter is available", meterMap.containsKey("Count"));
-        assertTrue("Meter count is one", meterMap.containsValue(1L));
+        assertTrue("Meter should be available", meterMap.containsKey("Count"));
+        assertTrue("Meter count should be one", meterMap.containsValue(1L));
 
         AttributeList gaugeAttributes = getAttributes(gaugeName, "Value");
         SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
-        assertTrue("Gauge is available", gaugeMap.containsKey("Value"));
-        assertTrue("Gauge value is one", gaugeMap.containsValue(1));
+        assertTrue("Gauge should be available", gaugeMap.containsKey("Value"));
+        assertTrue("Gauge value should be one", gaugeMap.containsValue(1));
     }
 
     public void testCSVReporter() {
         metricService.report();
-        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterName + ".csv").exists());
-        assertTrue("Gauge CSV file is created", new File("target/metrics-logs", gaugeName + ".csv").exists());
+        assertTrue("Meter CSV file should be created", new File("target/metrics-logs", meterName + ".csv").exists());
+        assertTrue("Gauge CSV file should be created", new File("target/metrics-logs", gaugeName + ".csv").exists());
     }
 
     public void testCSVReporterRestart() {
         metricService.report();
-        assertTrue("Meter CSV file is created", new File("target/metrics-logs", meterName + ".csv").exists());
+        assertTrue("Meter CSV file should be created", new File("target/metrics-logs", meterName + ".csv").exists());
 
         metricService.disable();
         String meterName2 = MetricManager.name(this.getClass(), "test-meter2");
@@ -174,29 +174,29 @@ public class ReporterTest extends TestCase {
         metricService.enable();
         metricService.report();
 
-        assertTrue("Meter2 CSV file is created", new File("target/metrics-logs", meterName2 + ".csv").exists());
+        assertTrue("Meter2 CSV file should be created", new File("target/metrics-logs", meterName2 + ".csv").exists());
     }
 
     public void testJDBCReporter() {
         metricService.report();
         List<Map<String, Object>> meterResult =
                 template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
-        assertEquals("There is one result", 1, meterResult.size());
-        assertEquals("Meter is available", meterName, meterResult.get(0).get("NAME"));
-        assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));
+        assertEquals("There should be one result", 1, meterResult.size());
+        assertEquals("Meter should be available", meterName, meterResult.get(0).get("NAME"));
+        assertEquals("Meter count should be one", 1L, meterResult.get(0).get("COUNT"));
 
         List<Map<String, Object>> gaugeResult =
                 template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
-        assertEquals("There is one result", 1, gaugeResult.size());
-        assertEquals("Gauge is available", gaugeName, gaugeResult.get(0).get("NAME"));
-        assertEquals("Gauge value is one", "1", gaugeResult.get(0).get("VALUE"));
+        assertEquals("There should be one result", 1, gaugeResult.size());
+        assertEquals("Gauge should be available", gaugeName, gaugeResult.get(0).get("NAME"));
+        assertEquals("Gauge value should be one", "1", gaugeResult.get(0).get("VALUE"));
     }
 
     public void testJDBCReporterRestart() {
         metricService.report();
         List<Map<String, Object>> meterResult =
                 template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
-        assertEquals("There is one result", 1, meterResult.size());
+        assertEquals("There should be one result", 1, meterResult.size());
 
         metricService.disable();
         metricService.report();
@@ -204,7 +204,7 @@ public class ReporterTest extends TestCase {
         metricService.report();
 
         meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
-        assertEquals("There are two results", 2, meterResult.size());
+        assertEquals("There should be two results", 2, meterResult.size());
     }
 
     public void testJVMMetricSetLevel() {
@@ -215,8 +215,8 @@ public class ReporterTest extends TestCase {
         assertEquals("Configured level should be TRACE", Level.TRACE, metricService.getMetricLevel(name));
         AttributeList gaugeAttributes = getAttributes(name, "Value");
         SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
-        assertTrue("Gauge is available", gaugeMap.containsKey("Value"));
-        assertTrue("Gauge value is a positive number", ((Integer) gaugeMap.get("Value")) > 0);
+        assertTrue("Gauge should be available", gaugeMap.containsKey("Value"));
+        assertTrue("Gauge value should be a positive number", ((Integer) gaugeMap.get("Value")) > 0);
     }
 
     public void testJMXReport() {
@@ -224,8 +224,8 @@ public class ReporterTest extends TestCase {
         List<Map<String, Object>> meterResult =
                 template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         assertEquals("There is one result", 1, meterResult.size());
-        assertEquals("Meter is available", meterName, meterResult.get(0).get("NAME"));
-        assertEquals("Meter count is one", 1L, meterResult.get(0).get("COUNT"));
+        assertEquals("Meter should be available", meterName, meterResult.get(0).get("NAME"));
+        assertEquals("Meter count should be one", 1L, meterResult.get(0).get("COUNT"));
     }
 
     private void invokeJMXReportOperation() {

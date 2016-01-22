@@ -43,7 +43,7 @@ public class MetricServiceTest extends TestCase {
     public void testMeterInitialCount() {
         Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         assertEquals("Initial count should be zero", 0, meter.getCount());
-        assertTrue("Metrics Count is not zero", metricService.getMetricsCount() > 0);
+        assertTrue("Metrics count should be greater than zero", metricService.getMetricsCount() > 0);
     }
 
     public void testDuplicateMetric() {
@@ -68,7 +68,7 @@ public class MetricServiceTest extends TestCase {
     }
 
     public void testEnableDisable() {
-        assertTrue("Metric Service is enabled", metricService.isEnabled());
+        assertTrue("Metric Service should be enabled", metricService.isEnabled());
         Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-enabled"), Level.INFO);
 
         metricService.setRootLevel(Level.TRACE);
@@ -76,7 +76,7 @@ public class MetricServiceTest extends TestCase {
         assertEquals("Count should be one", 1, meter.getCount());
 
         metricService.disable();
-        assertFalse("Metric Service is disabled", metricService.isEnabled());
+        assertFalse("Metric Service should be disabled", metricService.isEnabled());
 
         meter.mark();
         assertEquals("Count should be one", 1, meter.getCount());
@@ -89,7 +89,7 @@ public class MetricServiceTest extends TestCase {
     public void testMetricSetLevel() {
         String name = MetricManager.name(this.getClass(), "test-metric-level");
         Meter meter = MetricManager.meter(name, Level.INFO);
-        assertNull("There should no configured level", metricService.getMetricLevel(name));
+        assertNull("There should be no configured level", metricService.getMetricLevel(name));
 
         metricService.setRootLevel(Level.TRACE);
         meter.mark();

@@ -24,7 +24,6 @@ public class MetricHierarchyData {
     }
 
     public MetricHierarchyData(String path, String[] children, MetricMeta[] metrics) {
-        super();
         this.path = path;
         this.children = children;
         this.metrics = metrics;
