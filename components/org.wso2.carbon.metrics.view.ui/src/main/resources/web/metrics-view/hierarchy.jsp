@@ -1,4 +1,3 @@
-
 <%
     /*
      * Copyright 2015 WSO2 Inc. (http://wso2.org)
@@ -20,15 +19,15 @@
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.ChartView" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricHierarchyDataWrapper" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricMetaWrapper" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
-<%@ page import="org.wso2.carbon.metrics.view.ui.MetricHierarchyDataWrapper" %>
-<%@ page import="org.wso2.carbon.metrics.view.ui.ChartView" %>
-<%@ page import="java.util.Map" %>
 <%@ page import="java.util.LinkedHashMap" %>
-<%@ page import="org.wso2.carbon.metrics.view.ui.MetricMetaWrapper" %>
+<%@ page import="java.util.Map" %>
 
 <%!
     private Map<String, ChartView> getViewMap(MetricMetaWrapper[] metas) {
@@ -182,44 +181,51 @@
                     </table>
                     <input type="hidden" id="path" name="path" value="<%=path%>"/>
                 </form>
+
+                <br/>
                 <br/>
 
-                <table border="0" class="styledLeft">
-                    <thead>
-                    <tr>
-                        <th>
-                            <fmt:message key="metrics.hierarchy.path.heading"/>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>
-                            <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>">
-                                <fmt:message key="metrics.hierarchy.root.level"/>
-                            </a>
-                            <%
-                                StringBuilder breadCrumbBuilder = new StringBuilder();
-                                String[] split = path.split("\\.");
-                                for (int i = 0, splitLength = split.length; i < splitLength; i++) {
-                                    String breadcrumb = split[i];
-                                    breadCrumbBuilder.append(breadcrumb);
-                                    if (!breadcrumb.isEmpty()) {
-                            %>
-                            &nbsp;>&nbsp;
-                            <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>&path=<%=breadCrumbBuilder.toString().replaceAll(" ","%20")%>"><%=breadcrumb%>
-                            </a>
-                            <%
-                                    }
-                                    if (i != splitLength - 1) {
-                                        breadCrumbBuilder.append(".");
-                                    }
-                                }
-                            %>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <h3 class="metricsH3">
+                    <%
+                        int lastIndex = path.lastIndexOf('.');
+                        String title = "All Metrics";
+                        if (!"".equals(path)) {
+                            title = (lastIndex != -1) ? path.substring(lastIndex + 1) + " Metrics" : path + " Metrics";
+                        }
+                    %>
+                    <%=title%>
+                </h3>
+
+                <%
+                    if (!"".equals(path)) {
+                %>
+                <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>">
+                    <fmt:message key="metrics.hierarchy.root.level"/>
+                </a>
+                <%
+                    StringBuilder breadCrumbBuilder = new StringBuilder();
+                    String[] split = path.split("\\.");
+                    for (int i = 0, splitLength = split.length; i < splitLength; i++) {
+                        String breadcrumb = split[i];
+                        breadCrumbBuilder.append(breadcrumb);
+                        if (!breadcrumb.isEmpty()) {
+                %>
+                &nbsp;>&nbsp;
+                <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>&path=<%=breadCrumbBuilder.toString().replaceAll(" ","%20")%>"><%=breadcrumb%>
+                </a>
+                <%
+                        }
+                        if (i != splitLength - 1) {
+                            breadCrumbBuilder.append(".");
+                        }
+                    }
+                %>
+                <br/>
+                <br/>
+                <%
+                    }
+                %>
+
                 <br/>
 
                 <% if (subLevels != null && subLevels.length > 0) { %>
@@ -263,6 +269,7 @@
                                 <span id="msgNoData{{type}}" style="display: none;">
                                     <fmt:message key="metrics.hierarchy.nodata"/>
                                 </span>
+
                             <div id="toggle{{type}}"></div>
                             <div id="igviz{{type}}" class="igvizChart"></div>
                         </td>
