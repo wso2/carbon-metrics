@@ -174,6 +174,11 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return startTime;
     }
 
+    /**
+     * Get the list of reporting sources.
+     *
+     * @return List of sources.
+     */
     public String[] getAllSources() {
         List<String> sourcesList;
         Set<String> sources = reporterDAO.queryAllSources();
@@ -192,6 +197,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return sourcesList.toArray(new String[sourcesList.size()]);
     }
 
+    /**
+     * Get metric hierarchy data for a given source and path.
+     *
+     * @param source Current source.
+     * @param path   Curent path.
+     * @return {@link MetricHierarchyData} for the given source and path.
+     */
     public MetricHierarchyData getHierarchy(String source, String path) {
         Map<String, MetricType> hierarchicalMetrics = reporterDAO.queryHierarchicalMetrics(source, path);
         Set<String> childrenNames = new TreeSet<>();
@@ -344,6 +356,14 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
     }
 
+    /**
+     * Find last metrics.
+     *
+     * @param metrics {@link MetricList} of metrics.
+     * @param source  Source of the metrics.
+     * @param from    Starting time.
+     * @return {@link MetricData} for metrics.
+     */
     public MetricData findLastMetrics(MetricList metrics, String source, String from) {
         long startTime = getStartTime(from);
         if (startTime == -1) {
@@ -353,6 +373,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return findMetricsByTimePeriod(metrics, source, startTime, endTime);
     }
 
+    /**
+     * Find metrics for a given period of time.
+     *
+     * @param metrics   {@link MetricList} of metrics.
+     * @param source    Source of the metrics.
+     * @param startTime Starting time.
+     * @param endTime   Ending time.
+     * @return {@link MetricData} for metrics.
+     */
     public MetricData findMetricsByTimePeriod(MetricList metrics, String source, long startTime, long endTime) {
         Metric[] list = null;
         if (metrics == null || (list = metrics.getMetric()) == null) {
