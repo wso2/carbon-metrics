@@ -20,7 +20,6 @@ public class MetricMeta {
     private String type;
 
     public MetricMeta(String name, String type) {
-        super();
         this.name = name;
         this.type = type;
     }

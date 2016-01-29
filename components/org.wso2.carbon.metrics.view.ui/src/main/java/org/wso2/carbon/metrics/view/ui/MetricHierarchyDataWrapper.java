@@ -24,7 +24,6 @@ public class MetricHierarchyDataWrapper {
     private MetricMetaWrapper[] metrics;
 
     public MetricHierarchyDataWrapper(MetricHierarchyData hierarchyData) {
-        super();
         path = hierarchyData.getPath();
         children = hierarchyData.getChildren();
         if (hierarchyData.getMetrics() != null) {
