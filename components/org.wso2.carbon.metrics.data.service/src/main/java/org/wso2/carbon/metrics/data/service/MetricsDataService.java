@@ -201,7 +201,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
      * Get metric hierarchy data for a given source and path.
      *
      * @param source Current source.
-     * @param path   Curent path.
+     * @param path   Current path.
      * @return {@link MetricHierarchyData} for the given source and path.
      */
     public MetricHierarchyData getHierarchy(String source, String path) {
