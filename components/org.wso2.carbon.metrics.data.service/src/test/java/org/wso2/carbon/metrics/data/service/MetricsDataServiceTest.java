@@ -89,63 +89,63 @@ public class MetricsDataServiceTest extends TestCase {
 
     public void testAllData() {
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE");
-        assertEquals("There are 66 results", 66, gaugeResult.size());
+        assertEquals("There should be 66 results", 66, gaugeResult.size());
     }
 
     public void testSpecificData() {
         String gaugeName = "jvm.memory.heap.init";
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?",
                 gaugeName);
-        assertEquals("There are two results", 2, gaugeResult.size());
+        assertEquals("There should be two results", 2, gaugeResult.size());
     }
 
     public void testSources() {
         String[] sources = metricsDataService.getAllSources();
-        assertEquals("There is one source", 1, sources.length);
-        assertEquals("The source is " + SOURCE, SOURCE, sources[0]);
+        assertEquals("There should be one source", 1, sources.length);
+        assertEquals("The source should be " + SOURCE, SOURCE, sources[0]);
     }
 
     public void testHierarchy() {
         MetricHierarchyData hierarchyData1 = metricsDataService.getHierarchy(SOURCE, "");
         MetricHierarchyData hierarchyData2 = metricsDataService.getHierarchy(SOURCE, "jvm.memory");
         MetricHierarchyData hierarchyData3 = metricsDataService.getHierarchy(SOURCE, "jvm.memory.non-heap");
-        assertEquals("There are zero metrics", 0, hierarchyData1.getMetrics().length);
-        assertEquals("There are zero metrics", 0, hierarchyData2.getMetrics().length);
-        assertTrue("There are multiple metrics", hierarchyData3.getMetrics().length > 0);
-        assertTrue("There are multiple sub levels", hierarchyData1.getChildren().length > 0);
-        assertTrue("There are multiple sub levels", hierarchyData2.getChildren().length > 0);
-        assertEquals("There are no sub levels", 0, hierarchyData3.getChildren().length);
+        assertEquals("There should be zero metrics", 0, hierarchyData1.getMetrics().length);
+        assertEquals("There should be zero metrics", 0, hierarchyData2.getMetrics().length);
+        assertTrue("There should be multiple metrics", hierarchyData3.getMetrics().length > 0);
+        assertTrue("There should be multiple sub levels", hierarchyData1.getChildren().length > 0);
+        assertTrue("There should be multiple sub levels", hierarchyData2.getChildren().length > 0);
+        assertEquals("There should be no sub levels", 0, hierarchyData3.getChildren().length);
     }
 
     public void testLast1MinuteJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1m");
-        assertNotNull("Metric Data is not null", metricData);
+        assertNotNull("Metric Data can not be null", metricData);
     }
 
     public void testLast1HourJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1h");
-        assertNotNull("Metric Data is not null", metricData);
+        assertNotNull("Metric Data can not be null", metricData);
     }
 
     public void testLast1DayJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1d");
-        assertNotNull("Metric Data is not null", metricData);
+        assertNotNull("Metric Data is can not be null", metricData);
     }
 
     public void testLastJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE,
                 String.valueOf(START_TIME));
-        assertEquals("There are two results", 2, metricData.getData().length);
+        assertEquals("There results count should be 2", 2, metricData.getData().length);
     }
 
     public void testJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(getMemoryMetrics(), SOURCE, START_TIME,
                 END_TIME);
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are nine names", 9, metricData.getMetadata().getNames().length);
-        assertEquals("There are nine types", 9, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be nine names", 9, metricData.getMetadata().getNames().length);
+        assertEquals("There should be nine types", 9, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are nine values", 9, metricData.getData()[i].length);
+            assertEquals("The results count should be 9", 9, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
                 assertNotNull("Value is available", value);
@@ -188,16 +188,16 @@ public class MetricsDataServiceTest extends TestCase {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
-        assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be three names", 3, metricData.getMetadata().getNames().length);
+        assertEquals("There should be three types", 3, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are three values", 3, metricData.getData()[i].length);
+            assertEquals("There should be three values", 3, metricData.getData()[i].length);
             for (int j = 1; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
-                assertTrue("Value is greater than or equal to zero", value.compareTo(BigDecimal.ZERO) >= 0);
-                assertTrue("Value is less than or equal to 100%", value.compareTo(new BigDecimal("100")) <= 0);
+                assertNotNull("Value can not be null", value);
+                assertTrue("Value should be greater than or equal to zero", value.compareTo(BigDecimal.ZERO) >= 0);
+                assertTrue("Value should be less than or equal to 100", value.compareTo(new BigDecimal("100")) <= 0);
             }
         }
     }
@@ -212,14 +212,14 @@ public class MetricsDataServiceTest extends TestCase {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are two names", 2, metricData.getMetadata().getNames().length);
-        assertEquals("There are two types", 2, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be two names", 2, metricData.getMetadata().getNames().length);
+        assertEquals("There should be two types", 2, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are two values", 2, metricData.getData()[i].length);
+            assertEquals("There should be two values", 2, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                assertNotNull("Value can not be null", value);
             }
         }
     }
@@ -235,14 +235,14 @@ public class MetricsDataServiceTest extends TestCase {
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
-        assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be three names", 3, metricData.getMetadata().getNames().length);
+        assertEquals("There should be three types", 3, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are three values", 3, metricData.getData()[i].length);
+            assertEquals("There should be three values", 3, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                assertNotNull("Value should not be null", value);
             }
         }
     }
@@ -264,14 +264,14 @@ public class MetricsDataServiceTest extends TestCase {
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are six names", 6, metricData.getMetadata().getNames().length);
-        assertEquals("There are six types", 6, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be six names", 6, metricData.getMetadata().getNames().length);
+        assertEquals("There should be six types", 6, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are six values", 6, metricData.getData()[i].length);
+            assertEquals("There should be six values", 6, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                assertNotNull("Value cannot be null", value);
             }
         }
     }
@@ -286,14 +286,14 @@ public class MetricsDataServiceTest extends TestCase {
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are three names", 3, metricData.getMetadata().getNames().length);
-        assertEquals("There are three types", 3, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be three names", 3, metricData.getMetadata().getNames().length);
+        assertEquals("There should be three types", 3, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are three values", 3, metricData.getData()[i].length);
+            assertEquals("There should be three values", 3, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                assertNotNull("Value should not be null", value);
             }
         }
     }
@@ -312,14 +312,14 @@ public class MetricsDataServiceTest extends TestCase {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are four names", 4, metricData.getMetadata().getNames().length);
-        assertEquals("There are four types", 4, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be four names", 4, metricData.getMetadata().getNames().length);
+        assertEquals("There should be four types", 4, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are four values", 4, metricData.getData()[i].length);
+            assertEquals("There should be four values", 4, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                assertNotNull("Value should not be null", value);
             }
         }
     }
@@ -410,16 +410,15 @@ public class MetricsDataServiceTest extends TestCase {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There are two results", 2, metricData.getData().length);
-        assertEquals("There are 34 names", 34, metricData.getMetadata().getNames().length);
-        assertEquals("There are 34 types", 34, metricData.getMetadata().getTypes().length);
+        assertEquals("There should be two results", 2, metricData.getData().length);
+        assertEquals("There should be 34 names", 34, metricData.getMetadata().getNames().length);
+        assertEquals("There should be 34 types", 34, metricData.getMetadata().getTypes().length);
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There are 34 values", 34, metricData.getData()[i].length);
+            assertEquals("There should be 34 values", 34, metricData.getData()[i].length);
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                assertNotNull("Value should not be null", value);
             }
         }
     }
-
 }
