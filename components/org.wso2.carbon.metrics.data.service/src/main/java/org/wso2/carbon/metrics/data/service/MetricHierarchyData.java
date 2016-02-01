@@ -15,13 +15,14 @@
  */
 package org.wso2.carbon.metrics.data.service;
 
+/**
+ * Wraps metric meta data for children metrics,
+ * hierarchy information and path data.
+ */
 public class MetricHierarchyData {
     private String path;
     private String[] children;
     private MetricMeta[] metrics;
-
-    public MetricHierarchyData() {
-    }
 
     public MetricHierarchyData(String path, String[] children, MetricMeta[] metrics) {
         this.path = path;
