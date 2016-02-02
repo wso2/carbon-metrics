@@ -93,6 +93,9 @@ public class MetricServiceImpl implements MetricService {
 
     private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
 
+    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN = Pattern.compile(
+            MetricsConstants.METRIC_AGGREGATE_ANNOTATION_REGEX);
+
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
      * for a metric. The main reason to keep the enabled status separately is that EnabledMetricFilter gets called as
@@ -453,13 +456,12 @@ public class MetricServiceImpl implements MetricService {
     }
 
     private boolean isLevelsMatch(String annotatedName, Level[] levels) {
-        Pattern p = Pattern.compile(MetricsConstants.METRIC_AGGREGATE_ANNOTATION_REGEX);
-        Matcher m = p.matcher(annotatedName);
+        Matcher m = METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(annotatedName);
         int affectedMetrics = 0;
         while (m.find()) {
             affectedMetrics++;
         }
-        // Levels count should be equals to affected metrics + current metric
+        // Levels count should be equals to affected metrics + current metric.
         return levels.length == affectedMetrics + 1;
     }
 
