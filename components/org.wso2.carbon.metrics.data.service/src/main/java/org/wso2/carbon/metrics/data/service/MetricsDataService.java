@@ -216,13 +216,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 String suffix = (!"".equals(path)) ? metric.replaceFirst(path + "\\.", "") : metric;
                 int chunks = suffix.length() - suffix.replace(".", "").length();
                 if (chunks == 0) {
-                    // metrics
+                    // Chunks = 0 means, it is a metrics.
                     metrics.add(new MetricMeta(metric, type.name()));
                 } else if (chunks == 1) {
-                    // immediate child remove stat name and keep only path
+                    // Chunks = 1 means it is a immediate child, therefore remove stat name and keep only path.
                     childrenNames.add(metric.substring(0, metric.lastIndexOf('.')));
                 } else if (chunks > 1) {
-                    // child with further hierarchy
+                    // Chunks > 1 means the hierarchy goes beyond a one level.
                     if (!"".equals(path)) {
                         childrenNames.add(path + "." + suffix.substring(0, suffix.indexOf('.')));
                     } else {
