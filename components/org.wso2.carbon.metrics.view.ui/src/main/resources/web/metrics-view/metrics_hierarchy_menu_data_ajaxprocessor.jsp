@@ -49,7 +49,7 @@
         metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
         Gson gson = new Gson();
         MetricDataWrapper metricData = null;
-        ArrayList<Metric> metrics = getMetrics(metricsViewClient, source, path, type);
+        List<Metric> metrics = getMetrics(metricsViewClient, source, path, type);
         MetricList metricList = new MetricList();
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
         if (to != null && to.trim().length() > 0) {
@@ -80,9 +80,9 @@
 %>
 
 <%!
-    private ArrayList<Metric> getMetrics(MetricsViewClient client, String source, String path, String type) {
+    private List<Metric> getMetrics(MetricsViewClient client, String source, String path, String type) {
         MetricHierarchyDataWrapper hierarchyData = getHierarchyData(client, source, path);
-        ArrayList<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<Metric>();
         for (MetricMetaWrapper metricMeta : hierarchyData.getMetrics()) {
             if (type.equalsIgnoreCase(metricMeta.getDisplayName())) {
                 metrics.addAll(getMetricsForChart(metricMeta));
@@ -112,7 +112,6 @@
 
 <%!
     private List<Metric> getMetricsForChart(MetricMetaWrapper metricMeta) {
-        // TODO : add MetricDataFormat for GAUGE
         String type = metricMeta.getType();
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         MetricAttribute[] attributes;
