@@ -126,6 +126,8 @@ public class ReporterDAO {
                     results.addAll(list);
                 }
             }
+            connection.close();
+            connection = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources.", e);
         } finally {
@@ -147,6 +149,10 @@ public class ReporterDAO {
                 String source = rs.getString("SOURCE");
                 results.add(source);
             }
+            rs.close();
+            rs = null;
+            statement.close();
+            statement = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources. Metric Type: " + metricType, e);
         } finally {
@@ -168,6 +174,8 @@ public class ReporterDAO {
                     }
                 }
             }
+            connection.close();
+            connection = null;
         } catch (SQLException e) {
             logger.error("Error when querying sources.", e);
         } finally {
@@ -199,6 +207,10 @@ public class ReporterDAO {
                 String name = rs.getString("NAME");
                 results.add(name);
             }
+            rs.close();
+            rs = null;
+            ps.close();
+            ps = null;
         } catch (SQLException e) {
             logger.error(String.format("Error when querying metrics. SQL %s", query), e);
         } finally {
@@ -271,6 +283,12 @@ public class ReporterDAO {
                     processor.process(source, timestamp, metricType, name, attributes.get(j), value);
                 }
             }
+            rs.close();
+            rs = null;
+            ps.close();
+            ps = null;
+            connection.close();
+            connection = null;
         } catch (SQLException e) {
             logger.error(String.format("Error when querying metrics. SQL %s", queryBuilder.toString()), e);
         } finally {
@@ -280,16 +298,16 @@ public class ReporterDAO {
 
     private String getTableName(MetricType metricType) {
         switch (metricType) {
-            case COUNTER:
-                return "METRIC_COUNTER";
-            case GAUGE:
-                return "METRIC_GAUGE";
-            case HISTOGRAM:
-                return "METRIC_HISTOGRAM";
-            case METER:
-                return "METRIC_METER";
-            case TIMER:
-                return "METRIC_TIMER";
+        case COUNTER:
+            return "METRIC_COUNTER";
+        case GAUGE:
+            return "METRIC_GAUGE";
+        case HISTOGRAM:
+            return "METRIC_HISTOGRAM";
+        case METER:
+            return "METRIC_METER";
+        case TIMER:
+            return "METRIC_TIMER";
         }
         throw new IllegalStateException("Invalid Metric Type");
     }
