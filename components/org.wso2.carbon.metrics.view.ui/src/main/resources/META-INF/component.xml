@@ -50,7 +50,7 @@
             <parent-menu>metrics_menu</parent-menu>
             <link>../metrics-view/hierarchy.jsp</link>
             <region>region4</region>
-            <order>2</order>
+            <order>5</order>
             <style-class>monitor</style-class>
             <icon>../metrics-view/images/icon_hierarchy.png</icon>
             <require-permission>/permission/admin/monitor/metrics</require-permission>
