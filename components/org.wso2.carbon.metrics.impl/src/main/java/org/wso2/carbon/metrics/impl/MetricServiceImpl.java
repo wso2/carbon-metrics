@@ -38,7 +38,6 @@ import org.wso2.carbon.metrics.impl.metric.collection.MeterCollection;
 import org.wso2.carbon.metrics.impl.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.impl.reporter.Reporter;
 import org.wso2.carbon.metrics.impl.reporter.ScheduledReporter;
-import org.wso2.carbon.metrics.impl.util.MetricsConstants;
 import org.wso2.carbon.metrics.impl.util.ReporterBuilder;
 import org.wso2.carbon.metrics.impl.util.ReporterDisabledException;
 import org.wso2.carbon.metrics.manager.Counter;
@@ -87,14 +86,32 @@ public class MetricServiceImpl implements MetricService {
      */
     private final MetricRegistry metricRegistry;
 
+    private static final String SYSTEM_PROPERTY_METRICS_ENABLED = "metrics.enabled";
+
+    private static final String SYSTEM_PROPERTY_METRICS_ROOT_LEVEL = "metrics.rootLevel";
+
+    private static final String METRIC_AGGREGATE_ANNOTATION = "[+]";
+
+    private static final String METRIC_AGGREGATE_ANNOTATION_REGEX = "\\[\\+\\]";
+
+    /**
+     * Name of the root metric. This is set to empty string.
+     */
+    private static final String ROOT_METRIC_NAME = "";
+
+    /**
+     * Hierarchy delimiter in Metric name
+     */
+    private static final String METRIC_PATH_DELIMITER = ".";
+
     private final MetricsLevelConfiguration levelConfiguration;
 
     private final Set<Reporter> reporters = new HashSet<Reporter>();
 
     private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
 
-    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN = Pattern.compile(
-            MetricsConstants.METRIC_AGGREGATE_ANNOTATION_REGEX);
+    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN =
+            Pattern.compile(METRIC_AGGREGATE_ANNOTATION_REGEX);
 
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
@@ -159,11 +176,11 @@ public class MetricServiceImpl implements MetricService {
             Set<ReporterBuilder<? extends Reporter>> reporterBuilders) {
         this.levelConfiguration = levelConfiguration;
         // Highest priority is given for the System Properties
-        String metricsEnabledProperty = System.getProperty(MetricsConstants.SYSTEM_PROPERTY_METRICS_ENABLED);
+        String metricsEnabledProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ENABLED);
         if (metricsEnabledProperty != null && !metricsEnabledProperty.trim().isEmpty()) {
             enabled = Boolean.valueOf(metricsEnabledProperty);
         }
-        String rootLevelProperty = System.getProperty(MetricsConstants.SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
+        String rootLevelProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
         if (rootLevelProperty != null && !rootLevelProperty.trim().isEmpty()) {
             Level level = Level.getLevel(rootLevelProperty);
             if (level != null) {
@@ -336,12 +353,12 @@ public class MetricServiceImpl implements MetricService {
                     && configLevel.intLevel() > Level.OFF.intLevel();
         } else {
             String parentName;
-            int index = name.lastIndexOf(MetricsConstants.METRIC_PATH_DELIMITER);
+            int index = name.lastIndexOf(METRIC_PATH_DELIMITER);
             if (index != -1) {
                 parentName = name.substring(0, index);
                 configLevel = levelConfiguration.getLevel(parentName);
             } else {
-                parentName = MetricsConstants.ROOT_METRIC_NAME;
+                parentName = ROOT_METRIC_NAME;
                 configLevel = levelConfiguration.getRootLevel();
             }
             return isMetricEnabledBasedOnHierarchyLevel(parentName, metricLevel, configLevel);
@@ -426,7 +443,7 @@ public class MetricServiceImpl implements MetricService {
         }
         Metric metricCollection = metricsCollections.get(annotatedName);
         if (metricCollection == null) {
-            String name = annotatedName.replaceAll(MetricsConstants.METRIC_AGGREGATE_ANNOTATION_REGEX, "");
+            String name = annotatedName.replaceAll(METRIC_AGGREGATE_ANNOTATION_REGEX, "");
             Metric metric;
             if (level != null) {
                 metric = getOrCreateMetric(name, level, metricBuilder);
@@ -452,7 +469,7 @@ public class MetricServiceImpl implements MetricService {
     }
 
     private boolean isAnnotated(String annotatedName) {
-        return annotatedName.contains(MetricsConstants.METRIC_AGGREGATE_ANNOTATION);
+        return annotatedName.contains(METRIC_AGGREGATE_ANNOTATION);
     }
 
     private boolean isLevelsMatch(String annotatedName, Level[] levels) {
@@ -477,7 +494,7 @@ public class MetricServiceImpl implements MetricService {
             MetricBuilder<T> metricBuilder) throws MetricNotFoundException {
         boolean getOrCreate = (levels != null) && (levels.length > 0);
         int levelIndex = 0;
-        int index = annotatedName.lastIndexOf(MetricsConstants.METRIC_PATH_DELIMITER);
+        int index = annotatedName.lastIndexOf(METRIC_PATH_DELIMITER);
         String annotatedPath = annotatedName.substring(0, index);
         String statName = annotatedName.substring(index + 1);
 
@@ -493,8 +510,8 @@ public class MetricServiceImpl implements MetricService {
                 builder.append('.');
             }
             builder.append(chunk);
-            if (chunk.contains(MetricsConstants.METRIC_AGGREGATE_ANNOTATION)) {
-                affectedName = builder.toString().replaceAll(MetricsConstants.METRIC_AGGREGATE_ANNOTATION_REGEX, "");
+            if (chunk.contains(METRIC_AGGREGATE_ANNOTATION)) {
+                affectedName = builder.toString().replaceAll(METRIC_AGGREGATE_ANNOTATION_REGEX, "");
                 String metricName = String.format("%s.%s", affectedName, statName);
                 if (getOrCreate) {
                     Level level = levels[levelIndex];
