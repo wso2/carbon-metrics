@@ -1,4 +1,3 @@
-
 <%
     /*
      * Copyright 2015 WSO2 Inc. (http://wso2.org)
@@ -16,24 +15,18 @@
      * limitations under the License.
      */
 %>
-<%@page import="java.io.OutputStreamWriter"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="org.wso2.carbon.metrics.data.common.MetricList"%>
-<%@ page import="org.wso2.carbon.metrics.data.common.Metric"%>
-<%@ page import="org.wso2.carbon.metrics.data.common.MetricType"%>
-<%@ page import="org.wso2.carbon.metrics.data.common.MetricAttribute"%>
-<%@ page import="org.wso2.carbon.metrics.data.common.MetricDataFormat"%>
-<%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient"%>
-<%@ page import="org.wso2.carbon.metrics.view.ui.MetricDataWrapper"%>
-<%@ page import="com.google.gson.Gson"%>
-<%@ page import="org.apache.axis2.context.ConfigurationContext"%>
-<%@ page import="org.wso2.carbon.CarbonConstants"%>
-<%@ page import="org.wso2.carbon.utils.ServerConstants"%>
-<%@ page import="org.wso2.carbon.ui.CarbonUIUtil"%>
-<%@ page import="org.wso2.carbon.utils.CarbonUtils"%>
-<%@ page import="org.wso2.carbon.ui.CarbonUIMessage"%>
+<%@page import="com.google.gson.Gson" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
+<%@ page import="org.apache.axis2.context.ConfigurationContext" %>
+<%@ page import="org.wso2.carbon.CarbonConstants" %>
+<%@ page import="org.wso2.carbon.metrics.data.common.*" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricDataWrapper" %>
+<%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient" %>
+<%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
+<%@ page import="org.wso2.carbon.utils.ServerConstants" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 
 <%
     String source = request.getParameter("source");
@@ -50,7 +43,7 @@
         metricsViewClient = new MetricsViewClient(cookie, backendServerURL, configContext);
         Gson gson = new Gson();
         MetricDataWrapper metricData = null;
-        ArrayList<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<Metric>();
         if ("Memory".equals(type)) {
             metrics = getMemoryMetrics();
         } else if ("CPU".equals(type)) {
@@ -110,7 +103,7 @@
 %>
 
 <%!
-    private ArrayList<Metric> getMemoryMetrics() {
+    private List<Metric> getMemoryMetrics() {
         ArrayList<Metric> metrics = new ArrayList<Metric>();
         addMemoryMetrics(metrics, "heap", "Heap");
         addMemoryMetrics(metrics, "non-heap", "Non-Heap");

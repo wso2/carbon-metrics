@@ -23,7 +23,6 @@ public class MetricMetaWrapper {
     private String displayName;
 
     public MetricMetaWrapper(MetricMeta metricMeta) {
-        super();
         this.name = metricMeta.getName();
         this.type = metricMeta.getType();
         this.displayName = this.name.substring(this.name.lastIndexOf('.') + 1);

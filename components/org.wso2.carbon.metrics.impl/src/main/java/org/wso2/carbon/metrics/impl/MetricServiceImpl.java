@@ -87,7 +87,12 @@ public class MetricServiceImpl implements MetricService {
     private final MetricRegistry metricRegistry;
 
     private static final String SYSTEM_PROPERTY_METRICS_ENABLED = "metrics.enabled";
+
     private static final String SYSTEM_PROPERTY_METRICS_ROOT_LEVEL = "metrics.rootLevel";
+
+    private static final String METRIC_AGGREGATE_ANNOTATION = "[+]";
+
+    private static final String METRIC_AGGREGATE_ANNOTATION_REGEX = "\\[\\+\\]";
 
     /**
      * Name of the root metric. This is set to empty string.
@@ -97,13 +102,16 @@ public class MetricServiceImpl implements MetricService {
     /**
      * Hierarchy delimiter in Metric name
      */
-    private static final String HIERARCHY_DELIMITER = ".";
+    private static final String METRIC_PATH_DELIMITER = ".";
 
     private final MetricsLevelConfiguration levelConfiguration;
 
     private final Set<Reporter> reporters = new HashSet<Reporter>();
 
     private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
+
+    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN =
+            Pattern.compile(METRIC_AGGREGATE_ANNOTATION_REGEX);
 
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
@@ -345,7 +353,7 @@ public class MetricServiceImpl implements MetricService {
                     && configLevel.intLevel() > Level.OFF.intLevel();
         } else {
             String parentName;
-            int index = name.lastIndexOf(HIERARCHY_DELIMITER);
+            int index = name.lastIndexOf(METRIC_PATH_DELIMITER);
             if (index != -1) {
                 parentName = name.substring(0, index);
                 configLevel = levelConfiguration.getLevel(parentName);
@@ -435,7 +443,7 @@ public class MetricServiceImpl implements MetricService {
         }
         Metric metricCollection = metricsCollections.get(annotatedName);
         if (metricCollection == null) {
-            String name = annotatedName.replaceAll("\\[\\+\\]", "");
+            String name = annotatedName.replaceAll(METRIC_AGGREGATE_ANNOTATION_REGEX, "");
             Metric metric;
             if (level != null) {
                 metric = getOrCreateMetric(name, level, metricBuilder);
@@ -461,17 +469,16 @@ public class MetricServiceImpl implements MetricService {
     }
 
     private boolean isAnnotated(String annotatedName) {
-        return annotatedName.contains("[+]");
+        return annotatedName.contains(METRIC_AGGREGATE_ANNOTATION);
     }
 
     private boolean isLevelsMatch(String annotatedName, Level[] levels) {
-        Pattern p = Pattern.compile("\\[\\+\\]");
-        Matcher m = p.matcher(annotatedName);
+        Matcher m = METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(annotatedName);
         int affectedMetrics = 0;
         while (m.find()) {
             affectedMetrics++;
         }
-        // Levels count should be equals to affected metrics + current metric
+        // Levels count should be equals to affected metrics + current metric.
         return levels.length == affectedMetrics + 1;
     }
 
@@ -487,7 +494,7 @@ public class MetricServiceImpl implements MetricService {
             MetricBuilder<T> metricBuilder) throws MetricNotFoundException {
         boolean getOrCreate = (levels != null) && (levels.length > 0);
         int levelIndex = 0;
-        int index = annotatedName.lastIndexOf(".");
+        int index = annotatedName.lastIndexOf(METRIC_PATH_DELIMITER);
         String annotatedPath = annotatedName.substring(0, index);
         String statName = annotatedName.substring(index + 1);
 
@@ -503,8 +510,8 @@ public class MetricServiceImpl implements MetricService {
                 builder.append('.');
             }
             builder.append(chunk);
-            if (chunk.contains("[+]")) {
-                affectedName = builder.toString().replaceAll("\\[\\+\\]", "");
+            if (chunk.contains(METRIC_AGGREGATE_ANNOTATION)) {
+                affectedName = builder.toString().replaceAll(METRIC_AGGREGATE_ANNOTATION_REGEX, "");
                 String metricName = String.format("%s.%s", affectedName, statName);
                 if (getOrCreate) {
                     Level level = levels[levelIndex];

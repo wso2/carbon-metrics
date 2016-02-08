@@ -174,6 +174,11 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return startTime;
     }
 
+    /**
+     * Get the list of reporting sources.
+     *
+     * @return List of sources.
+     */
     public String[] getAllSources() {
         List<String> sourcesList;
         Set<String> sources = reporterDAO.queryAllSources();
@@ -192,6 +197,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return sourcesList.toArray(new String[sourcesList.size()]);
     }
 
+    /**
+     * Get metric hierarchy data for a given source and path.
+     *
+     * @param source Current source.
+     * @param path   Current path.
+     * @return {@link MetricHierarchyData} for the given source and path.
+     */
     public MetricHierarchyData getHierarchy(String source, String path) {
         Map<String, MetricType> hierarchicalMetrics = reporterDAO.queryHierarchicalMetrics(source, path);
         Set<String> childrenNames = new TreeSet<>();
@@ -204,13 +216,13 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
                 String suffix = (!"".equals(path)) ? metric.replaceFirst(path + "\\.", "") : metric;
                 int chunks = suffix.length() - suffix.replace(".", "").length();
                 if (chunks == 0) {
-                    // metrics
+                    // Chunks = 0 means, it is a metrics.
                     metrics.add(new MetricMeta(metric, type.name()));
                 } else if (chunks == 1) {
-                    // immediate child remove stat name and keep only path
+                    // Chunks = 1 means it is a immediate child, therefore remove stat name and keep only path.
                     childrenNames.add(metric.substring(0, metric.lastIndexOf('.')));
                 } else if (chunks > 1) {
-                    // child with further hierarchy
+                    // Chunks > 1 means the hierarchy goes beyond a one level.
                     if (!"".equals(path)) {
                         childrenNames.add(path + "." + suffix.substring(0, suffix.indexOf('.')));
                     } else {
@@ -344,6 +356,14 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         }
     }
 
+    /**
+     * Find last metrics.
+     *
+     * @param metrics {@link MetricList} of metrics.
+     * @param source  Source of the metrics.
+     * @param from    Starting time.
+     * @return {@link MetricData} for metrics.
+     */
     public MetricData findLastMetrics(MetricList metrics, String source, String from) {
         long startTime = getStartTime(from);
         if (startTime == -1) {
@@ -353,6 +373,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         return findMetricsByTimePeriod(metrics, source, startTime, endTime);
     }
 
+    /**
+     * Find metrics for a given period of time.
+     *
+     * @param metrics   {@link MetricList} of metrics.
+     * @param source    Source of the metrics.
+     * @param startTime Starting time.
+     * @param endTime   Ending time.
+     * @return {@link MetricData} for metrics.
+     */
     public MetricData findMetricsByTimePeriod(MetricList metrics, String source, long startTime, long endTime) {
         Metric[] list = null;
         if (metrics == null || (list = metrics.getMetric()) == null) {

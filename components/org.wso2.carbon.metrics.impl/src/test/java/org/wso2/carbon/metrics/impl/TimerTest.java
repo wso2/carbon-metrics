@@ -60,7 +60,7 @@ public class TimerTest extends TestCase {
     public void testTime() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-start"), Level.INFO);
         Context context = timer.start();
-        assertTrue("Timer works!", context.stop() > 0);
+        assertTrue("Timer value should be greater than zero", context.stop() > 0);
         assertEquals("Timer count should be one", 1, timer.getCount());
         context.close();
 
