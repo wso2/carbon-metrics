@@ -453,7 +453,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <carbon.metrics.version>1.2.2-SNAPSHOT</carbon.metrics.version>
+        <carbon.metrics.version>2.0.0-SNAPSHOT</carbon.metrics.version>
         <junit.version>4.12</junit.version>
         <metrics.version>3.1.2</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
