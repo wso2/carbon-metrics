@@ -35,14 +35,6 @@
             <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.data.service.stub</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.view.ui</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
@@ -71,8 +63,6 @@
                             </adviceFile>
                             <bundles>
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.common</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service.stub</bundleDef>
-                                <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.view.ui</bundleDef>
                                 <bundleDef>com.google.code.gson:gson</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-api</bundleDef>
                                 <bundleDef>org.slf4j:slf4j-log4j12</bundleDef>
