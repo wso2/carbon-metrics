@@ -60,11 +60,51 @@ public class MeterCollection implements Meter {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.wso2.carbon.metrics.manager.Meter#getCount()
      */
     @Override
     public long getCount() {
         return meter.getCount();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#getMeanRate()
+     */
+    @Override
+    public double getMeanRate() {
+        return meter.getMeanRate();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#getOneMinuteRate()
+     */
+    @Override
+    public double getOneMinuteRate() {
+        return meter.getOneMinuteRate();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#getFiveMinuteRate()
+     */
+    @Override
+    public double getFiveMinuteRate() {
+        return meter.getFiveMinuteRate();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.wso2.carbon.metrics.manager.Meter#getFifteenMinuteRate()
+     */
+    @Override
+    public double getFifteenMinuteRate() {
+        return meter.getFifteenMinuteRate();
     }
 }
