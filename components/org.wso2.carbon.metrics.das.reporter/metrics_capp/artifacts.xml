@@ -16,20 +16,20 @@
 -->
 <artifacts>
     <artifact name="Metrics_CApp" version="1.0.0" type="carbon/application">
-        <dependency artifact="counter_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="counter_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="counter_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="gauge_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="gauge_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="gauge_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="histogram_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="histogram_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="histogram_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="meter_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="meter_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="meter_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="timer_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="timer_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
-        <dependency artifact="timer_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer" />
+        <dependency artifact="counter_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="counter_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="counter_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="gauge_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="gauge_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="gauge_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="histogram_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="histogram_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="histogram_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="meter_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="meter_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="meter_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="timer_receiver" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="timer_store" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
+        <dependency artifact="timer_stream" version="1.0.0" include="true" serverRole="DataAnalyticsServer"/>
     </artifact>
 </artifacts>
