@@ -15,6 +15,20 @@
  */
 package org.wso2.carbon.metrics.data.service;
 
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import org.wso2.carbon.metrics.data.common.Metric;
+import org.wso2.carbon.metrics.data.common.MetricAttribute;
+import org.wso2.carbon.metrics.data.common.MetricDataFormat;
+import org.wso2.carbon.metrics.data.common.MetricList;
+import org.wso2.carbon.metrics.data.common.MetricType;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,25 +38,15 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.wso2.carbon.metrics.data.common.Metric;
-import org.wso2.carbon.metrics.data.common.MetricAttribute;
-import org.wso2.carbon.metrics.data.common.MetricDataFormat;
-import org.wso2.carbon.metrics.data.common.MetricList;
-import org.wso2.carbon.metrics.data.common.MetricType;
 
 /**
  * Test Metrics Data Service
  */
-public class MetricsDataServiceTest extends TestCase {
+public class MetricsDataServiceTest {
 
     private MetricsDataService metricsDataService;
 
@@ -54,44 +58,42 @@ public class MetricsDataServiceTest extends TestCase {
 
     private static final long END_TIME = 1428567416013L;
 
-    public static Test suite() {
-        return new TestSetup(new TestSuite(MetricsDataServiceTest.class)) {
+    @BeforeTest
+    private void initialize() throws Exception {
+        DataSource dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "");
+        template = new JdbcTemplate(dataSource);
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("dbscripts/h2.sql"));
+        populator.populate(dataSource.getConnection());
 
-            protected void setUp() throws Exception {
-                DataSource dataSource = JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "");
-                template = new JdbcTemplate(dataSource);
-                ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-                populator.addScript(new ClassPathResource("dbscripts/h2.sql"));
-                populator.populate(dataSource.getConnection());
-
-                // Create initial context
-                System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-                System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
-                InitialContext ic = new InitialContext();
-                ic.createSubcontext("jdbc");
-                ic.bind("jdbc/WSO2MetricsDB", dataSource);
-            }
-
-            protected void tearDown() throws Exception {
-                InitialContext ic = new InitialContext();
-                ic.unbind("jdbc/WSO2MetricsDB");
-                ic.unbind("jdbc");
-            }
-        };
+        // Create initial context
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
+        System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
+        InitialContext ic = new InitialContext();
+        ic.createSubcontext("jdbc");
+        ic.bind("jdbc/WSO2MetricsDB", dataSource);
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @AfterTest
+    private void destroy() throws Exception {
+        InitialContext ic = new InitialContext();
+        ic.unbind("jdbc/WSO2MetricsDB");
+        ic.unbind("jdbc");
+    }
 
+    @BeforeMethod
+    private void setUp() throws Exception {
         metricsDataService = new MetricsDataService();
         metricsDataService.init(Utils.getConfiguration());
     }
 
+    @Test
     public void testAllData() {
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE");
         assertEquals("There should be 66 results", 66, gaugeResult.size());
     }
 
+    @Test
     public void testSpecificData() {
         String gaugeName = "jvm.memory.heap.init";
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?",
@@ -99,12 +101,14 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There should be two results", 2, gaugeResult.size());
     }
 
+    @Test
     public void testSources() {
         String[] sources = metricsDataService.getAllSources();
         assertEquals("There should be one source", 1, sources.length);
         assertEquals("The source should be " + SOURCE, SOURCE, sources[0]);
     }
 
+    @Test
     public void testHierarchy() {
         MetricHierarchyData hierarchyData1 = metricsDataService.getHierarchy(SOURCE, "");
         MetricHierarchyData hierarchyData2 = metricsDataService.getHierarchy(SOURCE, "jvm.memory");
@@ -117,27 +121,32 @@ public class MetricsDataServiceTest extends TestCase {
         assertEquals("There should be no sub levels", 0, hierarchyData3.getChildren().length);
     }
 
+    @Test
     public void testLast1MinuteJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1m");
         assertNotNull("Metric Data can not be null", metricData);
     }
 
+    @Test
     public void testLast1HourJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1h");
         assertNotNull("Metric Data can not be null", metricData);
     }
 
+    @Test
     public void testLast1DayJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1d");
         assertNotNull("Metric Data is can not be null", metricData);
     }
 
+    @Test
     public void testLastJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE,
                 String.valueOf(START_TIME));
         assertEquals("There results count should be 2", 2, metricData.getData().length);
     }
 
+    @Test
     public void testJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(getMemoryMetrics(), SOURCE, START_TIME,
                 END_TIME);
@@ -176,6 +185,7 @@ public class MetricsDataServiceTest extends TestCase {
 
     }
 
+    @Test
     public void testJMXCPULoadMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.process", "Process CPU Load", MetricAttribute.VALUE,
@@ -202,6 +212,7 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testJMXLoadAverageMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.system.load.average", "System Load Average",
@@ -224,6 +235,7 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testJMXFileDescriptorMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.open.count", "Open File Descriptor Count",
@@ -247,6 +259,7 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testJMXPhysicalMemoryMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.free.size", "Free Physical Memory Size",
@@ -276,6 +289,7 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testJMXThreadingMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads", MetricAttribute.VALUE, null));
@@ -298,6 +312,7 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testJMXClassLoadingMetrics() {
         List<Metric> metrics = new ArrayList<Metric>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current", "Current Classes Loaded",
@@ -324,13 +339,15 @@ public class MetricsDataServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testDatabaseReadWriteAndJMXMetrics() {
         // This test will check the metric find queries
         List<Metric> metrics = new ArrayList<Metric>();
         // Read Metrics
         metrics.add(new Metric(MetricType.TIMER, "database.read", "Minimum Database Read Time", MetricAttribute.MIN,
                 null));
-        metrics.add(new Metric(MetricType.TIMER, "database.read", "Mean Database Read Time", MetricAttribute.MEAN, null));
+        metrics.add(new Metric(MetricType.TIMER, "database.read", "Mean Database Read Time",
+                MetricAttribute.MEAN, null));
         metrics.add(new Metric(MetricType.TIMER, "database.read", "Maximum Database Read Time", MetricAttribute.MAX,
                 null));
         metrics.add(new Metric(MetricType.TIMER, "database.read", "Standard Deviation of Database Read Time",

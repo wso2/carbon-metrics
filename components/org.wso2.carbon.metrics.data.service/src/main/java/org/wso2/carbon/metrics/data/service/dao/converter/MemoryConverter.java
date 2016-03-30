@@ -23,7 +23,7 @@ import java.math.RoundingMode;
  */
 public class MemoryConverter implements ValueConverter {
 
-    private final BigDecimal BYTES_IN_ONE_MEGABYTE = BigDecimal.valueOf(1024 * 1024);
+    private static final BigDecimal BYTES_IN_ONE_MEGABYTE = BigDecimal.valueOf(1024 * 1024);
 
     @Override
     public BigDecimal convert(BigDecimal value) {

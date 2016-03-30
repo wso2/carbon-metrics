@@ -14,7 +14,8 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
@@ -26,7 +27,9 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Metrics JDBC Reporter</name>
+    <name>WSO2 Carbon Metrics JDBC Reporter</name>
+    <description>JDBC Reporter implementation for Dropwizard Metrics</description>
+    <url>http://wso2.com</url>
 
     <dependencies>
         <dependency>
@@ -49,39 +52,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.wso2.carbon.metrics.jdbc.reporter.*,
-                        </Export-Package>
-                        <Import-Package>
-                            com.codahale.metrics;
-                            version="${metrics.version.range}",
-                            org.slf4j;version="${slf4j.version.range}"
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
+    <properties>
+        <export.package>
+            org.wso2.carbon.metrics.jdbc.reporter.*,
+        </export.package>
+        <import.package>
+            com.codahale.metrics;
+            version="${metrics.version.range}",
+            org.slf4j;version="${slf4j.version.range}"
+        </import.package>
+        <include.resource></include.resource>
+    </properties>
 </project>

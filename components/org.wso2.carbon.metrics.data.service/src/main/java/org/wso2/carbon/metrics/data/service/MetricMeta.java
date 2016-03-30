@@ -15,6 +15,9 @@
  */
 package org.wso2.carbon.metrics.data.service;
 
+/**
+ * Metric Meta Details
+ */
 public class MetricMeta {
     private String name;
     private String type;

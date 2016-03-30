@@ -43,7 +43,7 @@ If there is no configured level for specific metric name hierarachy, the level i
 
 This repository has multiple components.
 
-  - org.wso2.carbon.metrics.manager - The public API for WSO2 Metrics. See Usage.
+  - org.wso2.carbon.metrics.core - The public API for WSO2 Metrics. See Usage.
   - org.wso2.carbon.metrics.impl - Main implementation of Metric Service, which uses the [Metrics library](https://dropwizard.github.io/metrics/).
   - org.wso2.carbon.metrics.jdbc.reporter - A JDBC Reporter for Metrics Library.
   - org.wso2.carbon.metrics.common - A common component to read configurations.
@@ -52,7 +52,7 @@ This repository has multiple components.
 
 ## Usage
 
-All APIs are exposed via `org.wso2.carbon.metrics.manager.MetricManager` class.
+All APIs are exposed via `org.wso2.carbon.metrics.core.MetricManager` class.
 
 ```
 Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-meter"));
@@ -85,7 +85,7 @@ In order to use WSO2 Carbon Metrics in your components, you need to add followin
 ```
 <dependency>
     <groupId>org.wso2.carbon.metrics</groupId>
-    <artifactId>org.wso2.carbon.metrics.manager</artifactId>
+    <artifactId>org.wso2.carbon.metrics.core</artifactId>
     <version>${carbon.metrics.version}</version>
 </dependency>
 ```
@@ -154,6 +154,6 @@ For example:
 
 ## License
 
-Copyright (C) 2014-2015 WSO2 Inc
+Copyright (C) 2014 WSO2 Inc
 
 Licensed under the Apache License, Version 2.0

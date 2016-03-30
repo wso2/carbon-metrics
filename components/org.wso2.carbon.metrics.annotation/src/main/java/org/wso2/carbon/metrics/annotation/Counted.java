@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 public @interface Counted {
     /**
      * @return The name of the counter.
@@ -41,17 +41,15 @@ public @interface Counted {
     Level level() default Level.INFO;
 
     /**
-     * @return If {@code true}, use the given name as an absolute name. If {@code false}, use the given name
-     *         relative to the annotated class
+     * @return If {@code true}, use the given name as an absolute name. If {@code false}, use the given name relative to
+     * the annotated class
      */
     boolean absolute() default false;
 
     /**
-     * @return
-     *         If {@code false} (default), the counter is decremented when the annotated
-     *         method returns, counting current invocations of the annotated method.
-     *         If {@code true}, the counter increases monotonically, counting total
-     *         invocations of the annotated method.
+     * @return If {@code false} (default), the counter is decremented when the annotated method returns, counting
+     * current invocations of the annotated method. If {@code true}, the counter increases monotonically, counting total
+     * invocations of the annotated method.
      */
     boolean monotonic() default false;
 }

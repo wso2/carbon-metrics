@@ -23,7 +23,7 @@ import java.math.RoundingMode;
  */
 public class PercentageConverter implements ValueConverter {
 
-    private final BigDecimal HUNDRED = BigDecimal.valueOf(100);
+    private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
 
     @Override
     public BigDecimal convert(BigDecimal value) {

@@ -16,8 +16,7 @@
 package org.wso2.carbon.metrics.data.service;
 
 /**
- * Wraps metric meta data for children metrics,
- * hierarchy information and path data.
+ * Wraps metric meta data for children metrics, hierarchy information and path data.
  */
 public class MetricHierarchyData {
     private String path;

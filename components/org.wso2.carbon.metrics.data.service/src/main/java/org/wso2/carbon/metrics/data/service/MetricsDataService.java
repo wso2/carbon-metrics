@@ -15,24 +15,6 @@
  */
 package org.wso2.carbon.metrics.data.service;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.service.Lifecycle;
@@ -56,6 +38,27 @@ import org.wso2.carbon.metrics.data.service.dao.converter.PercentageConverter;
 import org.wso2.carbon.metrics.data.service.dao.converter.ValueConverter;
 import org.wso2.carbon.utils.CarbonUtils;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+/**
+ * Metrics Data Service (fetching data from the database). This data service will work only with JDBC Reporter.
+ */
 public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsDataService.class);
@@ -105,10 +108,10 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
     }
 
     void init(MetricsConfiguration configuration) {
-        final String JDBC_REPORTING_DATASOURCE_NAME = "Reporting.JDBC.DataSourceName";
-        final String JDBC_REPORTING_SOURCE = "Reporting.JDBC.Source";
+        final String jdbcReportingDatasourceName = "Reporting.JDBC.DataSourceName";
+        final String jdbcReportingSource = "Reporting.JDBC.Source";
 
-        String dataSourceName = configuration.getProperty(JDBC_REPORTING_DATASOURCE_NAME);
+        String dataSourceName = configuration.getProperty(jdbcReportingDatasourceName);
 
         if (dataSourceName == null || dataSourceName.trim().length() == 0) {
             String msg = "Data Source Name is not specified for Metrics Data Service";
@@ -139,7 +142,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         reporterDAO = new ReporterDAO(dataSource);
 
         currentJDBCReportingSource =
-                configuration.getProperty(JDBC_REPORTING_SOURCE, DefaultSourceValueProvider.getValue());
+                configuration.getProperty(jdbcReportingSource, DefaultSourceValueProvider.getValue());
     }
 
     private long getStartTime(String from) {
@@ -267,7 +270,7 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
         @Override
         public void process(String source, long timestamp, MetricType metricType, String metricName,
-                MetricAttribute metricAttribute, BigDecimal value) {
+                            MetricAttribute metricAttribute, BigDecimal value) {
             BigDecimal[] data = dataMap.get(timestamp);
             if (data == null) {
                 data = new BigDecimal[metricGroupMap.size() + 1];
@@ -290,7 +293,8 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
         public MetricData getResult() {
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format(
-                        "Metrics Search Results. Display Names: %s, Data Types: %s, Columns %d, Rows: %d, Total Data Points: %d",
+                        "Metrics Search Results. " +
+                                "Display Names: %s, Data Types: %s, Columns %d, Rows: %d, Total Data Points: %d",
                         Arrays.asList(displayNames), Arrays.asList(dataTypes), displayNames.length, orderedList.size(),
                         displayNames.length * orderedList.size()));
             }
@@ -430,15 +434,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
             if (metricDataFormat != null) {
                 switch (metricDataFormat) {
-                case P:
-                    valueConverter = PERCENTAGE_VALUE_CONVERTER;
-                    break;
-                case B:
-                    valueConverter = MEMORY_VALUE_CONVERTER;
-                    break;
-                default:
-                    valueConverter = DUMB_VALUE_CONVERTER;
-                    break;
+                    case P:
+                        valueConverter = PERCENTAGE_VALUE_CONVERTER;
+                        break;
+                    case B:
+                        valueConverter = MEMORY_VALUE_CONVERTER;
+                        break;
+                    default:
+                        valueConverter = DUMB_VALUE_CONVERTER;
+                        break;
                 }
             } else {
                 valueConverter = DUMB_VALUE_CONVERTER;

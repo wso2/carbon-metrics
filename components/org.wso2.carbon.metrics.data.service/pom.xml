@@ -14,7 +14,8 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
         <artifactId>carbon-metrics</artifactId>
@@ -26,41 +27,12 @@
     <artifactId>org.wso2.carbon.metrics.data.service</artifactId>
     <packaging>bundle</packaging>
 
-    <name>WSO2 Carbon - Metrics Data Service</name>
+    <name>WSO2 Carbon Metrics Data Service</name>
 
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.osgi</groupId>
-            <artifactId>org.eclipse.osgi.services</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.registry.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.impl</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -84,67 +56,17 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Private-Package>
-                            org.wso2.carbon.metrics.data.service.internal
-                        </Private-Package>
-                        <Export-Package>
-                            !org.wso2.carbon.metrics.data.service.internal.*,
-                            org.wso2.carbon.metrics.data.service.*
-                        </Export-Package>
-                        <Import-Package>
-                            javax.naming,
-                            org.osgi.service.component,
-                            org.wso2.carbon.registry.core.service;version="${carbon.registry.version.range}",
-                            org.wso2.carbon.metrics.common.*,
-                            org.wso2.carbon.metrics.data.common.*,
-                            org.wso2.carbon.core;version="${carbon.kernel.version.range}",
-                            org.wso2.carbon.utils;version="${carbon.kernel.version.range}",
-                            org.apache.axis2;version="${axis2.wso2.version.range}",
-                            org.apache.axis2.context;version="${axis2.wso2.version.range}",
-                            org.apache.axis2.service;version="${axis2.wso2.version.range}",
-                            org.slf4j;version="${slf4j.version.range}"
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.axis2</groupId>
-                <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
-                <configuration>
-                    <className>org.wso2.carbon.metrics.data.service.MetricsDataService</className>
-                    <outputFileName>target/generated-resources/wsdl/MetricsDataService.wsdl</outputFileName>
-                    <serviceName>MetricsDataService</serviceName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java2wsdl</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <properties>
+        <private.package>org.wso2.carbon.metrics.data.service.internal</private.package>
+        <export.package>
+            !org.wso2.carbon.metrics.data.service.internal.*,
+            org.wso2.carbon.metrics.data.service.*
+        </export.package>
+        <import.package>
+            javax.naming,
+            org.wso2.carbon.metrics.common.*,
+            org.wso2.carbon.metrics.data.common.*,
+            org.slf4j;version="${slf4j.version.range}"
+        </import.package>
+    </properties>
 </project>

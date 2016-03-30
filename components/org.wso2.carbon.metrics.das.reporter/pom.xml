@@ -14,7 +14,8 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
@@ -26,7 +27,9 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon - Metrics DAS Reporter</name>
+    <name>WSO2 Carbon Metrics DAS Reporter</name>
+    <description>WSO2 Data Analytics Server (DAS) Reporter implementation for Dropwizard Metrics</description>
+
 
     <dependencies>
         <dependency>
@@ -45,45 +48,13 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.wso2.carbon.metrics.das.reporter.*,
-                        </Export-Package>
-                        <Import-Package>
-                            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
-                            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
-                            com.codahale.metrics;version="${metrics.version.range}",
-                            org.slf4j;version="${slf4j.version.range}"
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
-                                <ant antfile="build.xml" target="zip" />
+                                <ant antfile="build.xml" target="zip"/>
                             </target>
                         </configuration>
                         <goals>
@@ -94,4 +65,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <export.package>
+            org.wso2.carbon.metrics.das.reporter.*,
+        </export.package>
+        <import.package>
+            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
+            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
+            com.codahale.metrics;version="${metrics.version.range}",
+            org.slf4j;version="${slf4j.version.range}"
+        </import.package>
+        <include.resource></include.resource>
+    </properties>
 </project>

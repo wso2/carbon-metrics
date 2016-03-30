@@ -16,12 +16,12 @@
 -->
 <project name="create-metrics-capps" default="zip" basedir=".">
 
-    <property name="target_dir" value="target" />
-    <property name="metrics_capp_dir" value="metrics_capp" />
+    <property name="target_dir" value="target"/>
+    <property name="metrics_capp_dir" value="metrics_capp"/>
 
     <target name="zip">
         <zip destfile="${target_dir}/${metrics_capp_dir}.car">
-            <zipfileset dir="${metrics_capp_dir}" />
+            <zipfileset dir="${metrics_capp_dir}"/>
         </zip>
     </target>
 

@@ -23,7 +23,7 @@ import org.wso2.carbon.registry.core.service.RegistryService;
 /**
  * @scr.component name="org.wso2.carbon.metrics.data.service.internal.MetricsDataComponent" immediate="true"
  * @scr.reference name="registry.service" interface="org.wso2.carbon.registry.core.service.RegistryService"
- *                cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
+ * cardinality="1..1" policy="dynamic" bind="setRegistryService" unbind="unsetRegistryService"
  */
 public class MetricsDataComponent {
 

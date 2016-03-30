@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.data.common.MetricAttribute;
 import org.wso2.carbon.metrics.data.common.MetricType;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.sql.DataSource;
 
 /**
  * Querying Metric Data via JDBC.
@@ -298,16 +299,16 @@ public class ReporterDAO {
 
     private String getTableName(MetricType metricType) {
         switch (metricType) {
-        case COUNTER:
-            return "METRIC_COUNTER";
-        case GAUGE:
-            return "METRIC_GAUGE";
-        case HISTOGRAM:
-            return "METRIC_HISTOGRAM";
-        case METER:
-            return "METRIC_METER";
-        case TIMER:
-            return "METRIC_TIMER";
+            case COUNTER:
+                return "METRIC_COUNTER";
+            case GAUGE:
+                return "METRIC_GAUGE";
+            case HISTOGRAM:
+                return "METRIC_HISTOGRAM";
+            case METER:
+                return "METRIC_METER";
+            case TIMER:
+                return "METRIC_TIMER";
         }
         throw new IllegalStateException("Invalid Metric Type");
     }
