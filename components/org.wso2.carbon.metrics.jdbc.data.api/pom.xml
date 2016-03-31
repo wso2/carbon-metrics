@@ -16,7 +16,6 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.wso2.carbon.metrics</groupId>
         <artifactId>carbon-metrics</artifactId>
@@ -25,28 +24,42 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.carbon.metrics.data.common</artifactId>
+    <artifactId>org.wso2.carbon.metrics.jdbc.data.api</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Carbon Metrics Data Common</name>
+
+    <name>WSO2 Carbon Metrics JDBC Data API</name>
 
     <dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Export-Package>
-                            org.wso2.carbon.metrics.data.common.*
-                        </Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
+    <properties>
+        <!--
+        <private.package>org.wso2.carbon.metrics.data.service.internal</private.package>
+        <export.package>
+            !org.wso2.carbon.metrics.data.service.internal.*,
+            org.wso2.carbon.metrics.data.service.*
+        </export.package>
+        <import.package>
+            javax.naming,
+            org.wso2.carbon.metrics.common.*,
+            org.wso2.carbon.metrics.data.common.*,
+            org.slf4j;version="${slf4j.version.range}"
+        </import.package>
+    -->
+    </properties>
 </project>

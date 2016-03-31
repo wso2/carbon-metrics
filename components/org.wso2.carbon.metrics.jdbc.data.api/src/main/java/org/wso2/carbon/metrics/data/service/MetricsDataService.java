@@ -15,16 +15,8 @@
  */
 package org.wso2.carbon.metrics.data.service;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.service.Lifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.core.AbstractAdmin;
-import org.wso2.carbon.metrics.common.DefaultSourceValueProvider;
-import org.wso2.carbon.metrics.common.MetricsConfigException;
-import org.wso2.carbon.metrics.common.MetricsConfiguration;
-import org.wso2.carbon.metrics.common.MetricsXMLConfiguration;
 import org.wso2.carbon.metrics.data.common.Metric;
 import org.wso2.carbon.metrics.data.common.MetricAttribute;
 import org.wso2.carbon.metrics.data.common.MetricDataFormat;
@@ -36,9 +28,7 @@ import org.wso2.carbon.metrics.data.service.dao.converter.DumbConverter;
 import org.wso2.carbon.metrics.data.service.dao.converter.MemoryConverter;
 import org.wso2.carbon.metrics.data.service.dao.converter.PercentageConverter;
 import org.wso2.carbon.metrics.data.service.dao.converter.ValueConverter;
-import org.wso2.carbon.utils.CarbonUtils;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,15 +41,12 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
  * Metrics Data Service (fetching data from the database). This data service will work only with JDBC Reporter.
  */
-public class MetricsDataService extends AbstractAdmin implements Lifecycle {
+public class MetricsDataService {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsDataService.class);
 
@@ -75,74 +62,15 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
     private static final ValueConverter DUMB_VALUE_CONVERTER = new DumbConverter();
 
-    public MetricsDataService() {
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis2.service.Lifecycle#init(org.apache.axis2.context.ServiceContext)
-     */
-    @Override
-    public void init(ServiceContext serviceContext) throws AxisFault {
-        MetricsXMLConfiguration configuration = new MetricsXMLConfiguration();
-        String filePath = CarbonUtils.getCarbonConfigDirPath() + File.separator + "metrics.xml";
-        try {
-            configuration.load(filePath);
-        } catch (MetricsConfigException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error("Error reading configuration from " + filePath, e);
-            }
-        }
-
-        init(configuration);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.axis2.service.Lifecycle#destroy(org.apache.axis2.context.ServiceContext)
-     */
-    @Override
-    public void destroy(ServiceContext serviceContext) {
-    }
-
-    void init(MetricsConfiguration configuration) {
-        final String jdbcReportingDatasourceName = "Reporting.JDBC.DataSourceName";
-        final String jdbcReportingSource = "Reporting.JDBC.Source";
-
-        String dataSourceName = configuration.getProperty(jdbcReportingDatasourceName);
-
-        if (dataSourceName == null || dataSourceName.trim().length() == 0) {
-            String msg = "Data Source Name is not specified for Metrics Data Service";
-            if (logger.isWarnEnabled()) {
-                logger.warn(msg);
-            }
-            throw new IllegalStateException(msg);
-        }
-
-        DataSource dataSource = null;
-        try {
-            Context ctx = new InitialContext();
-            dataSource = (DataSource) ctx.lookup(dataSourceName);
-        } catch (NamingException e) {
-            String msg = String.format(
-                    "Error when looking up the Data Source: '%s'. Cannot instantiate the Metrics Data Service",
-                    dataSourceName);
-            if (logger.isWarnEnabled()) {
-                logger.warn(msg);
-            }
-            throw new IllegalStateException(msg);
-        }
-
+    public MetricsDataService(DataSource dataSource) {
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Creating Metrics Data Service with data source '%s'", dataSourceName));
+            logger.debug(String.format("Creating Metrics Data Service"));
         }
 
         reporterDAO = new ReporterDAO(dataSource);
 
-        currentJDBCReportingSource =
-                configuration.getProperty(jdbcReportingSource, DefaultSourceValueProvider.getValue());
+        // TODO: Fix this
+        currentJDBCReportingSource = "carbon-server";
     }
 
     private long getStartTime(String from) {
@@ -419,12 +347,12 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
             List<MetricAttribute> attributes = nameGroupMap.get(metricName);
             if (attributes == null) {
-                attributes = new ArrayList<MetricAttribute>();
+                attributes = new ArrayList<>();
                 nameGroupMap.put(metricName, attributes);
             }
             List<String> names = attributeGroupMap.get(metricAttribute);
             if (names == null) {
-                names = new ArrayList<String>();
+                names = new ArrayList<>();
                 attributeGroupMap.put(metricAttribute, names);
             }
             attributes.add(metricAttribute);
@@ -477,11 +405,11 @@ public class MetricsDataService extends AbstractAdmin implements Lifecycle {
 
                 if (names.size() > attributes.size()) {
                     metricNames = names;
-                    metricAttributes = new ArrayList<MetricAttribute>(1);
+                    metricAttributes = new ArrayList<>(1);
                     metricAttributes.add(metricGroup.metricAttribute);
                 } else {
                     metricAttributes = attributes;
-                    metricNames = new ArrayList<String>(1);
+                    metricNames = new ArrayList<>(1);
                     metricNames.add(metricGroup.metricName);
                 }
 

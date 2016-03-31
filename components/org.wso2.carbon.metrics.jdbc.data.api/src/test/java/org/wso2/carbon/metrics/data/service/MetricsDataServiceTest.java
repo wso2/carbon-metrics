@@ -19,8 +19,7 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.data.common.Metric;
@@ -34,13 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
 
 
 /**
@@ -65,32 +58,13 @@ public class MetricsDataServiceTest {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("dbscripts/h2.sql"));
         populator.populate(dataSource.getConnection());
-
-        // Create initial context
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-        System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
-        InitialContext ic = new InitialContext();
-        ic.createSubcontext("jdbc");
-        ic.bind("jdbc/WSO2MetricsDB", dataSource);
-    }
-
-    @AfterTest
-    private void destroy() throws Exception {
-        InitialContext ic = new InitialContext();
-        ic.unbind("jdbc/WSO2MetricsDB");
-        ic.unbind("jdbc");
-    }
-
-    @BeforeMethod
-    private void setUp() throws Exception {
-        metricsDataService = new MetricsDataService();
-        metricsDataService.init(Utils.getConfiguration());
+        metricsDataService = new MetricsDataService(dataSource);
     }
 
     @Test
     public void testAllData() {
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE");
-        assertEquals("There should be 66 results", 66, gaugeResult.size());
+        Assert.assertEquals(gaugeResult.size(), 66, "There should be 66 results");
     }
 
     @Test
@@ -98,14 +72,14 @@ public class MetricsDataServiceTest {
         String gaugeName = "jvm.memory.heap.init";
         List<Map<String, Object>> gaugeResult = template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?",
                 gaugeName);
-        assertEquals("There should be two results", 2, gaugeResult.size());
+        Assert.assertEquals(gaugeResult.size(), 2, "There should be two results");
     }
 
     @Test
     public void testSources() {
         String[] sources = metricsDataService.getAllSources();
-        assertEquals("There should be one source", 1, sources.length);
-        assertEquals("The source should be " + SOURCE, SOURCE, sources[0]);
+        Assert.assertEquals(sources.length, 1, "There should be one source");
+        Assert.assertEquals(sources[0], SOURCE, "The source should be " + SOURCE);
     }
 
     @Test
@@ -113,57 +87,57 @@ public class MetricsDataServiceTest {
         MetricHierarchyData hierarchyData1 = metricsDataService.getHierarchy(SOURCE, "");
         MetricHierarchyData hierarchyData2 = metricsDataService.getHierarchy(SOURCE, "jvm.memory");
         MetricHierarchyData hierarchyData3 = metricsDataService.getHierarchy(SOURCE, "jvm.memory.non-heap");
-        assertEquals("There should be zero metrics", 0, hierarchyData1.getMetrics().length);
-        assertEquals("There should be zero metrics", 0, hierarchyData2.getMetrics().length);
-        assertTrue("There should be multiple metrics", hierarchyData3.getMetrics().length > 0);
-        assertTrue("There should be multiple sub levels", hierarchyData1.getChildren().length > 0);
-        assertTrue("There should be multiple sub levels", hierarchyData2.getChildren().length > 0);
-        assertEquals("There should be no sub levels", 0, hierarchyData3.getChildren().length);
+        Assert.assertEquals(hierarchyData1.getMetrics().length, 0, "There should be zero metrics");
+        Assert.assertEquals(hierarchyData2.getMetrics().length, 0, "There should be zero metrics");
+        Assert.assertTrue(hierarchyData3.getMetrics().length > 0, "There should be multiple metrics");
+        Assert.assertTrue(hierarchyData1.getChildren().length > 0, "There should be multiple sub levels");
+        Assert.assertTrue(hierarchyData2.getChildren().length > 0, "There should be multiple sub levels");
+        Assert.assertEquals(hierarchyData3.getChildren().length, 0, "There should be no sub levels");
     }
 
     @Test
     public void testLast1MinuteJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1m");
-        assertNotNull("Metric Data can not be null", metricData);
+        Assert.assertNotNull(metricData, "Metric Data can not be null");
     }
 
     @Test
     public void testLast1HourJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1h");
-        assertNotNull("Metric Data can not be null", metricData);
+        Assert.assertNotNull(metricData, "Metric Data can not be null");
     }
 
     @Test
     public void testLast1DayJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE, "-1d");
-        assertNotNull("Metric Data is can not be null", metricData);
+        Assert.assertNotNull(metricData, "Metric Data is can not be null");
     }
 
     @Test
     public void testLastJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findLastMetrics(getMemoryMetrics(), SOURCE,
                 String.valueOf(START_TIME));
-        assertEquals("There results count should be 2", 2, metricData.getData().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There results count should be 2");
     }
 
     @Test
     public void testJMXMemoryMetrics() {
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(getMemoryMetrics(), SOURCE, START_TIME,
                 END_TIME);
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be nine names", 9, metricData.getMetadata().getNames().length);
-        assertEquals("There should be nine types", 9, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 9, "There should be nine names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 9, "There should be nine types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("The results count should be 9", 9, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 9, "The results count should be 9");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value is available", value);
+                Assert.assertNotNull(value, "Value is available");
             }
         }
     }
 
     private MetricList getMemoryMetrics() {
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
 
         addMemoryMetrics(metrics, "heap", "Heap");
         addMemoryMetrics(metrics, "non-heap", "Non-Heap");
@@ -187,7 +161,7 @@ public class MetricsDataServiceTest {
 
     @Test
     public void testJMXCPULoadMetrics() {
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.process", "Process CPU Load", MetricAttribute.VALUE,
                 MetricDataFormat.P));
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.cpu.load.system", "System CPU Load", MetricAttribute.VALUE,
@@ -198,16 +172,18 @@ public class MetricsDataServiceTest {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be three names", 3, metricData.getMetadata().getNames().length);
-        assertEquals("There should be three types", 3, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 3, "There should be three names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 3, "There should be three types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be three values", 3, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 3, "There should be three values");
             for (int j = 1; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value can not be null", value);
-                assertTrue("Value should be greater than or equal to zero", value.compareTo(BigDecimal.ZERO) >= 0);
-                assertTrue("Value should be less than or equal to 100", value.compareTo(new BigDecimal("100")) <= 0);
+                Assert.assertNotNull(value, "Value can not be null");
+                Assert.assertTrue(value.compareTo(BigDecimal.ZERO) >= 0,
+                        "Value should be greater than or equal to zero");
+                Assert.assertTrue(value.compareTo(new BigDecimal("100")) <= 0,
+                        "Value should be less than or equal to 100");
             }
         }
     }
@@ -223,21 +199,21 @@ public class MetricsDataServiceTest {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be two names", 2, metricData.getMetadata().getNames().length);
-        assertEquals("There should be two types", 2, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 2, "There should be two names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 2, "There should be two types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be two values", 2, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 2, "There should be two values");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value can not be null", value);
+                Assert.assertNotNull(value, "Value should not be null");
             }
         }
     }
 
     @Test
     public void testJMXFileDescriptorMetrics() {
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.open.count", "Open File Descriptor Count",
                 MetricAttribute.VALUE, null));
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.file.descriptor.max.count", "Max File Descriptor Count",
@@ -247,21 +223,21 @@ public class MetricsDataServiceTest {
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be three names", 3, metricData.getMetadata().getNames().length);
-        assertEquals("There should be three types", 3, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 3, "There should be three names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 3, "There should be three types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be three values", 3, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 3, "There should be three values");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value should not be null", value);
+                Assert.assertNotNull(value, "Value should not be null");
             }
         }
     }
 
     @Test
     public void testJMXPhysicalMemoryMetrics() {
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.free.size", "Free Physical Memory Size",
                 MetricAttribute.VALUE, MetricDataFormat.B));
         metrics.add(new Metric(MetricType.GAUGE, "jvm.os.physical.memory.total.size", "Total Physical Memory Size",
@@ -277,21 +253,21 @@ public class MetricsDataServiceTest {
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be six names", 6, metricData.getMetadata().getNames().length);
-        assertEquals("There should be six types", 6, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 6, "There should be six names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 6, "There should be six types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be six values", 6, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 6, "There should be six values");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value cannot be null", value);
+                Assert.assertNotNull(value, "Value should not be null");
             }
         }
     }
 
     @Test
     public void testJMXThreadingMetrics() {
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.count", "Live Threads", MetricAttribute.VALUE, null));
         metrics.add(new Metric(MetricType.GAUGE, "jvm.threads.daemon.count", "Daemon Threads", MetricAttribute.VALUE,
                 null));
@@ -300,21 +276,21 @@ public class MetricsDataServiceTest {
         metricList.setMetric(metrics.toArray(new Metric[metrics.size()]));
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be three names", 3, metricData.getMetadata().getNames().length);
-        assertEquals("There should be three types", 3, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 3, "There should be three names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 3, "There should be three types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be three values", 3, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 3, "There should be three values");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value should not be null", value);
+                Assert.assertNotNull(value, "Value should not be null");
             }
         }
     }
 
     @Test
     public void testJMXClassLoadingMetrics() {
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.current", "Current Classes Loaded",
                 MetricAttribute.VALUE, null));
         metrics.add(new Metric(MetricType.GAUGE, "jvm.class-loading.loaded.total", "Total Classes Loaded",
@@ -327,14 +303,14 @@ public class MetricsDataServiceTest {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be four names", 4, metricData.getMetadata().getNames().length);
-        assertEquals("There should be four types", 4, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 4, "There should be four names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 4, "There should be four types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be four values", 4, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 4, "There should be four values");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value should not be null", value);
+                Assert.assertNotNull(value, "Value should not be null");
             }
         }
     }
@@ -342,7 +318,7 @@ public class MetricsDataServiceTest {
     @Test
     public void testDatabaseReadWriteAndJMXMetrics() {
         // This test will check the metric find queries
-        List<Metric> metrics = new ArrayList<Metric>();
+        List<Metric> metrics = new ArrayList<>();
         // Read Metrics
         metrics.add(new Metric(MetricType.TIMER, "database.read", "Minimum Database Read Time", MetricAttribute.MIN,
                 null));
@@ -427,14 +403,14 @@ public class MetricsDataServiceTest {
 
         MetricData metricData = metricsDataService.findMetricsByTimePeriod(metricList, SOURCE, START_TIME, END_TIME);
 
-        assertEquals("There should be two results", 2, metricData.getData().length);
-        assertEquals("There should be 34 names", 34, metricData.getMetadata().getNames().length);
-        assertEquals("There should be 34 types", 34, metricData.getMetadata().getTypes().length);
+        Assert.assertEquals(metricData.getData().length, 2, "There should be two results");
+        Assert.assertEquals(metricData.getMetadata().getNames().length, 34, "There should be 34 names");
+        Assert.assertEquals(metricData.getMetadata().getTypes().length, 34, "There should be 34 types");
         for (int i = 0; i < metricData.getData().length; i++) {
-            assertEquals("There should be 34 values", 34, metricData.getData()[i].length);
+            Assert.assertEquals(metricData.getData()[i].length, 34, "There should be 34 values");
             for (int j = 0; j < metricData.getData()[i].length; j++) {
                 BigDecimal value = metricData.getData()[i][j];
-                assertNotNull("Value should not be null", value);
+                Assert.assertNotNull(value, "Value should not be null");
             }
         }
     }
