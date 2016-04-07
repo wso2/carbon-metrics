@@ -24,6 +24,7 @@ import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
+import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
 
 /**
  * Test Cases for {@link MetricsConfig}
@@ -61,6 +62,15 @@ public class MetricsConfigTest extends BaseTest {
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 10L);
         Assert.assertEquals(config.getLocation(), "target/metrics");
+    }
+
+    @Test
+    public void testSlf4jReporterConfigLoad() {
+        Slf4jReporterConfig config = metricsConfig.getReporting().getSlf4j();
+        Assert.assertEquals(config.isEnabled(), false);
+        Assert.assertEquals(config.getPollingPeriod(), 10L);
+        Assert.assertEquals(config.getLoggerName(), "metrics.test");
+        Assert.assertEquals(config.getMarkerName(), "metrics");
     }
 
     @Test

@@ -29,6 +29,12 @@ reporting:
     location: ${metrics.target}/metrics
     pollingPeriod: 10
 
+  slf4j:
+    enabled: false
+    loggerName: metrics.test
+    markerName: metrics
+    pollingPeriod: 10
+
   das:
     enabled: false
     source: Carbon-das

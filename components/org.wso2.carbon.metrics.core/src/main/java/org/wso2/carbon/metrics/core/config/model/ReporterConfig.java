@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core.config.model;
 
 /**
- * Created by isuru on 3/23/16.
+ * Base class for configuring metric reporters.
  */
 public abstract class ReporterConfig {
 

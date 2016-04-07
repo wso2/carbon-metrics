@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by isuru on 3/23/16.
+ * Configuration for all reporters
  */
 public class ReportingConfig {
 
@@ -30,6 +30,8 @@ public class ReportingConfig {
     private ConsoleReporterConfig console = new ConsoleReporterConfig();
 
     private CsvReporterConfig csv = new CsvReporterConfig();
+
+    private Slf4jReporterConfig slf4j = new Slf4jReporterConfig();
 
     private JdbcReporterConfig jdbc = new JdbcReporterConfig();
 
@@ -47,6 +49,10 @@ public class ReportingConfig {
         return csv;
     }
 
+    public Slf4jReporterConfig getSlf4j() {
+        return slf4j;
+    }
+
     public JdbcReporterConfig getJdbc() {
         return jdbc;
     }
@@ -56,6 +62,6 @@ public class ReportingConfig {
     }
 
     public List<? extends ReporterBuilder> getReporterBuilders() {
-        return Arrays.asList(jmx, console, csv, jdbc, das);
+        return Arrays.asList(jmx, console, csv, slf4j, jdbc, das);
     }
 }
