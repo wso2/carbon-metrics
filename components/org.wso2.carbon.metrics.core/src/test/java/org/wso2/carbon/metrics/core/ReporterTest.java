@@ -178,6 +178,29 @@ public class ReporterTest extends BaseTest {
     }
 
     @Test
+    public void testJDBCReporterCustomDatasource() {
+        // reload with custom jdbc config
+        System.setProperty("metrics.conf", "src/test/resources/conf/metrics-jdbc.yml");
+        System.setProperty("metrics.datasource.conf", "src/test/resources/conf/metrics-datasource.properties");
+        metricService.reloadConfiguration();
+
+        String meterName = MetricManager.name(this.getClass(), "test-jdbc-datasource");
+        Meter meter = MetricManager.meter(meterName, Level.INFO);
+        meter.mark();
+
+        metricService.report();
+        List<Map<String, Object>> meterResult =
+                template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
+        Assert.assertEquals(meterResult.size(), 1);
+        Assert.assertEquals(meterResult.get(0).get("NAME"), meterName);
+        Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L);
+
+        // reload with original config
+        System.setProperty("metrics.conf", "src/test/resources/conf/metrics.yml");
+        metricService.reloadConfiguration();
+    }
+
+    @Test
     public void testJVMMetricSetLevel() {
         // This test is to check restarting of listener reporters
         String name = "jvm.threads.runnable.count";

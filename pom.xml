@@ -130,6 +130,11 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikaricp.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
@@ -404,29 +409,23 @@
         <testng.version>6.9.10</testng.version>
         <metrics.version>3.1.2</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
-
         <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
         <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
-
         <org.wso2.carbon.core.version>5.0.0</org.wso2.carbon.core.version>
         <org.wso2.carbon.core.version.range>[5.0.0, 6.0.0)</org.wso2.carbon.core.version.range>
         <carbon.analytics.common.version>5.0.10</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
-
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.5</log4j.version>
-
         <org.snakeyaml.version>1.16.0.wso2v1</org.snakeyaml.version>
         <org.snakeyaml.version.range>[1.16.0, 2.0.0)</org.snakeyaml.version.range>
-
-
+        <hikaricp.version>2.4.5</hikaricp.version>
         <h2.version>1.4.185</h2.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
         <tomcat.version>8.0.30</tomcat.version>
         <jacoco.version>0.7.6.201602180812</jacoco.version>
-
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
     </properties>
 </project>

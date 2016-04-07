@@ -17,6 +17,8 @@ package org.wso2.carbon.metrics.core.config.model;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
@@ -24,6 +26,7 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.impl.JdbcReporter;
 import org.wso2.carbon.metrics.core.utils.Utils;
 
+import java.io.File;
 import java.util.Optional;
 
 import javax.naming.InitialContext;
@@ -39,12 +42,18 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
     private String source = Utils.getDefaultSource();
 
+    private boolean lookupDataSource;
+
     private String dataSourceName;
 
     private JdbcScheduledCleanupConfig scheduledCleanup = new JdbcScheduledCleanupConfig();
 
     public String getSource() {
         return source;
+    }
+
+    public boolean isLookupDataSource() {
+        return lookupDataSource;
     }
 
     public String getDataSourceName() {
@@ -70,17 +79,35 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
         if (!enabled) {
             return Optional.empty();
         }
-        if (dataSourceName == null || dataSourceName.trim().isEmpty()) {
-            throw new ReporterBuildException("Data Source Name is not specified for JDBC Reporting.");
+
+        final DataSource dataSource;
+
+        if (lookupDataSource) {
+            if (dataSourceName == null || dataSourceName.trim().isEmpty()) {
+                throw new ReporterBuildException("Data Source Name is not specified for JDBC Reporting.");
+            }
+            try {
+                dataSource = InitialContext.doLookup(dataSourceName);
+            } catch (NamingException e) {
+                throw new ReporterBuildException(
+                        String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
+            }
+        } else {
+            Optional<File> metricsLevelConfigFile = org.wso2.carbon.metrics.core.utils.Utils.getConfigFile(
+                    "metrics.datasource.conf", "metrics-datasource.properties");
+            if (!metricsLevelConfigFile.isPresent()) {
+                throw new ReporterBuildException("Metrics Datasource configuration file not found!");
+            }
+
+            File file = metricsLevelConfigFile.get();
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Creating Metrics Datasource. Config file: %s", file.getAbsolutePath()));
+            }
+            HikariConfig hikariConfig = new HikariConfig(file.getPath());
+            dataSource = new HikariDataSource(hikariConfig);
         }
 
-        DataSource dataSource = null;
-        try {
-            dataSource = InitialContext.doLookup(dataSourceName);
-        } catch (NamingException e) {
-            throw new ReporterBuildException(
-                    String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
-        }
+
         // Setup Database if required
         try {
             setupMetricsDatabase(dataSource);
@@ -107,13 +134,16 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
      * @throws Exception if an error occurred while creating the Metrics Tables.
      */
     private static void setupMetricsDatabase(DataSource dataSource) throws Exception {
-        System.getProperty("setup");
-//        if (value != null) {
+        if (System.getProperty("setup") == null) {
+            return;
+        }
+
+        // TODO implement logic to support -Dsetup
 /////**
 //// * Select query to check whether database tables are created
 //// */
 ////private static final String DB_CHECK_SQL = "SELECT NAME FROM METRIC_GAUGE";
-//// TODO implement logic to support -Dsetup
+////
 ////            LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
 ////            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
 ////                databaseCreator.createRegistryDatabase();

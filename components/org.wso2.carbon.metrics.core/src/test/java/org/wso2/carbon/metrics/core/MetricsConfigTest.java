@@ -79,6 +79,7 @@ public class MetricsConfigTest extends BaseTest {
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 90L);
         Assert.assertEquals(config.getSource(), "Carbon-jdbc");
+        Assert.assertEquals(config.isLookupDataSource(), true);
         Assert.assertEquals(config.getDataSourceName(), "jdbc/WSO2MetricsDB");
         Assert.assertEquals(config.getScheduledCleanup().isEnabled(), true);
         Assert.assertEquals(config.getScheduledCleanup().getDaysToKeep(), 2);

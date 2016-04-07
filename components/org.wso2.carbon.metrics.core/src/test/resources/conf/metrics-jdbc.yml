@@ -17,39 +17,10 @@
 enabled: true
 
 reporting:
-  jmx:
-    enabled: true
-
-  console:
-    enabled: false
-    pollingPeriod: 300
-
-  csv:
-    enabled: true
-    location: ${metrics.target}/metrics
-    pollingPeriod: 10
-
-  slf4j:
-    enabled: false
-    loggerName: metrics.test
-    markerName: metrics
-    pollingPeriod: 10
-
-  das:
-    enabled: false
-    source: Carbon-das
-    receiverURL: tcp://localhost:7611
-    authURL: ssl://localhost:7711
-    type: thrift
-    username: admin
-    password: admin
-    pollingPeriod: 120
-
   jdbc:
     enabled: true
     source: Carbon-jdbc
-    lookupDataSource: true
-    dataSourceName: jdbc/WSO2MetricsDB
+    lookupDataSource: false
     pollingPeriod: 90
     scheduledCleanup:
       enabled: true
