@@ -55,7 +55,6 @@
         <module>components/org.wso2.carbon.metrics.das.reporter</module>
         <module>components/org.wso2.carbon.metrics.annotation</module>
         <module>components/org.wso2.carbon.metrics.core</module>
-        <module>components/org.wso2.carbon.metrics.jdbc.data.api</module>
         <!--
        <module>features/carbon-metrics</module>
        <module>features/repository</module>
@@ -77,11 +76,6 @@
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
-                <version>${carbon.metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.metrics</groupId>
-                <artifactId>org.wso2.carbon.metrics.jdbc.data.api</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>
