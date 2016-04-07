@@ -26,7 +26,6 @@ import org.wso2.carbon.metrics.core.utils.Utils;
 
 import java.util.Optional;
 
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -77,8 +76,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
         DataSource dataSource = null;
         try {
-            Context ctx = new InitialContext();
-            dataSource = (DataSource) ctx.lookup(dataSourceName);
+            dataSource = InitialContext.doLookup(dataSourceName);
         } catch (NamingException e) {
             throw new ReporterBuildException(
                     String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
