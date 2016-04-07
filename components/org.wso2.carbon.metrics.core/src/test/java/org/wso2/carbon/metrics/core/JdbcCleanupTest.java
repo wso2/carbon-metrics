@@ -42,14 +42,14 @@ import static org.testng.AssertJUnit.assertEquals;
 /**
  * Tests for {@link ScheduledJdbcMetricsCleanupTask}
  */
-public class JDBCCleanupTest extends BaseTest {
+public class JdbcCleanupTest extends BaseTest {
 
     private final MetricRegistry registry = mock(MetricRegistry.class);
     private final Clock clock = mock(Clock.class);
 
     private JdbcReporter reporter;
 
-    private static final String SOURCE = JDBCCleanupTest.class.getSimpleName();
+    private static final String SOURCE = JdbcCleanupTest.class.getSimpleName();
 
     private static final int DAYS = 7;
 

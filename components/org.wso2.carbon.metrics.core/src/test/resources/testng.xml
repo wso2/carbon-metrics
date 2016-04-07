@@ -27,7 +27,7 @@
             <class name="org.wso2.carbon.metrics.core.MetricServiceTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricManagerApiTest"/>
             <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
-            <class name="org.wso2.carbon.metrics.core.JDBCCleanupTest"/>
+            <class name="org.wso2.carbon.metrics.core.JdbcCleanupTest"/>
         </classes>
     </test>
 </suite>
