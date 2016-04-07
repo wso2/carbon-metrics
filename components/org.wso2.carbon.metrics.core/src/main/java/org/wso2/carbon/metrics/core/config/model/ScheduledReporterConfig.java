@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core.config.model;
 
 /**
- * Created by isuru on 3/23/16.
+ * Configuration for scheduled reporters
  */
 public abstract class ScheduledReporterConfig extends ReporterConfig {
 

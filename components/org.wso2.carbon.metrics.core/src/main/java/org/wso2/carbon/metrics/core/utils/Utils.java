@@ -30,7 +30,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 /**
- * Created by isuru on 3/25/16.
+ * Utility methods for Metrics
  */
 public class Utils {
 

@@ -123,12 +123,12 @@ public class DasReporter extends ScheduledReporter {
          * Builds a {@link DasReporter} with the given properties to report metrics to DAS
          *
          * @param source              A value to identify the source of each metrics
-         * @param type
-         * @param receiverURL
-         * @param authURL
-         * @param username
-         * @param password
-         * @param dataAgentConfigPath
+         * @param type                The type for the Data Publisher. e.g. "thrift"
+         * @param receiverURL         The URL for the DAS Receiver
+         * @param authURL             The authentication URL
+         * @param username            The username for the DAS Receiver
+         * @param password            The password for the DAS Receiver
+         * @param dataAgentConfigPath The path for the Data Agent Configuration
          * @return a {@link DasReporter}
          */
         public DasReporter build(String source, String type, String receiverURL, String authURL, String username,

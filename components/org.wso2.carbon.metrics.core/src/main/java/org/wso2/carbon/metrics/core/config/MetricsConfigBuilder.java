@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by isuru on 3/23/16.
+ * Build {@link MetricsConfig} from the YAML file
  */
 public class MetricsConfigBuilder {
 
