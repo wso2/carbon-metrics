@@ -114,6 +114,24 @@ public class ReporterTest extends BaseTest {
     }
 
     @Test
+    public void testCSVReporterReload() {
+        String meterName3 = MetricManager.name(this.getClass(), "test-csv-meter3");
+        Meter meter = MetricManager.meter(meterName3, Level.INFO);
+        meter.mark();
+
+        metricService.report();
+        Assert.assertTrue(new File("target/metrics", meterName3 + ".csv").exists(), "Meter CSV file should be created");
+
+        metricService.reloadConfiguration();
+        String meterName4 = MetricManager.name(this.getClass(), "test-csv-meter4");
+        meter = MetricManager.meter(meterName4, Level.INFO);
+        meter.mark();
+
+        metricService.report();
+        Assert.assertTrue(new File("target/metrics", meterName4 + ".csv").exists(), "Meter CSV file should be created");
+    }
+
+    @Test
     public void testJDBCReporter() {
         String meterName = MetricManager.name(this.getClass(), "test-jdbc-meter");
         Meter meter = MetricManager.meter(meterName, Level.INFO);

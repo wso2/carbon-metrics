@@ -42,6 +42,12 @@ public interface MetricManagerMXBean {
      */
     int getMetricsCount();
 
+
+    /**
+     * Reload Metrics Configuration. This is useful to change reporter configurations and create new set of reporters.
+     */
+    void reloadConfiguration();
+
     /**
      * @param name The name of the Metric
      * @return The Level for the given metric name

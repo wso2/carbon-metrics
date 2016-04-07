@@ -49,6 +49,7 @@ import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -110,9 +111,11 @@ public final class MetricService implements MetricManagerMXBean {
      */
     private static final String METRIC_PATH_DELIMITER = ".";
 
+    private MetricsConfig metricsConfig;
+
     private final MetricsLevelConfig levelConfiguration;
 
-    private final Set<Reporter> reporters = new HashSet<>();
+    private final Set<Reporter> reporters = Collections.synchronizedSet(new HashSet<>());
 
     private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN =
             Pattern.compile(METRIC_AGGREGATE_ANNOTATION_REGEX);
@@ -138,45 +141,6 @@ public final class MetricService implements MetricManagerMXBean {
         }
     }
 
-//    /**
-//     * Builder for creating the {@link MetricService}
-//     */
-//    public static class Builder {
-//
-//        private static final String ENABLED = "Enabled";
-//
-//        private boolean enabled;
-//
-//        private Level rootLevel;
-//
-//        private Set<ReporterBuilder<? extends Reporter>> reporterBuilders = new HashSet<>();
-//
-//        public Builder setEnabled(final boolean enabled) {
-//            this.enabled = enabled;
-//            return this;
-//        }
-//
-//        public Builder setRootLevel(final Level rootLevel) {
-//            this.rootLevel = rootLevel;
-//            return this;
-//        }
-//
-//        public Builder addReporterBuilder(final ReporterBuilder<? extends Reporter> reporterBuilder) {
-//            this.reporterBuilders.add(reporterBuilder);
-//            return this;
-//        }
-//
-//        public Builder configure(final MetricsConfiguration configuration) {
-//            enabled = Boolean.valueOf(configuration.getProperty(ENABLED));
-//            return this;
-//        }
-//
-//        public MetricService build(final MetricsLevelConfig levelConfiguration) {
-//            return new MetricService(enabled, rootLevel, levelConfiguration, reporterBuilders);
-//        }
-//    }
-
-
     /**
      * Initializes singleton. {@link MetricServiceHolder} is loaded on the first execution of { or the first access to
      * {@link MetricServiceHolder#INSTANCE}, not before.
@@ -189,9 +153,6 @@ public final class MetricService implements MetricManagerMXBean {
         return MetricServiceHolder.INSTANCE;
     }
 
-    private final MetricsConfig metricsConfig;
-
-
     /**
      * Initialize the MetricRegistry, Level and Reporters
      */
@@ -200,18 +161,10 @@ public final class MetricService implements MetricManagerMXBean {
         // Initialize Metric Registry
         metricRegistry = new MetricRegistry();
 
-        // Read configurations
-        metricsConfig = MetricsConfigBuilder.build();
+        // Configure
+        configureMetrics();
+
         levelConfiguration = MetricsLevelConfigBuilder.build();
-
-        // Set enabled from the config
-        boolean enabled = metricsConfig.isEnabled();
-
-        // Highest priority is given for the System Properties
-        String metricsEnabledProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ENABLED);
-        if (metricsEnabledProperty != null && !metricsEnabledProperty.trim().isEmpty()) {
-            enabled = Boolean.valueOf(metricsEnabledProperty);
-        }
 
         Optional<Level> rootLevel = Optional.empty();
         String rootLevelProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
@@ -221,6 +174,23 @@ public final class MetricService implements MetricManagerMXBean {
 
         if (rootLevel.isPresent()) {
             levelConfiguration.setRootLevel(rootLevel.get());
+        }
+
+        // Register JVM Metrics
+        // This should be the last method when initializing MetricService
+        registerJVMMetrics();
+    }
+
+    private void configureMetrics() {
+        // Read configurations
+        metricsConfig = MetricsConfigBuilder.build();
+        // Set enabled from the config
+        boolean enabled = metricsConfig.isEnabled();
+
+        // Highest priority is given for the System Properties
+        String metricsEnabledProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ENABLED);
+        if (metricsEnabledProperty != null && !metricsEnabledProperty.trim().isEmpty()) {
+            enabled = Boolean.valueOf(metricsEnabledProperty);
         }
 
         MetricFilter enabledMetricFilter = new EnabledMetricFilter();
@@ -241,10 +211,24 @@ public final class MetricService implements MetricManagerMXBean {
 
         // Set enabled
         setEnabled(enabled);
+    }
 
-        // Register JVM Metrics
-        // This should be the last method when initializing MetricService
-        registerJVMMetrics();
+    /**
+     * Reload Metrics Configuration
+     */
+    public void reloadConfiguration() {
+        // Stop Reporters
+        stopReporters();
+        // Clear Reporters
+        reporters.clear();
+        // Configure again
+        configureMetrics();
+        // Start Reporters
+        startReporters();
+    }
+
+    public void reloadLevelConfiguration() {
+        // TODO Implement
     }
 
     /**
