@@ -224,11 +224,11 @@ public class JdbcReporterTest {
 
         when(timer.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.map(), this.map(), this.map(), this.map(), map("test.another.timer", timer));
+        reporter.report(this.map(), this.map(), this.map(), this.map(), map("test.timer", timer));
 
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_TIMER");
         Assert.assertEquals(result.size(), 1);
-        Assert.assertEquals(result.get(0).get("NAME"), "test.another.timer");
+        Assert.assertEquals(result.get(0).get("NAME"), "test.timer");
         Assert.assertEquals(result.get(0).get("COUNT"), 1L);
         Assert.assertEquals(result.get(0).get("MAX"), (double) TimeUnit.MILLISECONDS.toNanos(100));
         Assert.assertEquals(result.get(0).get("MEAN"), (double) TimeUnit.MILLISECONDS.toNanos(200));
