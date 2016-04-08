@@ -14,7 +14,8 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
@@ -27,7 +28,8 @@
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon Metrics</name>
-    <description>WSO2 Carbon Metrics is an API for WSO2 Carbon Components to use Dropwizard Metrics library</description>
+    <description>WSO2 Carbon Metrics is an API for WSO2 Carbon Components to use Dropwizard Metrics library
+    </description>
     <inceptionYear>2014</inceptionYear>
     <url>http://wso2.com</url>
 
@@ -185,6 +187,30 @@
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-catalina</artifactId>
                 <version>${tomcat.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.core</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>slf4j.wso2</groupId>
+                        <artifactId>slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.receiver.thrift</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xerces.impl.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -406,25 +432,26 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <carbon.metrics.version>2.0.0-SNAPSHOT</carbon.metrics.version>
-        <testng.version>6.9.10</testng.version>
+        <testng.version>6.9.11</testng.version>
         <metrics.version>3.1.2</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
-        <equinox.osgi.version>3.10.2.v20150203-1939</equinox.osgi.version>
-        <equinox.osgi.services.version>3.4.0.v20140312-2051</equinox.osgi.services.version>
+        <equinox.osgi.version>3.10.101.v20150820-1432</equinox.osgi.version>
+        <equinox.osgi.services.version>3.5.0.v20150519-2006</equinox.osgi.services.version>
         <org.wso2.carbon.core.version>5.0.0</org.wso2.carbon.core.version>
         <org.wso2.carbon.core.version.range>[5.0.0, 6.0.0)</org.wso2.carbon.core.version.range>
-        <carbon.analytics.common.version>5.0.10</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.0.11</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
+        <xerces.impl.version>2.11.0.SP4</xerces.impl.version>
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.5</log4j.version>
         <org.snakeyaml.version>1.16.0.wso2v1</org.snakeyaml.version>
         <org.snakeyaml.version.range>[1.16.0, 2.0.0)</org.snakeyaml.version.range>
         <hikaricp.version>2.4.5</hikaricp.version>
-        <h2.version>1.4.185</h2.version>
+        <h2.version>1.4.191</h2.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
-        <tomcat.version>8.0.30</tomcat.version>
+        <tomcat.version>8.0.33</tomcat.version>
         <jacoco.version>0.7.6.201602180812</jacoco.version>
         <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
     </properties>
