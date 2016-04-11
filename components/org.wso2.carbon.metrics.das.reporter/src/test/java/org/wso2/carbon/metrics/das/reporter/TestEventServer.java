@@ -95,7 +95,7 @@ public class TestEventServer {
 
         Finder finder = new Finder();
         try {
-            Files.walkFileTree(Paths.get("metrics_capp"), finder);
+            Files.walkFileTree(Paths.get("target", "test-resources"), finder);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -177,6 +177,9 @@ public class TestEventServer {
         private void find(Path file) {
             Path name = file.getFileName();
             if (name != null && matcher.matches(name)) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("File Matched: {}", file);
+                }
                 matchedFiles.add(file);
             }
         }

@@ -59,6 +59,15 @@
             <artifactId>xercesImpl</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.das.capp</artifactId>
+            <classifier>src</classifier>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -73,18 +82,23 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <target>
-                                <ant antfile="build.xml" target="zip"/>
-                            </target>
-                        </configuration>
+                        <id>unpack-capp</id>
                         <goals>
-                            <goal>run</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/test-resources</outputDirectory>
+                            <includeArtifacIds>org.wso2.carbon.metrics.das.capp</includeArtifacIds>
+                            <includeGroupIds>${project.groupId}</includeGroupIds>
+                            <excludeTransitive>true</excludeTransitive>
+                            <excludeTypes>pom</excludeTypes>
+                            <scope>test</scope>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
