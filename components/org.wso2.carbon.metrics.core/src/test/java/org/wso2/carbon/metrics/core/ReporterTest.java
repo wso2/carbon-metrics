@@ -18,12 +18,14 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.metrics.core.jmx.MetricManagerMXBean;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -129,6 +131,33 @@ public class ReporterTest extends BaseTest {
 
         metricService.report();
         Assert.assertTrue(new File("target/metrics", meterName4 + ".csv").exists(), "Meter CSV file should be created");
+    }
+
+    @Test
+    public void testDasReporter() {
+        String meterName = MetricManager.name(this.getClass(), "test-das-meter");
+        Meter meter = MetricManager.meter(meterName, Level.INFO);
+        meter.mark();
+        String gaugeName = MetricManager.name(this.getClass(), "test-das-gauge");
+        MetricManager.gauge(gaugeName, Level.INFO, gauge);
+
+        metricService.report();
+
+        Optional<Event> event = TEST_EVENT_SERVER.getEvents().stream()
+                .filter(s -> s.getStreamId().contains("meter"))
+                .filter(s -> s.getPayloadData()[1].equals(meterName))
+                .findFirst();
+
+        Assert.assertTrue(event.isPresent());
+        Assert.assertEquals(event.get().getPayloadData()[2], 1L);
+
+        event = TEST_EVENT_SERVER.getEvents().stream()
+                .filter(s -> s.getStreamId().contains("gauge"))
+                .filter(s -> s.getPayloadData()[1].equals(gaugeName))
+                .findFirst();
+
+        Assert.assertTrue(event.isPresent());
+        Assert.assertEquals(event.get().getPayloadData()[2], 1.0D);
     }
 
     @Test

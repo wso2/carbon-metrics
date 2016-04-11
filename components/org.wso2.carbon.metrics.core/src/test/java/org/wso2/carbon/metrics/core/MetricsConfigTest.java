@@ -90,11 +90,11 @@ public class MetricsConfigTest extends BaseTest {
     @Test
     public void testDasReporterConfigLoad() {
         DasReporterConfig config = metricsConfig.getReporting().getDas();
-        Assert.assertEquals(config.isEnabled(), false);
+        Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 120L);
         Assert.assertEquals(config.getSource(), "Carbon-das");
-        Assert.assertEquals(config.getReceiverURL(), "tcp://localhost:7611");
-        Assert.assertEquals(config.getAuthURL(), "ssl://localhost:7711");
+        Assert.assertEquals(config.getReceiverURL(), "tcp://localhost:51840");
+        Assert.assertNull(config.getAuthURL());
         Assert.assertEquals(config.getType(), "thrift");
         Assert.assertEquals(config.getUsername(), "admin");
         Assert.assertEquals(config.getPassword(), "admin");

@@ -16,6 +16,8 @@
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Netrics-Core-Test-Suite" parallel="none">
+    <!-- Server port for internal server. Random: 3×16×8×27×5 -->
+    <parameter name="server-port" value="51840"/>
     <test name="Metrics-Core-Unit-Test">
         <classes>
             <class name="org.wso2.carbon.metrics.core.MetricsConfigTest"/>

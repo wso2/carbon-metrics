@@ -16,10 +16,10 @@
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Netrics-DAS-Reporter-Test-Suite" parallel="none">
+    <!-- Server port for internal server. Random: 3×16×8×27×5 -->
     <parameter name="server-port" value="51840"/>
     <test name="Metrics-DAS-Reporter-Unit-Test">
         <classes>
-            <!-- Server port for internal server. Random: 3×16×8×27×5 -->
             <class name="org.wso2.carbon.metrics.das.reporter.DasReporterTest"/>
         </classes>
     </test>

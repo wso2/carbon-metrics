@@ -35,7 +35,6 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.databridge.commons.Event;
 
 import java.io.File;
-import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -51,8 +50,7 @@ public class DasReporterTest {
     private static Logger logger = LoggerFactory.getLogger(DasReporterTest.class);
     private static final String SOURCE = DasReporterTest.class.getSimpleName();
     private static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
-
-    private final TestEventServer testServer = new TestEventServer();
+    private final TestEventServer testServer = new TestEventServer(RESOURCES_DIR);
     private final MetricRegistry registry = mock(MetricRegistry.class);
     private final Clock clock = mock(Clock.class);
     private DasReporter reporter;
@@ -82,22 +80,6 @@ public class DasReporterTest {
                         File.separator + "data-agent-config.xml");
     }
 
-    private Event getEvent(String stream) {
-        Optional<Event> event = Optional.empty();
-        for (int i = 0; i < 10; i++) {
-            event = testServer.getEvents().stream().filter(s -> s.getStreamId().contains(stream)).findFirst();
-            if (!event.isPresent()) {
-                try {
-                    logger.info("Attempt {}: Waiting to get the event for {}", i + 1, stream);
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-        Assert.assertTrue(event.isPresent());
-        return event.get();
-    }
-
     @SuppressWarnings("rawtypes")
     @Test
     public void reportsGaugeValues() {
@@ -106,7 +88,7 @@ public class DasReporterTest {
 
         reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
 
-        Event event = getEvent("gauge");
+        Event event = testServer.getEvent("gauge");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -122,7 +104,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), map("test.counter", counter), this.map(), this.map(), this.map());
 
-        Event event = getEvent("counter");
+        Event event = testServer.getEvent("counter");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -152,7 +134,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), this.map(), map("test.histogram", histogram), this.map(), this.map());
 
-        Event event = getEvent("histogram");
+        Event event = testServer.getEvent("histogram");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -182,7 +164,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), this.map(), this.map(), map("test.meter", meter), this.map());
 
-        Event event = getEvent("meter");
+        Event event = testServer.getEvent("meter");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -221,7 +203,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), this.map(), this.map(), this.map(), map("test.timer", timer));
 
-        Event event = getEvent("timer");
+        Event event = testServer.getEvent("timer");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);

@@ -59,7 +59,6 @@
             <artifactId>xercesImpl</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.das.capp</artifactId>
@@ -67,7 +66,6 @@
             <type>zip</type>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -93,11 +91,7 @@
                         <phase>generate-test-resources</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/test-resources</outputDirectory>
-                            <includeArtifacIds>org.wso2.carbon.metrics.das.capp</includeArtifacIds>
                             <includeGroupIds>${project.groupId}</includeGroupIds>
-                            <excludeTransitive>true</excludeTransitive>
-                            <excludeTypes>pom</excludeTypes>
-                            <scope>test</scope>
                         </configuration>
                     </execution>
                 </executions>

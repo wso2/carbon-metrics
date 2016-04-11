@@ -46,25 +46,24 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class TestEventServer {
 
     private static Logger logger = LoggerFactory.getLogger(TestEventServer.class);
-    private static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
     private ThriftDataReceiver thriftDataReceiver;
     private List<Event> events = Collections.synchronizedList(new ArrayList<>());
 
-    public static void setTrustStore() {
-        // Required for data agent
-        String trustStorePath = RESOURCES_DIR + File.separator + "client-truststore.jks";
-        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
-        System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
+    private final String resourcesDir;
+
+    public TestEventServer(String resourcesDir) {
+        this.resourcesDir = resourcesDir;
     }
 
     public void start(String host, int receiverPort) {
         setKeyStore();
         setTrustStore();
-        String dataBridgePath = RESOURCES_DIR + File.separator + "data-bridge-config.xml";
+        String dataBridgePath = resourcesDir + File.separator + "data-bridge-config.xml";
         AbstractStreamDefinitionStore streamDefinitionStore = new InMemoryStreamDefinitionStore();
         DataBridge databridge = new DataBridge(new AuthenticationHandler() {
             @Override
@@ -146,15 +145,37 @@ public class TestEventServer {
         }
     }
 
+    private void setTrustStore() {
+        // Required for data agent
+        String trustStorePath = resourcesDir + File.separator + "client-truststore.jks";
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
+    }
+
     private void setKeyStore() {
         // Required for data bridge
-        String keyStorePath = RESOURCES_DIR + File.separator + "wso2carbon.jks";
+        String keyStorePath = resourcesDir + File.separator + "wso2carbon.jks";
         System.setProperty("Security.KeyStore.Location", keyStorePath);
         System.setProperty("Security.KeyStore.Password", "wso2carbon");
     }
 
     public List<Event> getEvents() {
         return events;
+    }
+
+    public Event getEvent(String stream) {
+        Optional<Event> event = Optional.empty();
+        for (int i = 0; i < 10; i++) {
+            event = events.stream().filter(s -> s.getStreamId().contains(stream)).findFirst();
+            if (!event.isPresent()) {
+                try {
+                    logger.info("Attempt {}: Waiting to get the event for {}", i + 1, stream);
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        return event.get();
     }
 
     public void stop() {

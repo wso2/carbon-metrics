@@ -37,10 +37,10 @@ reporting:
     pollingPeriod: 10
 
   das:
-    enabled: false
+    enabled: true
     source: Carbon-das
-    receiverURL: tcp://localhost:7611
-    authURL: ssl://localhost:7711
+    receiverURL: tcp://localhost:51840
+    # authURL: ssl://localhost:7711
     type: thrift
     username: admin
     password: admin

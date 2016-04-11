@@ -24,9 +24,12 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Parameters;
 import org.wso2.carbon.metrics.core.impl.MetricService;
 import org.wso2.carbon.metrics.core.utils.Utils;
+import org.wso2.carbon.metrics.das.reporter.TestEventServer;
 
+import java.io.File;
 import java.util.Random;
 
 import javax.naming.Context;
@@ -48,8 +51,15 @@ public abstract class BaseTest {
 
     protected static JdbcTemplate template;
 
+    protected static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
+
+    protected static final String TEST_RESOURCES_DIR = "target" + File.separator + "test-resources";
+
+    protected static final TestEventServer TEST_EVENT_SERVER = new TestEventServer(TEST_RESOURCES_DIR);
+
+    @Parameters("server-port")
     @BeforeSuite
-    protected static void init() throws Exception {
+    protected static void init(String serverPort) throws Exception {
         if (logger.isInfoEnabled()) {
             logger.info("Initializing the data source and populating data");
         }
@@ -73,8 +83,16 @@ public abstract class BaseTest {
         System.setProperty("metrics.target", "target");
         System.setProperty("metrics.enabled", "true");
         System.setProperty("metrics.rootLevel", "INFO");
-        System.setProperty("metrics.conf", "src/test/resources/conf/metrics.yml");
-        System.setProperty("metrics.level.conf", "src/test/resources/conf/metrics.properties");
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator + "metrics.yml");
+        System.setProperty("metrics.level.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics.properties");
+        System.setProperty("metrics.dataagent.conf", TEST_RESOURCES_DIR + File.separator + "data-agent-config.xml");
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Creating the DAS Test Receiver");
+        }
+        TEST_EVENT_SERVER.start("localhost", Integer.parseInt(serverPort));
+
         if (logger.isInfoEnabled()) {
             logger.info("Creating the MetricService and registering the MX Bean");
         }
@@ -99,6 +117,8 @@ public abstract class BaseTest {
         metricService.disable();
         // Unregister the MX Bean
         Utils.unregisterMXBean();
+        // Stop DAS Receiver Test Server
+        TEST_EVENT_SERVER.stop();
     }
 
     @BeforeMethod

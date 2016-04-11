@@ -24,6 +24,7 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.impl.DasReporter;
 import org.wso2.carbon.metrics.core.utils.Utils;
 
+import java.io.File;
 import java.util.Optional;
 
 /**
@@ -71,10 +72,6 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
         return password;
     }
 
-    public String getDataAgentConfigPath() {
-        return dataAgentConfigPath;
-    }
-
     /**
      * Build the DAS Reporter
      *
@@ -105,8 +102,13 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
             throw new ReporterBuildException("Password is not specified for DAS Reporting.");
         }
 
-        if (dataAgentConfigPath == null || dataAgentConfigPath.trim().length() == 0) {
-            throw new ReporterBuildException("Data Agent config path is not specified for DAS Reporting.");
+        Optional<File> dataAgentConfigFile = org.wso2.carbon.metrics.core.utils.Utils.getConfigFile(
+                "metrics.dataagent.conf", "data-agent-config.xml");
+
+        if (dataAgentConfigFile.isPresent()) {
+            dataAgentConfigPath = dataAgentConfigFile.get().getPath();
+        } else if (logger.isDebugEnabled()) {
+            logger.debug("Data Agent config was not found for DAS Reporting.");
         }
 
         if (logger.isInfoEnabled()) {
