@@ -21,7 +21,7 @@ reporting:
     enabled: true
 
   console:
-    enabled: false
+    enabled: true
     pollingPeriod: 300
 
   csv:
@@ -30,7 +30,7 @@ reporting:
     pollingPeriod: 10
 
   slf4j:
-    enabled: false
+    enabled: true
     loggerName: metrics.test
     markerName: metrics
     pollingPeriod: 10

@@ -286,7 +286,7 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     @Override
-    public void updateLevel(String name, String level) {
+    public void setLevel(String name, String level) {
         setMetricLevel(name, Level.valueOf(level));
     }
 
@@ -372,8 +372,8 @@ public final class MetricService implements MetricManagerMXBean {
             // Then this is enabled only if the new threshold level is greater than or equal to current level.
             // This should be done only if the new level is not equal to OFF.
             // Otherwise the condition would fail when comparing two "OFF" levels
-            return this.enabled && configLevel.intLevel() >= metricLevel.intLevel()
-                    && configLevel.intLevel() > Level.OFF.intLevel();
+            return this.enabled && configLevel.compareTo(metricLevel) >= 0
+                    && configLevel.compareTo(Level.OFF) > 0;
         } else {
             String parentName;
             int index = name.lastIndexOf(METRIC_PATH_DELIMITER);

@@ -80,15 +80,6 @@ public class Level implements Comparable<Level> {
         }
     }
 
-    /**
-     * Gets the integral value of this Level.
-     *
-     * @return the value of this Level.
-     */
-    public int intLevel() {
-        return this.intLevel;
-    }
-
     @Override
     public int compareTo(final Level other) {
         return intLevel < other.intLevel ? -1 : (intLevel > other.intLevel ? 1 : 0);

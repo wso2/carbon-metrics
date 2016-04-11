@@ -21,19 +21,8 @@ package org.wso2.carbon.metrics.core;
 public class MetricNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;
 
-    public MetricNotFoundException() {
-        super();
-    }
-
-    public MetricNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public MetricNotFoundException(String message) {
         super(message);
     }
 
-    public MetricNotFoundException(Throwable cause) {
-        super(cause);
-    }
 }

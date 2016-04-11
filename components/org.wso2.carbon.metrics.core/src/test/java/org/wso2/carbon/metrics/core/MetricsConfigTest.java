@@ -52,7 +52,7 @@ public class MetricsConfigTest extends BaseTest {
     @Test
     public void testConsoleReporterConfigLoad() {
         ConsoleReporterConfig config = metricsConfig.getReporting().getConsole();
-        Assert.assertEquals(config.isEnabled(), false);
+        Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 300L);
     }
 
@@ -67,7 +67,7 @@ public class MetricsConfigTest extends BaseTest {
     @Test
     public void testSlf4jReporterConfigLoad() {
         Slf4jReporterConfig config = metricsConfig.getReporting().getSlf4j();
-        Assert.assertEquals(config.isEnabled(), false);
+        Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 10L);
         Assert.assertEquals(config.getLoggerName(), "metrics.test");
         Assert.assertEquals(config.getMarkerName(), "metrics");
@@ -97,6 +97,11 @@ public class MetricsConfigTest extends BaseTest {
         Assert.assertEquals(config.getType(), "thrift");
         Assert.assertEquals(config.getUsername(), "admin");
         Assert.assertEquals(config.getPassword(), "admin");
+    }
+
+    @Test
+    public void testReporterCount() {
+        Assert.assertEquals(metricsConfig.getReporting().getReporterBuilders().size(), 6);
     }
 
 }

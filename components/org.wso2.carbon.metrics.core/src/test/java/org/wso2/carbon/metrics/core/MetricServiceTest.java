@@ -33,7 +33,8 @@ public class MetricServiceTest extends BaseTest {
         if (logger.isInfoEnabled()) {
             logger.info("Resetting Root Level to {}", Level.OFF);
         }
-        metricService.setRootLevel(Level.OFF);
+        // Test setRootLevel(String)
+        metricService.setRootLevel(Level.OFF.name());
     }
 
     @Test

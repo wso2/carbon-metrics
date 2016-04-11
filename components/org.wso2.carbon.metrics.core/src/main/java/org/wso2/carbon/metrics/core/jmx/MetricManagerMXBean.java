@@ -60,7 +60,7 @@ public interface MetricManagerMXBean {
      * @param name  The name of the Metric
      * @param level New Level for the Metric
      */
-    void updateLevel(String name, String level);
+    void setLevel(String name, String level);
 
     /**
      * @return Get the current configured root level
