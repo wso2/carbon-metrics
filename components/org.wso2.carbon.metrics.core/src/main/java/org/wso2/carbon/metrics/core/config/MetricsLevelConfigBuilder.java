@@ -22,14 +22,13 @@ import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.Properties;
 
 /**
- *
+ * Build Metrics Level Configuration from a properties file
  */
 public class MetricsLevelConfigBuilder {
 
@@ -68,10 +67,8 @@ public class MetricsLevelConfigBuilder {
                         }
                     }
                 }
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Metrics Level Configuration file not found: " + file.getAbsolutePath(), e);
             } catch (IOException e) {
-                throw new RuntimeException("I/O error while reading the configuration file: "
+                throw new RuntimeException("Failed to load Metrics Level Configuration from "
                         + file.getAbsolutePath(), e);
             }
         }

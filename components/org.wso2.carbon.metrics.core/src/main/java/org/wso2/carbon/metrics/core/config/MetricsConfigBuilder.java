@@ -54,7 +54,8 @@ public class MetricsConfigBuilder {
                 yaml.setBeanAccess(BeanAccess.FIELD);
                 metricsConfig = yaml.loadAs(fileContent, MetricsConfig.class);
             } catch (IOException e) {
-                throw new RuntimeException("Failed populate MetricsConfig from " + file.getAbsolutePath(), e);
+                throw new RuntimeException("Failed to populate Metrics Configuration from "
+                        + file.getAbsolutePath(), e);
             }
         } else {
             metricsConfig = new MetricsConfig();
