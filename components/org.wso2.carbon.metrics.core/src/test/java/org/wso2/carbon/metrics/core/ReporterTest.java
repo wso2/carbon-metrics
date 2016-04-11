@@ -241,7 +241,7 @@ public class ReporterTest extends BaseTest {
     private AttributeList getAttributes(String name, String... attributeNames) {
         ObjectName n;
         try {
-            n = new ObjectName("org.wso2.carbon.metrics", "name", name);
+            n = new ObjectName("org.wso2.carbon.metrics.test", "name", name);
             return mBeanServer.getAttributes(n, attributeNames);
         } catch (MalformedObjectNameException e) {
             Assert.fail(e.getMessage());

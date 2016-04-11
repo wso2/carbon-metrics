@@ -19,6 +19,7 @@ enabled: true
 reporting:
   jmx:
     enabled: true
+    domain: org.wso2.carbon.metrics.test
 
   console:
     enabled: true

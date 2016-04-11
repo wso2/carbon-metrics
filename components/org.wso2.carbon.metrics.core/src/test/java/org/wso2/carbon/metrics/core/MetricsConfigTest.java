@@ -47,6 +47,7 @@ public class MetricsConfigTest extends BaseTest {
     public void testJmxReporterConfigLoad() {
         JmxReporterConfig config = metricsConfig.getReporting().getJmx();
         Assert.assertEquals(config.isEnabled(), true);
+        Assert.assertEquals(config.getDomain(), "org.wso2.carbon.metrics.test");
     }
 
     @Test
