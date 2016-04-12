@@ -27,6 +27,7 @@ import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -80,6 +81,11 @@ public class DasReporterTest {
                         File.separator + "data-agent-config.xml");
     }
 
+    @AfterMethod
+    private void stopReporter() {
+        reporter.stop();
+    }
+
     @SuppressWarnings("rawtypes")
     @Test
     public void reportsGaugeValues() {
@@ -94,6 +100,19 @@ public class DasReporterTest {
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
         Assert.assertEquals(event.getPayloadData()[1], "test.gauge");
         Assert.assertEquals(event.getPayloadData()[2], 1.0D);
+
+        // Report different data types for Gauge
+        when(gauge.getValue()).thenReturn(1.0D);
+        reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
+
+        when(gauge.getValue()).thenReturn(1.0F);
+        reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
+
+        when(gauge.getValue()).thenReturn(1L);
+        reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
+
+        when(gauge.getValue()).thenReturn("");
+        reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
     }
 
     @SuppressWarnings("rawtypes")
