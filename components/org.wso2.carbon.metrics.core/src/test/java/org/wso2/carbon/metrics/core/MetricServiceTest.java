@@ -137,22 +137,27 @@ public class MetricServiceTest extends BaseTest {
         Assert.assertEquals(meter.getCount(), 0);
 
         metricService.setRootLevel(Level.TRACE);
+        Assert.assertEquals(metricService.getRootLevel(), Level.TRACE.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
         metricService.setRootLevel(Level.DEBUG);
+        Assert.assertEquals(metricService.getRootLevel(), Level.DEBUG.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 2);
 
         metricService.setRootLevel(Level.INFO);
+        Assert.assertEquals(metricService.getRootLevel(), Level.INFO.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 3);
 
         metricService.setRootLevel(Level.ALL);
+        Assert.assertEquals(metricService.getRootLevel(), Level.ALL.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 4);
 
         metricService.setRootLevel(Level.OFF);
+        Assert.assertEquals(metricService.getRootLevel(), Level.OFF.name());
         meter.mark();
         // There should be no change
         Assert.assertEquals(meter.getCount(), 4);
