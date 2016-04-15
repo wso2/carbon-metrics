@@ -110,9 +110,6 @@ public class DasReporterTest {
 
         when(gauge.getValue()).thenReturn(1L);
         reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
-
-        when(gauge.getValue()).thenReturn("");
-        reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
     }
 
     @SuppressWarnings("rawtypes")

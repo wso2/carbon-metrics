@@ -120,17 +120,6 @@ public class Level implements Comparable<Level> {
     }
 
     /**
-     * Converts the string passed as argument to a level. If the conversion fails, then this method returns {@link
-     * #DEBUG}.
-     *
-     * @param sArg The name of the desired Level.
-     * @return The Level associated with the String.
-     */
-    public static Level toLevel(final String sArg) {
-        return toLevel(sArg, Level.DEBUG);
-    }
-
-    /**
      * Converts the string passed as argument to a level. If the conversion fails, then this method returns the value of
      * <code>defaultLevel</code>.
      *

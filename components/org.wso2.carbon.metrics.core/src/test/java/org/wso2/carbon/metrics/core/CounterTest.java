@@ -31,8 +31,9 @@ public class CounterTest extends BaseTest {
 
     @Test
     public void testParentCount() {
-        Counter main = MetricManager.counter("org.wso2.main.throughput", Level.INFO);
-        Counter sub = MetricManager.counter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
+        Counter main = MetricManager.counter("org.wso2.carbon.metrics.counter.test.counter", Level.INFO);
+        Counter sub = MetricManager.counter("org.wso2.carbon.metrics.counter.test[+].sub.counter", Level.INFO,
+                Level.INFO);
         sub.inc(5);
         main.dec(3);
         Assert.assertEquals(sub.getCount(), 5);
@@ -41,9 +42,11 @@ public class CounterTest extends BaseTest {
 
     @Test
     public void testParentCount2() {
-        Counter sub = MetricManager.counter("org.wso2.main2[+].sub.throughput", Level.INFO, Level.INFO);
-        Counter sub1 = MetricManager.counter("org.wso2.main2.sub[+].sub1.throughput", Level.INFO, Level.INFO);
-        Counter main = MetricManager.counter("org.wso2.main2.throughput", Level.INFO);
+        Counter sub = MetricManager.counter("org.wso2.carbon.metrics.counter.test2[+].sub.counter", Level.INFO,
+                Level.INFO);
+        Counter sub1 = MetricManager.counter("org.wso2.carbon.metrics.counter.test2.sub[+].sub1.counter", Level.INFO,
+                Level.INFO);
+        Counter main = MetricManager.counter("org.wso2.carbon.metrics.counter.test2.counter", Level.INFO);
         sub.inc(3);
         Assert.assertEquals(sub.getCount(), 3);
         Assert.assertEquals(main.getCount(), 3);
@@ -51,6 +54,14 @@ public class CounterTest extends BaseTest {
         Assert.assertEquals(main.getCount(), 3);
         Assert.assertEquals(sub.getCount(), 5);
         Assert.assertEquals(sub1.getCount(), 2);
+        sub.inc();
+        Assert.assertEquals(main.getCount(), 4);
+        Assert.assertEquals(sub.getCount(), 6);
+        Assert.assertEquals(sub1.getCount(), 2);
+        sub1.dec(2);
+        Assert.assertEquals(main.getCount(), 4);
+        Assert.assertEquals(sub.getCount(), 4);
+        Assert.assertEquals(sub1.getCount(), 0);
     }
 
     @Test
@@ -64,11 +75,13 @@ public class CounterTest extends BaseTest {
 
     @Test
     public void testSameMetricWithParent() {
-        Counter main = MetricManager.counter("org.wso2.main3.throughput", Level.INFO);
-        Counter sub = MetricManager.counter("org.wso2.main3[+].sub.throughput", Level.INFO, Level.INFO);
+        Counter main = MetricManager.counter("org.wso2.carbon.metrics.counter.test3.counter", Level.INFO);
+        Counter sub = MetricManager.counter("org.wso2.carbon.metrics.counter.test3[+].sub.counter", Level.INFO,
+                Level.INFO);
 
-        Counter main2 = MetricManager.counter("org.wso2.main3.throughput", Level.INFO);
-        Counter sub2 = MetricManager.counter("org.wso2.main3[+].sub.throughput", Level.INFO, Level.INFO);
+        Counter main2 = MetricManager.counter("org.wso2.carbon.metrics.counter.test3.counter", Level.INFO);
+        Counter sub2 = MetricManager.counter("org.wso2.carbon.metrics.counter.test3[+].sub.counter", Level.INFO,
+                Level.INFO);
 
         sub.inc(5L);
         Assert.assertEquals(sub.getCount(), 5L);
@@ -86,9 +99,11 @@ public class CounterTest extends BaseTest {
     @Test
     public void testMetricWithNonExistingParents() {
         Counter sub2 =
-                MetricManager.counter("org.wso2.main4[+].sub1[+].sub2.throughput", Level.INFO, Level.INFO, Level.INFO);
-        Counter sub1 = MetricManager.counter("org.wso2.main4[+].sub1.throughput", Level.INFO, Level.INFO);
-        Counter main = MetricManager.counter("org.wso2.main4.throughput", Level.INFO);
+                MetricManager.counter("org.wso2.carbon.metrics.counter.test4[+].sub1[+].sub2.counter", Level.INFO,
+                        Level.INFO, Level.INFO);
+        Counter sub1 = MetricManager.counter("org.wso2.carbon.metrics.counter.test4[+].sub1.counter", Level.INFO,
+                Level.INFO);
+        Counter main = MetricManager.counter("org.wso2.carbon.metrics.counter.test4.counter", Level.INFO);
         sub2.inc(5L);
         Assert.assertEquals(sub2.getCount(), 5L);
         Assert.assertEquals(sub1.getCount(), 5L);
@@ -103,6 +118,11 @@ public class CounterTest extends BaseTest {
         Assert.assertEquals(sub2.getCount(), 5L);
         Assert.assertEquals(sub1.getCount(), 2L);
         Assert.assertEquals(main.getCount(), 12L);
+
+        sub1.dec();
+        Assert.assertEquals(sub2.getCount(), 5L);
+        Assert.assertEquals(sub1.getCount(), 1L);
+        Assert.assertEquals(main.getCount(), 11L);
     }
 
     @Test
@@ -142,8 +162,8 @@ public class CounterTest extends BaseTest {
 
     @Test
     public void testDecrementByRandomNumber() {
-        Counter counter =
-                MetricManager.counter(MetricManager.name(this.getClass(), "test-counter-dec-rand"), Level.INFO);
+        Counter counter = MetricManager.counter(MetricManager.name(this.getClass(), "test-counter-dec-rand"),
+                Level.INFO);
         int n = random.nextInt();
         counter.dec(n);
         Assert.assertEquals(counter.getCount(), 0 - n);

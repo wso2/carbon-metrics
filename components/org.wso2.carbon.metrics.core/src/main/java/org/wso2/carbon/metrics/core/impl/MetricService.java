@@ -227,10 +227,6 @@ public final class MetricService implements MetricManagerMXBean {
         startReporters();
     }
 
-    public void reloadLevelConfiguration() {
-        // TODO Implement
-    }
-
     /**
      * Enables the Metrics Feature
      */

@@ -32,12 +32,17 @@ public class HistogramTest extends BaseTest {
 
     @Test
     public void testParentCount() {
-        Histogram main = MetricManager.histogram("org.wso2.main.test-histogram", Level.INFO);
-        Histogram sub = MetricManager.histogram("org.wso2.main[+].sub.test-histogram", Level.INFO, Level.INFO);
+        Histogram main = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test.value", Level.INFO);
+        Histogram sub = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test[+].sub.value",
+                Level.INFO, Level.INFO);
         sub.update(random.nextInt());
         main.update(random.nextInt());
         Assert.assertEquals(sub.getCount(), 1);
         Assert.assertEquals(main.getCount(), 2);
+        sub.update(random.nextLong());
+        main.update(random.nextLong());
+        Assert.assertEquals(sub.getCount(), 2);
+        Assert.assertEquals(main.getCount(), 4);
     }
 
     @Test
@@ -54,11 +59,13 @@ public class HistogramTest extends BaseTest {
 
     @Test
     public void testSameMetricWithParent() {
-        Histogram main = MetricManager.histogram("org.wso2.main1.test-histogram", Level.INFO);
-        Histogram sub = MetricManager.histogram("org.wso2.main1[+].sub.test-histogram", Level.INFO, Level.INFO);
+        Histogram main = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1.value", Level.INFO);
+        Histogram sub = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1[+].sub.value",
+                Level.INFO, Level.INFO);
 
-        Histogram main2 = MetricManager.histogram("org.wso2.main1.test-histogram", Level.INFO);
-        Histogram sub2 = MetricManager.histogram("org.wso2.main1[+].sub.test-histogram", Level.INFO, Level.INFO);
+        Histogram main2 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1.value", Level.INFO);
+        Histogram sub2 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1[+].sub.value",
+                Level.INFO, Level.INFO);
 
         sub.update(random.nextInt());
         Assert.assertEquals(sub.getCount(), 1);
@@ -75,10 +82,12 @@ public class HistogramTest extends BaseTest {
 
     @Test
     public void testMetricWithNonExistingParents() {
-        Histogram sub2 = MetricManager.histogram("org.wso2.main2[+].sub1[+].sub2.test-histogram", Level.INFO,
+        Histogram sub2 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test2[+].sub1[+].sub2.value",
+                Level.INFO,
                 Level.INFO, Level.INFO);
-        Histogram sub1 = MetricManager.histogram("org.wso2.main2[+].sub1.test-histogram", Level.INFO, Level.INFO);
-        Histogram main = MetricManager.histogram("org.wso2.main2.test-histogram", Level.INFO);
+        Histogram sub1 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test2[+].sub1.value", Level.INFO,
+                Level.INFO);
+        Histogram main = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test2.value", Level.INFO);
 
         sub2.update(random.nextInt());
         Assert.assertEquals(sub1.getCount(), 1);

@@ -33,8 +33,8 @@ public class MeterTest extends BaseTest {
 
     @Test
     public void testParentCount() {
-        Meter main = MetricManager.meter("org.wso2.main.test-meter", Level.INFO);
-        Meter sub = MetricManager.meter("org.wso2.main[+].sub.test-meter", Level.INFO, Level.INFO);
+        Meter main = MetricManager.meter("org.wso2.carbon.metrics.meter.test.events", Level.INFO);
+        Meter sub = MetricManager.meter("org.wso2.carbon.metrics.meter.test[+].sub.events", Level.INFO, Level.INFO);
         sub.mark(5);
         main.mark(5);
         Assert.assertEquals(sub.getCount(), 5);
@@ -54,11 +54,11 @@ public class MeterTest extends BaseTest {
 
     @Test
     public void testSameMetricWithParent() {
-        Meter main = MetricManager.meter("org.wso2.main1.test-meter", Level.INFO);
-        Meter sub = MetricManager.meter("org.wso2.main1[+].sub.test-meter", Level.INFO, Level.INFO);
+        Meter main = MetricManager.meter("org.wso2.carbon.metrics.meter.test1.events", Level.INFO);
+        Meter sub = MetricManager.meter("org.wso2.carbon.metrics.meter.test1[+].sub.events", Level.INFO, Level.INFO);
 
-        Meter main2 = MetricManager.meter("org.wso2.main1.test-meter", Level.INFO);
-        Meter sub2 = MetricManager.meter("org.wso2.main1[+].sub.test-meter", Level.INFO, Level.INFO);
+        Meter main2 = MetricManager.meter("org.wso2.carbon.metrics.meter.test1.events", Level.INFO);
+        Meter sub2 = MetricManager.meter("org.wso2.carbon.metrics.meter.test1[+].sub.events", Level.INFO, Level.INFO);
 
         sub.mark();
         Assert.assertEquals(sub.getCount(), 1);
@@ -77,9 +77,10 @@ public class MeterTest extends BaseTest {
     @Test
     public void testMetricWithNonExistingParents() {
         Meter sub2 =
-                MetricManager.meter("org.wso2.main2[+].sub1[+].sub2.test-meter", Level.INFO, Level.INFO, Level.INFO);
-        Meter sub1 = MetricManager.meter("org.wso2.main2[+].sub1.test-meter", Level.INFO, Level.INFO);
-        Meter main = MetricManager.meter("org.wso2.main2.test-meter", Level.INFO);
+                MetricManager.meter("org.wso2.carbon.metrics.meter.test2[+].sub1[+].sub2.events", Level.INFO,
+                        Level.INFO, Level.INFO);
+        Meter sub1 = MetricManager.meter("org.wso2.carbon.metrics.meter.test2[+].sub1.events", Level.INFO, Level.INFO);
+        Meter main = MetricManager.meter("org.wso2.carbon.metrics.meter.test2.events", Level.INFO);
 
         sub2.mark();
         Assert.assertEquals(sub2.getCount(), 1);

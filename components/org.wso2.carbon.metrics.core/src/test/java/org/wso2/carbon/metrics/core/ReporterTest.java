@@ -25,7 +25,6 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -66,15 +65,33 @@ public class ReporterTest extends BaseTest {
         String gaugeName = MetricManager.name(this.getClass(), "test-jmx-gauge");
         MetricManager.gauge(gaugeName, Level.INFO, gauge);
 
-        AttributeList meterAttributes = getAttributes(meterName, "Count");
-        SortedMap<String, Object> meterMap = values(meterAttributes);
-        Assert.assertTrue(meterMap.containsKey("Count"), "Meter should be available");
-        Assert.assertTrue(meterMap.containsValue(1L), "Meter count should be one");
+        try {
+            AttributeList meterAttributes = getAttributes(meterName, "Count");
+            SortedMap<String, Object> meterMap = values(meterAttributes);
+            Assert.assertTrue(meterMap.containsKey("Count"), "Meter should be available");
+            Assert.assertTrue(meterMap.containsValue(1L), "Meter count should be one");
 
-        AttributeList gaugeAttributes = getAttributes(gaugeName, "Value");
-        SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
-        Assert.assertTrue(gaugeMap.containsKey("Value"), "Gauge should be available");
-        Assert.assertTrue(gaugeMap.containsValue(1), "Gauge value should be one");
+            AttributeList gaugeAttributes = getAttributes(gaugeName, "Value");
+            SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
+            Assert.assertTrue(gaugeMap.containsKey("Value"), "Gauge should be available");
+            Assert.assertTrue(gaugeMap.containsValue(1), "Gauge value should be one");
+        } catch (MetricNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testDisabledGauge() {
+        String gaugeName = MetricManager.name(this.getClass(), "test-disabled-gauge");
+        MetricManager.gauge(gaugeName, Level.INFO, gauge);
+        metricService.setMetricLevel(gaugeName, Level.OFF);
+
+        try {
+            getAttributes(gaugeName, "Value");
+            Assert.fail("Gauge should not be available");
+        } catch (MetricNotFoundException e) {
+            // This is expected
+        }
     }
 
     @Test
@@ -143,21 +160,11 @@ public class ReporterTest extends BaseTest {
 
         metricService.report();
 
-        Optional<Event> event = TEST_EVENT_SERVER.getEvents().stream()
-                .filter(s -> s.getStreamId().contains("meter"))
-                .filter(s -> s.getPayloadData()[1].equals(meterName))
-                .findFirst();
+        Event event = TEST_EVENT_SERVER.getEvent("meter", meterName);
+        Assert.assertEquals(event.getPayloadData()[2], 1L);
 
-        Assert.assertTrue(event.isPresent());
-        Assert.assertEquals(event.get().getPayloadData()[2], 1L);
-
-        event = TEST_EVENT_SERVER.getEvents().stream()
-                .filter(s -> s.getStreamId().contains("gauge"))
-                .filter(s -> s.getPayloadData()[1].equals(gaugeName))
-                .findFirst();
-
-        Assert.assertTrue(event.isPresent());
-        Assert.assertEquals(event.get().getPayloadData()[2], 1.0D);
+        event = TEST_EVENT_SERVER.getEvent("gauge", gaugeName);
+        Assert.assertEquals(event.getPayloadData()[2], 1.0D);
     }
 
     @Test
@@ -236,10 +243,15 @@ public class ReporterTest extends BaseTest {
         // Initially this gauge is set to OFF and when changing the level, we need to restart JMXReporter
         metricService.setMetricLevel(name, Level.TRACE);
         Assert.assertEquals(metricService.getMetricLevel(name), Level.TRACE, "Configured level should be TRACE");
-        AttributeList gaugeAttributes = getAttributes(name, "Value");
-        SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
-        Assert.assertTrue(gaugeMap.containsKey("Value"), "Gauge should be available");
-        Assert.assertTrue(((Integer) gaugeMap.get("Value")) > 0, "Gauge value should be a positive number");
+        try {
+            AttributeList gaugeAttributes = getAttributes(name, "Value");
+            SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
+            Assert.assertTrue(gaugeMap.containsKey("Value"), "Gauge should be available");
+            Assert.assertTrue(((Integer) gaugeMap.get("Value")) > 0, "Gauge value should be a positive number");
+        } catch (MetricNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
+
     }
 
     @Test
@@ -267,17 +279,15 @@ public class ReporterTest extends BaseTest {
         }
     }
 
-    private AttributeList getAttributes(String name, String... attributeNames) {
+    private AttributeList getAttributes(String name, String... attributeNames) throws MetricNotFoundException {
         ObjectName n;
         try {
             n = new ObjectName("org.wso2.carbon.metrics.test", "name", name);
             return mBeanServer.getAttributes(n, attributeNames);
-        } catch (MalformedObjectNameException e) {
+        } catch (MalformedObjectNameException | ReflectionException e) {
             Assert.fail(e.getMessage());
         } catch (InstanceNotFoundException e) {
-            Assert.fail(e.getMessage());
-        } catch (ReflectionException e) {
-            Assert.fail(e.getMessage());
+            throw new MetricNotFoundException(e);
         }
         return null;
     }

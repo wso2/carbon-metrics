@@ -129,7 +129,9 @@ public class TestEventServer {
             public void receive(List<Event> eventList, Credentials credentials) {
                 logger.info("Received event count: {}, Username: {}, Events: {}", eventList.size(),
                         credentials.getUsername(), eventList);
-                events.addAll(eventList);
+                synchronized (events) {
+                    events.addAll(eventList);
+                }
             }
 
 
@@ -159,14 +161,14 @@ public class TestEventServer {
         System.setProperty("Security.KeyStore.Password", "wso2carbon");
     }
 
-    public List<Event> getEvents() {
-        return events;
-    }
-
     public Event getEvent(String stream) {
         Optional<Event> event = Optional.empty();
         for (int i = 0; i < 10; i++) {
-            event = events.stream().filter(s -> s.getStreamId().contains(stream)).findFirst();
+            synchronized (events) {
+                event = events.stream()
+                        .filter(s -> s.getStreamId().contains(stream))
+                        .findFirst();
+            }
             if (!event.isPresent()) {
                 try {
                     logger.info("Attempt {}: Waiting to get the event for {}", i + 1, stream);
@@ -177,6 +179,27 @@ public class TestEventServer {
         }
         return event.get();
     }
+
+    public Event getEvent(String stream, String name) {
+        Optional<Event> event = Optional.empty();
+        for (int i = 0; i < 10; i++) {
+            synchronized (events) {
+                event = events.stream()
+                        .filter(s -> s.getStreamId().contains(stream))
+                        .filter(s -> s.getPayloadData()[1].equals(name))
+                        .findFirst();
+            }
+            if (!event.isPresent()) {
+                try {
+                    logger.info("Attempt {}: Waiting to get the event for {} with name {}", i + 1, stream, name);
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        return event.get();
+    }
+
 
     public void stop() {
         if (thriftDataReceiver != null) {
