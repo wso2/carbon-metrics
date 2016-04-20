@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core;
+package org.wso2.carbon.metrics.core.impl;
+
+import org.wso2.carbon.metrics.core.Meter;
 
 import java.util.List;
 

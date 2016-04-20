@@ -26,15 +26,6 @@ import java.util.Optional;
  * @param <T> The {@link Reporter} type
  */
 public interface ReporterBuilder<T extends Reporter> {
-//
-//    /**
-//     * Configure reporters from {@link MetricsConfiguration}. This should not overwrite any reporter property if there
-//     * is no configuration found.
-//     *
-//     * @param configuration Configure reporter from {@link MetricsConfiguration}
-//     * @return The {@link ReporterBuilder} instance
-//     */
-//    ReporterBuilder<T> configure(MetricsConfiguration configuration);
 
     Optional<T> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException;
