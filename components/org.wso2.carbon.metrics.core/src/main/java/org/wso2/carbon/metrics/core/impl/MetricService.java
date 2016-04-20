@@ -63,11 +63,7 @@ import java.util.regex.Pattern;
 
 /**
  * Implementation class for {@link MetricService}, which will use the Metrics (https://dropwizard.github.io/metrics)
- * library. This is registered as an OSGi service
- */
-
-/**
- * Main interface for the service creating various metrics
+ * library for creating various metrics
  */
 public final class MetricService implements MetricManagerMXBean {
 
@@ -81,7 +77,7 @@ public final class MetricService implements MetricManagerMXBean {
     /**
      * Keep all metric collections created via this service
      */
-    private final ConcurrentMap<String, Metric> metricsCollections = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Metric> metricCollectionsMap = new ConcurrentHashMap<>();
 
     /**
      * Metrics feature enabling flag
@@ -97,10 +93,6 @@ public final class MetricService implements MetricManagerMXBean {
 
     private static final String SYSTEM_PROPERTY_METRICS_ROOT_LEVEL = "metrics.rootLevel";
 
-    private static final String METRIC_AGGREGATE_ANNOTATION = "[+]";
-
-    private static final String METRIC_AGGREGATE_ANNOTATION_REGEX = "\\[\\+\\]";
-
     /**
      * Name of the root metric. This is set to empty string.
      */
@@ -111,14 +103,18 @@ public final class MetricService implements MetricManagerMXBean {
      */
     private static final String METRIC_PATH_DELIMITER = ".";
 
+    /**
+     * Hierarchy delimiter regex in Metric name
+     */
+    private static final String METRIC_PATH_DELIMITER_REGEX = "\\.";
+
     private MetricsConfig metricsConfig;
 
     private final MetricsLevelConfig levelConfiguration;
 
     private final Set<Reporter> reporters = Collections.synchronizedSet(new HashSet<>());
 
-    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN =
-            Pattern.compile(METRIC_AGGREGATE_ANNOTATION_REGEX);
+    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN = Pattern.compile("^(.+)\\[\\+\\]$");
 
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
@@ -156,7 +152,6 @@ public final class MetricService implements MetricManagerMXBean {
     /**
      * Initialize the MetricRegistry, Level and Reporters
      */
-    // Private constructor. Prevents instantiation from other classes.
     private MetricService() {
         // Initialize Metric Registry
         metricRegistry = new MetricRegistry();
@@ -387,24 +382,28 @@ public final class MetricService implements MetricManagerMXBean {
     /**
      * Get metric for a given name
      *
-     * @param name          The name of the metric
-     * @param metricBuilder A {@code MetricBuilder} instance used to create the relevant metric
+     * @param name The name of the metric
      * @return The existing {@code AbstractMetric}
      */
     @SuppressWarnings("unchecked")
-    private <T extends AbstractMetric> T getMetric(String name, MetricBuilder<T> metricBuilder)
-            throws MetricNotFoundException {
+    private <T extends Metric> T getMetric(String name, Class metricClass) throws MetricNotFoundException {
+        Metric metric = null;
         MetricWrapper metricWrapper = metricsMap.get(name);
         if (metricWrapper != null && metricWrapper.metric != null) {
-            AbstractMetric metric = metricWrapper.metric;
-            if (metricBuilder.isInstance(metric)) {
-                return (T) metric;
-            } else {
-                throw new IllegalArgumentException("The name \"" + name + "\" is used for a different type of metric");
-            }
-        } else {
+            metric = metricWrapper.metric;
+        }
+
+        if (metric == null) {
+            metric = metricCollectionsMap.get(name);
+        }
+
+        if (metric == null) {
             throw new MetricNotFoundException("Metric \"" + name + "\" is not found");
         }
+        if (!metricClass.isInstance(metric)) {
+            throw new IllegalArgumentException("The name \"" + name + "\" is used for a different type of metric");
+        }
+        return (T) metric;
     }
 
     /**
@@ -418,7 +417,7 @@ public final class MetricService implements MetricManagerMXBean {
     @SuppressWarnings("unchecked")
     private <T extends AbstractMetric> T getOrCreateMetric(String name, Level level, MetricBuilder<T> metricBuilder) {
         if (isAnnotated(name)) {
-            throw new IllegalArgumentException(name + " invalid metric name (annotated)");
+            throw new IllegalArgumentException("The metric name should not be annotated");
         }
         MetricWrapper metricWrapper = metricsMap.get(name);
         if (metricWrapper != null && metricWrapper.metric != null) {
@@ -446,60 +445,72 @@ public final class MetricService implements MetricManagerMXBean {
     /**
      * Get or create a metric collection for a given path
      *
-     * @param annotatedName The annotatedName of the metric
+     * @param name          The name of the metric
      * @param levels        The {@code Level}s for affected metrics
      * @param metricBuilder A {@code MetricBuilder} instance used to create the relevant metric
      * @return The created {@link Metric} collection
      */
     @SuppressWarnings("unchecked")
-    private <T extends AbstractMetric> Metric getOrCreateMetricCollection(String annotatedName, Level[] levels,
-                                                                          MetricBuilder<T> metricBuilder)
-            throws MetricNotFoundException {
-        Level level = null;
-        if (levels != null && !isLevelsMatch(annotatedName, levels)) {
-            throw new IllegalArgumentException("number of metric levels doesn't match the annotated name");
-        } else if (levels != null && levels.length > 0) {
-            level = levels[levels.length - 1];
+    private <T extends AbstractMetric, M extends Metric> M getOrCreateMetricCollection(
+            String name, Level[] levels, MetricBuilder<T> metricBuilder,
+            MetricCollectionBuilder<M, T> metricCollectionBuilder) {
+        String[] metricNames = getMetricHierarchyNames(name);
+        if (levels.length != metricNames.length) {
+            throw new IllegalArgumentException("The metric levels don't match the annotated name");
         }
-        Metric metricCollection = metricsCollections.get(annotatedName);
-        if (metricCollection == null) {
-            String name = annotatedName.replaceAll(METRIC_AGGREGATE_ANNOTATION_REGEX, "");
-            Metric metric;
-            if (level != null) {
-                metric = getOrCreateMetric(name, level, metricBuilder);
-            } else {
-                metric = getMetric(name, metricBuilder);
-            }
-            boolean annotated = isAnnotated(annotatedName);
-            List<?> affected = getAffectedMetrics(annotatedName, levels, metricBuilder);
-            if (annotated && metric instanceof Counter) {
-                metricCollection = new CounterCollection((Counter) metric, (List<Counter>) affected);
-                metricsCollections.put(annotatedName, metricCollection);
-            } else if (annotated && metric instanceof Histogram) {
-                metricCollection = new HistogramCollection((Histogram) metric, (List<Histogram>) affected);
-                metricsCollections.put(annotatedName, metricCollection);
-            } else if (annotated && metric instanceof Meter) {
-                metricCollection = new MeterCollection((Meter) metric, (List<Meter>) affected);
-                metricsCollections.put(annotatedName, metricCollection);
-            } else {
-                metricCollection = metric;
-            }
+        Metric metricCollection = metricCollectionsMap.get(name);
+        if (metricCollection != null && !metricCollectionBuilder.isInstance(metricCollection)) {
+            throw new IllegalArgumentException(name + " is already used for a different type of metric collection");
+        } else {
+            metricCollection = metricCollectionBuilder.createMetricCollection(metricNames, levels, metricBuilder);
+            metricCollectionsMap.put(name, metricCollection);
         }
-        return metricCollection;
+        return (M) metricCollection;
     }
 
-    private boolean isAnnotated(String annotatedName) {
-        return annotatedName.contains(METRIC_AGGREGATE_ANNOTATION);
+    private boolean isAnnotated(String name) {
+        String[] nameParts = name.split(METRIC_PATH_DELIMITER_REGEX);
+        for (int i = 0; i < nameParts.length; i++) {
+            Matcher matcher = METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(nameParts[i]);
+            if (matcher.find()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isLevelsMatch(String annotatedName, Level[] levels) {
-        Matcher m = METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(annotatedName);
-        int affectedMetrics = 0;
-        while (m.find()) {
-            affectedMetrics++;
+    private String[] getMetricHierarchyNames(String name) {
+        String[] nameParts = name.split(METRIC_PATH_DELIMITER_REGEX);
+        String metricName = nameParts[nameParts.length - 1];
+        if (METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(metricName).find()) {
+            throw new IllegalArgumentException("The last part of the metric name \"" + name
+                    + "\" should not be annotated.");
         }
-        // Levels count should be equals to affected metrics + current metric.
-        return levels.length == affectedMetrics + 1;
+
+        StringBuilder parentNameBuilder = new StringBuilder();
+        List<String> childNames = new ArrayList<>();
+
+        for (int i = 0; i < nameParts.length; i++) {
+            Matcher matcher = METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(nameParts[i]);
+            if (i > 0) {
+                parentNameBuilder.append(METRIC_PATH_DELIMITER);
+            }
+            if (matcher.find()) {
+                parentNameBuilder.append(matcher.group(1));
+                childNames.add(String.format("%s.%s", parentNameBuilder.toString(), metricName));
+            } else {
+                parentNameBuilder.append(nameParts[i]);
+            }
+        }
+
+        String parentName = parentNameBuilder.toString();
+
+        String[] names = new String[childNames.size() + 1];
+        names[0] = parentName;
+        for (int i = 0; i < childNames.size(); i++) {
+            names[i + 1] = childNames.get(i);
+        }
+        return names;
     }
 
     /**
@@ -510,6 +521,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @param metricBuilder A {@code MetricBuilder} instance used to create the relevant metric
      * @return The created {@link List<Metric>} collection
      */
+    /*
     private <T extends AbstractMetric> List<?> getAffectedMetrics(String annotatedName, Level[] levels,
                                                                   MetricBuilder<T> metricBuilder)
             throws MetricNotFoundException {
@@ -544,7 +556,7 @@ public final class MetricService implements MetricManagerMXBean {
             }
         }
         return affected;
-    }
+    }*/
 
     /**
      * An interface for creating a new metric
@@ -629,7 +641,7 @@ public final class MetricService implements MetricManagerMXBean {
 
         @Override
         public GaugeImpl<T> createMetric(String name, Level level) {
-            GaugeImpl<T> gaugeImpl = new GaugeImpl<T>(name, level, gauge);
+            GaugeImpl<T> gaugeImpl = new GaugeImpl<>(name, level, gauge);
             metricRegistry.register(name, gaugeImpl);
             return gaugeImpl;
         }
@@ -649,7 +661,7 @@ public final class MetricService implements MetricManagerMXBean {
         private final long timeout;
         private final TimeUnit timeoutUnit;
 
-        public CachedGaugeBuilder(Gauge<T> gauge, long timeout, TimeUnit timeoutUnit) {
+        CachedGaugeBuilder(Gauge<T> gauge, long timeout, TimeUnit timeoutUnit) {
             super();
             this.gauge = gauge;
             this.timeout = timeout;
@@ -658,7 +670,7 @@ public final class MetricService implements MetricManagerMXBean {
 
         @Override
         public CachedGaugeImpl<T> createMetric(String name, Level level) {
-            CachedGaugeImpl<T> gaugeImpl = new CachedGaugeImpl<T>(name, level, timeout, timeoutUnit, gauge);
+            CachedGaugeImpl<T> gaugeImpl = new CachedGaugeImpl<>(name, level, timeout, timeoutUnit, gauge);
             metricRegistry.register(name, gaugeImpl);
             return gaugeImpl;
         }
@@ -667,6 +679,94 @@ public final class MetricService implements MetricManagerMXBean {
         public boolean isInstance(AbstractMetric metric) {
             return CachedGaugeImpl.class.isInstance(metric);
         }
+    }
+
+    /**
+     * An interface for creating a new metric
+     */
+    private interface MetricCollectionBuilder<T extends Metric, M extends AbstractMetric> {
+        T createMetricCollection(String[] names, Level[] levels, MetricBuilder<M> metricBuilder);
+
+        boolean isInstance(Metric metric);
+    }
+
+    /**
+     * Default Metric Collection Builder for {@code Counter}
+     */
+    private final MetricCollectionBuilder<Counter, CounterImpl> counterCollectionBuilder =
+            new MetricCollectionBuilder<Counter, CounterImpl>() {
+
+                @Override
+                public Counter createMetricCollection(String[] names, Level[] levels,
+                                                      MetricBuilder<CounterImpl> metricBuilder) {
+                    Counter parentCounter = getOrCreateMetric(names[0], levels[0], metricBuilder);
+                    List<Counter> childCounters = new ArrayList<>(names.length - 1);
+                    for (int i = 1; i < names.length; i++) {
+                        childCounters.add(getOrCreateMetric(names[i], levels[i], metricBuilder));
+                    }
+                    return new CounterCollection(parentCounter, childCounters);
+                }
+
+                @Override
+                public boolean isInstance(Metric metric) {
+                    return Counter.class.isInstance(metric);
+                }
+
+            };
+
+    /**
+     * Default Metric Collection Builder for {@code Meter}
+     */
+    private final MetricCollectionBuilder<Meter, MeterImpl> meterCollectionBuilder =
+            new MetricCollectionBuilder<Meter, MeterImpl>() {
+
+                @Override
+                public Meter createMetricCollection(String[] names, Level[] levels,
+                                                    MetricBuilder<MeterImpl> metricBuilder) {
+                    Meter parentMeter = getOrCreateMetric(names[0], levels[0], metricBuilder);
+                    List<Meter> childMeters = new ArrayList<>(names.length - 1);
+                    for (int i = 1; i < names.length; i++) {
+                        childMeters.add(getOrCreateMetric(names[i], levels[i], metricBuilder));
+                    }
+                    return new MeterCollection(parentMeter, childMeters);
+                }
+
+                @Override
+                public boolean isInstance(Metric metric) {
+                    return Meter.class.isInstance(metric);
+                }
+
+            };
+
+    /**
+     * Default Metric Collection Builder for {@code Histogram}
+     */
+    private final MetricCollectionBuilder<Histogram, HistogramImpl> histogramCollectionBuilder =
+            new MetricCollectionBuilder<Histogram, HistogramImpl>() {
+
+                @Override
+                public Histogram createMetricCollection(String[] names, Level[] levels,
+                                                        MetricBuilder<HistogramImpl> metricBuilder) {
+                    Histogram parentHistogram = getOrCreateMetric(names[0], levels[0], metricBuilder);
+                    List<Histogram> childHistograms = new ArrayList<>(names.length - 1);
+                    for (int i = 1; i < names.length; i++) {
+                        childHistograms.add(getOrCreateMetric(names[i], levels[i], metricBuilder));
+                    }
+                    return new HistogramCollection(parentHistogram, childHistograms);
+                }
+
+                @Override
+                public boolean isInstance(Metric metric) {
+                    return Histogram.class.isInstance(metric);
+                }
+
+            };
+
+    private Level[] levels(Level level, Level[] levels) {
+        Level[] levelArray = new Level[levels.length + 1];
+        System.arraycopy(levels, 0, levelArray, 1, levels.length);
+        levelArray[0] = level;
+        return levelArray;
     }
 
     /**
@@ -680,11 +780,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @throws MetricNotFoundException when there is no Meter for the given name.
      */
     public Meter getMeter(String name) throws MetricNotFoundException {
-        if (isAnnotated(name)) {
-            return (Meter) getOrCreateMetricCollection(name, null, meterBuilder);
-        } else {
-            return getMetric(name, meterBuilder);
-        }
+        return getMetric(name, Meter.class);
     }
 
     /**
@@ -698,17 +794,11 @@ public final class MetricService implements MetricManagerMXBean {
      *               should be equal)
      * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
      */
-    public Meter meter(String name, Level... levels) {
-        if (levels.length == 1) {
-            return getOrCreateMetric(name, levels[0], meterBuilder);
+    public Meter meter(String name, Level level, Level... levels) {
+        if (levels.length == 0) {
+            return getOrCreateMetric(name, level, meterBuilder);
         } else {
-            try {
-                return (Meter) getOrCreateMetricCollection(name, levels, meterBuilder);
-            } catch (MetricNotFoundException ignored) {
-                // since levels passed to getOrCreateMetricCollection
-                // MetricNotFoundException could not occur, therefore ignored
-                return null;
-            }
+            return getOrCreateMetricCollection(name, levels(level, levels), meterBuilder, meterCollectionBuilder);
         }
     }
 
@@ -723,11 +813,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @throws MetricNotFoundException when there is no Counter for the given name.
      */
     public Counter getCounter(String name) throws MetricNotFoundException {
-        if (isAnnotated(name)) {
-            return (Counter) getOrCreateMetricCollection(name, null, counterBuilder);
-        } else {
-            return getMetric(name, counterBuilder);
-        }
+        return getMetric(name, Counter.class);
     }
 
 
@@ -742,17 +828,11 @@ public final class MetricService implements MetricManagerMXBean {
      *               should be equal)
      * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
      */
-    public Counter counter(String name, Level... levels) {
-        if (levels.length == 1) {
-            return getOrCreateMetric(name, levels[0], counterBuilder);
+    public Counter counter(String name, Level level, Level... levels) {
+        if (levels.length == 0) {
+            return getOrCreateMetric(name, level, counterBuilder);
         } else {
-            try {
-                return (Counter) getOrCreateMetricCollection(name, levels, counterBuilder);
-            } catch (MetricNotFoundException ignored) {
-                // since levels passed to getOrCreateMetricCollection
-                // MetricNotFoundException could not occur, therefore ignored
-                return null;
-            }
+            return getOrCreateMetricCollection(name, levels(level, levels), counterBuilder, counterCollectionBuilder);
         }
     }
 
@@ -768,7 +848,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @throws MetricNotFoundException when there is no Timer for the given name.
      */
     public Timer getTimer(String name) throws MetricNotFoundException {
-        return getMetric(name, timerBuilder);
+        return getMetric(name, Timer.class);
     }
 
     /**
@@ -793,11 +873,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @throws MetricNotFoundException when there is no Histogram for the given name.
      */
     public Histogram getHistogram(String name) throws MetricNotFoundException {
-        if (isAnnotated(name)) {
-            return (Histogram) getOrCreateMetricCollection(name, null, histogramBuilder);
-        } else {
-            return getMetric(name, histogramBuilder);
-        }
+        return getMetric(name, Histogram.class);
     }
 
     /**
@@ -811,17 +887,12 @@ public final class MetricService implements MetricManagerMXBean {
      *               should be equal)
      * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
      */
-    public Histogram histogram(String name, Level... levels) {
-        if (levels.length == 1) {
-            return getOrCreateMetric(name, levels[0], histogramBuilder);
+    public Histogram histogram(String name, Level level, Level... levels) {
+        if (levels.length == 0) {
+            return getOrCreateMetric(name, level, histogramBuilder);
         } else {
-            try {
-                return (Histogram) getOrCreateMetricCollection(name, levels, histogramBuilder);
-            } catch (MetricNotFoundException ignored) {
-                // since levels passed to getOrCreateMetricCollection
-                // MetricNotFoundException could not occur, therefore ignored
-                return null;
-            }
+            return getOrCreateMetricCollection(name, levels(level, levels), histogramBuilder,
+                    histogramCollectionBuilder);
         }
     }
 
@@ -834,7 +905,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @param gauge An implementation of {@link Gauge}
      */
     public <T> void gauge(String name, Level level, Gauge<T> gauge) {
-        getOrCreateMetric(name, level, new GaugeBuilder<T>(gauge));
+        getOrCreateMetric(name, level, new GaugeBuilder<>(gauge));
     }
 
     /**
@@ -848,7 +919,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @param gauge       An implementation of {@link Gauge}
      */
     public <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
-        getOrCreateMetric(name, level, new CachedGaugeBuilder<T>(gauge, timeout, timeoutUnit));
+        getOrCreateMetric(name, level, new CachedGaugeBuilder<>(gauge, timeout, timeoutUnit));
     }
 
     /**
@@ -888,10 +959,7 @@ public final class MetricService implements MetricManagerMXBean {
 
     private boolean filterJVMMetric(String name) {
         // Remove "deadlocks" as it is a String Set.
-        if ("deadlocks".equals(name)) {
-            return false;
-        }
-        return true;
+        return !"deadlocks".equals(name);
     }
 
     private static class JVMGaugeWrapper implements Gauge<Object> {
@@ -916,9 +984,8 @@ public final class MetricService implements MetricManagerMXBean {
      * Invoke report method of all scheduled reporters.
      */
     public void report() {
-        reporters.stream().filter(reporter -> reporter instanceof ScheduledReporter).forEach(reporter -> {
-            ((ScheduledReporter) reporter).report();
-        });
+        reporters.stream().filter(reporter -> reporter instanceof ScheduledReporter)
+                .forEach(reporter -> ((ScheduledReporter) reporter).report());
     }
 
     private void startReporters() {

@@ -107,8 +107,8 @@ public final class MetricManager {
      *               should be equal)
      * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
      */
-    public static Meter meter(String name, Level... levels) {
-        return MetricService.getInstance().meter(name, levels);
+    public static Meter meter(String name, Level level, Level... levels) {
+        return MetricService.getInstance().meter(name, level, levels);
     }
 
     /**
@@ -152,8 +152,8 @@ public final class MetricManager {
      *               should be equal)
      * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
      */
-    public static Counter counter(String name, Level... levels) {
-        return MetricService.getInstance().counter(name, levels);
+    public static Counter counter(String name, Level level, Level... levels) {
+        return MetricService.getInstance().counter(name, level, levels);
     }
 
     /**
@@ -220,8 +220,8 @@ public final class MetricManager {
      *               should be equal)
      * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
      */
-    public static Histogram histogram(String name, Level... levels) {
-        return MetricService.getInstance().histogram(name, levels);
+    public static Histogram histogram(String name, Level level, Level... levels) {
+        return MetricService.getInstance().histogram(name, level, levels);
     }
 
     /**
