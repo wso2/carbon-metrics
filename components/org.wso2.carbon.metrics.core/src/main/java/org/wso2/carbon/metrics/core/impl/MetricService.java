@@ -514,51 +514,6 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     /**
-     * Get affected Metrics for a given hierarchy path
-     *
-     * @param annotatedName The annotated name of the metric
-     * @param levels        The {@code Level}s for affected metrics
-     * @param metricBuilder A {@code MetricBuilder} instance used to create the relevant metric
-     * @return The created {@link List<Metric>} collection
-     */
-    /*
-    private <T extends AbstractMetric> List<?> getAffectedMetrics(String annotatedName, Level[] levels,
-                                                                  MetricBuilder<T> metricBuilder)
-            throws MetricNotFoundException {
-        boolean getOrCreate = (levels != null) && (levels.length > 0);
-        int levelIndex = 0;
-        int index = annotatedName.lastIndexOf(METRIC_PATH_DELIMITER);
-        String annotatedPath = annotatedName.substring(0, index);
-        String statName = annotatedName.substring(index + 1);
-
-        List<T> affected = new ArrayList<>();
-        String[] chunks = annotatedPath.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        String affectedName;
-        // i < chunksLength - 1, cause affected metrics for path org.wso2.product.stat-name
-        // will be searched only in org.stat-name, org.wso2.stat-name.
-        for (int i = 0, chunksLength = chunks.length; i < chunksLength - 1; i++) {
-            String chunk = chunks[i];
-            if (builder.length() > 0) {
-                builder.append('.');
-            }
-            builder.append(chunk);
-            if (chunk.contains(METRIC_AGGREGATE_ANNOTATION)) {
-                affectedName = builder.toString().replaceAll(METRIC_AGGREGATE_ANNOTATION_REGEX, "");
-                String metricName = String.format("%s.%s", affectedName, statName);
-                if (getOrCreate) {
-                    Level level = levels[levelIndex];
-                    affected.add(getOrCreateMetric(metricName, level, metricBuilder));
-                } else {
-                    affected.add(getMetric(metricName, metricBuilder));
-                }
-                levelIndex++;
-            }
-        }
-        return affected;
-    }*/
-
-    /**
      * An interface for creating a new metric
      */
     private interface MetricBuilder<T extends AbstractMetric> {
@@ -770,29 +725,30 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     /**
-     * Get an existing {@link Meter} instance or {@link Meter}s bundle registered under a given name. If the name is not
-     * annotated, it'll return a single {@link Meter} instance. Otherwise it'll return a {@link Meter} bundle. Moreover,
-     * if the name is annotated, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in
-     * updating all the {@link Meter}s denoted by the annotated name.
+     * <p>Get an existing {@link Meter} instance or {@link Meter}s bundle registered under a given name.</p>
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The name of the metric (This name can be annotated. eg. org.wso2.parent[+].child.metric)
      * @return a single {@link Meter} instance or a {@link Meter} bundle.
-     * @throws MetricNotFoundException when there is no Meter for the given name.
+     * @throws MetricNotFoundException when there is no {@link Meter} for the given name.
+     * @see #meter(String, Level, Level...)
      */
     public Meter getMeter(String name) throws MetricNotFoundException {
         return getMetric(name, Meter.class);
     }
 
     /**
-     * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike {@link
-     * #getMeter(String)}, this will create the metrics denoted by the annotated name if they do not exists. Moreover,
-     * performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating all the {@link
-     * Meter}s denoted by the annotated name.
+     * <p>Get or create a {@link Meter} instance or a {@link Meter} bundle registered under given name.</p> <p>The name
+     * must be annotated with "[+]" to get or create a {@link Meter} bundle. The number of {@link Level}s must match the
+     * number of {@link Meter}s in the {@link Meter} bundle. In a {@link Meter} bundle, any action performed will be
+     * delegated to the {@link Meter}s denoted by the annotated name.</p>
      *
-     * @param name   The annotated name of the metric (i.e org.wso2.cep[+].executionPlan.statName)
-     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
-     * @return a {@link Meter} bundle which wraps a collection of {@link Meter}s
+     * @param name   The name of the metric (This name can be annotated to get or create a {@link Meter} bundle. eg.
+     *               org.wso2.parent[+].child.metric)
+     * @param level  The {@link Level} used for the metric
+     * @param levels The additional {@link Level}s used for each annotated metric (The total number of {@link Level}s
+     *               and the metrics in a bundle should be equal)
+     * @return a {@link Meter} or a {@link Meter} bundle if the name is annotated
+     * @see #getMeter(String)
      */
     public Meter meter(String name, Level level, Level... levels) {
         if (levels.length == 0) {
@@ -803,14 +759,12 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     /**
-     * Get an existing {@link Counter} instance or {@link Counter}s bundle registered under a given name. If the name is
-     * not annotated, it'll return a single {@link Counter} instance. Otherwise it'll return a {@link Counter} bundle.
-     * Moreover, if the name is annotated, performing actions (i.e {@link Counter#inc()}) in the returned bundle will
-     * result in updating all the {@link Counter}s denoted by the annotated name.
+     * <p>Get an existing {@link Counter} instance or {@link Counter}s bundle registered under a given name.</p>
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The name of the metric (This name can be annotated. eg. org.wso2.parent[+].child.metric)
      * @return a single {@link Counter} instance or a {@link Counter} bundle.
-     * @throws MetricNotFoundException when there is no Counter for the given name.
+     * @throws MetricNotFoundException when there is no {@link Counter} for the given name.
+     * @see #counter(String, Level, Level...)
      */
     public Counter getCounter(String name) throws MetricNotFoundException {
         return getMetric(name, Counter.class);
@@ -818,15 +772,18 @@ public final class MetricService implements MetricManagerMXBean {
 
 
     /**
-     * Get or create a {@link Counter}s bundle registered under a given annotated name and {@link Level}s. Unlike {@link
-     * #getCounter(String)}, this will create the metrics denoted by the annotated name if they do not exists. Moreover,
-     * performing actions (i.e {@link Counter#inc()}) in the returned bundle will result in updating all the {@link
-     * Counter}s denoted by the annotated name.
+     * <p>Get or create a {@link Counter} instance or a {@link Counter} bundle registered under given name.</p> <p>The
+     * name must be annotated with "[+]" to get or create a {@link Counter} bundle. The number of {@link Level}s must
+     * match the number of {@link Counter}s in the {@link Counter} bundle. In a {@link Counter} bundle, any action
+     * performed will be delegated to the {@link Counter}s denoted by the annotated name.</p>
      *
-     * @param name   The annotated name of the metric (i.e org.wso2.cep[+].executionPlan.statName)
-     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
-     * @return a {@link Counter} bundle which wraps a collection of {@link Counter}s
+     * @param name   The name of the metric (This name can be annotated to get or create a {@link Counter} bundle. eg.
+     *               org.wso2.parent[+].child.metric)
+     * @param level  The {@link Level} used for the metric
+     * @param levels The additional {@link Level}s used for each annotated metric (The total number of {@link Level}s
+     *               and the metrics in a bundle should be equal)
+     * @return a {@link Counter} or a {@link Counter} bundle if the name is annotated
+     * @see #getCounter(String)
      */
     public Counter counter(String name, Level level, Level... levels) {
         if (levels.length == 0) {
@@ -838,54 +795,54 @@ public final class MetricService implements MetricManagerMXBean {
 
 
     /**
-     * Get an existing {@link Timer} instance or {@link Timer}s bundle registered under a given name. If the name is not
-     * annotated, it'll return a single {@link Timer} instance. Otherwise it'll return a {@link Timer} bundle. Moreover,
-     * if the name is annotated, performing actions (i.e {@link Timer#update(long, TimeUnit)}) in the returned bundle
-     * will result in updating all the {@link Timer}s denoted by the annotated name.
+     * <p>Get the {@link Timer} instance registered under given name.</p>
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
-     * @return a single {@link Timer} instance or a {@link Timer} bundle.
-     * @throws MetricNotFoundException when there is no Timer for the given name.
+     * @param name The name of the metric
+     * @return a {@link Timer} instance
+     * @throws MetricNotFoundException when there is no  {@link Timer} for the given name.
+     * @see #timer(String, Level)
      */
     public Timer getTimer(String name) throws MetricNotFoundException {
         return getMetric(name, Timer.class);
     }
 
     /**
-     * Get or create a {@link Timer} instance for the given name
+     * <p>Get or create a {@link Timer} instance registered under given name.</p>
      *
      * @param name  The name of the metric
      * @param level The {@link Level} used for metric
      * @return a {@link Timer} instance
+     * @see #getTimer(String)
      */
     public Timer timer(String name, Level level) {
         return getOrCreateMetric(name, level, timerBuilder);
     }
 
     /**
-     * Get an existing {@link Histogram} instance or {@link Histogram}s bundle registered under a given name. If the
-     * name is not annotated, it'll return a single {@link Histogram} instance. Otherwise it'll return a {@link
-     * Histogram} bundle. Moreover, if the name is annotated, performing actions (i.e {@link Histogram#update(int)}) in
-     * the returned bundle will result in updating all the {@link Histogram}s denoted by the annotated name.
+     * <p>Get an existing {@link Histogram} instance or {@link Histogram}s bundle registered under a given name.</p>
      *
-     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     * @param name The name of the metric (This name can be annotated. eg. org.wso2.parent[+].child.metric)
      * @return a single {@link Histogram} instance or a {@link Histogram} bundle.
-     * @throws MetricNotFoundException when there is no Histogram for the given name.
+     * @throws MetricNotFoundException when there is no {@link Histogram} for the given name.
+     * @see #histogram(String, Level, Level...)
      */
     public Histogram getHistogram(String name) throws MetricNotFoundException {
         return getMetric(name, Histogram.class);
     }
 
     /**
-     * Get or create a {@link Histogram}s bundle registered under a given annotated name and {@link Level}s. Unlike
-     * {@link #getHistogram(String)}, this will create the metrics denoted by the annotated name if they do not exists.
-     * Moreover, performing actions (i.e {@link Histogram#update(int)}) in the returned bundle will result in updating
-     * all the {@link Histogram}s denoted by the annotated name.
+     * <p>Get or create a {@link Histogram} instance or a {@link Histogram} bundle registered under given name.</p>
+     * <p>The name must be annotated with "[+]" to get or create a {@link Histogram} bundle. The number of {@link
+     * Level}s must match the number of {@link Histogram}s in the {@link Histogram} bundle. In a {@link Histogram}
+     * bundle, any action performed will be delegated to the {@link Histogram}s denoted by the annotated name.</p>
      *
-     * @param name   The annotated name of the metric (i.e org.wso2.cep[+].executionPlan.statName)
-     * @param levels The {@link Level}s used for each annotated metric (Number of {@code levels} and Metrics count
-     *               should be equal)
-     * @return a {@link Histogram} bundle which wraps a collection of {@link Histogram}s
+     * @param name   The name of the metric (This name can be annotated to get or create a {@link Histogram} bundle. eg.
+     *               org.wso2.parent[+].child.metric)
+     * @param level  The {@link Level} used for the metric
+     * @param levels The additional {@link Level}s used for each annotated metric (The total number of {@link Level}s
+     *               and the metrics in a bundle should be equal)
+     * @return a {@link Histogram} or a {@link Histogram} bundle if the name is annotated
+     * @see #getHistogram(String)
      */
     public Histogram histogram(String name, Level level, Level... levels) {
         if (levels.length == 0) {
@@ -897,26 +854,28 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     /**
-     * Get or create a {@link Gauge} for the given name
+     * Register a {@link Gauge} instance under given name
      *
      * @param <T>   The type of the value used in the {@link Gauge}
      * @param name  The name of the metric
      * @param level The {@link Level} used for metric
      * @param gauge An implementation of {@link Gauge}
+     * @see #cachedGauge(String, Level, long, TimeUnit, Gauge)
      */
     public <T> void gauge(String name, Level level, Gauge<T> gauge) {
         getOrCreateMetric(name, level, new GaugeBuilder<>(gauge));
     }
 
     /**
-     * Get or create a cached {@link Gauge} for the given name
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout
      *
      * @param <T>         The type of the value used in the {@link Gauge}
      * @param name        The name of the metric
      * @param level       The {@link Level} used for metric
-     * @param timeout     the timeout
-     * @param timeoutUnit the unit of {@code timeout}
+     * @param timeout     The timeout value
+     * @param timeoutUnit The {@link TimeUnit} for the timeout
      * @param gauge       An implementation of {@link Gauge}
+     * @see #gauge(String, Level, Gauge)
      */
     public <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
         getOrCreateMetric(name, level, new CachedGaugeBuilder<>(gauge, timeout, timeoutUnit));
