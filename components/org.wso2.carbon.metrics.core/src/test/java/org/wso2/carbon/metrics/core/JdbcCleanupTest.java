@@ -24,6 +24,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Snapshot;
 import com.codahale.metrics.Timer;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.reporter.impl.ScheduledJdbcMetricsCleanupTask;
@@ -37,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.AssertJUnit.assertEquals;
 
 /**
  * Tests for {@link ScheduledJdbcMetricsCleanupTask}
@@ -77,12 +77,12 @@ public class JdbcCleanupTest extends BaseTest {
         queryBuilder.append(tableName);
         String query = queryBuilder.toString();
         List<Map<String, Object>> result = template.queryForList(query);
-        assertEquals(2, result.size());
+        Assert.assertEquals(result.size(), 2);
         try (ScheduledJdbcMetricsCleanupTask cleanupTask = new ScheduledJdbcMetricsCleanupTask(dataSource, DAYS)) {
             cleanupTask.run();
         }
         result = template.queryForList(query);
-        assertEquals(1, result.size());
+        Assert.assertEquals(result.size(), 1);
     }
 
     @SuppressWarnings("rawtypes")

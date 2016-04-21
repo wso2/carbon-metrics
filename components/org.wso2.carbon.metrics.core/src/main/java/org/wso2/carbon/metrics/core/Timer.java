@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A metric for measuring the duration of a particular piece of code
  */
-public interface Timer extends Metric {
+public interface Timer extends Metric, Metered, Sampling {
 
     /**
      * Adds a recorded duration.
@@ -50,8 +50,6 @@ public interface Timer extends Metric {
      * @see Context
      */
     Context start();
-
-    long getCount();
 
     /**
      * A timing context.

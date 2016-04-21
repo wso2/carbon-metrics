@@ -45,6 +45,23 @@ public class MetricManagerApiTest extends BaseTest {
     }
 
     @Test
+    public void testSimpleName() {
+        Counter counter = MetricManager.counter("counter1", Level.INFO);
+        counter.inc();
+        Assert.assertEquals(counter.getCount(), 1);
+    }
+
+    @Test
+    public void testInvalidMultipleLevels() {
+        try {
+            MetricManager.counter("counter2", Level.INFO, Level.INFO);
+            Assert.fail("Counter shouldn't be created");
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
     public void testCreateMultipleCounters() {
         // create new counters
         Counter subCounterCollection1 =
@@ -95,11 +112,57 @@ public class MetricManagerApiTest extends BaseTest {
     }
 
     @Test
+    public void testWrongMetricCollectionType() {
+        try {
+            MetricManager.meter("org.wso2.carbon.metrics.api.test4[+].sub.meter", Level.INFO, Level.INFO);
+            MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.meter", Level.INFO, Level.INFO);
+            Assert.fail("Should throw an exception, cannot retrieve metric when the metric type is different");
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void testInvalidAnnotations() {
+        String failMessage = "Invalid name should not be accepted";
+        try {
+            MetricManager.counter("api[+].sub", Level.INFO, Level.INFO);
+            Assert.fail(failMessage);
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+        try {
+            MetricManager.counter("api.sub[+].counter", Level.INFO, Level.INFO);
+            Assert.fail(failMessage);
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+        try {
+            MetricManager.counter("api.sub.counter[+]", Level.INFO, Level.INFO);
+            Assert.fail(failMessage);
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+        try {
+            MetricManager.counter("api[+].sub.counter", Level.INFO, Level.INFO);
+        } catch (Exception e) {
+            Assert.fail("Should not throw an exception");
+        }
+    }
+
+    @Test
     public void testAnnotatedNameToCreateSingleMetric() {
         try {
             MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.counter", Level.INFO);
-            Assert.fail("Should throw an exception, cannot retrieve metric when there's no sufficient Levels"
-                    + " to suite annotated name");
+            Assert.fail("Should throw an exception as there is only one level specified for the annotated name");
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+        try {
+            MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.counter", Level.INFO, Level.INFO
+                    , Level.INFO);
+            Assert.fail("Should throw an exception, cannot retrieve metric when the levels do not match with "
+                    + "the annotated name");
         } catch (Exception e) {
             Assert.assertTrue(e instanceof IllegalArgumentException);
         }

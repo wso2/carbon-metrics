@@ -120,4 +120,27 @@ public class MeterTest extends BaseTest {
         meter.mark(n);
         Assert.assertEquals(meter.getCount(), n);
     }
+
+    @Test
+    public void testEventRate() {
+        Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-meter-rate"), Level.INFO);
+        meter.mark();
+        Assert.assertEquals(meter.getCount(), 1);
+        Assert.assertTrue(meter.getOneMinuteRate() >= 0);
+        Assert.assertTrue(meter.getFiveMinuteRate() >= 0);
+        Assert.assertTrue(meter.getFifteenMinuteRate() >= 0);
+        Assert.assertTrue(meter.getMeanRate() >= 0);
+    }
+
+    @Test
+    public void testMetricCollectionEventRate() {
+        Meter meter = MetricManager.meter("org.wso2.carbon.metrics.meter.test3[+].sub.events", Level.INFO,
+                Level.INFO);
+
+        meter.mark();
+        Assert.assertTrue(meter.getOneMinuteRate() >= 0);
+        Assert.assertTrue(meter.getFiveMinuteRate() >= 0);
+        Assert.assertTrue(meter.getFifteenMinuteRate() >= 0);
+        Assert.assertTrue(meter.getMeanRate() >= 0);
+    }
 }

@@ -118,18 +118,19 @@ public class ReporterTest extends BaseTest {
 
         metricService.disable();
         String meterName2 = MetricManager.name(this.getClass(), "test-csv-meter2");
+        File meter2File = new File("target/metrics", meterName2 + ".csv");
+        // Delete the file first, it might be there from a previous execution
+        meter2File.delete();
         meter = MetricManager.meter(meterName2, Level.INFO);
         meter.mark();
 
         metricService.report();
-        Assert.assertFalse(new File("target/metrics", meterName2 + ".csv").exists(),
-                "Meter CSV file should NOT be created");
+        Assert.assertFalse(meter2File.exists(), "Meter CSV file should NOT be created");
 
         metricService.enable();
         metricService.report();
 
-        Assert.assertTrue(new File("target/metrics", meterName2 + ".csv").exists(),
-                "Meter2 CSV file should be created");
+        Assert.assertTrue(meter2File.exists(), "Meter2 CSV file should be created");
     }
 
     @Test

@@ -25,7 +25,7 @@ import org.wso2.carbon.metrics.core.Level;
  */
 public class GaugeImpl<T> extends AbstractMetric implements com.codahale.metrics.Gauge<T> {
 
-    private Gauge<T> gauge;
+    private final Gauge<T> gauge;
 
     public GaugeImpl(String name, Level level, Gauge<T> gauge) {
         super(name, level);

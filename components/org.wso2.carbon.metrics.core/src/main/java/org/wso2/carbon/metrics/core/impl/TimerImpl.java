@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.core.impl;
 
 import org.wso2.carbon.metrics.core.Level;
+import org.wso2.carbon.metrics.core.Snapshot;
 import org.wso2.carbon.metrics.core.Timer;
 
 import java.util.concurrent.Callable;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimerImpl extends AbstractMetric implements Timer {
 
-    private com.codahale.metrics.Timer timer;
+    private final com.codahale.metrics.Timer timer;
 
     public TimerImpl(String name, Level level, com.codahale.metrics.Timer timer) {
         super(name, level);
@@ -123,6 +124,31 @@ public class TimerImpl extends AbstractMetric implements Timer {
     @Override
     public long getCount() {
         return timer.getCount();
+    }
+
+    @Override
+    public double getFifteenMinuteRate() {
+        return timer.getFifteenMinuteRate();
+    }
+
+    @Override
+    public double getFiveMinuteRate() {
+        return timer.getFiveMinuteRate();
+    }
+
+    @Override
+    public double getMeanRate() {
+        return timer.getMeanRate();
+    }
+
+    @Override
+    public double getOneMinuteRate() {
+        return timer.getOneMinuteRate();
+    }
+
+    @Override
+    public Snapshot getSnapshot() {
+        return new SnapshotImpl(timer.getSnapshot());
     }
 
 }

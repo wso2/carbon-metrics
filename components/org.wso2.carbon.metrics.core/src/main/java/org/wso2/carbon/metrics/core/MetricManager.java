@@ -239,8 +239,7 @@ public final class MetricManager {
      * @see #cachedGauge(String, Level, long, TimeUnit, Gauge)
      */
     public static <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge) {
-        MetricService.getInstance().cachedGauge(name, level, timeout, TimeUnit.SECONDS,
-                gauge);
+        MetricService.getInstance().cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
     }
 
 }

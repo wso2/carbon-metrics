@@ -15,15 +15,13 @@
  */
 package org.wso2.carbon.metrics.core;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.Timer.Context;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
-import static org.testng.AssertJUnit.assertTrue;
+import java.util.stream.LongStream;
 
 /**
  * Test Cases for {@link Timer}
@@ -33,30 +31,38 @@ public class TimerTest extends BaseTest {
     @Test
     public void testInitialCount() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
-        assertEquals("Initial count should be zero", 0, timer.getCount());
+        Assert.assertEquals(timer.getCount(), 0);
     }
 
     @Test
     public void testSameMetric() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
-        assertEquals("Timer count should be one", 1, timer.getCount());
+        Assert.assertEquals(timer.getCount(), 1);
 
         Timer timer2 = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
-        assertEquals("Timer count should be one", 1, timer2.getCount());
+        Assert.assertEquals(timer2.getCount(), 1);
+        timer.update(1, TimeUnit.SECONDS);
+
+        try {
+            Timer timer3 = MetricManager.getTimer(MetricManager.name(this.getClass(), "test-same-timer"));
+            Assert.assertEquals(timer3.getCount(), 2);
+        } catch (MetricNotFoundException e) {
+            Assert.fail("Timer should be available", e);
+        }
     }
 
     @Test
     public void testTime() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-start"), Level.INFO);
         Context context = timer.start();
-        assertTrue("Timer value should be greater than zero", context.stop() > 0);
-        assertEquals("Timer count should be one", 1, timer.getCount());
+        Assert.assertTrue(context.stop() > 0, "Timer value should be greater than zero");
+        Assert.assertEquals(timer.getCount(), 1);
         context.close();
 
         metricService.setRootLevel(Level.OFF);
         context = timer.start();
-        assertEquals("Timer should not work", 0, context.stop());
+        Assert.assertEquals(context.stop(), 0);
         context.close();
     }
 
@@ -64,11 +70,11 @@ public class TimerTest extends BaseTest {
     public void testTimerUpdateCount() {
         Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-update"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
-        assertEquals("Timer count should be one", 1, timer.getCount());
+        Assert.assertEquals(timer.getCount(), 1);
 
         metricService.setRootLevel(Level.OFF);
         timer.update(1, TimeUnit.SECONDS);
-        assertEquals("Timer count should be one", 1, timer.getCount());
+        Assert.assertEquals(timer.getCount(), 1);
     }
 
     @Test
@@ -82,11 +88,32 @@ public class TimerTest extends BaseTest {
 
         };
         String value = timer.time(callable);
-        assertEquals("Value should be 'test'", "test", value);
+        Assert.assertEquals(value, "test");
 
         metricService.setRootLevel(Level.OFF);
         value = timer.time(callable);
-        assertNull("Value should be null", value);
+        Assert.assertNull(value, "Value should be null");
+    }
+
+    @Test
+    public void testSnapshot() {
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-callable"), Level.INFO);
+
+        LongStream.rangeClosed(1, 100).forEach(i -> timer.update(i, TimeUnit.NANOSECONDS));
+
+        Snapshot snapshot = timer.getSnapshot();
+        testSnapshot(snapshot);
+    }
+
+    @Test
+    public void testEventRate() {
+        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-rate"), Level.INFO);
+        timer.update(1L, TimeUnit.NANOSECONDS);
+        Assert.assertEquals(timer.getCount(), 1);
+        Assert.assertTrue(timer.getOneMinuteRate() >= 0);
+        Assert.assertTrue(timer.getFiveMinuteRate() >= 0);
+        Assert.assertTrue(timer.getFifteenMinuteRate() >= 0);
+        Assert.assertTrue(timer.getMeanRate() >= 0);
     }
 
 }

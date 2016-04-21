@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.core.impl;
 
 import org.wso2.carbon.metrics.core.Histogram;
+import org.wso2.carbon.metrics.core.Snapshot;
 
 import java.util.List;
 
@@ -25,8 +26,8 @@ import java.util.List;
  */
 public class HistogramCollection implements Histogram {
 
-    private Histogram histogram;
-    private List<Histogram> affected;
+    private final Histogram histogram;
+    private final List<Histogram> affected;
 
     public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
         this.histogram = histogram;
@@ -67,5 +68,10 @@ public class HistogramCollection implements Histogram {
     @Override
     public long getCount() {
         return histogram.getCount();
+    }
+
+    @Override
+    public Snapshot getSnapshot() {
+        return histogram.getSnapshot();
     }
 }

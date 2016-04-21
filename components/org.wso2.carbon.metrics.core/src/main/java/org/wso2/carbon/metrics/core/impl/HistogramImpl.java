@@ -17,13 +17,14 @@ package org.wso2.carbon.metrics.core.impl;
 
 import org.wso2.carbon.metrics.core.Histogram;
 import org.wso2.carbon.metrics.core.Level;
+import org.wso2.carbon.metrics.core.Snapshot;
 
 /**
  * Implementation class wrapping {@link com.codahale.metrics.Histogram} metric
  */
 public class HistogramImpl extends AbstractMetric implements Histogram {
 
-    private com.codahale.metrics.Histogram histogram;
+    private final com.codahale.metrics.Histogram histogram;
 
     public HistogramImpl(String name, Level level, com.codahale.metrics.Histogram histogram) {
         super(name, level);
@@ -62,5 +63,10 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
     @Override
     public long getCount() {
         return histogram.getCount();
+    }
+
+    @Override
+    public Snapshot getSnapshot() {
+        return new SnapshotImpl(histogram.getSnapshot());
     }
 }

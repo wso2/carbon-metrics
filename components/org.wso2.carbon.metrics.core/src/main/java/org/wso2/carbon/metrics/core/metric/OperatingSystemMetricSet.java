@@ -168,11 +168,7 @@ public class OperatingSystemMetricSet implements MetricSet {
     private long invokeLong(String methodName) {
         try {
             return (Long) invokeMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            return 0L;
-        } catch (IllegalAccessException e) {
-            return 0L;
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             return 0L;
         }
     }
@@ -180,11 +176,7 @@ public class OperatingSystemMetricSet implements MetricSet {
     private double invokeDouble(String methodName) {
         try {
             return (Double) invokeMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            return -1.0;
-        } catch (IllegalAccessException e) {
-            return -1.0;
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             return -1.0;
         }
     }

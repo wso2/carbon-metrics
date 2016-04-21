@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -127,5 +128,23 @@ public abstract class BaseTest {
             logger.info("Resetting Root Level to {}", Level.ALL);
         }
         metricService.setRootLevel(Level.ALL);
+    }
+
+
+    protected void testSnapshot(Snapshot snapshot) {
+        double delta = 0.00001D;
+        Assert.assertEquals(snapshot.getMin(), 1L);
+        Assert.assertEquals(snapshot.getMax(), 100L);
+        Assert.assertEquals(snapshot.getMean(), 50.5D, delta);
+        Assert.assertEquals(snapshot.getStdDev(), 28.86607004772212D, delta);
+        Assert.assertEquals(snapshot.getMedian(), 50D, delta);
+        Assert.assertEquals(snapshot.get75thPercentile(), 75D, delta);
+        Assert.assertEquals(snapshot.get95thPercentile(), 95D, delta);
+        Assert.assertEquals(snapshot.get98thPercentile(), 98D, delta);
+        Assert.assertEquals(snapshot.get99thPercentile(), 99D, delta);
+        Assert.assertEquals(snapshot.get999thPercentile(), 100D, delta);
+        Assert.assertEquals(snapshot.getValue(0.55D), 55D, delta);
+        Assert.assertEquals(snapshot.getValues().length, 100L);
+        Assert.assertEquals(snapshot.size(), 100);
     }
 }

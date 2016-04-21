@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.core;
 /**
  * An incrementing and decrementing counter metric.
  */
-public interface Counter extends Metric {
+public interface Counter extends Metric, Counting {
 
     /**
      * Increment the counter by one.
@@ -43,12 +43,5 @@ public interface Counter extends Metric {
      * @param n the amount by which the counter will be decreased
      */
     void dec(long n);
-
-    /**
-     * Returns the counter's current value.
-     *
-     * @return the counter's current value
-     */
-    long getCount();
 
 }

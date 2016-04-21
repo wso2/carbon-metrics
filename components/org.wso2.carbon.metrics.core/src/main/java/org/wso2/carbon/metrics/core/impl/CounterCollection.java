@@ -24,8 +24,8 @@ import java.util.List;
  */
 public class CounterCollection implements Counter {
 
-    private Counter counter;
-    private List<Counter> affected;
+    private final Counter counter;
+    private final List<Counter> affected;
 
     public CounterCollection(Counter counter, List<Counter> affectedCounters) {
         this.counter = counter;

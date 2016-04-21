@@ -478,12 +478,19 @@ public final class MetricService implements MetricManagerMXBean {
 
     private String[] getMetricHierarchyNames(String name) {
         String[] nameParts = name.split(METRIC_PATH_DELIMITER_REGEX);
-        String metricName = nameParts[nameParts.length - 1];
-        if (METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(metricName).find()) {
-            throw new IllegalArgumentException("The last part of the metric name \"" + name
-                    + "\" should not be annotated.");
+        if (nameParts.length < 3) {
+            throw new IllegalArgumentException("At least three parts should be there in the annotated metric name \""
+                    + name + "\".");
+        }
+        for (int i = 1; i <= 2; i++) {
+            // Check last two parts
+            if (METRIC_AGGREGATE_ANNOTATION_PATTERN.matcher(nameParts[nameParts.length - i]).find()) {
+                throw new IllegalArgumentException("The last two parts of the metric name \"" + name
+                        + "\" should not be annotated.");
+            }
         }
 
+        String metricName = nameParts[nameParts.length - 1];
         StringBuilder parentNameBuilder = new StringBuilder();
         List<String> childNames = new ArrayList<>();
 

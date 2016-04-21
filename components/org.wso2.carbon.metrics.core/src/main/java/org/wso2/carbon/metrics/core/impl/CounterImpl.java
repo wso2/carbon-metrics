@@ -23,7 +23,7 @@ import org.wso2.carbon.metrics.core.Level;
  */
 public class CounterImpl extends AbstractMetric implements Counter {
 
-    private com.codahale.metrics.Counter counter;
+    private final com.codahale.metrics.Counter counter;
 
     public CounterImpl(String name, Level level, com.codahale.metrics.Counter counter) {
         super(name, level);

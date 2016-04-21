@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CachedGaugeImpl<T> extends AbstractMetric implements com.codahale.metrics.Gauge<T> {
 
-    private CachedGauge<T> gauge;
+    private final CachedGauge<T> gauge;
 
     public CachedGaugeImpl(String name, Level level, long timeout, TimeUnit timeoutUnit, final Gauge<T> gauge) {
         super(name, level);

@@ -91,6 +91,7 @@ public class MetricServiceTest extends BaseTest {
         String name = MetricManager.name(this.getClass(), "test-metric-level");
         Meter meter = MetricManager.meter(name, Level.INFO);
         Assert.assertNull(metricService.getMetricLevel(name), "There should be no configured level");
+        Assert.assertNull(metricService.getLevel(name), "There should be no configured level");
 
         metricService.setRootLevel(Level.TRACE);
         meter.mark();
@@ -123,10 +124,34 @@ public class MetricServiceTest extends BaseTest {
         meter.mark();
         Assert.assertEquals(meter.getCount(), 5);
 
-        metricService.setMetricLevel(name, Level.INFO);
+        // Test string parameters
+        metricService.setLevel(name, Level.INFO.name());
+        Assert.assertEquals(metricService.getLevel(name), Level.INFO.name(), "Configured level should be INFO");
         Assert.assertEquals(metricService.getMetricLevel(name), Level.INFO, "Configured level should be INFO");
         meter.mark();
         Assert.assertEquals(meter.getCount(), 6);
+
+
+    }
+
+    @Test
+    public void testUnknownMetricSetLevel() {
+        try {
+            metricService.setMetricLevel("unknown", Level.INFO);
+            Assert.fail("Set metric level should not be successful for unknown metrics");
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void testUnknownMetricGetLevel() {
+        try {
+            metricService.getMetricLevel("unknown");
+            Assert.fail("Get metric level should not be successful for unknown metrics");
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof IllegalArgumentException);
+        }
     }
 
     @Test

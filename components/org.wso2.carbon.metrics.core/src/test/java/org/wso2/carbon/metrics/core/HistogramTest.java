@@ -18,6 +18,8 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.stream.IntStream;
+
 /**
  * Test Cases for {@link Histogram}
  */
@@ -128,6 +130,25 @@ public class HistogramTest extends BaseTest {
         metricService.setRootLevel(Level.OFF);
         histogram.update(random.nextLong());
         Assert.assertEquals(histogram.getCount(), 1);
+    }
+
+    @Test
+    public void testSnapshot() {
+        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-snapshot"), Level.INFO);
+        testSnapshot(histogram);
+    }
+
+    @Test
+    public void testHistogramCollectionSnapshot() {
+        Histogram histogram = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test3[+].sub1.value",
+                Level.INFO, Level.INFO);
+        testSnapshot(histogram);
+    }
+
+    private void testSnapshot(Histogram histogram) {
+        IntStream.rangeClosed(1, 100).forEach(histogram::update);
+        Snapshot snapshot = histogram.getSnapshot();
+        testSnapshot(snapshot);
     }
 
 }

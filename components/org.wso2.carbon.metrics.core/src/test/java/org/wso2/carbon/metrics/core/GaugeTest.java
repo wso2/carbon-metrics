@@ -17,6 +17,8 @@ package org.wso2.carbon.metrics.core;
 
 import org.testng.annotations.Test;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Test Cases for {@link Gauge}
  */
@@ -42,7 +44,7 @@ public class GaugeTest extends BaseTest {
 
         MetricManager.cachedGauge(name, Level.INFO, 5, gauge);
 
-        MetricManager.cachedGauge(name, Level.INFO, 5, gauge);
+        MetricManager.cachedGauge(name, Level.INFO, 5, TimeUnit.SECONDS, gauge);
     }
 
 }
