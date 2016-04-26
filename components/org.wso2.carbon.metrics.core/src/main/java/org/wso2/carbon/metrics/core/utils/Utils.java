@@ -15,28 +15,15 @@
  */
 package org.wso2.carbon.metrics.core.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.core.impl.MetricService;
-
 import java.io.File;
-import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
-
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 /**
  * Utility methods for Metrics
  */
 public class Utils {
-
-    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
-
-    private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
 
     private Utils() {
     }
@@ -71,43 +58,8 @@ public class Utils {
             file = new File(org.wso2.carbon.kernel.utils.Utils.getCarbonConfigHome().resolve(fileName).toString());
         }
 
-        return file.exists() ? Optional.of(file) : Optional.empty();
+        return file.exists() && file.isFile() ? Optional.of(file) : Optional.empty();
     }
 
 
-    public static void registerMXBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName name = new ObjectName(MBEAN_NAME);
-            if (mBeanServer.isRegistered(name)) {
-                mBeanServer.unregisterMBean(name);
-            }
-            mBeanServer.registerMBean(MetricService.getInstance(), name);
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("MetricManagerMXBean registered under name: %s", name));
-            }
-        } catch (JMException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error(String.format("MetricManagerMXBean registration failed. Name: %s", MBEAN_NAME), e);
-            }
-        }
-    }
-
-    public static void unregisterMXBean() {
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            ObjectName name = new ObjectName(MBEAN_NAME);
-            if (mBeanServer.isRegistered(name)) {
-                mBeanServer.unregisterMBean(name);
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("MetricManagerMXBean with name '%s' was unregistered.", name));
-            }
-        } catch (JMException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME),
-                        e);
-            }
-        }
-    }
 }

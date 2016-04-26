@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 /**
  * Test Cases for {@link Histogram}
  */
-public class HistogramTest extends BaseTest {
+public class HistogramTest extends BaseMetricTest {
 
     @Test
     public void testInitialCount() {
@@ -114,7 +114,7 @@ public class HistogramTest extends BaseTest {
         histogram.update(random.nextInt());
         Assert.assertEquals(histogram.getCount(), 1);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         histogram.update(random.nextInt());
         Assert.assertEquals(histogram.getCount(), 1);
     }
@@ -127,7 +127,7 @@ public class HistogramTest extends BaseTest {
         histogram.update(random.nextLong());
         Assert.assertEquals(histogram.getCount(), 1);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         histogram.update(random.nextLong());
         Assert.assertEquals(histogram.getCount(), 1);
     }

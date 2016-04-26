@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 /**
  * Test Cases for MetricService
  */
-public class MetricServiceTest extends BaseTest {
+public class MetricServiceTest extends BaseMetricTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricServiceTest.class);
 
@@ -34,14 +34,15 @@ public class MetricServiceTest extends BaseTest {
             logger.info("Resetting Root Level to {}", Level.OFF);
         }
         // Test setRootLevel(String)
-        metricService.setRootLevel(Level.OFF.name());
+        MetricManager.getMetricService().setRootLevel(Level.OFF.name());
     }
 
     @Test
     public void testMeterInitialCount() {
         Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
         Assert.assertEquals(meter.getCount(), 0);
-        Assert.assertTrue(metricService.getMetricsCount() > 0, "Metrics count should be greater than zero");
+        Assert.assertTrue(MetricManager.getMetricService().getMetricsCount() > 0,
+                "Metrics count should be greater than zero");
     }
 
     @Test
@@ -68,20 +69,22 @@ public class MetricServiceTest extends BaseTest {
 
     @Test
     public void testEnableDisable() {
-        Assert.assertTrue(metricService.isEnabled(), "Metric Service should be enabled");
+        Assert.assertTrue(MetricManager.getMetricService().isEnabled(), "Metric Service should be enabled");
         Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test-enabled"), Level.INFO);
 
-        metricService.setRootLevel(Level.TRACE);
+        MetricManager.getMetricService().setRootLevel(Level.TRACE);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
-        metricService.disable();
-        Assert.assertFalse(metricService.isEnabled(), "Metric Service should be disabled");
+        MetricManager.getMetricService().disable();
+        Assert.assertFalse(MetricManager.getMetricService().isEnabled(), "Metric Service should be disabled");
 
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
-        metricService.enable();
+        MetricManager.getMetricService().enable();
+        // Call again to cover the if condition
+        MetricManager.getMetricService().enable();
         meter.mark();
         Assert.assertEquals(meter.getCount(), 2);
     }
@@ -90,44 +93,51 @@ public class MetricServiceTest extends BaseTest {
     public void testMetricSetLevel() {
         String name = MetricManager.name(this.getClass(), "test-metric-level");
         Meter meter = MetricManager.meter(name, Level.INFO);
-        Assert.assertNull(metricService.getMetricLevel(name), "There should be no configured level");
-        Assert.assertNull(metricService.getLevel(name), "There should be no configured level");
+        Assert.assertNull(MetricManager.getMetricService().getMetricLevel(name), "There should be no configured level");
+        Assert.assertNull(MetricManager.getMetricService().getLevel(name), "There should be no configured level");
 
-        metricService.setRootLevel(Level.TRACE);
+        MetricManager.getMetricService().setRootLevel(Level.TRACE);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
-        metricService.setMetricLevel(name, Level.INFO);
-        Assert.assertEquals(metricService.getMetricLevel(name), Level.INFO, "Configured level should be INFO");
+        MetricManager.getMetricService().setMetricLevel(name, Level.INFO);
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.INFO,
+                "Configured level should be INFO");
         meter.mark();
         Assert.assertEquals(meter.getCount(), 2);
 
-        metricService.setMetricLevel(name, Level.DEBUG);
-        Assert.assertEquals(metricService.getMetricLevel(name), Level.DEBUG, "Configured level should be DEBUG");
+        MetricManager.getMetricService().setMetricLevel(name, Level.DEBUG);
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.DEBUG,
+                "Configured level should be DEBUG");
 
         meter.mark();
         Assert.assertEquals(meter.getCount(), 3);
 
-        metricService.setMetricLevel(name, Level.TRACE);
-        Assert.assertEquals(metricService.getMetricLevel(name), Level.TRACE, "Configured level should be TRACE");
+        MetricManager.getMetricService().setMetricLevel(name, Level.TRACE);
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.TRACE,
+                "Configured level should be TRACE");
         meter.mark();
         Assert.assertEquals(meter.getCount(), 4);
 
-        metricService.setMetricLevel(name, Level.ALL);
-        Assert.assertEquals(metricService.getMetricLevel(name), Level.ALL, "Configured level should be ALL");
+        MetricManager.getMetricService().setMetricLevel(name, Level.ALL);
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.ALL,
+                "Configured level should be ALL");
 
         meter.mark();
         Assert.assertEquals(meter.getCount(), 5);
 
-        metricService.setMetricLevel(name, Level.OFF);
-        Assert.assertEquals(metricService.getMetricLevel(name), Level.OFF, "Configured level should be OFF");
+        MetricManager.getMetricService().setMetricLevel(name, Level.OFF);
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.OFF,
+                "Configured level should be OFF");
         meter.mark();
         Assert.assertEquals(meter.getCount(), 5);
 
         // Test string parameters
-        metricService.setLevel(name, Level.INFO.name());
-        Assert.assertEquals(metricService.getLevel(name), Level.INFO.name(), "Configured level should be INFO");
-        Assert.assertEquals(metricService.getMetricLevel(name), Level.INFO, "Configured level should be INFO");
+        MetricManager.getMetricService().setLevel(name, Level.INFO.name());
+        Assert.assertEquals(MetricManager.getMetricService().getLevel(name), Level.INFO.name(),
+                "Configured level should be INFO");
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.INFO,
+                "Configured level should be INFO");
         meter.mark();
         Assert.assertEquals(meter.getCount(), 6);
 
@@ -137,7 +147,7 @@ public class MetricServiceTest extends BaseTest {
     @Test
     public void testUnknownMetricSetLevel() {
         try {
-            metricService.setMetricLevel("unknown", Level.INFO);
+            MetricManager.getMetricService().setMetricLevel("unknown", Level.INFO);
             Assert.fail("Set metric level should not be successful for unknown metrics");
         } catch (Exception e) {
             Assert.assertTrue(e instanceof IllegalArgumentException);
@@ -147,7 +157,7 @@ public class MetricServiceTest extends BaseTest {
     @Test
     public void testUnknownMetricGetLevel() {
         try {
-            metricService.getMetricLevel("unknown");
+            MetricManager.getMetricService().getMetricLevel("unknown");
             Assert.fail("Get metric level should not be successful for unknown metrics");
         } catch (Exception e) {
             Assert.assertTrue(e instanceof IllegalArgumentException);
@@ -161,28 +171,28 @@ public class MetricServiceTest extends BaseTest {
         // This is required as we need to check whether level changes are applied to existing metrics
         Assert.assertEquals(meter.getCount(), 0);
 
-        metricService.setRootLevel(Level.TRACE);
-        Assert.assertEquals(metricService.getRootLevel(), Level.TRACE.name());
+        MetricManager.getMetricService().setRootLevel(Level.TRACE);
+        Assert.assertEquals(MetricManager.getMetricService().getRootLevel(), Level.TRACE.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
-        metricService.setRootLevel(Level.DEBUG);
-        Assert.assertEquals(metricService.getRootLevel(), Level.DEBUG.name());
+        MetricManager.getMetricService().setRootLevel(Level.DEBUG);
+        Assert.assertEquals(MetricManager.getMetricService().getRootLevel(), Level.DEBUG.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 2);
 
-        metricService.setRootLevel(Level.INFO);
-        Assert.assertEquals(metricService.getRootLevel(), Level.INFO.name());
+        MetricManager.getMetricService().setRootLevel(Level.INFO);
+        Assert.assertEquals(MetricManager.getMetricService().getRootLevel(), Level.INFO.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 3);
 
-        metricService.setRootLevel(Level.ALL);
-        Assert.assertEquals(metricService.getRootLevel(), Level.ALL.name());
+        MetricManager.getMetricService().setRootLevel(Level.ALL);
+        Assert.assertEquals(MetricManager.getMetricService().getRootLevel(), Level.ALL.name());
         meter.mark();
         Assert.assertEquals(meter.getCount(), 4);
 
-        metricService.setRootLevel(Level.OFF);
-        Assert.assertEquals(metricService.getRootLevel(), Level.OFF.name());
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
+        Assert.assertEquals(MetricManager.getMetricService().getRootLevel(), Level.OFF.name());
         meter.mark();
         // There should be no change
         Assert.assertEquals(meter.getCount(), 4);
@@ -193,11 +203,11 @@ public class MetricServiceTest extends BaseTest {
         Meter meter = MetricManager.meter(MetricManager.name(this.getClass(), "test1"), Level.OFF);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 0);
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 0);
 
-        metricService.setRootLevel(Level.TRACE);
+        MetricManager.getMetricService().setRootLevel(Level.TRACE);
         meter = MetricManager.meter(MetricManager.name(this.getClass(), "test2"), Level.TRACE);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
@@ -206,7 +216,7 @@ public class MetricServiceTest extends BaseTest {
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
-        metricService.setRootLevel(Level.DEBUG);
+        MetricManager.getMetricService().setRootLevel(Level.DEBUG);
         meter = MetricManager.meter(MetricManager.name(this.getClass(), "test4"), Level.TRACE);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 0);

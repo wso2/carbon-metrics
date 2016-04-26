@@ -42,12 +42,6 @@ public interface MetricManagerMXBean {
      */
     int getMetricsCount();
 
-
-    /**
-     * Reload Metrics Configuration. This is useful to change reporter configurations and create new set of reporters.
-     */
-    void reloadConfiguration();
-
     /**
      * @param name The name of the Metric
      * @return The Level for the given metric name
@@ -78,4 +72,37 @@ public interface MetricManagerMXBean {
      * Invoke report method of all scheduled reporters.
      */
     void report();
+
+
+    /**
+     * Start the reporter with given name
+     *
+     * @param name The name of the reporter
+     */
+    void startReporter(String name);
+
+    /**
+     * Stop the reporter with given name
+     *
+     * @param name The name of the reporter
+     */
+    void stopReporter(String name);
+
+    /**
+     * Check whether the reporter with given name is running
+     *
+     * @param name The name of the reporter
+     * @return {@code true} if the reporter is started, otherwise {@code false}
+     */
+    boolean isReporterRunning(String name);
+
+    /**
+     * Start all reporters
+     */
+    void startReporters();
+
+    /**
+     * Stop all reporters
+     */
+    void stopReporters();
 }

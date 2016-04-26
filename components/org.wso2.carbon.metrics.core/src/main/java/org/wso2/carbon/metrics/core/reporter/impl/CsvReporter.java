@@ -17,8 +17,6 @@ package org.wso2.carbon.metrics.core.reporter.impl;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 
 import java.io.File;
@@ -30,8 +28,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class CsvReporter extends AbstractReporter implements ScheduledReporter {
 
-    private static final Logger logger = LoggerFactory.getLogger(CsvReporter.class);
-
     private final MetricRegistry metricRegistry;
 
     private final MetricFilter metricFilter;
@@ -42,9 +38,9 @@ public class CsvReporter extends AbstractReporter implements ScheduledReporter {
 
     private com.codahale.metrics.CsvReporter csvReporter;
 
-    public CsvReporter(MetricRegistry metricRegistry, MetricFilter metricFilter, File directory,
+    public CsvReporter(String name, MetricRegistry metricRegistry, MetricFilter metricFilter, File directory,
                        long pollingPeriod) {
-        super("CSV");
+        super(name);
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;
         this.directory = directory;
@@ -68,11 +64,9 @@ public class CsvReporter extends AbstractReporter implements ScheduledReporter {
 
     @Override
     public void stopReporter() {
-        try {
+        if (csvReporter != null) {
             csvReporter.stop();
             csvReporter = null;
-        } catch (Throwable e) {
-            logger.error("An error occurred when trying to stop the reporter", e);
         }
     }
 

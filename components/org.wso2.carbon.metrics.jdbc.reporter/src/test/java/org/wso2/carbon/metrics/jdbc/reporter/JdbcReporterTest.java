@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-
 import javax.sql.DataSource;
 
 import static org.mockito.Mockito.mock;
@@ -119,7 +118,7 @@ public class JdbcReporterTest {
         final Counter counter = mock(Counter.class);
         when(counter.getCount()).thenReturn(100L);
 
-        reporter.report(this.map(), map("test.counter", counter), this.map(), this.map(), this.map());
+        reporter.report(map(), map("test.counter", counter), map(), map(), map());
 
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_COUNTER");
         Assert.assertEquals(result.size(), 1);
@@ -151,7 +150,7 @@ public class JdbcReporterTest {
 
         when(histogram.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.map(), this.map(), map("test.histogram", histogram), this.map(), this.map());
+        reporter.report(map(), map(), map("test.histogram", histogram), map(), map());
 
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_HISTOGRAM");
         Assert.assertEquals(result.size(), 1);
@@ -183,7 +182,7 @@ public class JdbcReporterTest {
         when(meter.getFiveMinuteRate()).thenReturn(4.0);
         when(meter.getFifteenMinuteRate()).thenReturn(5.0);
 
-        reporter.report(this.map(), this.map(), this.map(), map("test.meter", meter), this.map());
+        reporter.report(map(), map(), map(), map("test.meter", meter), map());
 
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_METER");
         Assert.assertEquals(result.size(), 1);
@@ -224,7 +223,7 @@ public class JdbcReporterTest {
 
         when(timer.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.map(), this.map(), this.map(), this.map(), map("test.timer", timer));
+        reporter.report(map(), map(), map(), map(), map("test.timer", timer));
 
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_TIMER");
         Assert.assertEquals(result.size(), 1);
@@ -277,7 +276,7 @@ public class JdbcReporterTest {
                 .convertDurationsTo(TimeUnit.NANOSECONDS).convertTimestampTo(timestampUnit).withClock(clock)
                 .filter(MetricFilter.ALL).build(SOURCE, dataSource);
 
-        reporter.report(map("gauge", gauge), this.map(), this.map(), this.map(), this.map());
+        reporter.report(map("gauge", gauge), map(), map(), map(), map());
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_GAUGE");
         Assert.assertEquals(result.size(), 1);
         return (Long) result.get(0).get("TIMESTAMP");
@@ -293,4 +292,18 @@ public class JdbcReporterTest {
         return map;
     }
 
+    @Test
+    public void testJdbcReporterBuilderValidations() {
+        build(null, null);
+        build("", null);
+        build(SOURCE, null);
+    }
+
+    private void build(String source, DataSource dataSource) {
+        try {
+            JdbcReporter.forRegistry(registry).build(source, dataSource);
+            Assert.fail("The JdbcReporter Builder should fail");
+        } catch (IllegalArgumentException e) {
+        }
+    }
 }

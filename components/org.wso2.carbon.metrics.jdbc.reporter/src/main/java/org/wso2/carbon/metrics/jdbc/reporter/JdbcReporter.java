@@ -34,7 +34,6 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
-
 import javax.sql.DataSource;
 
 /**
@@ -140,7 +139,7 @@ public class JdbcReporter extends ScheduledReporter {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcReporter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JdbcReporter.class);
 
     private final Clock clock;
     private final String source;
@@ -169,8 +168,8 @@ public class JdbcReporter extends ScheduledReporter {
         this.dataSource = dataSource;
         this.timestampUnit = timestampUnit;
         this.clock = clock;
-        if (source == null) {
-            throw new IllegalArgumentException("Source cannot be null");
+        if (source == null || source.trim().isEmpty()) {
+            throw new IllegalArgumentException("Source cannot be null or empty");
         }
         if (dataSource == null) {
             throw new IllegalArgumentException("Data source cannot be null");
@@ -231,7 +230,7 @@ public class JdbcReporter extends ScheduledReporter {
             connection = null;
         } catch (SQLException e) {
             rollbackTransaction(connection);
-            LOGGER.error("Error when reporting gauges", e);
+            logger.error("Error when reporting gauges", e);
         } finally {
             closeQuietly(connection, ps);
         }
@@ -269,7 +268,7 @@ public class JdbcReporter extends ScheduledReporter {
             connection = null;
         } catch (SQLException e) {
             rollbackTransaction(connection);
-            LOGGER.error("Error when reporting counters", e);
+            logger.error("Error when reporting counters", e);
         } finally {
             closeQuietly(connection, ps);
         }
@@ -307,7 +306,7 @@ public class JdbcReporter extends ScheduledReporter {
             connection = null;
         } catch (SQLException e) {
             rollbackTransaction(connection);
-            LOGGER.error("Error when reporting histograms", e);
+            logger.error("Error when reporting histograms", e);
         } finally {
             closeQuietly(connection, ps);
         }
@@ -357,7 +356,7 @@ public class JdbcReporter extends ScheduledReporter {
             connection = null;
         } catch (SQLException e) {
             rollbackTransaction(connection);
-            LOGGER.error("Error when reporting meters", e);
+            logger.error("Error when reporting meters", e);
         } finally {
             closeQuietly(connection, ps);
         }
@@ -399,7 +398,7 @@ public class JdbcReporter extends ScheduledReporter {
             connection = null;
         } catch (SQLException e) {
             rollbackTransaction(connection);
-            LOGGER.error("Error when reporting timers", e);
+            logger.error("Error when reporting timers", e);
         } finally {
             closeQuietly(connection, ps);
         }
@@ -435,8 +434,8 @@ public class JdbcReporter extends ScheduledReporter {
             try {
                 connection.rollback();
             } catch (SQLException e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Error when rolling back the transaction", e);
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Error when rolling back the transaction", e);
                 }
             }
         }

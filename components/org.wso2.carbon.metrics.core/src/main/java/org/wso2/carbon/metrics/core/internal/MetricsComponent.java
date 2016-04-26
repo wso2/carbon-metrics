@@ -20,8 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.core.impl.MetricService;
-import org.wso2.carbon.metrics.core.utils.Utils;
+import org.wso2.carbon.metrics.core.MetricManager;
 
 /**
  * Metrics OSGi Component
@@ -38,7 +37,8 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component activated");
         }
-        Utils.registerMXBean();
+        // Initialize the metric service
+        MetricManager.activate();
     }
 
     @Deactivate
@@ -46,8 +46,7 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component deactivated");
         }
-        Utils.unregisterMXBean();
-        MetricService.getInstance().disable();
+        MetricManager.deactivate();
     }
 
 }

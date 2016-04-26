@@ -26,4 +26,8 @@ public abstract class ScheduledReporterConfig extends ReporterConfig {
     public long getPollingPeriod() {
         return pollingPeriod;
     }
+
+    public void setPollingPeriod(long pollingPeriod) {
+        this.pollingPeriod = pollingPeriod;
+    }
 }

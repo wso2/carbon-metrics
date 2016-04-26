@@ -24,8 +24,6 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Snapshot;
 import com.codahale.metrics.Timer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -48,7 +46,6 @@ import static org.mockito.Mockito.when;
  */
 public class DasReporterTest {
 
-    private static Logger logger = LoggerFactory.getLogger(DasReporterTest.class);
     private static final String SOURCE = DasReporterTest.class.getSimpleName();
     private static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
     private final TestEventServer testServer = new TestEventServer(RESOURCES_DIR);
@@ -77,7 +74,7 @@ public class DasReporterTest {
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .withClock(clock)
-                .build(SOURCE, "thrift", "tcp://localhost:" + serverPort, null, "admin", "", RESOURCES_DIR +
+                .build(SOURCE, "thrift", "tcp://localhost:" + serverPort, null, "admin", "admin", RESOURCES_DIR +
                         File.separator + "data-agent-config.xml");
     }
 
@@ -253,4 +250,29 @@ public class DasReporterTest {
         return map;
     }
 
+    @Test
+    public void testDasReporterBuilderValidations() {
+        build(null, null, null, null, null, null, null);
+        build("", null, null, null, null, null, null);
+        build(SOURCE, null, null, null, null, null, null);
+        build(SOURCE, "", null, null, null, null, null);
+        build(SOURCE, "thrift", null, null, null, null, null);
+        build(SOURCE, "thrift", "", null, null, null, null);
+        build(SOURCE, "thrift", "tcp://localhost:1234", null, null, null, null);
+        build(SOURCE, "thrift", "tcp://localhost:1234", null, "", null, null);
+        build(SOURCE, "thrift", "tcp://localhost:1234", null, "admin", null, null);
+        build(SOURCE, "thrift", "tcp://localhost:1234", null, "admin", "", null);
+        build(SOURCE, "thrift", "invalidURL", null, "admin", "admin", null);
+    }
+
+    private void build(String source, String type, String receiverURL, String authURL, String username,
+                       String password, String dataAgentConfigPath) {
+        try {
+            DasReporter.forRegistry(registry).build(source, type, receiverURL, authURL, username, password,
+                    dataAgentConfigPath);
+            Assert.fail("The DasReporter Builder should fail");
+        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException e) {
+        }
+    }
 }

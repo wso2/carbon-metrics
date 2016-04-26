@@ -17,7 +17,11 @@
 enabled: true
 
 reporting:
+  jmx:
+    enabled: false
+
   jdbc:
+    name: JDBC
     enabled: true
     source: Carbon-jdbc
     lookupDataSource: false

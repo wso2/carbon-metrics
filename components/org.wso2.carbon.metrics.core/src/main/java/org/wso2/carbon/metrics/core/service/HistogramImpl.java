@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.impl;
+package org.wso2.carbon.metrics.core.service;
 
 import org.wso2.carbon.metrics.core.Histogram;
+import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.Snapshot;
 
-import java.util.List;
-
-
 /**
- * Implementation class wrapping a list of {@link Histogram} metrics
+ * Implementation class wrapping {@link com.codahale.metrics.Histogram} metric
  */
-public class HistogramCollection implements Histogram {
+public class HistogramImpl extends AbstractMetric implements Histogram {
 
-    private final Histogram histogram;
-    private final List<Histogram> affected;
+    private final com.codahale.metrics.Histogram histogram;
 
-    public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
+    public HistogramImpl(String name, Level level, com.codahale.metrics.Histogram histogram) {
+        super(name, level);
         this.histogram = histogram;
-        this.affected = affectedHistograms;
     }
 
     /*
@@ -41,9 +38,8 @@ public class HistogramCollection implements Histogram {
      */
     @Override
     public void update(int value) {
-        histogram.update(value);
-        for (Histogram h : affected) {
-            h.update(value);
+        if (isEnabled()) {
+            histogram.update(value);
         }
     }
 
@@ -54,9 +50,8 @@ public class HistogramCollection implements Histogram {
      */
     @Override
     public void update(long value) {
-        histogram.update(value);
-        for (Histogram h : affected) {
-            h.update(value);
+        if (isEnabled()) {
+            histogram.update(value);
         }
     }
 
@@ -72,6 +67,6 @@ public class HistogramCollection implements Histogram {
 
     @Override
     public Snapshot getSnapshot() {
-        return histogram.getSnapshot();
+        return new SnapshotImpl(histogram.getSnapshot());
     }
 }

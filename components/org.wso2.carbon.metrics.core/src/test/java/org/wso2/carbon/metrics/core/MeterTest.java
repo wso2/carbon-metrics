@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 /**
  * Test Cases for {@link Meter}
  */
-public class MeterTest extends BaseTest {
+public class MeterTest extends BaseMetricTest {
 
     @Test
     public void testInitialCount() {
@@ -104,7 +104,7 @@ public class MeterTest extends BaseTest {
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
     }
@@ -116,7 +116,7 @@ public class MeterTest extends BaseTest {
         meter.mark(n);
         Assert.assertEquals(meter.getCount(), n);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         meter.mark(n);
         Assert.assertEquals(meter.getCount(), n);
     }

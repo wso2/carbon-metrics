@@ -20,9 +20,23 @@ package org.wso2.carbon.metrics.core.config.model;
  */
 public abstract class ReporterConfig {
 
+    protected String name;
+
     protected boolean enabled = false;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

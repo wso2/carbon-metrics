@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests for {@link ScheduledJdbcMetricsCleanupTask}
  */
-public class JdbcCleanupTest extends BaseTest {
+public class JdbcCleanupTest extends BaseReporterTest {
 
     private final MetricRegistry registry = mock(MetricRegistry.class);
     private final Clock clock = mock(Clock.class);
@@ -91,13 +91,11 @@ public class JdbcCleanupTest extends BaseTest {
         final Gauge gauge = mock(Gauge.class);
         when(gauge.getValue()).thenReturn(1);
 
-        reporter.report(map("gauge", gauge), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
-                this.<Timer>map());
+        reporter.report(map("gauge", gauge), map(), map(), map(), map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBTRACT_MILLIS);
 
-        reporter.report(map("gauge", gauge), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
-                this.<Timer>map());
+        reporter.report(map("gauge", gauge), map(), map(), map(), map());
 
         cleanValues("METRIC_GAUGE");
     }
@@ -108,13 +106,11 @@ public class JdbcCleanupTest extends BaseTest {
         final Counter counter = mock(Counter.class);
         when(counter.getCount()).thenReturn(100L);
 
-        reporter.report(this.<Gauge>map(), map("test.counter", counter), this.<Histogram>map(), this.<Meter>map(),
-                this.<Timer>map());
+        reporter.report(map(), map("test.counter", counter), map(), map(), map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBTRACT_MILLIS);
 
-        reporter.report(this.<Gauge>map(), map("test.counter", counter), this.<Histogram>map(), this.<Meter>map(),
-                this.<Timer>map());
+        reporter.report(map(), map("test.counter", counter), map(), map(), map());
 
         cleanValues("METRIC_COUNTER");
     }
@@ -139,13 +135,11 @@ public class JdbcCleanupTest extends BaseTest {
 
         when(histogram.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.<Gauge>map(), this.<Counter>map(), map("test.histogram", histogram), this.<Meter>map(),
-                this.<Timer>map());
+        reporter.report(map(), map(), map("test.histogram", histogram), map(), map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBTRACT_MILLIS);
 
-        reporter.report(this.<Gauge>map(), this.<Counter>map(), map("test.histogram", histogram), this.<Meter>map(),
-                this.<Timer>map());
+        reporter.report(map(), map(), map("test.histogram", histogram), map(), map());
 
         cleanValues("METRIC_HISTOGRAM");
     }
@@ -160,13 +154,11 @@ public class JdbcCleanupTest extends BaseTest {
         when(meter.getFiveMinuteRate()).thenReturn(4.0);
         when(meter.getFifteenMinuteRate()).thenReturn(5.0);
 
-        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), map("test.meter", meter),
-                this.<Timer>map());
+        reporter.report(map(), map(), map(), map("test.meter", meter), map());
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBTRACT_MILLIS);
 
-        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), map("test.meter", meter),
-                this.<Timer>map());
+        reporter.report(this.map(), map(), map(), map("test.meter", meter), map());
 
         cleanValues("METRIC_METER");
     }
@@ -195,23 +187,23 @@ public class JdbcCleanupTest extends BaseTest {
 
         when(timer.getSnapshot()).thenReturn(snapshot);
 
-        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
+        reporter.report(map(), map(), map(), map(),
                 map("test.timer", timer));
 
         when(clock.getTime()).thenReturn(System.currentTimeMillis() - SUBTRACT_MILLIS);
 
-        reporter.report(this.<Gauge>map(), this.<Counter>map(), this.<Histogram>map(), this.<Meter>map(),
+        reporter.report(map(), map(), map(), map(),
                 map("test.timer", timer));
 
         cleanValues("METRIC_TIMER");
     }
 
     private <T> SortedMap<String, T> map() {
-        return new TreeMap<String, T>();
+        return new TreeMap<>();
     }
 
     private <T> SortedMap<String, T> map(String name, T metric) {
-        final TreeMap<String, T> map = new TreeMap<String, T>();
+        final TreeMap<String, T> map = new TreeMap<>();
         map.put(name, metric);
         return map;
     }

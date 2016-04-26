@@ -17,8 +17,6 @@ package org.wso2.carbon.metrics.core.reporter.impl;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 
 import java.util.concurrent.TimeUnit;
@@ -28,8 +26,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConsoleReporter extends AbstractReporter implements ScheduledReporter {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConsoleReporter.class);
-
     private final MetricRegistry metricRegistry;
 
     private final MetricFilter metricFilter;
@@ -38,8 +34,8 @@ public class ConsoleReporter extends AbstractReporter implements ScheduledReport
 
     private com.codahale.metrics.ConsoleReporter consoleReporter;
 
-    public ConsoleReporter(MetricRegistry metricRegistry, MetricFilter metricFilter, long pollingPeriod) {
-        super("Console");
+    public ConsoleReporter(String name, MetricRegistry metricRegistry, MetricFilter metricFilter, long pollingPeriod) {
+        super(name);
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;
         this.pollingPeriod = pollingPeriod;
@@ -61,11 +57,9 @@ public class ConsoleReporter extends AbstractReporter implements ScheduledReport
 
     @Override
     public void stopReporter() {
-        try {
+        if (consoleReporter != null) {
             consoleReporter.stop();
             consoleReporter = null;
-        } catch (Throwable e) {
-            logger.error("An error occurred when trying to stop the reporter", e);
         }
     }
 

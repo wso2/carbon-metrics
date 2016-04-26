@@ -15,38 +15,34 @@
  */
 package org.wso2.carbon.metrics.core;
 
+import com.codahale.metrics.MetricRegistry;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
-import org.wso2.carbon.metrics.core.impl.MetricService;
-import org.wso2.carbon.metrics.core.utils.Utils;
+import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
+import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
+import org.wso2.carbon.metrics.core.service.MetricService;
 import org.wso2.carbon.metrics.das.reporter.TestEventServer;
 
 import java.io.File;
-import java.util.Random;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
- * Base Class for all Metrics Core Test Cases
+ * Base Class for all Reporter Based Test Cases
  */
-public abstract class BaseTest {
+public abstract class BaseReporterTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseReporterTest.class);
 
     protected static MetricService metricService;
-
-    protected static Random random = new Random();
 
     protected static DataSource dataSource;
 
@@ -78,29 +74,21 @@ public abstract class BaseTest {
         ic.createSubcontext("jdbc");
         ic.bind("jdbc/WSO2MetricsDB", dataSource);
 
-        // Set setup system property to cover database creator logic
-        System.setProperty("setup", "");
-
-        System.setProperty("metrics.target", "target");
-        System.setProperty("metrics.enabled", "true");
-        System.setProperty("metrics.rootLevel", "INFO");
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator + "metrics.yml");
-        System.setProperty("metrics.level.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
-                + "metrics.properties");
-        System.setProperty("metrics.dataagent.conf", TEST_RESOURCES_DIR + File.separator + "data-agent-config.xml");
-
         if (logger.isInfoEnabled()) {
             logger.info("Creating the DAS Test Receiver");
         }
         TEST_EVENT_SERVER.start("localhost", Integer.parseInt(serverPort));
 
         if (logger.isInfoEnabled()) {
-            logger.info("Creating the MetricService and registering the MX Bean");
+            logger.info("Creating a separate MetricService");
         }
-        metricService = MetricService.getInstance();
-
-        // Register the MX Bean
-        Utils.registerMXBean();
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics-reporter.yml");
+        System.setProperty("metrics.level.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics.properties");
+        System.setProperty("metrics.dataagent.conf", TEST_RESOURCES_DIR + File.separator + "data-agent-config.xml");
+        metricService = new MetricService(new MetricRegistry(), MetricsConfigBuilder.build(),
+                MetricsLevelConfigBuilder.build());
     }
 
     @AfterSuite
@@ -111,40 +99,15 @@ public abstract class BaseTest {
         InitialContext ic = new InitialContext();
         ic.unbind("jdbc/WSO2MetricsDB");
         ic.unbind("jdbc");
+
         if (logger.isInfoEnabled()) {
-            logger.info("Stopping reporters and unregistering the MX Bean");
+            logger.info("Stopping reporters");
         }
-        // Disable to stop reporters
+        // Disable and stop reporters
         metricService.disable();
-        // Unregister the MX Bean
-        Utils.unregisterMXBean();
+        metricService.stopReporters();
         // Stop DAS Receiver Test Server
         TEST_EVENT_SERVER.stop();
     }
 
-    @BeforeMethod
-    protected static void resetRootLevel() {
-        if (logger.isInfoEnabled()) {
-            logger.info("Resetting Root Level to {}", Level.ALL);
-        }
-        metricService.setRootLevel(Level.ALL);
-    }
-
-
-    protected void testSnapshot(Snapshot snapshot) {
-        double delta = 0.00001D;
-        Assert.assertEquals(snapshot.getMin(), 1L);
-        Assert.assertEquals(snapshot.getMax(), 100L);
-        Assert.assertEquals(snapshot.getMean(), 50.5D, delta);
-        Assert.assertEquals(snapshot.getStdDev(), 28.86607004772212D, delta);
-        Assert.assertEquals(snapshot.getMedian(), 50D, delta);
-        Assert.assertEquals(snapshot.get75thPercentile(), 75D, delta);
-        Assert.assertEquals(snapshot.get95thPercentile(), 95D, delta);
-        Assert.assertEquals(snapshot.get98thPercentile(), 98D, delta);
-        Assert.assertEquals(snapshot.get99thPercentile(), 99D, delta);
-        Assert.assertEquals(snapshot.get999thPercentile(), 100D, delta);
-        Assert.assertEquals(snapshot.getValue(0.55D), 55D, delta);
-        Assert.assertEquals(snapshot.getValues().length, 100L);
-        Assert.assertEquals(snapshot.size(), 100);
-    }
 }

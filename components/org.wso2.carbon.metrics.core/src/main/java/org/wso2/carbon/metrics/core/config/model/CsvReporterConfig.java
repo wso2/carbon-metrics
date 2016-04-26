@@ -35,8 +35,16 @@ public class CsvReporterConfig extends ScheduledReporterConfig implements Report
 
     private String location;
 
+    public CsvReporterConfig() {
+        name = "CSV";
+    }
+
     public String getLocation() {
         return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     /**
@@ -75,6 +83,6 @@ public class CsvReporterConfig extends ScheduledReporterConfig implements Report
                             location, pollingPeriod));
         }
 
-        return Optional.of(new CsvReporter(metricRegistry, metricFilter, csvLocation, pollingPeriod));
+        return Optional.of(new CsvReporter(name, metricRegistry, metricFilter, csvLocation, pollingPeriod));
     }
 }

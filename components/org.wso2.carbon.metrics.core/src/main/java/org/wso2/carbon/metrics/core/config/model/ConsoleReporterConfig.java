@@ -32,6 +32,10 @@ public class ConsoleReporterConfig extends ScheduledReporterConfig implements Re
 
     private static final Logger logger = LoggerFactory.getLogger(ConsoleReporterConfig.class);
 
+    public ConsoleReporterConfig() {
+        name = "Console";
+    }
+
     /**
      * Build the Console Reporter
      *
@@ -52,6 +56,6 @@ public class ConsoleReporterConfig extends ScheduledReporterConfig implements Re
                     pollingPeriod));
         }
 
-        return Optional.of(new ConsoleReporter(metricRegistry, metricFilter, pollingPeriod));
+        return Optional.of(new ConsoleReporter(name, metricRegistry, metricFilter, pollingPeriod));
     }
 }

@@ -36,12 +36,24 @@ public class Slf4jReporterConfig extends ScheduledReporterConfig implements Repo
 
     private String markerName;
 
+    public Slf4jReporterConfig() {
+        name = "SLF4J";
+    }
+
     public String getLoggerName() {
         return loggerName;
     }
 
+    public void setLoggerName(String loggerName) {
+        this.loggerName = loggerName;
+    }
+
     public String getMarkerName() {
         return markerName;
+    }
+
+    public void setMarkerName(String markerName) {
+        this.markerName = markerName;
     }
 
     /**
@@ -69,7 +81,8 @@ public class Slf4jReporterConfig extends ScheduledReporterConfig implements Repo
                     loggerName, pollingPeriod));
         }
 
-        return Optional.of(new Slf4jReporter(metricRegistry, metricFilter, loggerName, markerName, pollingPeriod));
+        return Optional.of(new Slf4jReporter(name, metricRegistry, metricFilter, loggerName, markerName,
+                pollingPeriod));
     }
 
 }

@@ -28,7 +28,15 @@ public class MetricsConfig {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public ReportingConfig getReporting() {
         return reporting;
+    }
+
+    public void setReporting(ReportingConfig reporting) {
+        this.reporting = reporting;
     }
 }

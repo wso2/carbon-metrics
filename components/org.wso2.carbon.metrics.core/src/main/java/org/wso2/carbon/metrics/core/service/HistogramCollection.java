@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 WSO2 Inc. (http://wso2.org)
+ * Copyright 2015 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.impl;
+package org.wso2.carbon.metrics.core.service;
 
 import org.wso2.carbon.metrics.core.Histogram;
-import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.Snapshot;
 
+import java.util.List;
+
+
 /**
- * Implementation class wrapping {@link com.codahale.metrics.Histogram} metric
+ * Implementation class wrapping a list of {@link Histogram} metrics
  */
-public class HistogramImpl extends AbstractMetric implements Histogram {
+public class HistogramCollection implements Histogram {
 
-    private final com.codahale.metrics.Histogram histogram;
+    private final Histogram histogram;
+    private final List<Histogram> affected;
 
-    public HistogramImpl(String name, Level level, com.codahale.metrics.Histogram histogram) {
-        super(name, level);
+    public HistogramCollection(Histogram histogram, List<Histogram> affectedHistograms) {
         this.histogram = histogram;
+        this.affected = affectedHistograms;
     }
 
     /*
@@ -38,8 +41,9 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
      */
     @Override
     public void update(int value) {
-        if (isEnabled()) {
-            histogram.update(value);
+        histogram.update(value);
+        for (Histogram h : affected) {
+            h.update(value);
         }
     }
 
@@ -50,8 +54,9 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
      */
     @Override
     public void update(long value) {
-        if (isEnabled()) {
-            histogram.update(value);
+        histogram.update(value);
+        for (Histogram h : affected) {
+            h.update(value);
         }
     }
 
@@ -67,6 +72,6 @@ public class HistogramImpl extends AbstractMetric implements Histogram {
 
     @Override
     public Snapshot getSnapshot() {
-        return new SnapshotImpl(histogram.getSnapshot());
+        return histogram.getSnapshot();
     }
 }

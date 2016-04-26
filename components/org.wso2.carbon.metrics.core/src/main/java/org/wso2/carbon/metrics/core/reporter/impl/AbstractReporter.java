@@ -38,6 +38,16 @@ public abstract class AbstractReporter implements Reporter {
     }
 
     @Override
+    public final String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
     public final void start() {
         if (!running) {
             startReporter();

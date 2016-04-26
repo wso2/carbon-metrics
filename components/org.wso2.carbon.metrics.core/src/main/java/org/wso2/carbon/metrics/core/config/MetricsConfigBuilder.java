@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.utils.Utils;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +50,6 @@ public class MetricsConfigBuilder {
                 String fileContent = stream.map(s -> org.wso2.carbon.kernel.utils.Utils.substituteVariables(s))
                         .collect(Collectors.joining(System.lineSeparator()));
                 Yaml yaml = new Yaml();
-                yaml.setBeanAccess(BeanAccess.FIELD);
                 metricsConfig = yaml.loadAs(fileContent, MetricsConfig.class);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to populate Metrics Configuration from "

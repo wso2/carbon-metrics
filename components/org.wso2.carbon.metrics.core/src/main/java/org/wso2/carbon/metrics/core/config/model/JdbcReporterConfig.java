@@ -28,7 +28,6 @@ import org.wso2.carbon.metrics.core.utils.Utils;
 
 import java.io.File;
 import java.util.Optional;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -48,20 +47,40 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
     private JdbcScheduledCleanupConfig scheduledCleanup = new JdbcScheduledCleanupConfig();
 
+    public JdbcReporterConfig() {
+        name = "JDBC";
+    }
+
     public String getSource() {
         return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public boolean isLookupDataSource() {
         return lookupDataSource;
     }
 
+    public void setLookupDataSource(boolean lookupDataSource) {
+        this.lookupDataSource = lookupDataSource;
+    }
+
     public String getDataSourceName() {
         return dataSourceName;
     }
 
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
+
     public JdbcScheduledCleanupConfig getScheduledCleanup() {
         return scheduledCleanup;
+    }
+
+    public void setScheduledCleanup(JdbcScheduledCleanupConfig scheduledCleanup) {
+        this.scheduledCleanup = scheduledCleanup;
     }
 
     /**
@@ -122,7 +141,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                     source, dataSourceName, pollingPeriod));
         }
 
-        return Optional.of(new JdbcReporter(metricRegistry, metricFilter, source, dataSource, pollingPeriod,
+        return Optional.of(new JdbcReporter(name, metricRegistry, metricFilter, source, dataSource, pollingPeriod,
                 scheduledCleanup.isEnabled(), scheduledCleanup.getDaysToKeep(),
                 scheduledCleanup.getScheduledCleanupPeriod()));
     }

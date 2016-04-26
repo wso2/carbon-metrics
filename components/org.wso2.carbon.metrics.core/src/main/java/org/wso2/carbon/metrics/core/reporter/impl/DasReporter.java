@@ -17,8 +17,6 @@ package org.wso2.carbon.metrics.core.reporter.impl;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 
 import java.util.concurrent.TimeUnit;
@@ -27,8 +25,6 @@ import java.util.concurrent.TimeUnit;
  * A scheduled reporter for Data Analytics Server (DAS)
  */
 public class DasReporter extends AbstractReporter implements ScheduledReporter {
-
-    private static final Logger logger = LoggerFactory.getLogger(DasReporter.class);
 
     private final MetricRegistry metricRegistry;
 
@@ -47,10 +43,10 @@ public class DasReporter extends AbstractReporter implements ScheduledReporter {
 
     private final long pollingPeriod;
 
-    public DasReporter(MetricRegistry metricRegistry, MetricFilter metricFilter, String source, String type,
-                       String receiverURL, String authURL, String username, String password,
+    public DasReporter(String name, MetricRegistry metricRegistry, MetricFilter metricFilter, String source,
+                       String type, String receiverURL, String authURL, String username, String password,
                        String dataAgentConfigPath, long pollingPeriod) {
-        super("DAS");
+        super(name);
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;
         this.source = source;
@@ -81,11 +77,9 @@ public class DasReporter extends AbstractReporter implements ScheduledReporter {
 
     @Override
     public void stopReporter() {
-        try {
+        if (dasReporter != null) {
             dasReporter.stop();
             dasReporter = null;
-        } catch (Throwable e) {
-            logger.error("An error occurred when trying to stop the reporter", e);
         }
     }
 }

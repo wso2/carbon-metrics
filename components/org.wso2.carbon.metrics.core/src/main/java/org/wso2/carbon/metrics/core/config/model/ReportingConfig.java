@@ -41,24 +41,48 @@ public class ReportingConfig {
         return jmx;
     }
 
+    public void setJmx(JmxReporterConfig jmx) {
+        this.jmx = jmx;
+    }
+
     public ConsoleReporterConfig getConsole() {
         return console;
+    }
+
+    public void setConsole(ConsoleReporterConfig console) {
+        this.console = console;
     }
 
     public CsvReporterConfig getCsv() {
         return csv;
     }
 
+    public void setCsv(CsvReporterConfig csv) {
+        this.csv = csv;
+    }
+
     public Slf4jReporterConfig getSlf4j() {
         return slf4j;
+    }
+
+    public void setSlf4j(Slf4jReporterConfig slf4j) {
+        this.slf4j = slf4j;
     }
 
     public JdbcReporterConfig getJdbc() {
         return jdbc;
     }
 
+    public void setJdbc(JdbcReporterConfig jdbc) {
+        this.jdbc = jdbc;
+    }
+
     public DasReporterConfig getDas() {
         return das;
+    }
+
+    public void setDas(DasReporterConfig das) {
+        this.das = das;
     }
 
     public List<? extends ReporterBuilder> getReporterBuilders() {

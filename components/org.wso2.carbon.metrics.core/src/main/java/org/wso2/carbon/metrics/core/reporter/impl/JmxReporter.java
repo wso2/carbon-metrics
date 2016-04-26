@@ -28,8 +28,8 @@ public class JmxReporter extends AbstractReporter implements ListeningReporter {
 
     private final com.codahale.metrics.JmxReporter jmxReporter;
 
-    public JmxReporter(MetricRegistry metricRegistry, MetricFilter metricFilter, String domain) {
-        super("JMX");
+    public JmxReporter(String name, MetricRegistry metricRegistry, MetricFilter metricFilter, String domain) {
+        super(name);
         this.jmxReporter = com.codahale.metrics.JmxReporter.forRegistry(metricRegistry).inDomain(domain)
                 .filter(metricFilter).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();

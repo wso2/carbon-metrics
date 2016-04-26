@@ -1,4 +1,4 @@
-package org.wso2.carbon.metrics.core.impl;
+package org.wso2.carbon.metrics.core.service;
 
 import org.wso2.carbon.metrics.core.Snapshot;
 

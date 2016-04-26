@@ -13,31 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.impl;
+package org.wso2.carbon.metrics.core.service;
 
-import com.codahale.metrics.CachedGauge;
 import org.wso2.carbon.metrics.core.Gauge;
 import org.wso2.carbon.metrics.core.Level;
 
-import java.util.concurrent.TimeUnit;
-
 /**
- * Implementation of cached {@link Gauge} metric
+ * Implementation of {@link Gauge} metric
  *
  * @param <T> the type of the gauge value
  */
-public class CachedGaugeImpl<T> extends AbstractMetric implements com.codahale.metrics.Gauge<T> {
+public class GaugeImpl<T> extends AbstractMetric implements com.codahale.metrics.Gauge<T> {
 
-    private final CachedGauge<T> gauge;
+    private final Gauge<T> gauge;
 
-    public CachedGaugeImpl(String name, Level level, long timeout, TimeUnit timeoutUnit, final Gauge<T> gauge) {
+    public GaugeImpl(String name, Level level, Gauge<T> gauge) {
         super(name, level);
-        this.gauge = new CachedGauge<T>(timeout, timeoutUnit) {
-            @Override
-            protected T loadValue() {
-                return gauge.getValue();
-            }
-        };
+        this.gauge = gauge;
     }
 
     /*

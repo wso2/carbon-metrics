@@ -40,10 +40,15 @@ public class JmxReporterConfig extends ReporterConfig implements ReporterBuilder
     public JmxReporterConfig() {
         // Enable JMX by default
         enabled = true;
+        name = "JMX";
     }
 
     public String getDomain() {
         return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     /**
@@ -61,11 +66,14 @@ public class JmxReporterConfig extends ReporterConfig implements ReporterBuilder
         if (!enabled) {
             return Optional.empty();
         }
+        if (domain == null || domain.trim().isEmpty()) {
+            throw new ReporterBuildException("Domain is not specified for JMX Reporting.");
+        }
 
         if (logger.isInfoEnabled()) {
             logger.info(String.format("Creating JMX reporter for Metrics with domain '%s'", domain));
         }
 
-        return Optional.of(new JmxReporter(metricRegistry, metricFilter, domain));
+        return Optional.of(new JmxReporter(name, metricRegistry, metricFilter, domain));
     }
 }

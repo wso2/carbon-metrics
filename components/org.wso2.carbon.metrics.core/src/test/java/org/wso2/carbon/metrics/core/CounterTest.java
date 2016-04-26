@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 /**
  * Test Cases for {@link Counter}
  */
-public class CounterTest extends BaseTest {
+public class CounterTest extends BaseMetricTest {
 
     @Test
     public void testInitialCount() {
@@ -131,7 +131,7 @@ public class CounterTest extends BaseTest {
         counter.inc();
         Assert.assertEquals(counter.getCount(), 1L);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         counter.inc();
         Assert.assertEquals(counter.getCount(), 1L);
     }
@@ -144,7 +144,7 @@ public class CounterTest extends BaseTest {
         counter.inc(n);
         Assert.assertEquals(counter.getCount(), n);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         counter.inc(n);
         Assert.assertEquals(counter.getCount(), n);
     }
@@ -155,7 +155,7 @@ public class CounterTest extends BaseTest {
         counter.dec();
         Assert.assertEquals(counter.getCount(), -1L);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         counter.dec();
         Assert.assertEquals(counter.getCount(), -1L);
     }
@@ -168,7 +168,7 @@ public class CounterTest extends BaseTest {
         counter.dec(n);
         Assert.assertEquals(counter.getCount(), 0 - n);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         counter.dec(n);
         Assert.assertEquals(counter.getCount(), 0 - n);
     }

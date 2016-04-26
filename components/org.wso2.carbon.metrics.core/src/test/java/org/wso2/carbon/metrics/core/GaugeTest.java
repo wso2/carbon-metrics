@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Test Cases for {@link Gauge}
  */
-public class GaugeTest extends BaseTest {
+public class GaugeTest extends BaseMetricTest {
 
     @Test
     public void testSameMetric() {

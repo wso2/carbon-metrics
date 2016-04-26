@@ -17,7 +17,6 @@ package org.wso2.carbon.metrics.core.reporter.impl;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
@@ -25,11 +24,9 @@ import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A scheduled reporter for logging Metrics values to a SLF4J {@link Logger}
+ * A scheduled reporter for logging Metrics values to a SLF4J Logger
  */
 public class Slf4jReporter extends AbstractReporter implements ScheduledReporter {
-
-    private static final Logger logger = LoggerFactory.getLogger(Slf4jReporter.class);
 
     private final MetricRegistry metricRegistry;
 
@@ -43,9 +40,9 @@ public class Slf4jReporter extends AbstractReporter implements ScheduledReporter
 
     private com.codahale.metrics.Slf4jReporter slf4jReporter;
 
-    public Slf4jReporter(MetricRegistry metricRegistry, MetricFilter metricFilter, String loggerName, String markerName,
-                         long pollingPeriod) {
-        super("SLF4J");
+    public Slf4jReporter(String name, MetricRegistry metricRegistry, MetricFilter metricFilter, String loggerName,
+                         String markerName, long pollingPeriod) {
+        super(name);
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;
         this.loggerName = loggerName;
@@ -74,11 +71,9 @@ public class Slf4jReporter extends AbstractReporter implements ScheduledReporter
 
     @Override
     public void stopReporter() {
-        try {
+        if (slf4jReporter != null) {
             slf4jReporter.stop();
             slf4jReporter = null;
-        } catch (Throwable e) {
-            logger.error("An error occurred when trying to stop the reporter", e);
         }
     }
 }

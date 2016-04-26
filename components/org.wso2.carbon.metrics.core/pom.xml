@@ -149,51 +149,24 @@
 
 
     <properties>
-        <!--
-        <private.package>org.wso2.carbon.metrics.coreternal</private.package>
+        <private.package>org.wso2.carbon.metrics.core.internal</private.package>
         <export.package>
-            !org.wso2.carbon.metrics.coreternal.*,
-            org.wso2.carbon.metrics.core
+            !org.wso2.carbon.metrics.core.internal.*,
+            org.wso2.carbon.metrics.core.*
         </export.package>
         <import.package>
             javax.management,
-            org.osgi.service.component,
-            org.slf4j;version="${slf4j.version.range}"
-        </import.package>
-
-
-                <private.package>org.wso2.carbon.metrics.impl.internal</private.package>
-        <export.package>
-            !org.wso2.carbon.metrics.impl.internal.*,
-            org.wso2.carbon.metrics.impl.*
-        </export.package>
-        <import.package>
             javax.naming,
             javax.sql,
             org.osgi.service.component,
-            org.osgi.framework,
-            org.wso2.carbon.metrics.common.*,
-            org.wso2.carbon.metrics.core
+            org.slf4j;version="${slf4j.version.range}",
+            org.wso2.carbon.metrics.annotation.*,
             org.wso2.carbon.metrics.jdbc.reporter.*;resolution:=optional,
             org.wso2.carbon.metrics.das.reporter.*;resolution:=optional,
             com.codahale.metrics;version="${metrics.version.range}",
             com.codahale.metrics.jvm;version="${metrics.version.range}",
-            org.slf4j;version="${slf4j.version.range}",
-            org.apache.commons.io;version="${commons-io.wso2.version.range}";resolution:=optional,
-            org.wso2.carbon.registry.core.*;version="${carbon.registry.version.range}";resolution:=optional,
-            org.wso2.carbon.utils.*;version="${carbon.kernel.version.range}";resolution:=optional
+            org.wso2.carbon.kernel.*;version="${org.wso2.carbon.core.version.range}"
         </import.package>
-
-
-
-        <export.package>
-            org.wso2.carbon.metrics.common.*
-        </export.package>
-        <import.package>
-            org.wso2.carbon.kernel.*;version="${org.wso2.carbon.core.version.range}",
-            org.slf4j;version="${slf4j.version.range}";resolution:=optional
-        </import.package>-->
-
     </properties>
 </project>
 

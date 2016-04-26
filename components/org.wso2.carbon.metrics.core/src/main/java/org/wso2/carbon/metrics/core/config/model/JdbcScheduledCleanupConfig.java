@@ -32,11 +32,23 @@ public class JdbcScheduledCleanupConfig {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public long getScheduledCleanupPeriod() {
         return scheduledCleanupPeriod;
     }
 
+    public void setScheduledCleanupPeriod(long scheduledCleanupPeriod) {
+        this.scheduledCleanupPeriod = scheduledCleanupPeriod;
+    }
+
     public int getDaysToKeep() {
         return daysToKeep;
+    }
+
+    public void setDaysToKeep(int daysToKeep) {
+        this.daysToKeep = daysToKeep;
     }
 }

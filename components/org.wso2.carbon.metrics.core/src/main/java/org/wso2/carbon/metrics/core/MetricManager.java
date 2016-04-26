@@ -15,16 +15,102 @@
  */
 package org.wso2.carbon.metrics.core;
 
-import org.wso2.carbon.metrics.core.impl.MetricService;
+import com.codahale.metrics.MetricRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
+import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
+import org.wso2.carbon.metrics.core.service.MetricService;
 
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 /**
  * MetricManager is a static utility class providing various metrics.
  */
 public final class MetricManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(MetricManager.class);
+
+    private static final MetricService metricService;
+
+    private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricManager";
+
     private MetricManager() {
+    }
+
+    static {
+        try {
+            metricService = new MetricService(new MetricRegistry(), MetricsConfigBuilder.build(),
+                    MetricsLevelConfigBuilder.build());
+        } catch (RuntimeException e) {
+            logger.error("Couldn't create the MetricService for MetricManager", e);
+            throw e;
+        }
+    }
+
+    /**
+     * Register the MXBean for the MetricService and start all reporters.
+     */
+    public static void activate() {
+        registerMXBean();
+        metricService.startReporters();
+    }
+
+    /**
+     * Unregister the MXBean for the MetricService and stop all reporters.
+     */
+    public static void deactivate() {
+        unregisterMXBean();
+        metricService.stopReporters();
+    }
+
+    /**
+     * Access the main {@link MetricService} used by the {@link MetricManager}
+     *
+     * @return The {@link MetricService} in use
+     */
+    public static MetricService getMetricService() {
+        return metricService;
+    }
+
+    private static void registerMXBean() {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName name = new ObjectName(MBEAN_NAME);
+            if (mBeanServer.isRegistered(name)) {
+                mBeanServer.unregisterMBean(name);
+            }
+            mBeanServer.registerMBean(metricService, name);
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("MetricManagerMXBean registered under name: %s", name));
+            }
+        } catch (JMException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("MetricManagerMXBean registration failed. Name: %s", MBEAN_NAME), e);
+            }
+        }
+    }
+
+    private static void unregisterMXBean() {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName name = new ObjectName(MBEAN_NAME);
+            if (mBeanServer.isRegistered(name)) {
+                mBeanServer.unregisterMBean(name);
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("MetricManagerMXBean with name '%s' was unregistered.", name));
+            }
+        } catch (JMException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("MetricManagerMXBean with name '%s' was failed to unregister", MBEAN_NAME),
+                        e);
+            }
+        }
     }
 
     /**
@@ -74,7 +160,7 @@ public final class MetricManager {
      * @see #meter(String, Level, Level...)
      */
     public static Meter getMeter(String name) throws MetricNotFoundException {
-        return MetricService.getInstance().getMeter(name);
+        return metricService.getMeter(name);
     }
 
     /**
@@ -98,7 +184,7 @@ public final class MetricManager {
      * @see #getMeter(String)
      */
     public static Meter meter(String name, Level level, Level... levels) {
-        return MetricService.getInstance().meter(name, level, levels);
+        return metricService.meter(name, level, levels);
     }
 
     /**
@@ -110,7 +196,7 @@ public final class MetricManager {
      * @see #counter(String, Level, Level...)
      */
     public static Counter getCounter(String name) throws MetricNotFoundException {
-        return MetricService.getInstance().getCounter(name);
+        return metricService.getCounter(name);
     }
 
     /**
@@ -134,7 +220,7 @@ public final class MetricManager {
      * @see #getCounter(String)
      */
     public static Counter counter(String name, Level level, Level... levels) {
-        return MetricService.getInstance().counter(name, level, levels);
+        return metricService.counter(name, level, levels);
     }
 
     /**
@@ -146,7 +232,7 @@ public final class MetricManager {
      * @see #timer(String, Level)
      */
     public static Timer getTimer(String name) throws MetricNotFoundException {
-        return MetricService.getInstance().getTimer(name);
+        return metricService.getTimer(name);
     }
 
     /**
@@ -158,7 +244,7 @@ public final class MetricManager {
      * @see #getTimer(String)
      */
     public static Timer timer(String name, Level level) {
-        return MetricService.getInstance().timer(name, level);
+        return metricService.timer(name, level);
     }
 
     /**
@@ -170,7 +256,7 @@ public final class MetricManager {
      * @see #histogram(String, Level, Level...)
      */
     public static Histogram getHistogram(String name) throws MetricNotFoundException {
-        return MetricService.getInstance().getHistogram(name);
+        return metricService.getHistogram(name);
     }
 
     /**
@@ -194,7 +280,7 @@ public final class MetricManager {
      * @see #getHistogram(String)
      */
     public static Histogram histogram(String name, Level level, Level... levels) {
-        return MetricService.getInstance().histogram(name, level, levels);
+        return metricService.histogram(name, level, levels);
     }
 
     /**
@@ -208,7 +294,7 @@ public final class MetricManager {
      * @see #cachedGauge(String, Level, long, TimeUnit, Gauge)
      */
     public static <T> void gauge(String name, Level level, Gauge<T> gauge) {
-        MetricService.getInstance().gauge(name, level, gauge);
+        metricService.gauge(name, level, gauge);
     }
 
     /**
@@ -224,7 +310,7 @@ public final class MetricManager {
      * @see #cachedGauge(String, Level, long, Gauge)
      */
     public static <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge) {
-        MetricService.getInstance().cachedGauge(name, level, timeout, timeoutUnit, gauge);
+        metricService.cachedGauge(name, level, timeout, timeoutUnit, gauge);
     }
 
     /**
@@ -239,7 +325,7 @@ public final class MetricManager {
      * @see #cachedGauge(String, Level, long, TimeUnit, Gauge)
      */
     public static <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge) {
-        MetricService.getInstance().cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
+        metricService.cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
     }
 
 }

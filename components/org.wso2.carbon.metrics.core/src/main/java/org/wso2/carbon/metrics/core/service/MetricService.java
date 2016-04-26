@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.impl;
+package org.wso2.carbon.metrics.core.service;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -32,8 +32,6 @@ import org.wso2.carbon.metrics.core.Meter;
 import org.wso2.carbon.metrics.core.Metric;
 import org.wso2.carbon.metrics.core.MetricNotFoundException;
 import org.wso2.carbon.metrics.core.Timer;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
-import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
 import org.wso2.carbon.metrics.core.jmx.MetricManagerMXBean;
@@ -41,17 +39,15 @@ import org.wso2.carbon.metrics.core.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.core.metric.OperatingSystemMetricSet;
 import org.wso2.carbon.metrics.core.reporter.ListeningReporter;
 import org.wso2.carbon.metrics.core.reporter.Reporter;
+import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -105,11 +101,13 @@ public final class MetricService implements MetricManagerMXBean {
      */
     private static final String METRIC_PATH_DELIMITER_REGEX = "\\.";
 
-    private MetricsConfig metricsConfig;
+    private final MetricsConfig metricsConfig;
 
-    private final MetricsLevelConfig levelConfiguration;
+    private final MetricsLevelConfig metricsLevelConfig;
 
-    private final Set<Reporter> reporters = Collections.synchronizedSet(new HashSet<>());
+    private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
+
+    private final Map<String, Reporter> reporterMap = new ConcurrentHashMap<>();
 
     private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN = Pattern.compile("^(.+)\\[\\+\\]$");
 
@@ -134,48 +132,21 @@ public final class MetricService implements MetricManagerMXBean {
         }
     }
 
-    /**
-     * Initializes singleton. {@link MetricServiceHolder} is loaded on the first execution of { or the first access to
-     * {@link MetricServiceHolder#INSTANCE}, not before.
-     */
-    private static class MetricServiceHolder {
-        private static final MetricService INSTANCE = new MetricService();
-    }
-
-    public static MetricService getInstance() {
-        return MetricServiceHolder.INSTANCE;
-    }
 
     /**
-     * Initialize the MetricRegistry, Level and Reporters
+     * Constructs a Metric Service with given {@link MetricRegistry} and other configurations.
+     *
+     * @param metricRegistry     The main {@link MetricRegistry} used by the MetricService.
+     * @param metricsConfig      The {@link MetricsConfig} with main and reporter configurations.
+     * @param metricsLevelConfig The {@link MetricsLevelConfig} with root level configuration and level configurations
+     *                           for each metric.
      */
-    private MetricService() {
-        // Initialize Metric Registry
-        metricRegistry = new MetricRegistry();
+    public MetricService(MetricRegistry metricRegistry, MetricsConfig metricsConfig,
+                         MetricsLevelConfig metricsLevelConfig) {
+        this.metricRegistry = metricRegistry;
+        this.metricsConfig = metricsConfig;
+        this.metricsLevelConfig = metricsLevelConfig;
 
-        // Configure
-        configureMetrics();
-
-        levelConfiguration = MetricsLevelConfigBuilder.build();
-
-        Optional<Level> rootLevel = Optional.empty();
-        String rootLevelProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
-        if (rootLevelProperty != null && !rootLevelProperty.trim().isEmpty()) {
-            rootLevel = Optional.ofNullable(Level.getLevel(rootLevelProperty));
-        }
-
-        if (rootLevel.isPresent()) {
-            levelConfiguration.setRootLevel(rootLevel.get());
-        }
-
-        // Register JVM Metrics
-        // This should be the last method when initializing MetricService
-        registerJVMMetrics();
-    }
-
-    private void configureMetrics() {
-        // Read configurations
-        metricsConfig = MetricsConfigBuilder.build();
         // Set enabled from the config
         boolean enabled = metricsConfig.isEnabled();
 
@@ -185,38 +156,42 @@ public final class MetricService implements MetricManagerMXBean {
             enabled = Boolean.valueOf(metricsEnabledProperty);
         }
 
-        MetricFilter enabledMetricFilter = new EnabledMetricFilter();
+        Optional<Level> rootLevel = Optional.empty();
+        String rootLevelProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
+        if (rootLevelProperty != null && !rootLevelProperty.trim().isEmpty()) {
+            rootLevel = Optional.ofNullable(Level.getLevel(rootLevelProperty));
+        }
+
+        if (rootLevel.isPresent()) {
+            metricsLevelConfig.setRootLevel(rootLevel.get());
+        }
 
         // Build all reporters
-        for (ReporterBuilder<? extends Reporter> reporterBuilder : metricsConfig.getReporting().getReporterBuilders()) {
+        metricsConfig.getReporting().getReporterBuilders().forEach(reporterBuilder -> {
             try {
-                Optional<? extends Reporter> reporter = reporterBuilder.build(metricRegistry, enabledMetricFilter);
-                if (reporter.isPresent()) {
-                    reporters.add(reporter.get());
-                }
-            } catch (Throwable e) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Failed to build the reporter", e);
-                }
+                addReporter(reporterBuilder);
+            } catch (ReporterBuildException e) {
+                logger.warn("Reporter build failed", e);
             }
-        }
+        });
 
         // Set enabled
         setEnabled(enabled);
+
+        // Register JVM Metrics
+        // This should be the last method when initializing MetricService
+        registerJVMMetrics();
     }
 
-    /**
-     * Reload Metrics Configuration
-     */
-    public void reloadConfiguration() {
-        // Stop Reporters
-        stopReporters();
-        // Clear Reporters
-        reporters.clear();
-        // Configure again
-        configureMetrics();
-        // Start Reporters
-        startReporters();
+    public <T extends ReporterBuilder> void addReporter(T reporterBuilder) throws ReporterBuildException {
+        Optional<? extends Reporter> reporter = reporterBuilder.build(metricRegistry, enabledMetricFilter);
+        if (reporter.isPresent()) {
+            Reporter r = reporter.get();
+            Reporter previousReporter = reporterMap.put(r.getName(), r);
+            if (previousReporter != null) {
+                previousReporter.stop();
+            }
+        }
     }
 
     /**
@@ -247,11 +222,6 @@ public final class MetricService implements MetricManagerMXBean {
         this.enabled = enabled;
         if (changed) {
             notifyEnabledStatus();
-            if (enabled) {
-                startReporters();
-            } else {
-                stopReporters();
-            }
         }
     }
 
@@ -259,7 +229,7 @@ public final class MetricService implements MetricManagerMXBean {
         for (MetricWrapper metricWrapper : metricsMap.values()) {
             AbstractMetric metric = metricWrapper.metric;
             metric.setEnabled(isMetricEnabled(metricWrapper.name, metric.getLevel(),
-                    levelConfiguration.getLevel(metric.getName()), false));
+                    metricsLevelConfig.getLevel(metric.getName()), false));
         }
     }
 
@@ -288,7 +258,7 @@ public final class MetricService implements MetricManagerMXBean {
         if (!metricsMap.containsKey(name)) {
             throw new IllegalArgumentException("Invalid Metric Name");
         }
-        return levelConfiguration.getLevel(name);
+        return metricsLevelConfig.getLevel(name);
     }
 
     /**
@@ -302,10 +272,10 @@ public final class MetricService implements MetricManagerMXBean {
         if (metricWrapper == null) {
             throw new IllegalArgumentException("Invalid Metric Name");
         }
-        Level currentLevel = levelConfiguration.getLevel(name);
+        Level currentLevel = metricsLevelConfig.getLevel(name);
         if (currentLevel == null || !currentLevel.equals(level)) {
             // Set new level only if there is no existing level or the new level is different from existing level
-            levelConfiguration.setLevel(name, level);
+            metricsLevelConfig.setLevel(name, level);
             AbstractMetric metric = metricWrapper.metric;
             metric.setEnabled(isMetricEnabled(metricWrapper.name, metric.getLevel(), level, false));
             restartListeningReporters();
@@ -316,7 +286,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @return The current root {@link Level}
      */
     public String getRootLevel() {
-        return levelConfiguration.getRootLevel().name();
+        return metricsLevelConfig.getRootLevel().name();
     }
 
 
@@ -330,8 +300,8 @@ public final class MetricService implements MetricManagerMXBean {
      * @param level New Root {@link Level}
      */
     public void setRootLevel(Level level) {
-        boolean changed = !levelConfiguration.getRootLevel().equals(level);
-        levelConfiguration.setRootLevel(level);
+        boolean changed = !metricsLevelConfig.getRootLevel().equals(level);
+        metricsLevelConfig.setRootLevel(level);
         if (changed) {
             notifyEnabledStatus();
             restartListeningReporters();
@@ -367,10 +337,10 @@ public final class MetricService implements MetricManagerMXBean {
             int index = name.lastIndexOf(METRIC_PATH_DELIMITER);
             if (index != -1) {
                 parentName = name.substring(0, index);
-                configLevel = levelConfiguration.getLevel(parentName);
+                configLevel = metricsLevelConfig.getLevel(parentName);
             } else {
                 parentName = ROOT_METRIC_NAME;
-                configLevel = levelConfiguration.getRootLevel();
+                configLevel = metricsLevelConfig.getRootLevel();
             }
             return isMetricEnabledBasedOnHierarchyLevel(parentName, metricLevel, configLevel);
         }
@@ -429,7 +399,7 @@ public final class MetricService implements MetricManagerMXBean {
                 throw new IllegalArgumentException(name + " is already used for a different type of metric");
             }
         } else {
-            boolean enabled = isMetricEnabledBasedOnHierarchyLevel(name, level, levelConfiguration.getLevel(name));
+            boolean enabled = isMetricEnabledBasedOnHierarchyLevel(name, level, metricsLevelConfig.getLevel(name));
             metricWrapper = new MetricWrapper(name, level, enabled);
             metricsMap.put(name, metricWrapper);
             T newMetric = metricBuilder.createMetric(name, level);
@@ -895,26 +865,23 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     private void registerJVMMetrics() {
-        registerAll(Level.INFO, "jvm.memory", new MemoryUsageGaugeSet());
-        registerAll(Level.INFO, "jvm.os", new OperatingSystemMetricSet());
-        registerAll(Level.INFO, "jvm.class-loading", new ClassLoadingGaugeSet());
-        registerAll(Level.DEBUG, "jvm.gc", new GarbageCollectorMetricSet());
-        registerAll(Level.DEBUG, "jvm.threads", new ThreadStatesGaugeSet());
-        registerAll(Level.TRACE, "jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
+        registerAllJVMMetrics(Level.INFO, "jvm.memory", new MemoryUsageGaugeSet());
+        registerAllJVMMetrics(Level.INFO, "jvm.os", new OperatingSystemMetricSet());
+        registerAllJVMMetrics(Level.INFO, "jvm.class-loading", new ClassLoadingGaugeSet());
+        registerAllJVMMetrics(Level.DEBUG, "jvm.gc", new GarbageCollectorMetricSet());
+        registerAllJVMMetrics(Level.DEBUG, "jvm.threads", new ThreadStatesGaugeSet());
+        registerAllJVMMetrics(Level.TRACE, "jvm.buffers",
+                new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
     }
 
-    private void registerAll(Level level, String prefix, MetricSet metrics) throws IllegalArgumentException {
+    private void registerAllJVMMetrics(Level level, String prefix, MetricSet metrics) throws IllegalArgumentException {
         for (Map.Entry<String, com.codahale.metrics.Metric> entry : metrics.getMetrics().entrySet()) {
-            if (entry.getValue() instanceof MetricSet) {
-                registerAll(level, MetricRegistry.name(prefix, entry.getKey()), (MetricSet) entry.getValue());
-            } else if (filterJVMMetric(entry.getKey())) {
+            if (filterJVMMetric(entry.getKey())) {
                 String name = MetricRegistry.name(prefix, entry.getKey());
                 com.codahale.metrics.Metric metric = entry.getValue();
                 if (metric instanceof com.codahale.metrics.Gauge) {
                     com.codahale.metrics.Gauge<?> gauge = (com.codahale.metrics.Gauge<?>) metric;
                     gauge(name, level, new JVMGaugeWrapper(gauge));
-                } else {
-                    logger.warn(String.format("Unexpected Metric found. Name: %s, Class: %s", name, metric.getClass()));
                 }
             }
         }
@@ -941,42 +908,67 @@ public final class MetricService implements MetricManagerMXBean {
     }
 
     /**
-     * For testing purposes
-     */
-    /**
      * Invoke report method of all scheduled reporters.
      */
     public void report() {
-        reporters.stream().filter(reporter -> reporter instanceof ScheduledReporter)
+        reporterMap.values().stream().filter(reporter -> reporter instanceof ScheduledReporter)
                 .forEach(reporter -> ((ScheduledReporter) reporter).report());
     }
 
-    private void startReporters() {
-        for (Reporter reporter : reporters) {
+    private Reporter getReporter(String name) {
+        Reporter reporter = reporterMap.get(name);
+        if (reporter == null) {
+            throw new IllegalArgumentException("Invalid Reporter Name");
+        }
+        return reporter;
+    }
+
+    @Override
+    public void startReporter(String name) {
+        getReporter(name).start();
+    }
+
+    @Override
+    public void stopReporter(String name) {
+        getReporter(name).stop();
+    }
+
+    @Override
+    public boolean isReporterRunning(String name) {
+        return getReporter(name).isRunning();
+    }
+
+    @Override
+    public void startReporters() {
+        reporterMap.values().forEach(reporter -> {
             try {
                 reporter.start();
             } catch (Throwable e) {
                 logger.error("Error when starting the reporter", e);
             }
-        }
+        });
     }
 
-    private void stopReporters() {
-        for (Reporter reporter : reporters) {
+    @Override
+    public void stopReporters() {
+        reporterMap.values().forEach(reporter -> {
             try {
                 reporter.stop();
             } catch (Throwable e) {
                 logger.error("Error when stopping the reporter", e);
             }
-        }
+        });
     }
 
     private void restartListeningReporters() {
-        reporters.stream().filter(reporter -> reporter instanceof ListeningReporter).forEach(reporter -> {
-            ListeningReporter listeningReporter = (ListeningReporter) reporter;
-            listeningReporter.stop();
-            listeningReporter.start();
-        });
+        reporterMap.values().stream()
+                .filter(reporter -> reporter instanceof ListeningReporter)
+                .filter(reporter -> reporter.isRunning())
+                .forEach(reporter -> {
+                    ListeningReporter listeningReporter = (ListeningReporter) reporter;
+                    listeningReporter.stop();
+                    listeningReporter.start();
+                });
     }
 
     /**
@@ -987,7 +979,7 @@ public final class MetricService implements MetricManagerMXBean {
         public boolean matches(String name, com.codahale.metrics.Metric metric) {
             MetricWrapper metricWrapper = metricsMap.get(name);
             return metricWrapper != null &&
-                    isMetricEnabled(metricWrapper.name, metricWrapper.level, levelConfiguration.getLevel(name), true);
+                    isMetricEnabled(metricWrapper.name, metricWrapper.level, metricsLevelConfig.getLevel(name), true);
         }
     }
 

@@ -22,7 +22,6 @@ import org.wso2.carbon.metrics.core.task.ScheduledTask;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 /**

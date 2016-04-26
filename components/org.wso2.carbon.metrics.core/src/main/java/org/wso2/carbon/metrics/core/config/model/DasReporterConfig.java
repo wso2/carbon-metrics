@@ -46,30 +46,66 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
 
     private String password = "admin";
 
-    private String dataAgentConfigPath;
+    private String dataAgentConfigPath = null;
+
+    public DasReporterConfig() {
+        name = "DAS";
+    }
 
     public String getSource() {
         return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getReceiverURL() {
         return receiverURL;
+    }
+
+    public void setReceiverURL(String receiverURL) {
+        this.receiverURL = receiverURL;
     }
 
     public String getAuthURL() {
         return authURL;
     }
 
+    public void setAuthURL(String authURL) {
+        this.authURL = authURL;
+    }
+
     public String getUsername() {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDataAgentConfigPath() {
+        return dataAgentConfigPath;
+    }
+
+    public void setDataAgentConfigPath(String dataAgentConfigPath) {
+        this.dataAgentConfigPath = dataAgentConfigPath;
     }
 
     /**
@@ -93,11 +129,9 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
         if (receiverURL == null || receiverURL.trim().length() == 0) {
             throw new ReporterBuildException("Receiver URL is not specified for DAS Reporting.");
         }
-
         if (username == null || username.trim().length() == 0) {
             throw new ReporterBuildException("Username is not specified for DAS Reporting.");
         }
-
         if (password == null || password.trim().length() == 0) {
             throw new ReporterBuildException("Password is not specified for DAS Reporting.");
         }
@@ -117,7 +151,7 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
                     source, type, pollingPeriod));
         }
 
-        return Optional.of(new DasReporter(metricRegistry, metricFilter, source, type, receiverURL, authURL, username,
-                password, dataAgentConfigPath, pollingPeriod));
+        return Optional.of(new DasReporter(name, metricRegistry, metricFilter, source, type, receiverURL, authURL,
+                username, password, dataAgentConfigPath, pollingPeriod));
     }
 }

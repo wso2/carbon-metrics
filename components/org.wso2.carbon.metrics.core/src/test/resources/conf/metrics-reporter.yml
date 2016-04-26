@@ -18,25 +18,30 @@ enabled: true
 
 reporting:
   jmx:
+    name: JMX
     enabled: true
     domain: org.wso2.carbon.metrics.test
 
   console:
+    name: Console
     enabled: true
     pollingPeriod: 300
 
   csv:
+    name: CSV
     enabled: true
     location: ${metrics.target}/metrics
     pollingPeriod: 10
 
   slf4j:
+    name: SLF4J
     enabled: true
     loggerName: metrics.test
     markerName: metrics
     pollingPeriod: 10
 
   das:
+    name: DAS
     enabled: true
     source: Carbon-das
     receiverURL: tcp://localhost:51840
@@ -45,8 +50,10 @@ reporting:
     username: admin
     password: admin
     pollingPeriod: 120
+    dataAgentConfigPath: data-agent-config.xml
 
   jdbc:
+    name: JDBC
     enabled: true
     source: Carbon-jdbc
     lookupDataSource: true

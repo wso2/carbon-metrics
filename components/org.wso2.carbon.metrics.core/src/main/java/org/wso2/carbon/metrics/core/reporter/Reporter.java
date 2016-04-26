@@ -20,6 +20,10 @@ package org.wso2.carbon.metrics.core.reporter;
  */
 public interface Reporter {
 
+    String getName();
+
+    boolean isRunning();
+
     void start();
 
     void stop();

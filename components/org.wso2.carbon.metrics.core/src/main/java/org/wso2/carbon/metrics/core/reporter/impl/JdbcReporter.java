@@ -17,20 +17,15 @@ package org.wso2.carbon.metrics.core.reporter.impl;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.reporter.ScheduledReporter;
 
 import java.util.concurrent.TimeUnit;
-
 import javax.sql.DataSource;
 
 /**
  * A scheduled reporter for inserting Metrics data to database tables via JDBC.
  */
 public class JdbcReporter extends AbstractReporter implements ScheduledReporter {
-
-    private static final Logger logger = LoggerFactory.getLogger(JdbcReporter.class);
 
     private final MetricRegistry metricRegistry;
 
@@ -53,10 +48,10 @@ public class JdbcReporter extends AbstractReporter implements ScheduledReporter 
     // This task can be null
     private ScheduledJdbcMetricsCleanupTask scheduledJdbcMetricsCleanupTask;
 
-    public JdbcReporter(MetricRegistry metricRegistry, MetricFilter metricFilter, String source,
+    public JdbcReporter(String name, MetricRegistry metricRegistry, MetricFilter metricFilter, String source,
                         DataSource dataSource, long pollingPeriod, boolean runCleanupTask, int daysToKeep,
                         long cleanupPeriod) {
-        super("JDBC");
+        super(name);
         this.metricRegistry = metricRegistry;
         this.metricFilter = metricFilter;
         this.source = source;
@@ -88,18 +83,12 @@ public class JdbcReporter extends AbstractReporter implements ScheduledReporter 
 
     @Override
     public void stopReporter() {
-        try {
+        if (jdbcReporter != null) {
             jdbcReporter.stop();
             jdbcReporter = null;
-        } catch (Throwable e) {
-            logger.error("An error occurred when trying to stop the reporter", e);
         }
-        try {
-            if (scheduledJdbcMetricsCleanupTask != null) {
-                scheduledJdbcMetricsCleanupTask.stop();
-            }
-        } catch (Throwable e) {
-            logger.error("An error occurred when trying to stop the cleanup task", e);
+        if (scheduledJdbcMetricsCleanupTask != null) {
+            scheduledJdbcMetricsCleanupTask.stop();
         }
     }
 }

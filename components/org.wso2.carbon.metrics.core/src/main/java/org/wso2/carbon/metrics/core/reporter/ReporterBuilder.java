@@ -27,6 +27,15 @@ import java.util.Optional;
  */
 public interface ReporterBuilder<T extends Reporter> {
 
+    /**
+     * Build a {@link Reporter}
+     *
+     * @param metricRegistry The Metric Registry used by the Metric Service
+     * @param metricFilter   The Metric filter for filtering enabled metrics
+     * @return An {@link Optional} {@link Reporter}.
+     * @throws ReporterBuildException Throws when required parameters are not found or when the reporter is failed to
+     *                                build.
+     */
     Optional<T> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException;
 

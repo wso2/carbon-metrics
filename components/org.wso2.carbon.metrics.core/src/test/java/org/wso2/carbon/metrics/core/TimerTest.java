@@ -26,7 +26,7 @@ import java.util.stream.LongStream;
 /**
  * Test Cases for {@link Timer}
  */
-public class TimerTest extends BaseTest {
+public class TimerTest extends BaseMetricTest {
 
     @Test
     public void testInitialCount() {
@@ -60,7 +60,7 @@ public class TimerTest extends BaseTest {
         Assert.assertEquals(timer.getCount(), 1);
         context.close();
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         context = timer.start();
         Assert.assertEquals(context.stop(), 0);
         context.close();
@@ -72,7 +72,7 @@ public class TimerTest extends BaseTest {
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
     }
@@ -90,7 +90,7 @@ public class TimerTest extends BaseTest {
         String value = timer.time(callable);
         Assert.assertEquals(value, "test");
 
-        metricService.setRootLevel(Level.OFF);
+        MetricManager.getMetricService().setRootLevel(Level.OFF);
         value = timer.time(callable);
         Assert.assertNull(value, "Value should be null");
     }

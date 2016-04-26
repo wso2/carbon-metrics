@@ -138,7 +138,7 @@ public class DasReporter extends ScheduledReporter {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DasReporter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DasReporter.class);
 
     private final Clock clock;
     private final String source;
@@ -172,20 +172,20 @@ public class DasReporter extends ScheduledReporter {
         super(registry, "das-reporter", filter, rateUnit, durationUnit);
         this.source = source;
         this.clock = clock;
-        if (source == null) {
-            throw new IllegalArgumentException("Source cannot be null");
+        if (source == null || source.trim().isEmpty()) {
+            throw new IllegalArgumentException("Source cannot be null or empty");
         }
-        if (type == null) {
-            throw new IllegalArgumentException("Type cannot be null");
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("Type cannot be null or empty");
         }
-        if (receiverURL == null) {
-            throw new IllegalArgumentException("Data Receiver URL cannot be null");
+        if (receiverURL == null || receiverURL.trim().isEmpty()) {
+            throw new IllegalArgumentException("Data Receiver URL cannot be null or empty");
         }
-        if (username == null) {
-            throw new IllegalArgumentException("Username cannot be null");
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
         }
-        if (password == null) {
-            throw new IllegalArgumentException("Password cannot be null");
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
         }
         if (dataAgentConfigPath != null) {
             AgentHolder.setConfigPath(dataAgentConfigPath);
@@ -204,7 +204,7 @@ public class DasReporter extends ScheduledReporter {
         try {
             dataPublisher.shutdown();
         } catch (DataEndpointException e) {
-            LOGGER.error("Error when stopping the Data Publisher", e);
+            logger.error("Error when stopping the Data Publisher", e);
         }
     }
 

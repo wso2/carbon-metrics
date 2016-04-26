@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 /**
  * Test Cases for Metric Manager API
  */
-public class MetricManagerApiTest extends BaseTest {
+public class MetricManagerApiTest extends BaseMetricTest {
 
     @Test
     public void testCreateSingleCounter() {
