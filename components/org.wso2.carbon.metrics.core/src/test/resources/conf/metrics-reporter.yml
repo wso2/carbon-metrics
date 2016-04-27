@@ -25,20 +25,20 @@ reporting:
   console:
     name: Console
     enabled: true
-    pollingPeriod: 300
+    pollingPeriod: 600
 
   csv:
     name: CSV
     enabled: true
     location: ${metrics.target}/metrics
-    pollingPeriod: 10
+    pollingPeriod: 600
 
   slf4j:
     name: SLF4J
     enabled: true
     loggerName: metrics.test
     markerName: metrics
-    pollingPeriod: 10
+    pollingPeriod: 600
 
   das:
     name: DAS
@@ -49,7 +49,7 @@ reporting:
     type: thrift
     username: admin
     password: admin
-    pollingPeriod: 120
+    pollingPeriod: 600
     dataAgentConfigPath: data-agent-config.xml
 
   jdbc:
@@ -58,7 +58,7 @@ reporting:
     source: Carbon-jdbc
     lookupDataSource: true
     dataSourceName: jdbc/WSO2MetricsDB
-    pollingPeriod: 90
+    pollingPeriod: 600
     scheduledCleanup:
       enabled: true
       daysToKeep: 2

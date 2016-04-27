@@ -58,7 +58,7 @@ public class MetricsConfigTest extends BaseReporterTest {
         ConsoleReporterConfig config = metricsConfig.getReporting().getConsole();
         Assert.assertEquals(config.getName(), "Console");
         Assert.assertEquals(config.isEnabled(), true);
-        Assert.assertEquals(config.getPollingPeriod(), 300L);
+        Assert.assertEquals(config.getPollingPeriod(), 600L);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MetricsConfigTest extends BaseReporterTest {
         CsvReporterConfig config = metricsConfig.getReporting().getCsv();
         Assert.assertEquals(config.getName(), "CSV");
         Assert.assertEquals(config.isEnabled(), true);
-        Assert.assertEquals(config.getPollingPeriod(), 10L);
+        Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getLocation(), "target/metrics");
     }
 
@@ -75,7 +75,7 @@ public class MetricsConfigTest extends BaseReporterTest {
         Slf4jReporterConfig config = metricsConfig.getReporting().getSlf4j();
         Assert.assertEquals(config.getName(), "SLF4J");
         Assert.assertEquals(config.isEnabled(), true);
-        Assert.assertEquals(config.getPollingPeriod(), 10L);
+        Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getLoggerName(), "metrics.test");
         Assert.assertEquals(config.getMarkerName(), "metrics");
     }
@@ -85,7 +85,7 @@ public class MetricsConfigTest extends BaseReporterTest {
         JdbcReporterConfig config = metricsConfig.getReporting().getJdbc();
         Assert.assertEquals(config.getName(), "JDBC");
         Assert.assertEquals(config.isEnabled(), true);
-        Assert.assertEquals(config.getPollingPeriod(), 90L);
+        Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getSource(), "Carbon-jdbc");
         Assert.assertEquals(config.isLookupDataSource(), true);
         Assert.assertEquals(config.getDataSourceName(), "jdbc/WSO2MetricsDB");
@@ -99,7 +99,7 @@ public class MetricsConfigTest extends BaseReporterTest {
         DasReporterConfig config = metricsConfig.getReporting().getDas();
         Assert.assertEquals(config.getName(), "DAS");
         Assert.assertEquals(config.isEnabled(), true);
-        Assert.assertEquals(config.getPollingPeriod(), 120L);
+        Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getSource(), "Carbon-das");
         Assert.assertEquals(config.getReceiverURL(), "tcp://localhost:51840");
         Assert.assertNull(config.getAuthURL());

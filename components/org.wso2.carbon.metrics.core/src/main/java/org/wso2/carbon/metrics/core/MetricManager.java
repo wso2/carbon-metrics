@@ -53,19 +53,19 @@ public final class MetricManager {
     }
 
     /**
-     * Register the MXBean for the MetricService and start all reporters.
+     * Register the MXBean for the MetricService. The metrics should be enabled only via the configuration.
+     * The metrics can also be enabled later from the MetricManagerMXBean.
      */
     public static void activate() {
         registerMXBean();
-        metricService.startReporters();
     }
 
     /**
-     * Unregister the MXBean for the MetricService and stop all reporters.
+     * Unregister the MXBean for the MetricService and disable metrics
      */
     public static void deactivate() {
         unregisterMXBean();
-        metricService.stopReporters();
+        metricService.disable();
     }
 
     /**

@@ -73,7 +73,7 @@ public final class MetricService implements MetricManagerMXBean {
     private final ConcurrentMap<String, Metric> metricCollectionsMap = new ConcurrentHashMap<>();
 
     /**
-     * Metrics feature enabling flag
+     * Metrics feature enabling flag. This flag should be initially updated from the configuration.
      */
     private boolean enabled;
 
@@ -183,6 +183,13 @@ public final class MetricService implements MetricManagerMXBean {
         registerJVMMetrics();
     }
 
+    /**
+     * Add a {@link Reporter} to the {@link MetricService}.
+     *
+     * @param reporterBuilder The {@link ReporterBuilder} to create a new {@link Reporter}.
+     * @param <T>             The type of the {@link Reporter}
+     * @throws ReporterBuildException when the reporter build fails
+     */
     public <T extends ReporterBuilder> void addReporter(T reporterBuilder) throws ReporterBuildException {
         Optional<? extends Reporter> reporter = reporterBuilder.build(metricRegistry, enabledMetricFilter);
         if (reporter.isPresent()) {
@@ -192,6 +199,21 @@ public final class MetricService implements MetricManagerMXBean {
                 previousReporter.stop();
             }
         }
+    }
+
+    /**
+     * Remove a {@link Reporter} from the {@link MetricService}.
+     *
+     * @param name The name of the reporter
+     * @return {@code true} if the reporter is removed successfully, otherwise {@code false}
+     */
+    public boolean removeReporter(String name) {
+        Reporter previousReporter = reporterMap.remove(name);
+        if (previousReporter != null) {
+            previousReporter.stop();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -222,6 +244,11 @@ public final class MetricService implements MetricManagerMXBean {
         this.enabled = enabled;
         if (changed) {
             notifyEnabledStatus();
+            if (enabled) {
+                startReporters();
+            } else {
+                stopReporters();
+            }
         }
     }
 

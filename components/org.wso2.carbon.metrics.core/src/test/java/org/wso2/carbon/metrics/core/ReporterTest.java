@@ -17,6 +17,7 @@ package org.wso2.carbon.metrics.core;
 
 import com.codahale.metrics.MetricRegistry;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.databridge.commons.Event;
@@ -66,6 +67,11 @@ public class ReporterTest extends BaseReporterTest {
         template.execute("DELETE FROM METRIC_METER;");
         template.execute("DELETE FROM METRIC_HISTOGRAM;");
         template.execute("DELETE FROM METRIC_COUNTER;");
+    }
+
+    @BeforeClass
+    private void stopReporters() {
+        metricService.stopReporters();
     }
 
     @Test
@@ -167,7 +173,8 @@ public class ReporterTest extends BaseReporterTest {
         metricService.report();
         Assert.assertTrue(new File("target/metrics", meterName + ".csv").exists(), "Meter CSV file should be created");
 
-        metricService.disable();
+        metricService.stopReporter("CSV");
+        Assert.assertFalse(metricService.isReporterRunning("CSV"));
         String meterName2 = MetricManager.name(this.getClass(), "test-csv-meter2");
         File meter2File = new File("target/metrics", meterName2 + ".csv");
         // Delete the file first, it might be there from a previous execution
@@ -178,7 +185,8 @@ public class ReporterTest extends BaseReporterTest {
         metricService.report();
         Assert.assertFalse(meter2File.exists(), "Meter CSV file should NOT be created");
 
-        metricService.enable();
+        metricService.startReporter("CSV");
+        Assert.assertTrue(metricService.isReporterRunning("CSV"));
         metricService.report();
 
         Assert.assertTrue(meter2File.exists(), "Meter2 CSV file should be created");
@@ -275,13 +283,15 @@ public class ReporterTest extends BaseReporterTest {
                 template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         Assert.assertEquals(meterResult.size(), 1);
 
-        metricService.disable();
+        metricService.stopReporter("JDBC");
+        Assert.assertFalse(metricService.isReporterRunning("JDBC"));
         metricService.report();
         meterResult =
                 template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         Assert.assertEquals(meterResult.size(), 1);
 
-        metricService.enable();
+        metricService.startReporter("JDBC");
+        Assert.assertTrue(metricService.isReporterRunning("JDBC"));
         metricService.report();
 
         meterResult = template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
@@ -436,7 +446,9 @@ public class ReporterTest extends BaseReporterTest {
 
     @Test
     public void testDasReporterValidations() {
+        String name = "DAS-TEST";
         DasReporterConfig dasReporterConfig = new DasReporterConfig();
+        dasReporterConfig.setName(name);
         dasReporterConfig.setEnabled(true);
         dasReporterConfig.setAuthURL("ssl://localhost:7711");
         dasReporterConfig.setType(null);
@@ -470,9 +482,13 @@ public class ReporterTest extends BaseReporterTest {
         System.setProperty("metrics.dataagent.conf", "invalid.xml");
         try {
             metricService.addReporter(dasReporterConfig);
+            // Add again to update
+            metricService.addReporter(dasReporterConfig);
         } catch (ReporterBuildException e) {
             Assert.fail("Reporter should be created");
         }
+        Assert.assertTrue(metricService.removeReporter(name));
+        Assert.assertFalse(metricService.removeReporter(name));
     }
 
     private <T extends ReporterBuilder> void addReporter(T reporterBuilder) {

@@ -126,11 +126,19 @@ public class MetricServiceTest extends BaseMetricTest {
         meter.mark();
         Assert.assertEquals(meter.getCount(), 5);
 
+        // Set level again
+        MetricManager.getMetricService().setMetricLevel(name, Level.ALL);
+        Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.ALL,
+                "Configured level should be ALL");
+
+        meter.mark();
+        Assert.assertEquals(meter.getCount(), 6);
+
         MetricManager.getMetricService().setMetricLevel(name, Level.OFF);
         Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.OFF,
                 "Configured level should be OFF");
         meter.mark();
-        Assert.assertEquals(meter.getCount(), 5);
+        Assert.assertEquals(meter.getCount(), 6);
 
         // Test string parameters
         MetricManager.getMetricService().setLevel(name, Level.INFO.name());
@@ -139,7 +147,7 @@ public class MetricServiceTest extends BaseMetricTest {
         Assert.assertEquals(MetricManager.getMetricService().getMetricLevel(name), Level.INFO,
                 "Configured level should be INFO");
         meter.mark();
-        Assert.assertEquals(meter.getCount(), 6);
+        Assert.assertEquals(meter.getCount(), 7);
 
 
     }

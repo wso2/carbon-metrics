@@ -103,11 +103,7 @@ public abstract class BaseReporterTest {
         if (logger.isInfoEnabled()) {
             logger.info("Stopping reporters");
         }
-        // Disable and stop reporters
         metricService.disable();
-        metricService.stopReporters();
-        // Stop DAS Receiver Test Server
         TEST_EVENT_SERVER.stop();
     }
-
 }
