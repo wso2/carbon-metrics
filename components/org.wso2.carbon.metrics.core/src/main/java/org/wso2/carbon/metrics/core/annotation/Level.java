@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.annotation;
+package org.wso2.carbon.metrics.core.annotation;
 
 /**
  * Defines the set of Levels to be used in Metric Annotations

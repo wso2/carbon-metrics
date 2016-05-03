@@ -17,10 +17,10 @@ package org.wso2.carbon.metrics.core;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.wso2.carbon.metrics.annotation.Counted;
-import org.wso2.carbon.metrics.annotation.Level;
-import org.wso2.carbon.metrics.annotation.Metered;
-import org.wso2.carbon.metrics.annotation.Timed;
+import org.wso2.carbon.metrics.core.annotation.Counted;
+import org.wso2.carbon.metrics.core.annotation.Level;
+import org.wso2.carbon.metrics.core.annotation.Metered;
+import org.wso2.carbon.metrics.core.annotation.Timed;
 
 import java.lang.reflect.Method;
 

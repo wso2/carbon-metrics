@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.annotation;
+package org.wso2.carbon.metrics.core.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,15 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Measure the rate of events
+ * Count
  */
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Metered {
+public @interface Counted {
     /**
-     * @return The name of the meter.
+     * @return The name of the counter.
      */
     String name() default "";
 
@@ -42,8 +42,14 @@ public @interface Metered {
 
     /**
      * @return If {@code true}, use the given name as an absolute name. If {@code false}, use the given name relative to
-     * the annotated class.
+     * the annotated class
      */
     boolean absolute() default false;
 
+    /**
+     * @return If {@code false} (default), the counter is decremented when the annotated method returns, counting
+     * current invocations of the annotated method. If {@code true}, the counter increases monotonically, counting total
+     * invocations of the annotated method.
+     */
+    boolean monotonic() default false;
 }

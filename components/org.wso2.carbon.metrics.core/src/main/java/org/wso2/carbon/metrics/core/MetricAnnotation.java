@@ -15,9 +15,9 @@
  */
 package org.wso2.carbon.metrics.core;
 
-import org.wso2.carbon.metrics.annotation.Counted;
-import org.wso2.carbon.metrics.annotation.Metered;
-import org.wso2.carbon.metrics.annotation.Timed;
+import org.wso2.carbon.metrics.core.annotation.Counted;
+import org.wso2.carbon.metrics.core.annotation.Metered;
+import org.wso2.carbon.metrics.core.annotation.Timed;
 
 import java.lang.reflect.Method;
 
@@ -39,7 +39,7 @@ public final class MetricAnnotation {
         return MetricManager.name(method.getDeclaringClass().getName(), method.getName());
     }
 
-    private static Level toLevel(org.wso2.carbon.metrics.annotation.Level level) {
+    private static Level toLevel(org.wso2.carbon.metrics.core.annotation.Level level) {
         Level returnLevel = Level.INFO;
         switch (level) {
             case OFF:
