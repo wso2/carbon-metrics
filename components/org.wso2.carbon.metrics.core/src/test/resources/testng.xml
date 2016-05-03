@@ -30,9 +30,10 @@
             <class name="org.wso2.carbon.metrics.core.MetricManagerApiTest"/>
             <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
             <class name="org.wso2.carbon.metrics.core.JdbcCleanupTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricAnnotationTest"/>
         </classes>
     </test>
     <listeners>
-        <listener class-name="org.wso2.carbon.metrics.core.TestMethodListener" />
+        <listener class-name="org.wso2.carbon.metrics.core.TestMethodListener"/>
     </listeners>
 </suite>

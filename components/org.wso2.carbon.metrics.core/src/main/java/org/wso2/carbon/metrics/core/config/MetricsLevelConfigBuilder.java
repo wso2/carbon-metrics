@@ -43,7 +43,7 @@ public class MetricsLevelConfigBuilder {
 
     public static MetricsLevelConfig build() {
         MetricsLevelConfig metricsLevelConfig = new MetricsLevelConfig();
-        Optional<File> metricsLevelConfigFile = org.wso2.carbon.metrics.core.utils
+        Optional<File> metricsLevelConfigFile = org.wso2.carbon.metrics.core.internal.utils
                 .Utils.getConfigFile("metrics.level.conf", "metrics.properties");
         if (metricsLevelConfigFile.isPresent()) {
             File file = metricsLevelConfigFile.get();

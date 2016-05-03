@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.utils;
+package org.wso2.carbon.metrics.core.internal.utils;
 
 import java.io.File;
 import java.net.InetAddress;

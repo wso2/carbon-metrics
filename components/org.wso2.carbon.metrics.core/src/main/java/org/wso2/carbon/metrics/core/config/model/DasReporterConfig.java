@@ -19,10 +19,10 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.metrics.core.internal.utils.Utils;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.impl.DasReporter;
-import org.wso2.carbon.metrics.core.utils.Utils;
 
 import java.io.File;
 import java.util.Optional;
@@ -136,7 +136,7 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
             throw new ReporterBuildException("Password is not specified for DAS Reporting.");
         }
 
-        Optional<File> dataAgentConfigFile = org.wso2.carbon.metrics.core.utils.Utils.getConfigFile(
+        Optional<File> dataAgentConfigFile = org.wso2.carbon.metrics.core.internal.utils.Utils.getConfigFile(
                 "metrics.dataagent.conf", "data-agent-config.xml");
 
         if (dataAgentConfigFile.isPresent()) {
