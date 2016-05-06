@@ -152,24 +152,16 @@ public class MetricServiceTest extends BaseMetricTest {
 
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testUnknownMetricSetLevel() {
-        try {
-            MetricManager.getMetricService().setMetricLevel("unknown", Level.INFO);
-            Assert.fail("Set metric level should not be successful for unknown metrics");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+        MetricManager.getMetricService().setMetricLevel("unknown", Level.INFO);
+        Assert.fail("Set metric level should not be successful for unknown metrics");
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testUnknownMetricGetLevel() {
-        try {
-            MetricManager.getMetricService().getMetricLevel("unknown");
-            Assert.fail("Get metric level should not be successful for unknown metrics");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+        MetricManager.getMetricService().getMetricLevel("unknown");
+        Assert.fail("Get metric level should not be successful for unknown metrics");
     }
 
     @Test

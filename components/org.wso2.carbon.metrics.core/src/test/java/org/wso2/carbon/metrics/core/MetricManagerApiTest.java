@@ -51,14 +51,10 @@ public class MetricManagerApiTest extends BaseMetricTest {
         Assert.assertEquals(counter.getCount(), 1);
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testInvalidMultipleLevels() {
-        try {
-            MetricManager.counter("counter2", Level.INFO, Level.INFO);
-            Assert.fail("Counter shouldn't be created");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+        // Counter shouldn't be created
+        MetricManager.counter("counter2", Level.INFO, Level.INFO);
     }
 
     @Test
@@ -90,93 +86,63 @@ public class MetricManagerApiTest extends BaseMetricTest {
         }
     }
 
-    @Test
-    public void testGetUndefinedCounter() {
-        try {
-            MetricManager.getCounter("org.wso2.carbon.metrics.api.test2.counter");
-            Assert.fail("Should throw an exception, cannot retrieve undefined metric");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof MetricNotFoundException);
-        }
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testGetUndefinedCounter() throws MetricNotFoundException {
+        // cannot retrieve undefined metric
+        MetricManager.getCounter("org.wso2.carbon.metrics.api.test2.counter");
     }
 
-    @Test
-    public void testGetWrongMetricType() {
-        try {
-            MetricManager.counter("org.wso2.carbon.metrics.api.test3.counter", Level.INFO);
-            MetricManager.getMeter("org.wso2.carbon.metrics.api.test3.counter");
-            Assert.fail("Should throw an exception, cannot retrieve metric when the metric type is different");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testGetWrongMetricType() throws MetricNotFoundException {
+        // cannot retrieve metric when the metric type is different
+        MetricManager.counter("org.wso2.carbon.metrics.api.test3.counter", Level.INFO);
+        MetricManager.getMeter("org.wso2.carbon.metrics.api.test3.counter");
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testWrongMetricCollectionType() {
-        try {
-            MetricManager.meter("org.wso2.carbon.metrics.api.test4[+].sub.meter", Level.INFO, Level.INFO);
-            MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.meter", Level.INFO, Level.INFO);
-            Assert.fail("Should throw an exception, cannot retrieve metric when the metric type is different");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+        // cannot retrieve metric when the metric type is different
+        MetricManager.meter("org.wso2.carbon.metrics.api.test4[+].sub.meter", Level.INFO, Level.INFO);
+        MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.meter", Level.INFO, Level.INFO);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testInvalidAnnotation1() {
+        MetricManager.counter("api[+].sub", Level.INFO, Level.INFO);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testInvalidAnnotation2() {
+        MetricManager.counter("api.sub[+].counter", Level.INFO, Level.INFO);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testInvalidAnnotation3() {
+        MetricManager.counter("api.sub.counter[+]", Level.INFO, Level.INFO);
     }
 
     @Test
-    public void testInvalidAnnotations() {
-        String failMessage = "Invalid name should not be accepted";
-        try {
-            MetricManager.counter("api[+].sub", Level.INFO, Level.INFO);
-            Assert.fail(failMessage);
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
-        try {
-            MetricManager.counter("api.sub[+].counter", Level.INFO, Level.INFO);
-            Assert.fail(failMessage);
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
-        try {
-            MetricManager.counter("api.sub.counter[+]", Level.INFO, Level.INFO);
-            Assert.fail(failMessage);
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
-        try {
-            MetricManager.counter("api[+].sub.counter", Level.INFO, Level.INFO);
-        } catch (Exception e) {
-            Assert.fail("Should not throw an exception");
-        }
+    public void testValidAnnotation() {
+        MetricManager.counter("api[+].sub.counter", Level.INFO, Level.INFO);
     }
 
-    @Test
-    public void testAnnotatedNameToCreateSingleMetric() {
-        try {
-            MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.counter", Level.INFO);
-            Assert.fail("Should throw an exception as there is only one level specified for the annotated name");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
-        try {
-            MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.counter", Level.INFO, Level.INFO
-                    , Level.INFO);
-            Assert.fail("Should throw an exception, cannot retrieve metric when the levels do not match with "
-                    + "the annotated name");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testAnnotatedNameWithOneLevel() {
+        // There is only one level specified for the annotated name
+        MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.counter", Level.INFO);
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testAnnotatedNameWithExtraLevels() {
+        // Cannot retrieve metric when the levels do not match with the annotated name
+        MetricManager.counter("org.wso2.carbon.metrics.api.test4[+].sub.counter", Level.INFO, Level.INFO, Level.INFO);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testGetMetricWithDifferentLevel() {
-        try {
-            MetricManager.counter("org.wso2.carbon.metrics.api.test5.counter", Level.INFO);
-            MetricManager.counter("org.wso2.carbon.metrics.api.test5.counter", Level.DEBUG);
-            Assert.fail("Should throw an exception, cannot retrieve metric when the metric level is different");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof IllegalArgumentException);
-        }
+        // Cannot retrieve metric when the metric level is different
+        MetricManager.counter("org.wso2.carbon.metrics.api.test5.counter", Level.INFO);
+        MetricManager.counter("org.wso2.carbon.metrics.api.test5.counter", Level.DEBUG);
     }
 
     @Test
@@ -201,41 +167,33 @@ public class MetricManagerApiTest extends BaseMetricTest {
     }
 
     @Test
-    public void testCreateMultipleMeters() {
+    public void testCreateMultipleMeters() throws MetricNotFoundException {
         // create new meters
         Meter subMeterCollection1 =
                 MetricManager.meter("org.wso2.carbon.metrics.api.test1[+].sub.meter", Level.INFO, Level.INFO);
         // retrieve created meters
-        try {
-            Meter subMeterCollection2 = MetricManager.getMeter("org.wso2.carbon.metrics.api.test1[+].sub.meter");
-            Meter subMeter1 = MetricManager.getMeter("org.wso2.carbon.metrics.api.test1.sub.meter");
-            Meter mainMeter1 = MetricManager.getMeter("org.wso2.carbon.metrics.api.test1.meter");
+        Meter subMeterCollection2 = MetricManager.getMeter("org.wso2.carbon.metrics.api.test1[+].sub.meter");
+        Meter subMeter1 = MetricManager.getMeter("org.wso2.carbon.metrics.api.test1.sub.meter");
+        Meter mainMeter1 = MetricManager.getMeter("org.wso2.carbon.metrics.api.test1.meter");
 
-            // get or create meters
-            Meter subCounter2 = MetricManager.meter("org.wso2.carbon.metrics.api.test1.sub.meter", Level.INFO);
-            Meter mainCounter2 = MetricManager.meter("org.wso2.carbon.metrics.api.test1.meter", Level.INFO);
+        // get or create meters
+        Meter subCounter2 = MetricManager.meter("org.wso2.carbon.metrics.api.test1.sub.meter", Level.INFO);
+        Meter mainCounter2 = MetricManager.meter("org.wso2.carbon.metrics.api.test1.meter", Level.INFO);
 
-            subMeterCollection1.mark();
+        subMeterCollection1.mark();
 
-            Assert.assertEquals(subMeterCollection1.getCount(), 1);
-            Assert.assertEquals(subMeterCollection2.getCount(), 1);
-            Assert.assertEquals(subMeter1.getCount(), 1);
-            Assert.assertEquals(mainMeter1.getCount(), 1);
-            Assert.assertEquals(subCounter2.getCount(), 1);
-            Assert.assertEquals(mainCounter2.getCount(), 1);
-        } catch (MetricNotFoundException e) {
-            Assert.fail("Metric should exist");
-        }
+        Assert.assertEquals(subMeterCollection1.getCount(), 1);
+        Assert.assertEquals(subMeterCollection2.getCount(), 1);
+        Assert.assertEquals(subMeter1.getCount(), 1);
+        Assert.assertEquals(mainMeter1.getCount(), 1);
+        Assert.assertEquals(subCounter2.getCount(), 1);
+        Assert.assertEquals(mainCounter2.getCount(), 1);
     }
 
-    @Test
-    public void testGetUndefinedMeter() {
-        try {
-            MetricManager.getMeter("org.wso2.carbon.metrics.api.test2.meter");
-            Assert.fail("Should throw an exception, cannot retrieve undefined metric");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof MetricNotFoundException);
-        }
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testGetUndefinedMeter() throws MetricNotFoundException {
+        // cannot retrieve undefined metric
+        MetricManager.getMeter("org.wso2.carbon.metrics.api.test2.meter");
     }
 
     @Test
@@ -260,42 +218,34 @@ public class MetricManagerApiTest extends BaseMetricTest {
     }
 
     @Test
-    public void testCreateMultipleHistograms() {
+    public void testCreateMultipleHistograms() throws MetricNotFoundException {
         // create new histograms
         Histogram subHistogramCollection1 =
                 MetricManager.histogram("org.wso2.carbon.metrics.api.test1[+].sub.histogram", Level.INFO, Level.INFO);
         // retrieve created histograms
-        try {
-            Histogram subHistogramCollection2 = MetricManager
-                    .getHistogram("org.wso2.carbon.metrics.api.test1[+].sub.histogram");
-            Histogram subHistogram1 = MetricManager.getHistogram("org.wso2.carbon.metrics.api.test1.sub.histogram");
-            Histogram mainHistogram1 = MetricManager.getHistogram("org.wso2.carbon.metrics.api.test1.histogram");
+        Histogram subHistogramCollection2 = MetricManager
+                .getHistogram("org.wso2.carbon.metrics.api.test1[+].sub.histogram");
+        Histogram subHistogram1 = MetricManager.getHistogram("org.wso2.carbon.metrics.api.test1.sub.histogram");
+        Histogram mainHistogram1 = MetricManager.getHistogram("org.wso2.carbon.metrics.api.test1.histogram");
 
-            // get or create histograms
-            Histogram subCounter2 = MetricManager.histogram("org.wso2.carbon.metrics.api.test1.sub.histogram",
-                    Level.INFO);
-            Histogram mainCounter2 = MetricManager.histogram("org.wso2.carbon.metrics.api.test1.histogram", Level.INFO);
+        // get or create histograms
+        Histogram subCounter2 = MetricManager.histogram("org.wso2.carbon.metrics.api.test1.sub.histogram",
+                Level.INFO);
+        Histogram mainCounter2 = MetricManager.histogram("org.wso2.carbon.metrics.api.test1.histogram", Level.INFO);
 
-            subHistogramCollection1.update(1);
+        subHistogramCollection1.update(1);
 
-            Assert.assertEquals(subHistogramCollection1.getCount(), 1);
-            Assert.assertEquals(subHistogramCollection2.getCount(), 1);
-            Assert.assertEquals(subHistogram1.getCount(), 1);
-            Assert.assertEquals(mainHistogram1.getCount(), 1);
-            Assert.assertEquals(subCounter2.getCount(), 1);
-            Assert.assertEquals(mainCounter2.getCount(), 1);
-        } catch (MetricNotFoundException e) {
-            Assert.fail("Metric should exist");
-        }
+        Assert.assertEquals(subHistogramCollection1.getCount(), 1);
+        Assert.assertEquals(subHistogramCollection2.getCount(), 1);
+        Assert.assertEquals(subHistogram1.getCount(), 1);
+        Assert.assertEquals(mainHistogram1.getCount(), 1);
+        Assert.assertEquals(subCounter2.getCount(), 1);
+        Assert.assertEquals(mainCounter2.getCount(), 1);
     }
 
-    @Test
-    public void testGetUndefinedHistogram() {
-        try {
-            MetricManager.getHistogram("org.wso2.carbon.metrics.api.test2.histogram");
-            Assert.fail("Should throw an exception, cannot retrieve undefined metric");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof MetricNotFoundException);
-        }
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testGetUndefinedHistogram() throws MetricNotFoundException {
+        // cannot retrieve undefined metric
+        MetricManager.getHistogram("org.wso2.carbon.metrics.api.test2.histogram");
     }
 }
