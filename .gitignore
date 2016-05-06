@@ -49,4 +49,4 @@ local.properties
 .texlipse
 
 #H2 database
-*.h2.db
+*.db

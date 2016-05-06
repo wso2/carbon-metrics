@@ -30,7 +30,6 @@
     <name>WSO2 Carbon Metrics DAS CAPP</name>
     <description>WSO2 Data Analytics Server (DAS) Reporter implementation for Dropwizard Metrics</description>
 
-
     <build>
         <plugins>
             <plugin>

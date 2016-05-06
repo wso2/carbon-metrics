@@ -29,12 +29,40 @@
     <packaging>bundle</packaging>
     <name>WSO2 Carbon Metrics JDBC Reporter</name>
     <description>JDBC Reporter implementation for Dropwizard Metrics</description>
-    <url>http://wso2.com</url>
 
     <dependencies>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -51,6 +79,11 @@
             <artifactId>spring-jdbc</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -58,10 +91,8 @@
             org.wso2.carbon.metrics.jdbc.reporter.*,
         </export.package>
         <import.package>
-            com.codahale.metrics;
-            version="${metrics.version.range}",
+            com.codahale.metrics;version="${metrics.version.range}",
             org.slf4j;version="${slf4j.version.range}"
         </import.package>
-        <include.resource></include.resource>
     </properties>
 </project>

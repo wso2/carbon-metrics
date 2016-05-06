@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     # Copyright 2014 WSO2 Inc. (http://wso2.org)
     #
@@ -58,12 +58,41 @@
             <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.orbit.org.yaml</groupId>
+            <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -160,11 +189,12 @@
             javax.sql,
             org.osgi.service.component,
             org.slf4j;version="${slf4j.version.range}",
-            org.wso2.carbon.metrics.jdbc.reporter.*;resolution:=optional,
+            org.wso2.carbon.metrics.jdbc.reporter.*,
             org.wso2.carbon.metrics.das.reporter.*;resolution:=optional,
             com.codahale.metrics;version="${metrics.version.range}",
             com.codahale.metrics.jvm;version="${metrics.version.range}",
-            org.wso2.carbon.kernel.*;version="${org.wso2.carbon.core.version.range}"
+            org.yaml.snakeyaml;version="${snakeyaml.version.range}",
+            org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}"
         </import.package>
     </properties>
 </project>

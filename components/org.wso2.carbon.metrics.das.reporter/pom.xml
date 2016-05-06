@@ -30,7 +30,6 @@
     <name>WSO2 Carbon Metrics DAS Reporter</name>
     <description>WSO2 Data Analytics Server (DAS) Reporter implementation for Dropwizard Metrics</description>
 
-
     <dependencies>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -43,6 +42,35 @@
         <dependency>
             <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.databridge.commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.analytics-common</groupId>
@@ -104,11 +132,10 @@
             org.wso2.carbon.metrics.das.reporter.*,
         </export.package>
         <import.package>
-            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
-            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.version.range}";resolution:=optional,
+            org.wso2.carbon.databridge.agent.*;version="${carbon.analytics.common.version.range}",
+            org.wso2.carbon.databridge.commons.*;version="${carbon.analytics.common.version.range}",
             com.codahale.metrics;version="${metrics.version.range}",
             org.slf4j;version="${slf4j.version.range}"
         </import.package>
-        <include.resource></include.resource>
     </properties>
 </project>
