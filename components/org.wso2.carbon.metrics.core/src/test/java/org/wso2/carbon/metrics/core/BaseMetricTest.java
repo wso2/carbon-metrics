@@ -62,7 +62,7 @@ public abstract class BaseMetricTest {
 
 
     protected void testSnapshot(Snapshot snapshot) {
-        double delta = 0.001D;
+        double delta = 0.2D;
         Assert.assertEquals(snapshot.getMin(), 1L);
         Assert.assertEquals(snapshot.getMax(), 100L);
         Assert.assertEquals(snapshot.getMean(), 50.5D, delta);
