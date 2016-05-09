@@ -27,6 +27,12 @@ import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import org.wso2.carbon.kernel.utils.CarbonServerInfo;
+import org.wso2.carbon.metrics.core.Counter;
+import org.wso2.carbon.metrics.core.Histogram;
+import org.wso2.carbon.metrics.core.Level;
+import org.wso2.carbon.metrics.core.Meter;
+import org.wso2.carbon.metrics.core.MetricManager;
+import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.osgi.test.util.CarbonSysPropConfiguration;
 import org.wso2.carbon.osgi.test.util.OSGiTestConfigurationUtils;
 
@@ -34,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -50,12 +57,27 @@ public class MetricsTest {
     @Configuration
     public Option[] createConfiguration() {
         List<Option> optionList = new ArrayList<>();
-        optionList.add(mavenBundle().artifactId("org.wso2.carbon.metrics.jdbc.reporter")
-                .groupId("org.wso2.carbon.metrics").versionAsInProject());
-        optionList.add(mavenBundle().artifactId("org.wso2.carbon.metrics.das.reporter")
-                .groupId("org.wso2.carbon.metrics").versionAsInProject());
-        optionList.add(mavenBundle().artifactId("org.wso2.carbon.metrics.core")
-                .groupId("org.wso2.carbon.metrics").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.jdbc.reporter").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.core").versionAsInProject());
+        optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
+                .artifactId("metrics-core").versionAsInProject());
+        optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
+                .artifactId("metrics-jvm").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.datasources")
+                .artifactId("org.wso2.carbon.datasource.core").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.das.reporter").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
+                .artifactId("org.wso2.carbon.databridge.agent").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
+                .artifactId("org.wso2.carbon.databridge.commons").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.orbit.com.lmax")
+                .artifactId("disruptor").versionAsInProject());
+        optionList.add(mavenBundle().groupId("libthrift.wso2")
+                .artifactId("libthrift").versionAsInProject());
+
 
         String currentDir = Paths.get("").toAbsolutePath().toString();
         Path carbonHome = Paths.get(currentDir, "target", "carbon-home");
@@ -86,7 +108,46 @@ public class MetricsTest {
     @Test
     public void testMetricsCoreBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.core");
-//        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE, "Metrics Core Bundle is not activated");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
+    @Test
+    public void testMetricsJdbcReporterBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.jdbc.reporter");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
+    public void testMetricsDasReporterBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.reporter");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
+    public void testCounter() {
+        Counter counter = MetricManager.counter("org.wso2.carbon.metrics.osgi.test.counter", Level.INFO);
+        counter.inc();
+        Assert.assertEquals(counter.getCount(), 1);
+    }
+
+    @Test
+    public void testMeter() {
+        Meter meter = MetricManager.meter("org.wso2.carbon.metrics.osgi.test.meter", Level.INFO);
+        meter.mark();
+        Assert.assertEquals(meter.getCount(), 1);
+    }
+
+    @Test
+    public void testHistogram() {
+        Histogram histogram = MetricManager.histogram("org.wso2.carbon.metrics.osgi.test.histogram", Level.INFO);
+        histogram.update(1);
+        Assert.assertEquals(histogram.getCount(), 1);
+    }
+
+    @Test
+    public void testTimer() {
+        Timer timer = MetricManager.timer("org.wso2.carbon.metrics.osgi.test.timer", Level.INFO);
+        timer.update(1, TimeUnit.SECONDS);
+        Assert.assertEquals(timer.getCount(), 1);
+    }
 }
