@@ -17,13 +17,13 @@
 <FindBugsFilter>
     <Match>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
-        <Class name="org.wso2.carbon.metrics.core.reporter.impl.ScheduledJdbcMetricsCleanupTask" />
-        <Method name="cleanMetricsTable" />
+        <Class name="org.wso2.carbon.metrics.core.reporter.impl.ScheduledJdbcMetricsCleanupTask"/>
+        <Method name="cleanMetricsTable"/>
     </Match>
 
     <Match>
         <Bug pattern="DM_CONVERT_CASE"/>
-        <Class name="org.wso2.carbon.metrics.core.Level" />
-        <Method name="valueOf" />
+        <Class name="org.wso2.carbon.metrics.core.Level"/>
+        <Method name="valueOf"/>
     </Match>
 </FindBugsFilter>
