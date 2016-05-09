@@ -18,8 +18,12 @@ package org.wso2.carbon.metrics.core.internal;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.metrics.core.MetricManager;
 
 /**
@@ -49,6 +53,25 @@ public class MetricsComponent {
         MetricManager.deactivate();
     }
 
+    @Reference(
+            name = "org.wso2.carbon.datasource.DataSourceService",
+            service = DataSourceService.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterDataSourceService"
+    )
+    protected void onDataSourceServiceReady(DataSourceService service) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("The JNDI datasource lookup for JDBC Reporter should work now");
+        }
+    }
+
+
+    protected void unregisterDataSourceService(DataSourceService dataSourceService) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("The JNDI datasource is unregistered");
+        }
+    }
 }
 
 

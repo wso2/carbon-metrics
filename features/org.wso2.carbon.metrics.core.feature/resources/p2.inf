@@ -15,8 +15,9 @@
 ################################################################################
 
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.metrics.server_${feature.version}/sql/,target:${installFolder}/../../../dbscripts/metrics,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.metrics.server_${feature.version}/conf/metrics.xml/,target:${installFolder}/../../conf/metrics.xml,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.metrics.server_${feature.version}/conf/metrics.properties/,target:${installFolder}/../../conf/metrics.properties,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.metrics.server_${feature.version}/conf/metrics-datasources.xml/,target:${installFolder}/../../conf/datasources/metrics-datasources.xml,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../features/org.wso2.carbon.metrics.server_${feature.version}/repository/database/WSO2METRICS_DB.h2.db/,target:${installFolder}/../../database/WSO2METRICS_DB.h2.db,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../conf); \
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/sql/,target:${installFolder}/../../../dbscripts/metrics,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics.yml/,target:${installFolder}/../../../conf/metrics.yml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics.properties/,target:${installFolder}/../../../conf/metrics.properties,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics-datasources.xml/,target:${installFolder}/../../../conf/datasources/metrics-datasources.xml,overwrite:true);\
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/database/metrics.mv.db/,target:${installFolder}/../../../database/metrics.mv.db,overwrite:true);\

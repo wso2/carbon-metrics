@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.core.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
-import org.wso2.carbon.metrics.core.internal.utils.Utils;
+import org.wso2.carbon.metrics.core.internal.Utils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;

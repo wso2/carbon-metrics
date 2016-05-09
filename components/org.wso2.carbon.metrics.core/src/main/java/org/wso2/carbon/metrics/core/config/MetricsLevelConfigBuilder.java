@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.internal.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,8 +44,7 @@ public class MetricsLevelConfigBuilder {
 
     public static MetricsLevelConfig build() {
         MetricsLevelConfig metricsLevelConfig = new MetricsLevelConfig();
-        Optional<File> metricsLevelConfigFile = org.wso2.carbon.metrics.core.internal.utils
-                .Utils.getConfigFile("metrics.level.conf", "metrics.properties");
+        Optional<File> metricsLevelConfigFile = Utils.getConfigFile("metrics.level.conf", "metrics.properties");
         if (metricsLevelConfigFile.isPresent()) {
             File file = metricsLevelConfigFile.get();
             if (logger.isDebugEnabled()) {

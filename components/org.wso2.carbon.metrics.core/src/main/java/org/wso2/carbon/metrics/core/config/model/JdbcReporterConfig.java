@@ -21,7 +21,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.core.internal.utils.Utils;
+import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.impl.JdbcReporter;
@@ -112,8 +112,8 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                         String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
             }
         } else {
-            Optional<File> metricsLevelConfigFile = org.wso2.carbon.metrics.core.internal.utils.Utils.getConfigFile(
-                    "metrics.datasource.conf", "metrics-datasource.properties");
+            Optional<File> metricsLevelConfigFile = Utils.getConfigFile("metrics.datasource.conf",
+                    "metrics-datasource.properties");
             if (!metricsLevelConfigFile.isPresent()) {
                 throw new ReporterBuildException("Metrics Datasource configuration file not found!");
             }

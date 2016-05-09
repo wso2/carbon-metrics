@@ -101,7 +101,7 @@
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.yaml</groupId>
+                <groupId>org.wso2.orbit.org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
             </dependency>
@@ -135,6 +135,11 @@
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
                 <version>${hikaricp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.datasources</groupId>
+                <artifactId>org.wso2.carbon.datasource.core</artifactId>
+                <version>${carbon.datasources.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testng</groupId>
@@ -242,16 +247,6 @@
                 <scope>test</scope>
             </dependency>
             <!-- OSGi Test Dependencies - Start -->
-            <!--            <dependency>
-                            <groupId>org.ops4j.pax.logging</groupId>
-                            <artifactId>pax-logging-api</artifactId>
-                            <version>${pax.logging.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.ops4j.pax.logging</groupId>
-                            <artifactId>pax-logging-log4j2</artifactId>
-                            <version>${pax.logging.version}</version>
-                        </dependency>-->
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam</artifactId>
@@ -290,18 +285,6 @@
             </dependency>
             <!-- OSGi Test Dependencies - End -->
             <!-- Distribution Dependencies - Start -->
-            <!--            <dependency>
-                            <groupId>org.wso2.carbon</groupId>
-                            <artifactId>org.wso2.carbon.core.server.feature</artifactId>
-                            <version>${carbon.kernel.version}</version>
-                            <type>zip</type>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.wso2.carbon</groupId>
-                            <artifactId>org.wso2.carbon.core.runtime.feature</artifactId>
-                            <version>${carbon.kernel.version}</version>
-                            <type>zip</type>
-                        </dependency>-->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
@@ -322,7 +305,7 @@
             <dependency>
                 <groupId>org.wso2.carbon.datasources</groupId>
                 <artifactId>org.wso2.carbon.datasource.core.feature</artifactId>
-                <version>${carbon.datasource.version}</version>
+                <version>${carbon.datasources.version}</version>
                 <type>zip</type>
             </dependency>
             <!-- Distribution Dependencies - End -->
@@ -512,7 +495,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.5</log4j.version>
-        <snakeyaml.version>1.17</snakeyaml.version>
+        <snakeyaml.version>1.16.0.wso2v1</snakeyaml.version>
         <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
         <hikaricp.version>2.4.6</hikaricp.version>
         <h2.version>1.4.191</h2.version>
@@ -520,13 +503,14 @@
         <mockito.version>1.10.19</mockito.version>
         <tomcat.version>8.0.33</tomcat.version>
         <jacoco.version>0.7.6.201602180812</jacoco.version>
-        <carbon.feature.plugin.version>2.0.0</carbon.feature.plugin.version>
+        <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <pax.logging.version>1.8.4</pax.logging.version>
         <pax.exam.version>4.9.1</pax.exam.version>
         <pax.url.version>1.6.0</pax.url.version>
         <ow2.jta.spec.version>1.0.12</ow2.jta.spec.version>
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
         <carbon.jndi.version>1.0.0-alpha</carbon.jndi.version>
-        <carbon.datasource.version>1.0.0-SNAPSHOT</carbon.datasource.version>
+        <carbon.datasources.version>1.0.0-SNAPSHOT</carbon.datasources.version>
+        <carbon.datasources.version.range>[1.0.0, 2.0.0)</carbon.datasources.version.range>
     </properties>
 </project>

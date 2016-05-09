@@ -58,12 +58,16 @@
             <artifactId>org.wso2.carbon.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
+            <groupId>org.wso2.orbit.org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.datasources</groupId>
+            <artifactId>org.wso2.carbon.datasource.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -189,6 +193,7 @@
             javax.sql,
             org.osgi.service.component,
             org.slf4j;version="${slf4j.version.range}",
+            org.wso2.carbon.datasource.core.*;version="${carbon.datasources.version.range}",
             org.wso2.carbon.metrics.jdbc.reporter.*,
             org.wso2.carbon.metrics.das.reporter.*;resolution:=optional,
             com.codahale.metrics;version="${metrics.version.range}",
