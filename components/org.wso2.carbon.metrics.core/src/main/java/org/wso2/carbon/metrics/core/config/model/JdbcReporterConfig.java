@@ -126,14 +126,6 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
             dataSource = new HikariDataSource(hikariConfig);
         }
 
-
-        // Setup Database if required
-        try {
-            setupMetricsDatabase(dataSource);
-        } catch (Exception e) {
-            throw new ReporterBuildException(
-                    String.format("Error when setting up metrics tables in Data Source: '%s'.", dataSourceName), e);
-        }
         if (logger.isInfoEnabled()) {
             logger.info(String.format(
                     "Creating JDBC reporter for Metrics with source '%s', data source '%s'" +
@@ -146,31 +138,4 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                 scheduledCleanup.getScheduledCleanupPeriod()));
     }
 
-
-    /**
-     * Create Metrics Database Tables
-     *
-     * @throws Exception if an error occurred while creating the Metrics Tables.
-     */
-    private static void setupMetricsDatabase(DataSource dataSource) throws Exception {
-        if (System.getProperty("setup") == null) {
-            return;
-        }
-
-        // TODO implement logic to support -Dsetup
-/////**
-//// * Select query to check whether database tables are created
-//// */
-////private static final String DB_CHECK_SQL = "SELECT NAME FROM METRIC_GAUGE";
-////
-////            LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
-////            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
-////                databaseCreator.createRegistryDatabase();
-////            } else {
-////                if (logger.isInfoEnabled()) {
-////                    logger.info("Metrics tables exist. Skipping the Metrics Database setup process.");
-////                }
-////            }
-//        }
-    }
 }
