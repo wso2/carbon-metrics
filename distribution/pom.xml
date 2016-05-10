@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
-            <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
+            <artifactId>org.wso2.carbon.metrics.feature</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
@@ -95,7 +95,7 @@
                             <targetRepository>file:${basedir}/target/p2-repo</targetRepository>
                             <features>
                                 <feature>
-                                    <id>org.wso2.carbon.metrics.core.feature</id>
+                                    <id>org.wso2.carbon.metrics.feature</id>
                                     <version>${carbon.metrics.version}</version>
                                 </feature>
                                 <feature>
@@ -124,7 +124,7 @@
                             <deleteOldProfileFiles>true</deleteOldProfileFiles>
                             <features>
                                 <feature>
-                                    <id>org.wso2.carbon.metrics.core.feature</id>
+                                    <id>org.wso2.carbon.metrics.feature</id>
                                     <version>${carbon.metrics.version}</version>
                                 </feature>
                                 <feature>
@@ -147,12 +147,12 @@
                     <execution>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <replace dir="target/wso2carbon-kernel-${carbon.kernel.version}/osgi" token="false"
                                          value="true">
                                     <include name="**/bundles.info"/>
                                 </replace>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -176,7 +176,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

@@ -190,6 +190,7 @@ public final class MetricService implements MetricManagerMXBean {
      * @param <T>             The type of the {@link Reporter}
      * @throws ReporterBuildException when the reporter build fails
      */
+    @SuppressWarnings("unchecked")
     public <T extends ReporterBuilder> void addReporter(T reporterBuilder) throws ReporterBuildException {
         Optional<? extends Reporter> reporter = reporterBuilder.build(metricRegistry, enabledMetricFilter);
         if (reporter.isPresent()) {

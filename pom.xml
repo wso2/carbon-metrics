@@ -57,8 +57,7 @@
         <module>components/org.wso2.carbon.metrics.das.capp</module>
         <module>components/org.wso2.carbon.metrics.das.reporter</module>
         <module>components/org.wso2.carbon.metrics.core</module>
-        <module>features/org.wso2.carbon.metrics.das.reporter.feature</module>
-        <module>features/org.wso2.carbon.metrics.core.feature</module>
+        <module>features/org.wso2.carbon.metrics.feature</module>
         <module>tests/osgi-tests</module>
         <module>distribution</module>
     </modules>
@@ -251,31 +250,37 @@
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam</artifactId>
                 <version>${pax.exam.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam-container-native</artifactId>
                 <version>${pax.exam.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam-testng</artifactId>
                 <version>${pax.exam.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam-link-mvn</artifactId>
                 <version>${pax.exam.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.ops4j.pax.url</groupId>
                 <artifactId>pax-url-aether</artifactId>
                 <version>${pax.url.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.ow2.spec.ee</groupId>
                 <artifactId>ow2-jta-1.1-spec</artifactId>
                 <version>${ow2.jta.spec.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -283,11 +288,17 @@
                 <version>${carbon.kernel.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
+                <scope>test</scope>
+            </dependency>
             <!-- OSGi Test Dependencies - End -->
             <!-- Distribution Dependencies - Start -->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
-                <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
+                <artifactId>org.wso2.carbon.metrics.feature</artifactId>
                 <version>${carbon.metrics.version}</version>
                 <type>zip</type>
             </dependency>
@@ -332,6 +343,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>
@@ -506,9 +518,10 @@
         <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <pax.logging.version>1.8.4</pax.logging.version>
         <pax.exam.version>4.9.1</pax.exam.version>
-        <pax.url.version>1.6.0</pax.url.version>
-        <ow2.jta.spec.version>1.0.12</ow2.jta.spec.version>
+        <pax.url.version>2.4.7</pax.url.version>
+        <ow2.jta.spec.version>1.0.13</ow2.jta.spec.version>
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
+        <javax.inject.version>1</javax.inject.version>
         <carbon.jndi.version>1.0.0-alpha</carbon.jndi.version>
         <carbon.datasources.version>1.0.0-SNAPSHOT</carbon.datasources.version>
         <carbon.datasources.version.range>[1.0.0, 2.0.0)</carbon.datasources.version.range>
