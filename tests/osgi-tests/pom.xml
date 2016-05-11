@@ -129,6 +129,8 @@
                             <systemPropertyVariables>
                                 <org.ops4j.pax.url.mvn.localRepository>${settings.localRepository}
                                 </org.ops4j.pax.url.mvn.localRepository>
+                                <org.ops4j.pax.logging.DefaultServiceLog.level>INFO
+                                </org.ops4j.pax.logging.DefaultServiceLog.level>
                                 <!--<pax.exam.system>default</pax.exam.system>-->
                             </systemPropertyVariables>
                             <suiteXmlFiles>
