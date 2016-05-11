@@ -111,40 +111,40 @@ public class MetricsTest {
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testMetricsCoreBundle")
     public void testMetricsJdbcReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.jdbc.reporter");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testMetricsCoreBundle")
     public void testMetricsDasReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.reporter");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testMetricsCoreBundle")
     public void testCounter() {
         Counter counter = MetricManager.counter("org.wso2.carbon.metrics.osgi.test.counter", Level.INFO);
         counter.inc();
         Assert.assertEquals(counter.getCount(), 1);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testMetricsCoreBundle")
     public void testMeter() {
         Meter meter = MetricManager.meter("org.wso2.carbon.metrics.osgi.test.meter", Level.INFO);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testMetricsCoreBundle")
     public void testHistogram() {
         Histogram histogram = MetricManager.histogram("org.wso2.carbon.metrics.osgi.test.histogram", Level.INFO);
         histogram.update(1);
         Assert.assertEquals(histogram.getCount(), 1);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testMetricsCoreBundle")
     public void testTimer() {
         Timer timer = MetricManager.timer("org.wso2.carbon.metrics.osgi.test.timer", Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
