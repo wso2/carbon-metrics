@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>4</version>
+        <version>5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -308,6 +308,18 @@
                 <version>${carbon.kernel.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.kernel.feature</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.runtime.feature</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon.jndi</groupId>
                 <artifactId>org.wso2.carbon.jndi.feature</artifactId>
                 <version>${carbon.jndi.version}</version>
@@ -488,8 +500,8 @@
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <equinox.osgi.version>3.10.101.v20150820-1432</equinox.osgi.version>
         <equinox.osgi.services.version>3.5.0.v20150519-2006</equinox.osgi.services.version>
-        <carbon.kernel.version>5.1.0-alpha</carbon.kernel.version>
-        <carbon.kernel.version.range>[5.0.0, 6.0.0)</carbon.kernel.version.range>
+        <carbon.kernel.version>5.1.0-alpha2</carbon.kernel.version>
+        <carbon.kernel.version.range>[5.1.0, 6.0.0)</carbon.kernel.version.range>
         <carbon.analytics.common.version>5.0.11</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
         <xerces.impl.version>2.11.0.SP4</xerces.impl.version>
