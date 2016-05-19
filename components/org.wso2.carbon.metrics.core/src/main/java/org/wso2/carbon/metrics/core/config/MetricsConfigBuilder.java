@@ -47,7 +47,7 @@ public class MetricsConfigBuilder {
                 logger.debug(String.format("Loading Metrics Configuration from %s", file.getAbsolutePath()));
             }
             try (Stream<String> stream = Files.lines(file.toPath())) {
-                String fileContent = stream.map(s -> org.wso2.carbon.kernel.utils.Utils.substituteVariables(s))
+                String fileContent = stream.map(org.wso2.carbon.kernel.utils.Utils::substituteVariables)
                         .collect(Collectors.joining(System.lineSeparator()));
                 Yaml yaml = new Yaml();
                 metricsConfig = yaml.loadAs(fileContent, MetricsConfig.class);
