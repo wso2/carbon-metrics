@@ -15,7 +15,7 @@
     # limitations under the License.
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Netrics-Core-Test-Suite" parallel="none">
+<suite name="Netrics-Core-Test-Suite" parallel="false">
     <!-- Server port for internal server -->
     <parameter name="server-port" value="51840"/>
     <test name="Metrics-Core-Unit-Test">

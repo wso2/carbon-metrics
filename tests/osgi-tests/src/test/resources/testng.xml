@@ -15,7 +15,7 @@
     # limitations under the License.
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Netrics-OSGi-Test-Suite" parallel="none">
+<suite name="Netrics-OSGi-Test-Suite" parallel="false">
     <test name="Metrics-OSGi-Unit-Test">
         <classes>
             <class name="org.wso2.carbon.metrics.osgi.MetricsTest"/>
