@@ -65,6 +65,8 @@ public class MetricsTest {
                 .artifactId("metrics-core").versionAsInProject());
         optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
                 .artifactId("metrics-jvm").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.jndi")
+                .artifactId("org.wso2.carbon.jndi").versionAsInProject());
         optionList.add(mavenBundle().groupId("org.wso2.carbon.datasources")
                 .artifactId("org.wso2.carbon.datasource.core").versionAsInProject());
         optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
