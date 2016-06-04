@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.core.jmx;
 /**
  * Interface for JMX Managed Metric Manager Bean
  */
-public interface MetricManagerMXBean {
+public interface MetricsMXBean {
 
     /**
      * Enables the Metrics Feature
@@ -46,7 +46,7 @@ public interface MetricManagerMXBean {
      * @param name The name of the Metric
      * @return The Level for the given metric name
      */
-    String getLevel(String name);
+    String getMetricLevel(String name);
 
     /**
      * Set a new level to the given metric name
@@ -54,7 +54,7 @@ public interface MetricManagerMXBean {
      * @param name  The name of the Metric
      * @param level New Level for the Metric
      */
-    void setLevel(String name, String level);
+    void setMetricLevel(String name, String level);
 
     /**
      * @return Get the current configured root level
@@ -73,6 +73,12 @@ public interface MetricManagerMXBean {
      */
     void report();
 
+    /**
+     * Invoke report method of the scheduled reporter with given name
+     *
+     * @param name The name of the reporter
+     */
+    void report(String name);
 
     /**
      * Start the reporter with given name

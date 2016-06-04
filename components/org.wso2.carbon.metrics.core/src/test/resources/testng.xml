@@ -21,14 +21,16 @@
     <test name="Metrics-Core-Unit-Test">
         <classes>
             <class name="org.wso2.carbon.metrics.core.MetricsConfigTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricManagerTest"/>
             <class name="org.wso2.carbon.metrics.core.GaugeTest"/>
             <class name="org.wso2.carbon.metrics.core.CounterTest"/>
             <class name="org.wso2.carbon.metrics.core.MeterTest"/>
             <class name="org.wso2.carbon.metrics.core.HistogramTest"/>
             <class name="org.wso2.carbon.metrics.core.TimerTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricManagementServiceTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricServiceTest"/>
-            <class name="org.wso2.carbon.metrics.core.MetricManagerApiTest"/>
             <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricsMXBeanTest"/>
             <class name="org.wso2.carbon.metrics.core.JdbcCleanupTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricAnnotationTest"/>
         </classes>

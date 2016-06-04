@@ -34,9 +34,9 @@ public final class MetricAnnotation {
             if (absolute) {
                 return explicitName;
             }
-            return MetricManager.name(method.getDeclaringClass().getName(), method.getName(), explicitName);
+            return MetricService.name(method.getDeclaringClass().getName(), method.getName(), explicitName);
         }
-        return MetricManager.name(method.getDeclaringClass().getName(), method.getName());
+        return MetricService.name(method.getDeclaringClass().getName(), method.getName());
     }
 
     private static Level toLevel(org.wso2.carbon.metrics.core.annotation.Level level) {
@@ -61,18 +61,18 @@ public final class MetricAnnotation {
         return returnLevel;
     }
 
-    public static Counter counter(Counted annotation, Method method) {
-        return MetricManager.counter(buildName(annotation.name(), annotation.absolute(), method),
+    public static Counter counter(MetricService metricService, Counted annotation, Method method) {
+        return metricService.counter(buildName(annotation.name(), annotation.absolute(), method),
                 toLevel(annotation.level()));
     }
 
-    public static Meter meter(Metered annotation, Method method) {
-        return MetricManager.meter(buildName(annotation.name(), annotation.absolute(), method),
+    public static Meter meter(MetricService metricService, Metered annotation, Method method) {
+        return metricService.meter(buildName(annotation.name(), annotation.absolute(), method),
                 toLevel(annotation.level()));
     }
 
-    public static Timer timer(Timed annotation, Method method) {
-        return MetricManager.timer(buildName(annotation.name(), annotation.absolute(), method),
+    public static Timer timer(MetricService metricService, Timed annotation, Method method) {
+        return metricService.timer(buildName(annotation.name(), annotation.absolute(), method),
                 toLevel(annotation.level()));
     }
 

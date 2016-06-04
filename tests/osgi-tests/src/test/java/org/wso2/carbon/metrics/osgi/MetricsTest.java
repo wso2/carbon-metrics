@@ -31,7 +31,8 @@ import org.wso2.carbon.metrics.core.Counter;
 import org.wso2.carbon.metrics.core.Histogram;
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.Meter;
-import org.wso2.carbon.metrics.core.MetricManager;
+import org.wso2.carbon.metrics.core.MetricManagementService;
+import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.osgi.test.util.CarbonSysPropConfiguration;
 import org.wso2.carbon.osgi.test.util.OSGiTestConfigurationUtils;
@@ -53,6 +54,12 @@ public class MetricsTest {
 
     @Inject
     private CarbonServerInfo carbonServerInfo;
+
+    @Inject
+    private MetricService metricService;
+
+    @Inject
+    private MetricManagementService metricManagementService;
 
     @Configuration
     public Option[] createConfiguration() {
@@ -113,43 +120,105 @@ public class MetricsTest {
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = "testMetricsCoreBundle")
+    @Test
     public void testMetricsJdbcReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.jdbc.reporter");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = "testMetricsCoreBundle")
+    @Test
     public void testMetricsDasReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.reporter");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = "testMetricsCoreBundle")
+    @Test
     public void testCounter() {
-        Counter counter = MetricManager.counter("org.wso2.carbon.metrics.osgi.test.counter", Level.INFO);
+        Counter counter = metricService.counter("org.wso2.carbon.metrics.osgi.test.counter", Level.INFO);
         counter.inc();
         Assert.assertEquals(counter.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = "testMetricsCoreBundle")
+    @Test
     public void testMeter() {
-        Meter meter = MetricManager.meter("org.wso2.carbon.metrics.osgi.test.meter", Level.INFO);
+        Meter meter = metricService.meter("org.wso2.carbon.metrics.osgi.test.meter", Level.INFO);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = "testMetricsCoreBundle")
+    @Test
     public void testHistogram() {
-        Histogram histogram = MetricManager.histogram("org.wso2.carbon.metrics.osgi.test.histogram", Level.INFO);
+        Histogram histogram = metricService.histogram("org.wso2.carbon.metrics.osgi.test.histogram", Level.INFO);
         histogram.update(1);
         Assert.assertEquals(histogram.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = "testMetricsCoreBundle")
+    @Test
     public void testTimer() {
-        Timer timer = MetricManager.timer("org.wso2.carbon.metrics.osgi.test.timer", Level.INFO);
+        Timer timer = metricService.timer("org.wso2.carbon.metrics.osgi.test.timer", Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
+    }
+
+    @Test
+    public void testEnableDisable() {
+        Assert.assertTrue(metricManagementService.isEnabled(), "Metric Service should be enabled");
+        Counter counter = metricService.counter(MetricService.name(this.getClass(), "test-enabled"), Level.INFO);
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 10);
+
+        metricManagementService.disable();
+        Assert.assertFalse(metricManagementService.isEnabled(), "Metric Service should be disabled");
+
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 10);
+
+        metricManagementService.enable();
+        counter.inc(90);
+        Assert.assertEquals(counter.getCount(), 100);
+    }
+
+    @Test
+    public void testMetricSetLevel() {
+        String name = MetricService.name(this.getClass(), "test-metric-level");
+        Counter counter = metricService.counter(name, Level.INFO);
+        Assert.assertNull(metricManagementService.getMetricLevel(name), "There should be no configured level");
+
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 10);
+
+        metricManagementService.setMetricLevel(name, Level.INFO);
+        Assert.assertEquals(metricManagementService.getMetricLevel(name), Level.INFO,
+                "Configured level should be INFO");
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 20);
+
+        metricManagementService.setMetricLevel(name, Level.OFF);
+        Assert.assertEquals(metricManagementService.getMetricLevel(name), Level.OFF, "Configured level should be OFF");
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 20);
+    }
+
+    @Test
+    public void testMetricServiceLevels() {
+        Counter counter = metricService.counter(MetricService.name(this.getClass(), "test-levels"), Level.INFO);
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 10);
+
+        metricManagementService.setRootLevel(Level.TRACE);
+        Assert.assertEquals(metricManagementService.getRootLevel(), Level.TRACE);
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 20);
+
+        metricManagementService.setRootLevel(Level.OFF);
+        Assert.assertEquals(metricManagementService.getRootLevel(), Level.OFF);
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 20);
+
+        //  Set Root Level back to INFO, otherwise other tests will fail
+        metricManagementService.setRootLevel(Level.INFO);
+        Assert.assertEquals(metricManagementService.getRootLevel(), Level.INFO);
+        counter.inc(10);
+        Assert.assertEquals(counter.getCount(), 30);
     }
 }

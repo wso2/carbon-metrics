@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.service;
+package org.wso2.carbon.metrics.core.impl;
 
 import org.wso2.carbon.metrics.core.Counter;
-
-import java.util.List;
+import org.wso2.carbon.metrics.core.Level;
 
 /**
- * Implementation class wrapping a list of {@link Counter} metrics
+ * Implementation class wrapping {@link com.codahale.metrics.Counter} metric
  */
-public class CounterCollection implements Counter {
+public class CounterImpl extends AbstractMetric implements Counter {
 
-    private final Counter counter;
-    private final List<Counter> affected;
+    private final com.codahale.metrics.Counter counter;
 
-    public CounterCollection(Counter counter, List<Counter> affectedCounters) {
+    public CounterImpl(String name, Level level, com.codahale.metrics.Counter counter) {
+        super(name, level);
         this.counter = counter;
-        this.affected = affectedCounters;
     }
 
     /*
@@ -39,9 +37,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void inc() {
-        counter.inc();
-        for (Counter c : affected) {
-            c.inc();
+        if (isEnabled()) {
+            counter.inc();
         }
     }
 
@@ -52,9 +49,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void inc(long n) {
-        counter.inc(n);
-        for (Counter c : affected) {
-            c.inc(n);
+        if (isEnabled()) {
+            counter.inc(n);
         }
     }
 
@@ -65,9 +61,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void dec() {
-        counter.dec();
-        for (Counter c : affected) {
-            c.dec();
+        if (isEnabled()) {
+            counter.dec();
         }
     }
 
@@ -78,9 +73,8 @@ public class CounterCollection implements Counter {
      */
     @Override
     public void dec(long n) {
-        counter.dec(n);
-        for (Counter c : affected) {
-            c.dec(n);
+        if (isEnabled()) {
+            counter.dec(n);
         }
     }
 
@@ -93,5 +87,4 @@ public class CounterCollection implements Counter {
     public long getCount() {
         return counter.getCount();
     }
-
 }

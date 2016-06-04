@@ -33,23 +33,30 @@ public abstract class BaseMetricTest {
 
     protected static Random random = new Random();
 
+    protected static Metrics metrics;
+
+    protected static MetricService metricService;
+
+    protected static MetricManagementService metricManagementService;
+
     @BeforeSuite
-    protected static void init() throws Exception {
+    protected void init() throws Exception {
         // Set Carbon Home to load configs
         System.setProperty("carbon.home", "target");
         System.setProperty("metrics.target", "target");
         System.setProperty("metrics.enabled", "true");
         System.setProperty("metrics.rootLevel", "INFO");
-        // Initialize the Metric Service in MetricManager.
-        MetricManager.activate();
+        // Initialize the Metrics
+        metrics = new Metrics.Builder().build();
+        metricService = metrics.getMetricService();
+        metricManagementService = metrics.getMetricManagementService();
         // Stop reporters
-        MetricManager.getMetricService().stopReporters();
+        metricManagementService.stopReporters();
     }
 
     @AfterSuite
     protected static void destroy() throws Exception {
-        // Deactivate MetricManager
-        MetricManager.deactivate();
+        metrics.deactivate();
     }
 
     @BeforeMethod
@@ -57,7 +64,7 @@ public abstract class BaseMetricTest {
         if (logger.isTraceEnabled()) {
             logger.trace("Resetting Root Level to {}", Level.ALL);
         }
-        MetricManager.getMetricService().setRootLevel(Level.ALL);
+        metricManagementService.setRootLevel(Level.ALL);
     }
 
 

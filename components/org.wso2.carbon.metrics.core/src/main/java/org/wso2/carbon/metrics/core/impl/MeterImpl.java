@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 WSO2 Inc. (http://wso2.org)
+ * Copyright 2014 WSO2 Inc. (http://wso2.org)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.carbon.metrics.core.service;
+package org.wso2.carbon.metrics.core.impl;
 
+import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.Meter;
 
-import java.util.List;
-
 /**
- * Implementation class wrapping a list of {@link Meter} metrics
+ * Implementation class wrapping {@link com.codahale.metrics.Meter} metric
  */
-public class MeterCollection implements Meter {
+public class MeterImpl extends AbstractMetric implements Meter {
 
-    private Meter meter;
-    private List<Meter> affected;
+    private com.codahale.metrics.Meter meter;
 
-    public MeterCollection(Meter meter, List<Meter> affectedMeters) {
+    public MeterImpl(String name, Level level, com.codahale.metrics.Meter meter) {
+        super(name, level);
         this.meter = meter;
-        this.affected = affectedMeters;
     }
 
     /*
@@ -39,9 +37,8 @@ public class MeterCollection implements Meter {
      */
     @Override
     public void mark() {
-        meter.mark();
-        for (Meter m : affected) {
-            m.mark();
+        if (isEnabled()) {
+            meter.mark();
         }
     }
 
@@ -52,15 +49,14 @@ public class MeterCollection implements Meter {
      */
     @Override
     public void mark(long n) {
-        meter.mark(n);
-        for (Meter m : affected) {
-            m.mark(n);
+        if (isEnabled()) {
+            meter.mark(n);
         }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.wso2.carbon.metrics.core.Meter#getCount()
      */
     @Override

@@ -15,7 +15,6 @@
  */
 package org.wso2.carbon.metrics.core;
 
-import com.codahale.metrics.MetricRegistry;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +24,11 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
-import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
-import org.wso2.carbon.metrics.core.service.MetricService;
 import org.wso2.carbon.metrics.das.reporter.TestEventServer;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import javax.management.MBeanServer;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
@@ -42,17 +40,23 @@ public abstract class BaseReporterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseReporterTest.class);
 
+    protected static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
+
+    protected static final String TEST_RESOURCES_DIR = "target" + File.separator + "test-resources";
+
+    protected static MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+
+    protected static Metrics metrics;
+
     protected static MetricService metricService;
+
+    protected static MetricManagementService metricManagementService;
 
     protected static DataSource dataSource;
 
     protected static JdbcTemplate template;
 
-    protected static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
-
-    protected static final String TEST_RESOURCES_DIR = "target" + File.separator + "test-resources";
-
-    protected static final TestEventServer TEST_EVENT_SERVER = new TestEventServer(TEST_RESOURCES_DIR);
+    protected static TestEventServer testServer = new TestEventServer(TEST_RESOURCES_DIR);
 
     @Parameters("server-port")
     @BeforeSuite
@@ -77,7 +81,7 @@ public abstract class BaseReporterTest {
         if (logger.isInfoEnabled()) {
             logger.info("Creating the DAS Test Receiver");
         }
-        TEST_EVENT_SERVER.start("localhost", Integer.parseInt(serverPort));
+        testServer.start("localhost", Integer.parseInt(serverPort));
 
         if (logger.isInfoEnabled()) {
             logger.info("Creating a separate MetricService");
@@ -87,8 +91,10 @@ public abstract class BaseReporterTest {
         System.setProperty("metrics.level.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
                 + "metrics.properties");
         System.setProperty("metrics.dataagent.conf", TEST_RESOURCES_DIR + File.separator + "data-agent-config.xml");
-        metricService = new MetricService(new MetricRegistry(), MetricsConfigBuilder.build(),
-                MetricsLevelConfigBuilder.build());
+        metrics = new Metrics.Builder().registerMBean().build();
+        metrics.activate();
+        metricService = metrics.getMetricService();
+        metricManagementService = metrics.getMetricManagementService();
     }
 
     @AfterSuite
@@ -103,7 +109,7 @@ public abstract class BaseReporterTest {
         if (logger.isInfoEnabled()) {
             logger.info("Stopping reporters");
         }
-        metricService.disable();
-        TEST_EVENT_SERVER.stop();
+        metrics.deactivate();
+        testServer.stop();
     }
 }
