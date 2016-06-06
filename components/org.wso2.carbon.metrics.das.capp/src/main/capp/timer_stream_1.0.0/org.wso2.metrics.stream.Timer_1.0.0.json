@@ -1,8 +1,8 @@
 {
-  "name": "org.wso2.carbon.metrics.histogram",
+  "name": "org.wso2.metrics.stream.Timer",
   "version": "1.0.0",
-  "nickName": "histogram_metrics",
-  "description": "Histogram Metrics",
+  "nickName": "Timer",
+  "description": "Timer Metrics",
   "metaData": [
     {
       "name": "timestamp",
@@ -24,7 +24,7 @@
     },
     {
       "name": "max",
-      "type": "LONG"
+      "type": "DOUBLE"
     },
     {
       "name": "mean",
@@ -32,7 +32,7 @@
     },
     {
       "name": "min",
-      "type": "LONG"
+      "type": "DOUBLE"
     },
     {
       "name": "stddev",
@@ -61,6 +61,30 @@
     {
       "name": "999th_percentile",
       "type": "DOUBLE"
+    },
+    {
+      "name": "mean_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "one_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "five_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "fifteen_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "rate_unit",
+      "type": "STRING"
+    },
+    {
+      "name": "duration_unit",
+      "type": "STRING"
     }
   ]
 }

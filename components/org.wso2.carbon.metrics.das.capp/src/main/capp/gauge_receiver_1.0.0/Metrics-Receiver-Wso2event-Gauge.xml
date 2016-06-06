@@ -14,9 +14,9 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<eventReceiver name="meter_metrics_receiver" statistics="disable" trace="disable"
+<eventReceiver name="Metrics-Receiver-Wso2event-Gauge" statistics="disable" trace="disable"
                xmlns="http://wso2.org/carbon/eventreceiver">
     <from eventAdapterType="wso2event"/>
     <mapping customMapping="disable" type="wso2event"/>
-    <to streamName="org.wso2.carbon.metrics.meter" version="1.0.0"/>
+    <to streamName="org.wso2.metrics.stream.Gauge" version="1.0.0"/>
 </eventReceiver>

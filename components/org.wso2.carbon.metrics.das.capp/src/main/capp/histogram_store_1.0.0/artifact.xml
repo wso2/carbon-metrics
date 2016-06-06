@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="histogram_store" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
-    <file>org_wso2_carbon_metrics_histogram.xml</file>
+    <file>ORG_WSO2_METRICS_STREAM_HISTOGRAM.xml</file>
 </artifact>

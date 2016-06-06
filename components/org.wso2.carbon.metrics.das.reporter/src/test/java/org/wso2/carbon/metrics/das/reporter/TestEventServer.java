@@ -215,7 +215,7 @@ public class TestEventServer {
         private List<Path> matchedFiles = new ArrayList<>();
 
         private Finder() {
-            matcher = FileSystems.getDefault().getPathMatcher("glob:org.wso2.carbon.metrics.*_1.0.0.json");
+            matcher = FileSystems.getDefault().getPathMatcher("glob:org.wso2.metrics.stream.*_1.0.0.json");
         }
 
         private void find(Path file) {

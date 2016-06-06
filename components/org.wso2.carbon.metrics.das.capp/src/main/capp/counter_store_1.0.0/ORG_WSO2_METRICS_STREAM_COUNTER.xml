@@ -38,15 +38,15 @@
             <Type>STRING</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>value</Name>
+            <Name>count</Name>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
+            <Type>LONG</Type>
         </ColumnDefinition>
     </TableSchema>
     <Source>
-        <StreamId>org.wso2.carbon.metrics.gauge:1.0.0</StreamId>
+        <StreamId>org.wso2.metrics.stream.Counter:1.0.0</StreamId>
     </Source>
     <RecordStoreName>EVENT_STORE</RecordStoreName>
 </EventStoreConfiguration>

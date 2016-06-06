@@ -1,8 +1,8 @@
 {
-  "name": "org.wso2.carbon.metrics.gauge",
+  "name": "org.wso2.metrics.stream.Counter",
   "version": "1.0.0",
-  "nickName": "gauge_metrics",
-  "description": "Gauge Metrics",
+  "nickName": "Counter",
+  "description": "Counter Metrics",
   "metaData": [
     {
       "name": "timestamp",
@@ -19,8 +19,8 @@
       "type": "STRING"
     },
     {
-      "name": "value",
-      "type": "DOUBLE"
+      "name": "count",
+      "type": "LONG"
     }
   ]
 }

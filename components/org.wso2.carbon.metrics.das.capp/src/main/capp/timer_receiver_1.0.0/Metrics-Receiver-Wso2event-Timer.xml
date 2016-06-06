@@ -14,9 +14,9 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<eventReceiver name="histogram_metrics_receiver" statistics="disable" trace="disable"
+<eventReceiver name="Metrics-Receiver-Wso2event-Timer" statistics="disable" trace="disable"
                xmlns="http://wso2.org/carbon/eventreceiver">
     <from eventAdapterType="wso2event"/>
     <mapping customMapping="disable" type="wso2event"/>
-    <to streamName="org.wso2.carbon.metrics.histogram" version="1.0.0"/>
+    <to streamName="org.wso2.metrics.stream.Timer" version="1.0.0"/>
 </eventReceiver>

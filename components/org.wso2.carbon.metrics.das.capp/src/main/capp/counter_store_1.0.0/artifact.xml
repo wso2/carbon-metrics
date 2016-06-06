@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="counter_store" version="1.0.0" type="analytics/eventstore" serverRole="DataAnalyticsServer">
-    <file>org_wso2_carbon_metrics_counter.xml</file>
+    <file>ORG_WSO2_METRICS_STREAM_COUNTER.xml</file>
 </artifact>

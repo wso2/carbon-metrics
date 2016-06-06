@@ -1,7 +1,7 @@
 {
-  "name": "org.wso2.carbon.metrics.meter",
+  "name": "org.wso2.metrics.stream.Meter",
   "version": "1.0.0",
-  "nickName": "meter_metrics",
+  "nickName": "Meter",
   "description": "Meter Metrics",
   "metaData": [
     {

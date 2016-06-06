@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="meter_receiver" version="1.0.0" type="event/receiver" serverRole="DataAnalyticsServer">
-    <file>meter_metrics_receiver.xml</file>
+    <file>Metrics-Receiver-Wso2event-Meter.xml</file>
 </artifact>

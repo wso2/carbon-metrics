@@ -222,10 +222,10 @@ public class ReporterTest extends BaseReporterTest {
 
         metricManagementService.report();
 
-        Event event = testServer.getEvent("meter", meterName);
+        Event event = testServer.getEvent("Meter", meterName);
         Assert.assertEquals(event.getPayloadData()[2], 1L);
 
-        event = testServer.getEvent("gauge", gaugeName);
+        event = testServer.getEvent("Gauge", gaugeName);
         Assert.assertEquals(event.getPayloadData()[2], 1.0D);
         metricManagementService.stopReporter("DAS");
         Assert.assertFalse(metricManagementService.isReporterRunning("DAS"));
