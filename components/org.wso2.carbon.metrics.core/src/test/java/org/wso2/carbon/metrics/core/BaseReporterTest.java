@@ -91,7 +91,7 @@ public abstract class BaseReporterTest {
         System.setProperty("metrics.level.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
                 + "metrics.properties");
         System.setProperty("metrics.dataagent.conf", TEST_RESOURCES_DIR + File.separator + "data-agent-config.xml");
-        metrics = new Metrics.Builder().registerMBean().build();
+        metrics = new Metrics.Builder().build();
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

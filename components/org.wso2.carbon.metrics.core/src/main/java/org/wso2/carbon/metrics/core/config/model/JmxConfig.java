@@ -16,37 +16,29 @@
 package org.wso2.carbon.metrics.core.config.model;
 
 /**
- * Configuration for Metrics
+ * JMX Configuration for Metrics
  */
-public class MetricsConfig {
+public class JmxConfig {
 
-    private boolean enabled = true;
+    private boolean registerMBean = true;
 
-    private JmxConfig jmx = new JmxConfig();
+    private String name = "org.wso2.carbon:type=Metrics";
 
-    private ReportingConfig reporting = new ReportingConfig();
-
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isRegisterMBean() {
+        return registerMBean;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setRegisterMBean(boolean registerMBean) {
+        this.registerMBean = registerMBean;
     }
 
-    public JmxConfig getJmx() {
-        return jmx;
+    public String getName() {
+        return name;
     }
 
-    public void setJmx(JmxConfig jmx) {
-        this.jmx = jmx;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public ReportingConfig getReporting() {
-        return reporting;
-    }
 
-    public void setReporting(ReportingConfig reporting) {
-        this.reporting = reporting;
-    }
 }

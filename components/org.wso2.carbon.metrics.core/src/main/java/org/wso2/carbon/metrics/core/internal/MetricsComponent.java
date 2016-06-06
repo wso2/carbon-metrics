@@ -46,7 +46,7 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component activated");
         }
-        metrics = new Metrics.Builder().registerMBean().build();
+        metrics = new Metrics.Builder().build();
         metrics.activate();
         bundleContext.registerService(MetricService.class, metrics.getMetricService(), null);
         bundleContext.registerService(MetricManagementService.class, metrics.getMetricManagementService(), null);

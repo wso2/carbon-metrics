@@ -39,7 +39,7 @@ public class MetricsMXBeanTest extends BaseReporterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricManagementServiceTest.class);
 
-    private static final String MBEAN_NAME = "org.wso2.carbon:type=Metrics";
+    private static final String MBEAN_NAME = "org.wso2.carbon:type=MetricsTest";
 
     private MetricsMXBean metricsMXBean;
 

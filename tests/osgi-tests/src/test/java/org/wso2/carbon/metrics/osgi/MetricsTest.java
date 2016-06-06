@@ -34,21 +34,29 @@ import org.wso2.carbon.metrics.core.Meter;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Timer;
+import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.osgi.test.util.CarbonSysPropConfiguration;
 import org.wso2.carbon.osgi.test.util.OSGiTestConfigurationUtils;
 
+import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import javax.management.JMX;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 
 @Listeners(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class MetricsTest {
+
+    private static final String MBEAN_NAME = "org.wso2.carbon:type=Metrics";
+
     @Inject
     private BundleContext bundleContext;
 
@@ -221,4 +229,21 @@ public class MetricsTest {
         counter.inc(10);
         Assert.assertEquals(counter.getCount(), 30);
     }
+
+    @Test
+    public void testMBean() {
+        MetricsMXBean metricsMXBean = null;
+        try {
+            ObjectName n = new ObjectName(MBEAN_NAME);
+            metricsMXBean = JMX.newMXBeanProxy(ManagementFactory.getPlatformMBeanServer(), n, MetricsMXBean.class);
+        } catch (MalformedObjectNameException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertNotNull(metricsMXBean);
+        Assert.assertTrue(metricsMXBean.isEnabled());
+        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
+        Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
+    }
+
 }

@@ -51,6 +51,12 @@ public class MetricsConfigTest {
     }
 
     @Test
+    public void testJmxConfig() {
+        Assert.assertEquals(metricsConfig.getJmx().getName(), "org.wso2.carbon:type=MetricsTest");
+        Assert.assertTrue(metricsConfig.getJmx().isRegisterMBean());
+    }
+
+    @Test
     public void testJmxReporterConfigLoad() {
         JmxReporterConfig config = metricsConfig.getReporting().getJmx();
         Assert.assertEquals(config.getName(), "JMX");

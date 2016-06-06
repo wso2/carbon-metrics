@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
+import org.wso2.carbon.metrics.core.config.model.JmxConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
 import org.wso2.carbon.metrics.core.impl.MetricManagementServiceImpl;
@@ -142,23 +143,6 @@ public class Metrics {
      */
     public static class Builder {
 
-        private boolean registerMBean;
-        private String mBeanName;
-
-        public Builder() {
-            this.mBeanName = "org.wso2.carbon:type=Metrics";
-        }
-
-        /**
-         * Register an MBean for Metrics
-         *
-         * @return {@code this}
-         */
-        public Builder registerMBean() {
-            registerMBean = true;
-            return this;
-        }
-
         /**
          * Builds a {@link Metrics} instance with a {@link MetricService} and a {@link MetricManagementService}
          *
@@ -168,6 +152,7 @@ public class Metrics {
             MetricRegistry metricRegistry = new MetricRegistry();
             MetricsConfig metricsConfig = MetricsConfigBuilder.build();
             MetricsLevelConfig metricsLevelConfig = MetricsLevelConfigBuilder.build();
+            JmxConfig jmxConfig = metricsConfig.getJmx();
 
             // Set enabled from the config
             boolean enabled = metricsConfig.isEnabled();
@@ -205,7 +190,8 @@ public class Metrics {
                 }
             });
 
-            return new Metrics(registerMBean, mBeanName, metricService, metricManagementService);
+            return new Metrics(jmxConfig.isRegisterMBean(), jmxConfig.getName(), metricService,
+                    metricManagementService);
         }
     }
 
