@@ -169,7 +169,26 @@ public class MetricsTest {
     }
 
     @Test
+    public void testMBean() {
+        MetricsMXBean metricsMXBean = null;
+        try {
+            ObjectName n = new ObjectName(MBEAN_NAME);
+            metricsMXBean = JMX.newMXBeanProxy(ManagementFactory.getPlatformMBeanServer(), n, MetricsMXBean.class);
+        } catch (MalformedObjectNameException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertNotNull(metricsMXBean);
+        Assert.assertTrue(metricsMXBean.isEnabled());
+        // Check whether the reporters are started at the startup
+        Assert.assertTrue(metricsMXBean.isReporterRunning("JMX"));
+        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
+        Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
+    }
+
+    @Test(dependsOnMethods = "testMBean")
     public void testEnableDisable() {
+        // This method depends on the "testMBean" as the reporters will start if we disable and enable the Metrics
         Assert.assertTrue(metricManagementService.isEnabled(), "Metric Service should be enabled");
         Counter counter = metricService.counter(MetricService.name(this.getClass(), "test-enabled"), Level.INFO);
         counter.inc(10);
@@ -228,22 +247,6 @@ public class MetricsTest {
         Assert.assertEquals(metricManagementService.getRootLevel(), Level.INFO);
         counter.inc(10);
         Assert.assertEquals(counter.getCount(), 30);
-    }
-
-    @Test
-    public void testMBean() {
-        MetricsMXBean metricsMXBean = null;
-        try {
-            ObjectName n = new ObjectName(MBEAN_NAME);
-            metricsMXBean = JMX.newMXBeanProxy(ManagementFactory.getPlatformMBeanServer(), n, MetricsMXBean.class);
-        } catch (MalformedObjectNameException e) {
-            Assert.fail(e.getMessage());
-        }
-
-        Assert.assertNotNull(metricsMXBean);
-        Assert.assertTrue(metricsMXBean.isEnabled());
-        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
-        Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
     }
 
 }
