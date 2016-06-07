@@ -22,6 +22,8 @@ public class MetricsConfig {
 
     private boolean enabled = true;
 
+    private JmxConfig jmx = new JmxConfig();
+
     private ReportingConfig reporting = new ReportingConfig();
 
     public boolean isEnabled() {
@@ -30,6 +32,14 @@ public class MetricsConfig {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public JmxConfig getJmx() {
+        return jmx;
+    }
+
+    public void setJmx(JmxConfig jmx) {
+        this.jmx = jmx;
     }
 
     public ReportingConfig getReporting() {

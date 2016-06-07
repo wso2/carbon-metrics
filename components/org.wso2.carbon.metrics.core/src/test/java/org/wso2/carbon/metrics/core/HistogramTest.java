@@ -28,14 +28,14 @@ public class HistogramTest extends BaseMetricTest {
     @Test
     public void testInitialCount() {
         Histogram histogram =
-                MetricManager.histogram(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
+                metricService.histogram(MetricService.name(this.getClass(), "test-initial-count"), Level.INFO);
         Assert.assertEquals(histogram.getCount(), 0);
     }
 
     @Test
     public void testParentCount() {
-        Histogram main = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test.value", Level.INFO);
-        Histogram sub = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test[+].sub.value",
+        Histogram main = metricService.histogram("org.wso2.carbon.metrics.histogram.test.value", Level.INFO);
+        Histogram sub = metricService.histogram("org.wso2.carbon.metrics.histogram.test[+].sub.value",
                 Level.INFO, Level.INFO);
         sub.update(random.nextInt());
         main.update(random.nextInt());
@@ -50,23 +50,23 @@ public class HistogramTest extends BaseMetricTest {
     @Test
     public void testSameMetric() {
         Histogram histogram =
-                MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
+                metricService.histogram(MetricService.name(this.getClass(), "test-same-histogram"), Level.INFO);
         histogram.update(random.nextInt());
         Assert.assertEquals(histogram.getCount(), 1);
 
         Histogram histogram2 =
-                MetricManager.histogram(MetricManager.name(this.getClass(), "test-same-histogram"), Level.INFO);
+                metricService.histogram(MetricService.name(this.getClass(), "test-same-histogram"), Level.INFO);
         Assert.assertEquals(histogram2.getCount(), 1);
     }
 
     @Test
     public void testSameMetricWithParent() {
-        Histogram main = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1.value", Level.INFO);
-        Histogram sub = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1[+].sub.value",
+        Histogram main = metricService.histogram("org.wso2.carbon.metrics.histogram.test1.value", Level.INFO);
+        Histogram sub = metricService.histogram("org.wso2.carbon.metrics.histogram.test1[+].sub.value",
                 Level.INFO, Level.INFO);
 
-        Histogram main2 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1.value", Level.INFO);
-        Histogram sub2 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test1[+].sub.value",
+        Histogram main2 = metricService.histogram("org.wso2.carbon.metrics.histogram.test1.value", Level.INFO);
+        Histogram sub2 = metricService.histogram("org.wso2.carbon.metrics.histogram.test1[+].sub.value",
                 Level.INFO, Level.INFO);
 
         sub.update(random.nextInt());
@@ -84,12 +84,12 @@ public class HistogramTest extends BaseMetricTest {
 
     @Test
     public void testMetricWithNonExistingParents() {
-        Histogram sub2 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test2[+].sub1[+].sub2.value",
+        Histogram sub2 = metricService.histogram("org.wso2.carbon.metrics.histogram.test2[+].sub1[+].sub2.value",
                 Level.INFO,
                 Level.INFO, Level.INFO);
-        Histogram sub1 = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test2[+].sub1.value", Level.INFO,
+        Histogram sub1 = metricService.histogram("org.wso2.carbon.metrics.histogram.test2[+].sub1.value", Level.INFO,
                 Level.INFO);
-        Histogram main = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test2.value", Level.INFO);
+        Histogram main = metricService.histogram("org.wso2.carbon.metrics.histogram.test2.value", Level.INFO);
 
         sub2.update(random.nextInt());
         Assert.assertEquals(sub1.getCount(), 1);
@@ -110,11 +110,11 @@ public class HistogramTest extends BaseMetricTest {
     @Test
     public void testUpdateInt() {
         Histogram histogram =
-                MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-int"), Level.INFO);
+                metricService.histogram(MetricService.name(this.getClass(), "test-histogram-update-int"), Level.INFO);
         histogram.update(random.nextInt());
         Assert.assertEquals(histogram.getCount(), 1);
 
-        MetricManager.getMetricService().setRootLevel(Level.OFF);
+        metricManagementService.setRootLevel(Level.OFF);
         histogram.update(random.nextInt());
         Assert.assertEquals(histogram.getCount(), 1);
     }
@@ -122,25 +122,25 @@ public class HistogramTest extends BaseMetricTest {
     @Test
     public void testUpdateLong() {
         Histogram histogram =
-                MetricManager.histogram(MetricManager.name(this.getClass(), "test-histogram-update-long"), Level.INFO);
+                metricService.histogram(MetricService.name(this.getClass(), "test-histogram-update-long"), Level.INFO);
 
         histogram.update(random.nextLong());
         Assert.assertEquals(histogram.getCount(), 1);
 
-        MetricManager.getMetricService().setRootLevel(Level.OFF);
+        metricManagementService.setRootLevel(Level.OFF);
         histogram.update(random.nextLong());
         Assert.assertEquals(histogram.getCount(), 1);
     }
 
     @Test
     public void testSnapshot() {
-        Histogram histogram = MetricManager.histogram(MetricManager.name(this.getClass(), "test-snapshot"), Level.INFO);
+        Histogram histogram = metricService.histogram(MetricService.name(this.getClass(), "test-snapshot"), Level.INFO);
         testSnapshot(histogram);
     }
 
     @Test
     public void testHistogramCollectionSnapshot() {
-        Histogram histogram = MetricManager.histogram("org.wso2.carbon.metrics.histogram.test3[+].sub1.value",
+        Histogram histogram = metricService.histogram("org.wso2.carbon.metrics.histogram.test3[+].sub1.value",
                 Level.INFO, Level.INFO);
         testSnapshot(histogram);
     }

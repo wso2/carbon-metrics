@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.core.internal;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -24,7 +25,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.metrics.core.MetricManager;
+import org.wso2.carbon.metrics.core.MetricManagementService;
+import org.wso2.carbon.metrics.core.MetricService;
+import org.wso2.carbon.metrics.core.Metrics;
 
 /**
  * Metrics OSGi Component
@@ -36,13 +39,17 @@ public class MetricsComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsComponent.class);
 
+    private Metrics metrics;
+
     @Activate
-    protected void activate() {
+    protected void activate(BundleContext bundleContext) {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component activated");
         }
-        // Initialize the metric service
-        MetricManager.activate();
+        metrics = new Metrics.Builder().build();
+        metrics.activate();
+        bundleContext.registerService(MetricService.class, metrics.getMetricService(), null);
+        bundleContext.registerService(MetricManagementService.class, metrics.getMetricManagementService(), null);
     }
 
     @Deactivate
@@ -50,7 +57,7 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component deactivated");
         }
-        MetricManager.deactivate();
+        metrics.deactivate();
     }
 
     @Reference(

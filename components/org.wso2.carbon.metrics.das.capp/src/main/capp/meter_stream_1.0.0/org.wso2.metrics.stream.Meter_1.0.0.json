@@ -1,0 +1,46 @@
+{
+  "name": "org.wso2.metrics.stream.Meter",
+  "version": "1.0.0",
+  "nickName": "Meter",
+  "description": "Meter Metrics",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "LONG"
+    },
+    {
+      "name": "mean_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "one_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "five_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "fifteen_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "rate_unit",
+      "type": "STRING"
+    }
+  ]
+}

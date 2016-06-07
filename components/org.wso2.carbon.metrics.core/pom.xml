@@ -30,6 +30,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon.metrics</groupId>
             <artifactId>org.wso2.carbon.metrics.jdbc.reporter</artifactId>
         </dependency>
@@ -38,20 +46,12 @@
             <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.databridge.agent</artifactId>
+            <groupId>org.wso2.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-jvm</artifactId>
+            <groupId>org.wso2.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi.services</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -64,6 +64,14 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.databridge.agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.analytics-common</groupId>
+            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.datasources</groupId>
@@ -191,13 +199,14 @@
             javax.management,
             javax.naming,
             javax.sql,
+            org.osgi.framework,
             org.osgi.service.component,
             org.wso2.carbon.metrics.jdbc.reporter.*,
             org.wso2.carbon.metrics.das.reporter.*;resolution:=optional,
             com.codahale.metrics;version="${metrics.version.range}",
             com.codahale.metrics.jvm;version="${metrics.version.range}",
             org.slf4j;version="${slf4j.version.range}",
-            org.yaml.snakeyaml;version="${snakeyaml.version.range}",
+            org.yaml.snakeyaml.*;version="${snakeyaml.version.range}",
             org.wso2.carbon.datasource.core.*;version="${carbon.datasources.version.range}",
             org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}"
         </import.package>

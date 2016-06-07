@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="gauge_stream" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
-    <file>org.wso2.carbon.metrics.gauge_1.0.0.json</file>
+    <file>org.wso2.metrics.stream.Gauge_1.0.0.json</file>
 </artifact>

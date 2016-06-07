@@ -26,25 +26,25 @@ public class GaugeTest extends BaseMetricTest {
 
     @Test
     public void testSameMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-gauge");
+        String name = MetricService.name(this.getClass(), "test-same-gauge");
 
         Gauge<Integer> gauge = () -> 1;
 
-        MetricManager.gauge(name, Level.INFO, gauge);
+        metricService.gauge(name, Level.INFO, gauge);
 
         // This call also should be successful as we are getting the same gauge
-        MetricManager.gauge(name, Level.INFO, gauge);
+        metricService.gauge(name, Level.INFO, gauge);
     }
 
     @Test
     public void testSameCachedMetric() {
-        String name = MetricManager.name(this.getClass(), "test-same-cached-gauge");
+        String name = MetricService.name(this.getClass(), "test-same-cached-gauge");
 
         Gauge<Integer> gauge = () -> 1;
 
-        MetricManager.cachedGauge(name, Level.INFO, 5, gauge);
+        metricService.cachedGauge(name, Level.INFO, 5, gauge);
 
-        MetricManager.cachedGauge(name, Level.INFO, 5, TimeUnit.SECONDS, gauge);
+        metricService.cachedGauge(name, Level.INFO, 5, TimeUnit.SECONDS, gauge);
     }
 
 }

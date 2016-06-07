@@ -18,6 +18,7 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
@@ -28,21 +29,31 @@ import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
 
 import java.io.File;
 
+import static org.wso2.carbon.metrics.core.BaseReporterTest.RESOURCES_DIR;
+
 /**
  * Test Cases for {@link MetricsConfig}
  */
-public class MetricsConfigTest extends BaseReporterTest {
+public class MetricsConfigTest {
 
     private static MetricsConfig metricsConfig;
 
     @BeforeClass
     private void load() {
-        metricsConfig = metricService.getMetricsConfig();
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics-reporter.yml");
+        metricsConfig = MetricsConfigBuilder.build();
     }
 
     @Test
     public void testConfigLoad() {
         Assert.assertEquals(metricsConfig.isEnabled(), true);
+    }
+
+    @Test
+    public void testJmxConfig() {
+        Assert.assertEquals(metricsConfig.getJmx().getName(), "org.wso2.carbon:type=MetricsTest");
+        Assert.assertTrue(metricsConfig.getJmx().isRegisterMBean());
     }
 
     @Test
@@ -106,14 +117,19 @@ public class MetricsConfigTest extends BaseReporterTest {
         Assert.assertEquals(config.getType(), "thrift");
         Assert.assertEquals(config.getUsername(), "admin");
         Assert.assertEquals(config.getPassword(), "admin");
-        // This path is updated in runtime as we have specified the system property "metrics.dataagent.conf"
-        Assert.assertEquals(config.getDataAgentConfigPath(), TEST_RESOURCES_DIR + File.separator
-                + "data-agent-config.xml");
+        Assert.assertEquals(config.getDataAgentConfigPath(), "data-agent-config.xml");
     }
 
     @Test
     public void testReporterCount() {
         Assert.assertEquals(metricsConfig.getReporting().getReporterBuilders().size(), 6);
+    }
+
+    @Test(expectedExceptions = RuntimeException.class)
+    public void testInvalidFile() {
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics.properties");
+        MetricsConfigBuilder.build();
     }
 
 }

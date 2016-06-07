@@ -16,6 +16,10 @@
 
 enabled: true
 
+jmx:
+  registerMBean: true
+  name: org.wso2.carbon:type=MetricsTest
+
 reporting:
   jmx:
     name: JMX

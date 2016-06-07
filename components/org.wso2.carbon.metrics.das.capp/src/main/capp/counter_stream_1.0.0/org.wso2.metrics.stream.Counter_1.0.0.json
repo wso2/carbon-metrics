@@ -1,0 +1,26 @@
+{
+  "name": "org.wso2.metrics.stream.Counter",
+  "version": "1.0.0",
+  "nickName": "Counter",
+  "description": "Counter Metrics",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "LONG"
+    }
+  ]
+}

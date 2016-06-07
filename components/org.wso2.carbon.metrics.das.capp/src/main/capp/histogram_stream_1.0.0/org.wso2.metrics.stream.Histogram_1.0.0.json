@@ -1,0 +1,66 @@
+{
+  "name": "org.wso2.metrics.stream.Histogram",
+  "version": "1.0.0",
+  "nickName": "Histogram",
+  "description": "Histogram Metrics",
+  "metaData": [
+    {
+      "name": "timestamp",
+      "type": "LONG"
+    }
+  ],
+  "payloadData": [
+    {
+      "name": "source",
+      "type": "STRING"
+    },
+    {
+      "name": "name",
+      "type": "STRING"
+    },
+    {
+      "name": "count",
+      "type": "LONG"
+    },
+    {
+      "name": "max",
+      "type": "LONG"
+    },
+    {
+      "name": "mean",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "min",
+      "type": "LONG"
+    },
+    {
+      "name": "stddev",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "median",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "75th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "95th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "98th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "99th_percentile",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "999th_percentile",
+      "type": "DOUBLE"
+    }
+  ]
+}

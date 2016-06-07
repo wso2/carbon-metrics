@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="timer_receiver" version="1.0.0" type="event/receiver" serverRole="DataAnalyticsServer">
-    <file>timer_metrics_receiver.xml</file>
+    <file>Metrics-Receiver-Wso2event-Timer.xml</file>
 </artifact>

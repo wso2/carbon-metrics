@@ -294,6 +294,12 @@
                 <version>${javax.inject.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.jndi</groupId>
+                <artifactId>org.wso2.carbon.jndi</artifactId>
+                <version>${carbon.jndi.version}</version>
+                <scope>test</scope>
+            </dependency>
             <!-- OSGi Test Dependencies - End -->
             <!-- Distribution Dependencies - Start -->
             <dependency>
@@ -495,23 +501,23 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <carbon.metrics.version>2.0.0-SNAPSHOT</carbon.metrics.version>
-        <testng.version>6.9.11</testng.version>
+        <testng.version>6.9.10</testng.version>
         <metrics.version>3.1.2</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <equinox.osgi.version>3.10.101.v20150820-1432</equinox.osgi.version>
         <equinox.osgi.services.version>3.5.0.v20150519-2006</equinox.osgi.services.version>
-        <carbon.kernel.version>5.1.0-alpha2</carbon.kernel.version>
+        <carbon.kernel.version>5.1.0</carbon.kernel.version>
         <carbon.kernel.version.range>[5.1.0, 6.0.0)</carbon.kernel.version.range>
         <carbon.analytics.common.version>5.0.11</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
         <xerces.impl.version>2.11.0.SP4</xerces.impl.version>
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
-        <log4j.version>2.5</log4j.version>
+        <log4j.version>2.6</log4j.version>
         <snakeyaml.version>1.16.0.wso2v1</snakeyaml.version>
         <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
         <hikaricp.version>2.4.6</hikaricp.version>
-        <h2.version>1.4.191</h2.version>
+        <h2.version>1.4.192</h2.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
         <tomcat.version>8.0.33</tomcat.version>
@@ -523,8 +529,8 @@
         <ow2.jta.spec.version>1.0.13</ow2.jta.spec.version>
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
         <javax.inject.version>1</javax.inject.version>
-        <carbon.jndi.version>1.0.0-alpha</carbon.jndi.version>
-        <carbon.datasources.version>1.0.0-SNAPSHOT</carbon.datasources.version>
+        <carbon.jndi.version>1.0.0</carbon.jndi.version>
+        <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon.datasources.version.range>[1.0.0, 2.0.0)</carbon.datasources.version.range>
     </properties>
 </project>

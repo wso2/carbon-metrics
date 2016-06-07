@@ -72,27 +72,27 @@ public class MetricAnnotationTest extends BaseMetricTest {
     private void checkName(Method method, String name) throws MetricNotFoundException {
         Assert.assertTrue(method.isAnnotationPresent(Counted.class));
         Counted annotation = method.getAnnotation(Counted.class);
-        MetricAnnotation.counter(annotation, method);
-        Assert.assertNotNull(MetricManager.getCounter(name));
+        MetricAnnotation.counter(metricService, annotation, method);
+        Assert.assertNotNull(metricService.counter(name));
     }
 
     private void checkLevel(Method method, String name, org.wso2.carbon.metrics.core.Level level) {
         Assert.assertTrue(method.isAnnotationPresent(Counted.class));
         Counted annotation = method.getAnnotation(Counted.class);
-        MetricAnnotation.counter(annotation, method);
-        Assert.assertNotNull(MetricManager.counter(name, level));
+        MetricAnnotation.counter(metricService, annotation, method);
+        Assert.assertNotNull(metricService.counter(name, level));
     }
 
     @Test
     public void testCounter1() throws NoSuchMethodException, MetricNotFoundException {
         Method method = this.getClass().getMethod("counter1");
-        checkName(method, MetricManager.name(method.getDeclaringClass().getName(), method.getName()));
+        checkName(method, MetricService.name(method.getDeclaringClass().getName(), method.getName()));
     }
 
     @Test
     public void testCounter2() throws NoSuchMethodException, MetricNotFoundException {
         Method method = this.getClass().getMethod("counter2");
-        checkName(method, MetricManager.name(method.getDeclaringClass().getName(), method.getName(), "test-counter"));
+        checkName(method, MetricService.name(method.getDeclaringClass().getName(), method.getName(), "test-counter"));
     }
 
     @Test
@@ -136,9 +136,9 @@ public class MetricAnnotationTest extends BaseMetricTest {
         Method method = this.getClass().getMethod("meter");
         Assert.assertTrue(method.isAnnotationPresent(Metered.class));
         Metered annotation = method.getAnnotation(Metered.class);
-        MetricAnnotation.meter(annotation, method);
-        Assert.assertNotNull(MetricManager.getMeter(
-                MetricManager.name(method.getDeclaringClass().getName(), method.getName(), "test-meter")));
+        MetricAnnotation.meter(metricService, annotation, method);
+        Assert.assertNotNull(metricService.meter(
+                MetricService.name(method.getDeclaringClass().getName(), method.getName(), "test-meter")));
     }
 
     @Test
@@ -146,8 +146,8 @@ public class MetricAnnotationTest extends BaseMetricTest {
         Method method = this.getClass().getMethod("timer");
         Assert.assertTrue(method.isAnnotationPresent(Timed.class));
         Timed annotation = method.getAnnotation(Timed.class);
-        MetricAnnotation.timer(annotation, method);
-        Assert.assertNotNull(MetricManager.getTimer(
-                MetricManager.name(method.getDeclaringClass().getName(), method.getName(), "test-timer")));
+        MetricAnnotation.timer(metricService, annotation, method);
+        Assert.assertNotNull(metricService.timer(
+                MetricService.name(method.getDeclaringClass().getName(), method.getName(), "test-timer")));
     }
 }

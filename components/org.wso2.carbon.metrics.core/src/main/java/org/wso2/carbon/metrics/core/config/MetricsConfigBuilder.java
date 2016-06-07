@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.internal.Utils;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.parser.ParserException;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,11 +48,11 @@ public class MetricsConfigBuilder {
                 logger.debug(String.format("Loading Metrics Configuration from %s", file.getAbsolutePath()));
             }
             try (Stream<String> stream = Files.lines(file.toPath())) {
-                String fileContent = stream.map(s -> org.wso2.carbon.kernel.utils.Utils.substituteVariables(s))
+                String fileContent = stream.map(org.wso2.carbon.kernel.utils.Utils::substituteVariables)
                         .collect(Collectors.joining(System.lineSeparator()));
                 Yaml yaml = new Yaml();
                 metricsConfig = yaml.loadAs(fileContent, MetricsConfig.class);
-            } catch (IOException e) {
+            } catch (IOException | ParserException e) {
                 throw new RuntimeException("Failed to populate Metrics Configuration from "
                         + file.getAbsolutePath(), e);
             }

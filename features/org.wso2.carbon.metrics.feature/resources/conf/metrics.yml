@@ -17,6 +17,13 @@
 # Enable Metrics
 enabled: true
 
+# Metrics JMX Configuration
+jmx:
+  # Register MBean when initializing Metrics
+  registerMBean: true
+  # MBean Name
+  name: org.wso2.carbon:type=Metrics
+
 # Metrics reporting configurations
 reporting:
   jmx:
@@ -90,6 +97,9 @@ reporting:
     username: admin
 
     password: admin
+
+    # The path for Data Bridge Agent configuration
+    # dataAgentConfigPath: ${carbon.home}/conf/data-agent-config.xml
 
     # Polling Period in seconds.
     # This is the period for polling metrics from the metric registry and sending events via the Data Publisher

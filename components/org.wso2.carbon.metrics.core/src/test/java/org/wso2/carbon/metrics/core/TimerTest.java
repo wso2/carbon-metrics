@@ -30,22 +30,22 @@ public class TimerTest extends BaseMetricTest {
 
     @Test
     public void testInitialCount() {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-initial-count"), Level.INFO);
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-initial-count"), Level.INFO);
         Assert.assertEquals(timer.getCount(), 0);
     }
 
     @Test
     public void testSameMetric() {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-same-timer"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
 
-        Timer timer2 = MetricManager.timer(MetricManager.name(this.getClass(), "test-same-timer"), Level.INFO);
+        Timer timer2 = metricService.timer(MetricService.name(this.getClass(), "test-same-timer"), Level.INFO);
         Assert.assertEquals(timer2.getCount(), 1);
         timer.update(1, TimeUnit.SECONDS);
 
         try {
-            Timer timer3 = MetricManager.getTimer(MetricManager.name(this.getClass(), "test-same-timer"));
+            Timer timer3 = metricService.timer(MetricService.name(this.getClass(), "test-same-timer"));
             Assert.assertEquals(timer3.getCount(), 2);
         } catch (MetricNotFoundException e) {
             Assert.fail("Timer should be available", e);
@@ -54,13 +54,13 @@ public class TimerTest extends BaseMetricTest {
 
     @Test
     public void testTime() {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-start"), Level.INFO);
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-timer-start"), Level.INFO);
         Context context = timer.start();
         Assert.assertTrue(context.stop() > 0, "Timer value should be greater than zero");
         Assert.assertEquals(timer.getCount(), 1);
         context.close();
 
-        MetricManager.getMetricService().setRootLevel(Level.OFF);
+        metricManagementService.setRootLevel(Level.OFF);
         context = timer.start();
         Assert.assertEquals(context.stop(), 0);
         context.close();
@@ -68,36 +68,30 @@ public class TimerTest extends BaseMetricTest {
 
     @Test
     public void testTimerUpdateCount() {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-update"), Level.INFO);
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-timer-update"), Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
 
-        MetricManager.getMetricService().setRootLevel(Level.OFF);
+        metricManagementService.setRootLevel(Level.OFF);
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
     }
 
     @Test
     public void testTimerCallableInstances() throws Exception {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-callable"), Level.INFO);
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return "test";
-            }
-
-        };
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-timer-callable"), Level.INFO);
+        Callable<String> callable = () -> "test";
         String value = timer.time(callable);
         Assert.assertEquals(value, "test");
 
-        MetricManager.getMetricService().setRootLevel(Level.OFF);
+        metricManagementService.setRootLevel(Level.OFF);
         value = timer.time(callable);
         Assert.assertNull(value, "Value should be null");
     }
 
     @Test
     public void testSnapshot() {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-callable"), Level.INFO);
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-timer-callable"), Level.INFO);
 
         LongStream.rangeClosed(1, 100).forEach(i -> timer.update(i, TimeUnit.NANOSECONDS));
 
@@ -107,7 +101,7 @@ public class TimerTest extends BaseMetricTest {
 
     @Test
     public void testEventRate() {
-        Timer timer = MetricManager.timer(MetricManager.name(this.getClass(), "test-timer-rate"), Level.INFO);
+        Timer timer = metricService.timer(MetricService.name(this.getClass(), "test-timer-rate"), Level.INFO);
         timer.update(1L, TimeUnit.NANOSECONDS);
         Assert.assertEquals(timer.getCount(), 1);
         Assert.assertTrue(timer.getOneMinuteRate() >= 0);

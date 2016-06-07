@@ -91,7 +91,7 @@ public class DasReporterTest {
 
         reporter.report(map("test.gauge", gauge), this.map(), this.map(), this.map(), this.map());
 
-        Event event = testServer.getEvent("gauge");
+        Event event = testServer.getEvent("Gauge");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -117,7 +117,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), map("test.counter", counter), this.map(), this.map(), this.map());
 
-        Event event = testServer.getEvent("counter");
+        Event event = testServer.getEvent("Counter");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -147,7 +147,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), this.map(), map("test.histogram", histogram), this.map(), this.map());
 
-        Event event = testServer.getEvent("histogram");
+        Event event = testServer.getEvent("Histogram");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -177,7 +177,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), this.map(), this.map(), map("test.meter", meter), this.map());
 
-        Event event = testServer.getEvent("meter");
+        Event event = testServer.getEvent("Meter");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);
@@ -216,7 +216,7 @@ public class DasReporterTest {
 
         reporter.report(this.map(), this.map(), this.map(), this.map(), map("test.timer", timer));
 
-        Event event = testServer.getEvent("timer");
+        Event event = testServer.getEvent("Timer");
         Assert.assertEquals(event.getTimeStamp(), clock.getTime());
         Assert.assertEquals(event.getMetaData()[0], clock.getTime());
         Assert.assertEquals(event.getPayloadData()[0], SOURCE);

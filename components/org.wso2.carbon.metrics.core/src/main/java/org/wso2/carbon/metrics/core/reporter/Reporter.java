@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core.reporter;
 
 /**
- * Reporter interface to manage multiple reporters in this service
+ * Reporter interface to manage multiple reporters in this impl
  */
 public interface Reporter {
 
