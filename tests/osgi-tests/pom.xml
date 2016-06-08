@@ -93,6 +93,16 @@
             <artifactId>org.wso2.carbon.metrics.core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.sample.service</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.metrics</groupId>
+            <artifactId>org.wso2.carbon.metrics.sample.consumer</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>

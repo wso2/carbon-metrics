@@ -33,4 +33,16 @@
             </excludes>
         </fileSet>
     </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>./osgi/dropins</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useStrictFiltering>true</useStrictFiltering>
+            <includes>
+                <include>org.wso2.carbon.metrics:org.wso2.carbon.metrics.sample.service</include>
+                <include>org.wso2.carbon.metrics:org.wso2.carbon.metrics.sample.consumer</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
 </assembly>

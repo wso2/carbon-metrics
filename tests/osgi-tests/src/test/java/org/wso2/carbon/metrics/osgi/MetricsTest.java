@@ -35,6 +35,7 @@ import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
+import org.wso2.carbon.metrics.sample.service.RandomNumberService;
 import org.wso2.carbon.osgi.test.util.CarbonSysPropConfiguration;
 import org.wso2.carbon.osgi.test.util.OSGiTestConfigurationUtils;
 
@@ -69,6 +70,9 @@ public class MetricsTest {
     @Inject
     private MetricManagementService metricManagementService;
 
+    @Inject
+    private RandomNumberService randomNumberService;
+
     @Configuration
     public Option[] createConfiguration() {
         List<Option> optionList = new ArrayList<>();
@@ -95,6 +99,11 @@ public class MetricsTest {
         optionList.add(mavenBundle().groupId("libthrift.wso2")
                 .artifactId("libthrift").versionAsInProject());
 
+        // Sample bundles
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.sample.service").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.sample.consumer").versionAsInProject());
 
         String currentDir = Paths.get("").toAbsolutePath().toString();
         Path carbonHome = Paths.get(currentDir, "target", "carbon-home");
@@ -137,6 +146,18 @@ public class MetricsTest {
     @Test
     public void testMetricsDasReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.reporter");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
+    public void testMetricsSampleServiceBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.sample.service");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
+    public void testMetricsSampleConsumerBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.sample.consumer");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
@@ -247,6 +268,11 @@ public class MetricsTest {
         Assert.assertEquals(metricManagementService.getRootLevel(), Level.INFO);
         counter.inc(10);
         Assert.assertEquals(counter.getCount(), 30);
+    }
+
+    @Test
+    public void testSampleService() {
+        Assert.assertTrue(randomNumberService.getRandomNumbers().length > 0);
     }
 
 }
