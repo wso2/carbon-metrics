@@ -42,6 +42,7 @@ public class MetricServiceImpl implements MetricService {
         return metricManager.counter(name);
     }
 
+    @Override
     public Counter counter(String name, Level level, Level... levels) {
         return metricManager.counter(name, level, levels);
     }
@@ -51,6 +52,7 @@ public class MetricServiceImpl implements MetricService {
         return metricManager.meter(name);
     }
 
+    @Override
     public Meter meter(String name, Level level, Level... levels) {
         return metricManager.meter(name, level, levels);
     }
