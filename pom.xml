@@ -57,8 +57,10 @@
         <module>components/org.wso2.carbon.metrics.das.capp</module>
         <module>components/org.wso2.carbon.metrics.das.reporter</module>
         <module>components/org.wso2.carbon.metrics.core</module>
-        <module>features/org.wso2.carbon.metrics.feature</module>
+        <module>samples/org.wso2.carbon.metrics.sample.service</module>
+        <module>samples/org.wso2.carbon.metrics.sample.consumer</module>
         <module>tests/osgi-tests</module>
+        <module>features/org.wso2.carbon.metrics.feature</module>
         <module>distribution</module>
     </modules>
 
@@ -77,6 +79,16 @@
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.sample.service</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.sample.consumer</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>

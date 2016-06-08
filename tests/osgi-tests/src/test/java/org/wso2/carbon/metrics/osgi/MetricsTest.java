@@ -35,6 +35,7 @@ import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
+import org.wso2.carbon.metrics.sample.service.RandomNumberService;
 import org.wso2.carbon.osgi.test.util.CarbonSysPropConfiguration;
 import org.wso2.carbon.osgi.test.util.OSGiTestConfigurationUtils;
 
@@ -69,6 +70,9 @@ public class MetricsTest {
     @Inject
     private MetricManagementService metricManagementService;
 
+    @Inject
+    private RandomNumberService randomNumberService;
+
     @Configuration
     public Option[] createConfiguration() {
         List<Option> optionList = new ArrayList<>();
@@ -95,6 +99,11 @@ public class MetricsTest {
         optionList.add(mavenBundle().groupId("libthrift.wso2")
                 .artifactId("libthrift").versionAsInProject());
 
+        // Sample bundles
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.sample.service").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.sample.consumer").versionAsInProject());
 
         String currentDir = Paths.get("").toAbsolutePath().toString();
         Path carbonHome = Paths.get(currentDir, "target", "carbon-home");
@@ -141,6 +150,18 @@ public class MetricsTest {
     }
 
     @Test
+    public void testMetricsSampleServiceBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.sample.service");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
+    public void testMetricsSampleConsumerBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.sample.consumer");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
     public void testCounter() {
         Counter counter = metricService.counter("org.wso2.carbon.metrics.osgi.test.counter", Level.INFO);
         counter.inc();
@@ -169,7 +190,26 @@ public class MetricsTest {
     }
 
     @Test
+    public void testMBean() {
+        MetricsMXBean metricsMXBean = null;
+        try {
+            ObjectName n = new ObjectName(MBEAN_NAME);
+            metricsMXBean = JMX.newMXBeanProxy(ManagementFactory.getPlatformMBeanServer(), n, MetricsMXBean.class);
+        } catch (MalformedObjectNameException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertNotNull(metricsMXBean);
+        Assert.assertTrue(metricsMXBean.isEnabled());
+        // Check whether the reporters are started at the startup
+        Assert.assertTrue(metricsMXBean.isReporterRunning("JMX"));
+        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
+        Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
+    }
+
+    @Test(dependsOnMethods = "testMBean")
     public void testEnableDisable() {
+        // This method depends on the "testMBean" as the reporters will start if we disable and enable the Metrics
         Assert.assertTrue(metricManagementService.isEnabled(), "Metric Service should be enabled");
         Counter counter = metricService.counter(MetricService.name(this.getClass(), "test-enabled"), Level.INFO);
         counter.inc(10);
@@ -231,19 +271,8 @@ public class MetricsTest {
     }
 
     @Test
-    public void testMBean() {
-        MetricsMXBean metricsMXBean = null;
-        try {
-            ObjectName n = new ObjectName(MBEAN_NAME);
-            metricsMXBean = JMX.newMXBeanProxy(ManagementFactory.getPlatformMBeanServer(), n, MetricsMXBean.class);
-        } catch (MalformedObjectNameException e) {
-            Assert.fail(e.getMessage());
-        }
-
-        Assert.assertNotNull(metricsMXBean);
-        Assert.assertTrue(metricsMXBean.isEnabled());
-        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
-        Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
+    public void testSampleService() {
+        Assert.assertTrue(randomNumberService.getRandomNumbers().length > 0);
     }
 
 }

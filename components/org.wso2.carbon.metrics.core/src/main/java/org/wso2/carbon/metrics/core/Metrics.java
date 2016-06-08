@@ -174,9 +174,6 @@ public class Metrics {
             }
 
             MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig);
-            if (enabled) {
-                metricManager.enable();
-            }
 
             MetricService metricService = new MetricServiceImpl(metricManager);
             MetricManagementService metricManagementService = new MetricManagementServiceImpl(metricManager);
@@ -190,6 +187,11 @@ public class Metrics {
                 }
             });
 
+
+            // Enable Metric Manager after adding reporters. The change listeners should start the reporters
+            if (enabled) {
+                metricManager.enable();
+            }
             return new Metrics(jmxConfig.isRegisterMBean(), jmxConfig.getName(), metricService,
                     metricManagementService);
         }

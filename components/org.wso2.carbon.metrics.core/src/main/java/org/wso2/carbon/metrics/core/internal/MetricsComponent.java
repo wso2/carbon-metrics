@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.core.internal;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -41,6 +42,10 @@ public class MetricsComponent {
 
     private Metrics metrics;
 
+    private ServiceRegistration metricServiceRegistration;
+
+    private ServiceRegistration metricManagementServiceRegistration;
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         if (logger.isDebugEnabled()) {
@@ -48,8 +53,10 @@ public class MetricsComponent {
         }
         metrics = new Metrics.Builder().build();
         metrics.activate();
-        bundleContext.registerService(MetricService.class, metrics.getMetricService(), null);
-        bundleContext.registerService(MetricManagementService.class, metrics.getMetricManagementService(), null);
+        metricServiceRegistration = bundleContext.registerService(MetricService.class, metrics.getMetricService(),
+                null);
+        metricManagementServiceRegistration = bundleContext.registerService(MetricManagementService.class,
+                metrics.getMetricManagementService(), null);
     }
 
     @Deactivate
@@ -58,6 +65,8 @@ public class MetricsComponent {
             logger.debug("Metrics Component deactivated");
         }
         metrics.deactivate();
+        metricServiceRegistration.unregister();
+        metricManagementServiceRegistration.unregister();
     }
 
     @Reference(
