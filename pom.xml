@@ -530,9 +530,9 @@
         <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
         <hikaricp.version>2.4.6</hikaricp.version>
         <h2.version>1.4.192</h2.version>
-        <spring.version>4.2.5.RELEASE</spring.version>
+        <spring.version>4.2.6.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
-        <tomcat.version>8.0.33</tomcat.version>
+        <tomcat.version>8.0.35</tomcat.version>
         <jacoco.version>0.7.6.201602180812</jacoco.version>
         <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <pax.logging.version>1.8.4</pax.logging.version>
