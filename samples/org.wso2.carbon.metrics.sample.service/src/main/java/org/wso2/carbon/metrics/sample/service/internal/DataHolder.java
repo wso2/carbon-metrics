@@ -15,8 +15,6 @@
  */
 package org.wso2.carbon.metrics.sample.service.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 
@@ -24,8 +22,6 @@ import org.wso2.carbon.metrics.core.MetricService;
  * DataHolder to hold OSGi services
  */
 public class DataHolder {
-
-    private static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
     private static final DataHolder instance = new DataHolder();
 
