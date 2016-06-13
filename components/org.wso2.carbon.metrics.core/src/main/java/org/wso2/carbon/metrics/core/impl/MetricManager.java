@@ -900,6 +900,44 @@ public final class MetricManager {
     }
 
     /**
+     * Removes the metric or metric collection with the given name.
+     *
+     * @param name the name of the metric or the annotated name for the metric collection
+     * @return whether or not the metric was removed
+     */
+    public boolean remove(String name) {
+        boolean removed;
+        if (isAnnotated(name)) {
+            Metric metric = metricCollectionsMap.remove(name);
+            removed = metric != null;
+            String[] metricNames = getMetricHierarchyNames(name);
+            for (String metricName : metricNames) {
+                // Child metrics might have removed earlier
+                removed = removeMetric(metricName) || removed;
+            }
+        } else {
+            removed = removeMetric(name);
+        }
+        return removed;
+    }
+
+
+    /**
+     * Removes the metric with the given name.
+     *
+     * @param name the name of the metric
+     * @return whether or not the metric was removed
+     */
+    private boolean removeMetric(String name) {
+        MetricWrapper metricWrapper = metricsMap.remove(name);
+        if (metricWrapper != null) {
+            // Remove from metric registry. This is needed to remove metrics from reporters
+            return metricRegistry.remove(name);
+        }
+        return false;
+    }
+
+    /**
      * Return the number of metrics used
      *
      * @return The metrics count

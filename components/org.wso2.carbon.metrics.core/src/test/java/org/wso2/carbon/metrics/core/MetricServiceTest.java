@@ -249,4 +249,49 @@ public class MetricServiceTest extends BaseMetricTest {
         // cannot retrieve undefined metric
         metricService.histogram("org.wso2.carbon.metrics.api.test2.histogram");
     }
+
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testMetricRemove() throws MetricNotFoundException {
+        String name = "org.wso2.carbon.metrics.api.remove.meter";
+        metricService.meter(name, Level.INFO);
+        Assert.assertNotNull(metricService.meter(name));
+        Assert.assertTrue(metricService.remove(name));
+        Assert.assertFalse(metricService.remove(name));
+        // Following should throw an exception
+        Assert.assertNull(metricService.meter(name));
+    }
+
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testMetricCollectionRemove() throws MetricNotFoundException {
+        String name = "org.wso2.carbon.metrics.api.remove[+].sub.histogram";
+        String sub = "org.wso2.carbon.metrics.api.remove.sub.histogram";
+        String main = "org.wso2.carbon.metrics.api.remove.histogram";
+        metricService.histogram(name, Level.INFO, Level.INFO);
+        Assert.assertNotNull(metricService.histogram(name));
+        Assert.assertNotNull(metricService.histogram(sub));
+        Assert.assertNotNull(metricService.histogram(main));
+        Assert.assertTrue(metricService.remove(name));
+        Assert.assertFalse(metricService.remove(name));
+        // Following should throw an exception
+        Assert.assertNull(metricService.histogram(name));
+    }
+
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testMetricCollectionRemoveChildren() throws MetricNotFoundException {
+        String name = "org.wso2.carbon.metrics.api.remove[+].sub.counter";
+        String sub = "org.wso2.carbon.metrics.api.remove.sub.counter";
+        String main = "org.wso2.carbon.metrics.api.remove.counter";
+        metricService.counter(name, Level.INFO, Level.INFO);
+        Assert.assertNotNull(metricService.counter(name));
+        Assert.assertNotNull(metricService.counter(sub));
+        Assert.assertNotNull(metricService.counter(main));
+        Assert.assertTrue(metricService.remove(sub));
+        Assert.assertFalse(metricService.remove(sub));
+        Assert.assertTrue(metricService.remove(main));
+        Assert.assertFalse(metricService.remove(main));
+        Assert.assertTrue(metricService.remove(name));
+        Assert.assertFalse(metricService.remove(name));
+        // Following should throw an exception
+        Assert.assertNull(metricService.histogram(sub));
+    }
 }

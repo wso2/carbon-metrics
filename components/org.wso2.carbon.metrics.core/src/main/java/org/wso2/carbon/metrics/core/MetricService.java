@@ -203,4 +203,12 @@ public interface MetricService {
      * @see #cachedGauge(String, Level, long, TimeUnit, Gauge)
      */
     <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge);
+
+    /**
+     * Removes the metric or metric collection with the given name.
+     *
+     * @param name the name of the metric or the annotated name for the metric collection
+     * @return whether or not the metric was removed
+     */
+    boolean remove(String name);
 }

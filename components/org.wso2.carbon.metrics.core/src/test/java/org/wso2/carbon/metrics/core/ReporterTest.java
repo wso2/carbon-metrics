@@ -87,8 +87,8 @@ public class ReporterTest extends BaseReporterTest {
         metricManagementService.stopReporter("JMX");
     }
 
-    @Test
-    public void testDisabledGauge() {
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testDisabledGauge() throws MetricNotFoundException {
         metricManagementService.startReporter("JMX");
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX"));
         String gaugeName = MetricService.name(this.getClass(), "test-disabled-gauge");
@@ -98,10 +98,50 @@ public class ReporterTest extends BaseReporterTest {
         try {
             getAttributes(gaugeName, "Value");
             Assert.fail("Gauge should not be available");
-        } catch (MetricNotFoundException e) {
-            // This is expected
+        } finally {
+            metricManagementService.stopReporter("JMX");
         }
+    }
+
+    @Test
+    public void testMetricRemove() {
+        metricManagementService.startReporter("JMX");
+        Assert.assertTrue(metricManagementService.isReporterRunning("JMX"));
+        String counterName = MetricService.name(this.getClass(), "remove[+].sub.counter");
+        String subName = MetricService.name(this.getClass(), "remove.sub.counter");
+        String mainName = MetricService.name(this.getClass(), "remove.counter");
+        metricService.counter(counterName, Level.INFO, Level.INFO);
+
+        // Test sub counter remove
+        testCounterRemove(subName);
+
+        // Test main counter remove
+        testCounterRemove(mainName);
+
+        Assert.assertTrue(metricService.remove(counterName));
+        Assert.assertFalse(metricService.remove(counterName));
+
         metricManagementService.stopReporter("JMX");
+    }
+
+    private void testCounterRemove(String name) {
+        try {
+            AttributeList gaugeAttributes = getAttributes(name, "Count");
+            SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
+            Assert.assertTrue(gaugeMap.containsKey("Count"), "Counter should be available");
+        } catch (MetricNotFoundException e) {
+            Assert.fail("Counter should be available");
+        }
+
+        Assert.assertTrue(metricService.remove(name));
+        Assert.assertFalse(metricService.remove(name));
+
+        try {
+            getAttributes(name, "Count");
+            Assert.fail("Counter should not be available");
+        } catch (MetricNotFoundException e) {
+            // Ignore. Cannot throw as there are more asserts
+        }
     }
 
     @Test
