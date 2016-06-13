@@ -525,12 +525,12 @@
         <xerces.impl.version>2.11.0.SP4</xerces.impl.version>
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
-        <log4j.version>2.6</log4j.version>
+        <log4j.version>2.6.1</log4j.version>
         <snakeyaml.version>1.16.0.wso2v1</snakeyaml.version>
         <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
         <hikaricp.version>2.4.6</hikaricp.version>
         <h2.version>1.4.192</h2.version>
-        <spring.version>4.2.6.RELEASE</spring.version>
+        <spring.version>4.3.0.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
         <tomcat.version>8.0.35</tomcat.version>
         <jacoco.version>0.7.6.201602180812</jacoco.version>
