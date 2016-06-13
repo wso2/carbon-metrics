@@ -31,7 +31,6 @@ import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 
 import java.lang.management.ManagementFactory;
-import java.util.Optional;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -42,10 +41,6 @@ import javax.management.ObjectName;
 public class Metrics {
 
     private static final Logger logger = LoggerFactory.getLogger(Metrics.class);
-
-    private static final String SYSTEM_PROPERTY_METRICS_ENABLED = "metrics.enabled";
-
-    private static final String SYSTEM_PROPERTY_METRICS_ROOT_LEVEL = "metrics.rootLevel";
 
     private final boolean registerMBean;
 
@@ -152,26 +147,6 @@ public class Metrics {
             MetricRegistry metricRegistry = new MetricRegistry();
             MetricsConfig metricsConfig = MetricsConfigBuilder.build();
             MetricsLevelConfig metricsLevelConfig = MetricsLevelConfigBuilder.build();
-            JmxConfig jmxConfig = metricsConfig.getJmx();
-
-            // Set enabled from the config
-            boolean enabled = metricsConfig.isEnabled();
-
-            // Highest priority is given for the System Properties
-            String metricsEnabledProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ENABLED);
-            if (metricsEnabledProperty != null && !metricsEnabledProperty.trim().isEmpty()) {
-                enabled = Boolean.valueOf(metricsEnabledProperty);
-            }
-
-            Optional<Level> rootLevel = Optional.empty();
-            String rootLevelProperty = System.getProperty(SYSTEM_PROPERTY_METRICS_ROOT_LEVEL);
-            if (rootLevelProperty != null && !rootLevelProperty.trim().isEmpty()) {
-                rootLevel = Optional.ofNullable(Level.getLevel(rootLevelProperty));
-            }
-
-            if (rootLevel.isPresent()) {
-                metricsLevelConfig.setRootLevel(rootLevel.get());
-            }
 
             MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig);
 
@@ -187,11 +162,12 @@ public class Metrics {
                 }
             });
 
-
             // Enable Metric Manager after adding reporters. The change listeners should start the reporters
-            if (enabled) {
+            if (metricsConfig.isEnabled()) {
                 metricManager.enable();
             }
+
+            JmxConfig jmxConfig = metricsConfig.getJmx();
             return new Metrics(jmxConfig.isRegisterMBean(), jmxConfig.getName(), metricService,
                     metricManagementService);
         }
