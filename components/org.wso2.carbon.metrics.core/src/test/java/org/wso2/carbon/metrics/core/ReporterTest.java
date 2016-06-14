@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
@@ -296,6 +298,41 @@ public class ReporterTest extends BaseReporterTest {
         Assert.assertEquals(gaugeResult.get(0).get("NAME"), gaugeName);
         Assert.assertEquals(gaugeResult.get(0).get("VALUE"), "1");
         Assert.assertEquals(gaugeResult.get(0).get("SOURCE"), "Carbon-jdbc");
+        metricManagementService.stopReporter("JDBC");
+        Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
+    }
+
+    @Test
+    public void testJDBCReporterCachedGauge() {
+        metricManagementService.startReporter("JDBC");
+        Assert.assertTrue(metricManagementService.isReporterRunning("JDBC"));
+        String gaugeName = MetricService.name(this.getClass(), "test-jdbc-cached-gauge");
+        LongAdder adder = new LongAdder();
+        adder.increment();
+        Assert.assertEquals(adder.longValue(), 1L);
+
+        Gauge<Long> gauge = () -> adder.longValue();
+        metricService.cachedGauge(gaugeName, Level.INFO, 1, TimeUnit.HOURS, gauge);
+
+        metricManagementService.report();
+        List<Map<String, Object>> gaugeResult =
+                template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
+        Assert.assertEquals(gaugeResult.size(), 1);
+        Assert.assertEquals(gaugeResult.get(0).get("NAME"), gaugeName);
+        Assert.assertEquals(gaugeResult.get(0).get("VALUE"), "1");
+        Assert.assertEquals(gaugeResult.get(0).get("SOURCE"), "Carbon-jdbc");
+
+        adder.increment();
+        Assert.assertEquals(adder.longValue(), 2L);
+
+        metricManagementService.report();
+        List<Map<String, Object>> gaugeResult2 =
+                template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ? ORDER BY TIMESTAMP", gaugeName);
+        Assert.assertEquals(gaugeResult2.size(), 2);
+        Assert.assertEquals(gaugeResult2.get(1).get("NAME"), gaugeResult2.get(0).get("NAME"));
+        Assert.assertEquals(gaugeResult2.get(1).get("VALUE"), gaugeResult2.get(0).get("VALUE"));
+        Assert.assertEquals(gaugeResult2.get(1).get("SOURCE"), gaugeResult2.get(0).get("SOURCE"));
+
         metricManagementService.stopReporter("JDBC");
         Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
     }
