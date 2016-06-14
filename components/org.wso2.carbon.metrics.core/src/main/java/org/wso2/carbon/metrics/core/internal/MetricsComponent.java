@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.carbon.kernel.CarbonRuntime;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Metrics;
@@ -72,7 +73,7 @@ public class MetricsComponent {
     @Reference(
             name = "org.wso2.carbon.datasource.DataSourceService",
             service = DataSourceService.class,
-            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            cardinality = ReferenceCardinality.MANDATORY,
             policy = ReferencePolicy.DYNAMIC,
             unbind = "unregisterDataSourceService"
     )
@@ -86,6 +87,36 @@ public class MetricsComponent {
     protected void unregisterDataSourceService(DataSourceService dataSourceService) {
         if (logger.isDebugEnabled()) {
             logger.debug("The JNDI datasource is unregistered");
+        }
+    }
+
+    /**
+     * This bind method will be called when CarbonRuntime OSGi service is registered.
+     *
+     * @param carbonRuntime The CarbonRuntime instance registered by Carbon Kernel as an OSGi service
+     */
+    @Reference(
+            name = "carbon.runtime.service",
+            service = CarbonRuntime.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetCarbonRuntime"
+    )
+    protected void setCarbonRuntime(CarbonRuntime carbonRuntime) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Setting default source to {}", carbonRuntime.getConfiguration().getId());
+        }
+        Utils.setDefaultSource(carbonRuntime.getConfiguration().getId());
+    }
+
+    /**
+     * This is the unbind method which gets called at the un-registration of CarbonRuntime OSGi service.
+     *
+     * @param carbonRuntime The CarbonRuntime instance registered by Carbon Kernel as an OSGi service
+     */
+    protected void unsetCarbonRuntime(CarbonRuntime carbonRuntime) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("The Carbon Runtime is unregistered");
         }
     }
 }

@@ -111,4 +111,11 @@ public interface MetricsMXBean {
      * Stop all reporters
      */
     void stopReporters();
+
+    /**
+     * Get the default source used for the reporters
+     *
+     * @return The default source used for the reporters
+     */
+    String getDefaultSource();
 }

@@ -17,6 +17,7 @@ package org.wso2.carbon.metrics.core.impl;
 
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.MetricManagementService;
+import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 
 /**
@@ -102,5 +103,10 @@ public class MetricsMXBeanImpl implements MetricsMXBean {
     @Override
     public void stopReporters() {
         metricManagementService.stopReporters();
+    }
+
+    @Override
+    public String getDefaultSource() {
+        return Utils.getDefaultSource();
     }
 }

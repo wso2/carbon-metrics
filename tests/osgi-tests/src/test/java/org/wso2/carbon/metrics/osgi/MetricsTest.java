@@ -205,6 +205,7 @@ public class MetricsTest {
         Assert.assertTrue(metricsMXBean.isReporterRunning("JMX"));
         Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
         Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
+        Assert.assertEquals(metricsMXBean.getDefaultSource(), "carbon-metrics");
     }
 
     @Test(dependsOnMethods = "testMBean")

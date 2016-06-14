@@ -23,6 +23,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
+import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 
@@ -160,6 +161,11 @@ public class MetricsMXBeanTest extends BaseReporterTest {
     @Test
     public void testMetricsCount() {
         Assert.assertTrue(metricsMXBean.getMetricsCount() > 0, "Metrics count should be greater than zero");
+    }
+
+    @Test
+    public void testDefaultSource() {
+        Assert.assertEquals(metricsMXBean.getDefaultSource(), Utils.getDefaultSource());
     }
 
 }

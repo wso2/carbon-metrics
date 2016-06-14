@@ -23,7 +23,8 @@ reporting:
   jdbc:
     name: JDBC
     enabled: true
-    source: Carbon-jdbc
+    # Use default source
+    # source:
     lookupDataSource: false
     pollingPeriod: 90
     scheduledCleanup:

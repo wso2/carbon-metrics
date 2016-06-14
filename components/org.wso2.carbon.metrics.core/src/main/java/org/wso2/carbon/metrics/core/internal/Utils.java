@@ -25,29 +25,36 @@ import java.util.Optional;
  */
 public class Utils {
 
+    private static volatile String defaultSource;
+
     private Utils() {
     }
 
     /**
      * A utility method to provide a default source value
      *
-     * @return The host name, if it is available, otherwise "Carbon"
+     * @return The default source, if it is available, otherwise "Carbon"
      */
     public static String getDefaultSource() {
-        String source;
-        // Use host name if available
-        String hostname = null;
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            // Ignore exception
+        if (defaultSource == null) {
+            // Use host name if available
+            String hostname = null;
+            try {
+                hostname = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                // Ignore exception
+            }
+            if (hostname == null || hostname.trim().length() == 0) {
+                defaultSource = "Carbon";
+            } else {
+                defaultSource = hostname;
+            }
         }
-        if (hostname == null || hostname.trim().length() == 0) {
-            source = "Carbon";
-        } else {
-            source = hostname;
-        }
-        return source;
+        return defaultSource;
+    }
+
+    public static void setDefaultSource(String defaultSource) {
+        Utils.defaultSource = defaultSource;
     }
 
     public static Optional<File> getConfigFile(final String key, final String fileName) {
