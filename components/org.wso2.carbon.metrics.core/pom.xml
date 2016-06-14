@@ -193,7 +193,7 @@
         <private.package>org.wso2.carbon.metrics.core.internal</private.package>
         <export.package>
             !org.wso2.carbon.metrics.core.internal.*,
-            org.wso2.carbon.metrics.core.*
+            org.wso2.carbon.metrics.core.*;version="${carbon.metrics.package.export.version}"
         </export.package>
         <import.package>
             javax.management,
