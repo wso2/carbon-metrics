@@ -34,7 +34,7 @@
     <url>http://wso2.com</url>
 
     <prerequisites>
-        <maven>3.0.1</maven>
+        <maven>3.0.5</maven>
     </prerequisites>
 
     <licenses>
@@ -533,8 +533,8 @@
         <h2.version>1.4.192</h2.version>
         <spring.version>4.3.0.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
-        <tomcat.version>8.0.35</tomcat.version>
-        <jacoco.version>0.7.6.201602180812</jacoco.version>
+        <tomcat.version>8.0.36</tomcat.version>
+        <jacoco.version>0.7.7.201606060606</jacoco.version>
         <carbon.feature.plugin.version>2.0.1</carbon.feature.plugin.version>
         <pax.logging.version>1.8.4</pax.logging.version>
         <pax.exam.version>4.9.1</pax.exam.version>
