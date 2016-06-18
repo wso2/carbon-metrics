@@ -25,7 +25,6 @@ import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
-import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 
@@ -375,7 +374,6 @@ public class ReporterTest extends BaseReporterTest {
         System.setProperty("metrics.datasource.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
                 + "metrics-datasource.properties");
 
-        Utils.setDefaultSource("tests");
         Metrics metrics = new Metrics.Builder().build();
         MetricService metricService = metrics.getMetricService();
         MetricManagementService metricManagementService = metrics.getMetricManagementService();
@@ -392,7 +390,6 @@ public class ReporterTest extends BaseReporterTest {
         Assert.assertEquals(meterResult.size(), 1);
         Assert.assertEquals(meterResult.get(0).get("NAME"), meterName);
         Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L);
-        Assert.assertEquals(meterResult.get(0).get("SOURCE"), "tests");
         metricManagementService.stopReporter("JDBC");
         Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
     }

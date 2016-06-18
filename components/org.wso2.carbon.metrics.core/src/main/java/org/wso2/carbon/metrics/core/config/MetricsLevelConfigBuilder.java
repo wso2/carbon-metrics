@@ -15,15 +15,10 @@
  */
 package org.wso2.carbon.metrics.core.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
 import org.wso2.carbon.metrics.core.internal.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.Properties;
@@ -32,8 +27,6 @@ import java.util.Properties;
  * Build Metrics Level Configuration from a properties file
  */
 public class MetricsLevelConfigBuilder {
-
-    private static final Logger logger = LoggerFactory.getLogger(MetricsLevelConfigBuilder.class);
 
     private static final String METRICS_ROOT_LEVEL = "metrics.rootLevel";
 
@@ -44,34 +37,24 @@ public class MetricsLevelConfigBuilder {
 
     public static MetricsLevelConfig build() {
         MetricsLevelConfig metricsLevelConfig = new MetricsLevelConfig();
-        Optional<File> metricsLevelConfigFile = Utils.getConfigFile("metrics.level.conf", "metrics.properties");
-        if (metricsLevelConfigFile.isPresent()) {
-            File file = metricsLevelConfigFile.get();
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Loading Metrics Level Configuration from %s", file.getAbsolutePath()));
-            }
-            try (FileInputStream in = new FileInputStream(file)) {
-                Properties properties = new Properties();
-                properties.load(in);
+        Optional<Properties> propertiesOptional = Utils.loadProperties("metrics.level.conf", "metrics.properties");
 
-                metricsLevelConfig.setRootLevel(Level.toLevel(properties.getProperty(METRICS_ROOT_LEVEL,
-                        Level.OFF.name()).trim(), Level.OFF));
-                Enumeration<?> enumeration = properties.propertyNames();
-                while (enumeration.hasMoreElements()) {
-                    String key = (String) enumeration.nextElement();
-                    if (key.startsWith(METRIC_LEVEL_PREFIX)) {
-                        String metricName = key.substring(METRIC_LEVEL_PREFIX.length());
-                        String value = properties.getProperty(key);
-                        if (value != null) {
-                            metricsLevelConfig.setLevel(metricName, Level.toLevel(value.trim(), Level.OFF));
-                        }
+        propertiesOptional.ifPresent(properties -> {
+            metricsLevelConfig.setRootLevel(Level.toLevel(properties.getProperty(METRICS_ROOT_LEVEL,
+                    Level.OFF.name()).trim(), Level.OFF));
+
+            Enumeration<?> enumeration = properties.propertyNames();
+            while (enumeration.hasMoreElements()) {
+                String key = (String) enumeration.nextElement();
+                if (key.startsWith(METRIC_LEVEL_PREFIX)) {
+                    String metricName = key.substring(METRIC_LEVEL_PREFIX.length());
+                    String value = properties.getProperty(key);
+                    if (value != null) {
+                        metricsLevelConfig.setLevel(metricName, Level.toLevel(value.trim(), Level.OFF));
                     }
                 }
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load Metrics Level Configuration from "
-                        + file.getAbsolutePath(), e);
             }
-        }
+        });
 
         return metricsLevelConfig;
     }

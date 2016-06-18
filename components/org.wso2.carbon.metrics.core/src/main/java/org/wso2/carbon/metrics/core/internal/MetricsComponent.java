@@ -52,6 +52,7 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component activated");
         }
+        Utils.setCarbonEnvironment(true);
         metrics = new Metrics.Builder().build();
         metrics.activate();
         metricServiceRegistration = bundleContext.registerService(MetricService.class, metrics.getMetricService(),

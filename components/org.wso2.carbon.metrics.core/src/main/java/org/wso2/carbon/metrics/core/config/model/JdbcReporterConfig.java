@@ -26,8 +26,8 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.impl.JdbcReporter;
 
-import java.io.File;
 import java.util.Optional;
+import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -41,7 +41,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
     private String source = Utils.getDefaultSource();
 
-    private boolean lookupDataSource;
+    private boolean lookupDataSource = Utils.isCarbonEnvironment();
 
     private String dataSourceName;
 
@@ -112,17 +112,17 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                         String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
             }
         } else {
-            Optional<File> metricsLevelConfigFile = Utils.getConfigFile("metrics.datasource.conf",
+            Optional<Properties> propertiesOptional = Utils.loadProperties("metrics.datasource.conf",
                     "metrics-datasource.properties");
-            if (!metricsLevelConfigFile.isPresent()) {
+            if (!propertiesOptional.isPresent()) {
                 throw new ReporterBuildException("Metrics Datasource configuration file not found!");
             }
 
-            File file = metricsLevelConfigFile.get();
+            Properties properties = propertiesOptional.get();
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Creating Metrics Datasource. Config file: %s", file.getAbsolutePath()));
+                logger.debug("Creating Metrics Datasource");
             }
-            HikariConfig hikariConfig = new HikariConfig(file.getPath());
+            HikariConfig hikariConfig = new HikariConfig(properties);
             dataSource = new HikariDataSource(hikariConfig);
         }
 
