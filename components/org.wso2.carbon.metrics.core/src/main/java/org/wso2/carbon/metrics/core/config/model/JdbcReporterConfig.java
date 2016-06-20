@@ -41,11 +41,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
     private String source = Utils.getDefaultSource();
 
-    private boolean lookupDataSource = Utils.isCarbonEnvironment();
-
-    private String dataSourceName;
-
-    private JdbcScheduledCleanupConfig scheduledCleanup = new JdbcScheduledCleanupConfig();
+    private DataSourceConfig dataSource;
 
     public JdbcReporterConfig() {
         name = "JDBC";
@@ -59,28 +55,12 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
         this.source = source;
     }
 
-    public boolean isLookupDataSource() {
-        return lookupDataSource;
+    public DataSourceConfig getDataSource() {
+        return dataSource;
     }
 
-    public void setLookupDataSource(boolean lookupDataSource) {
-        this.lookupDataSource = lookupDataSource;
-    }
-
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
-
-    public JdbcScheduledCleanupConfig getScheduledCleanup() {
-        return scheduledCleanup;
-    }
-
-    public void setScheduledCleanup(JdbcScheduledCleanupConfig scheduledCleanup) {
-        this.scheduledCleanup = scheduledCleanup;
+    public void setDataSource(DataSourceConfig dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -99,14 +79,15 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
             return Optional.empty();
         }
 
-        final DataSource dataSource;
+        DataSource jdbcDataSource;
+        String dataSourceName = dataSource.getDataSourceName();
 
-        if (lookupDataSource) {
+        if (dataSource.isLookupDataSource()) {
             if (dataSourceName == null || dataSourceName.trim().isEmpty()) {
                 throw new ReporterBuildException("Data Source Name is not specified for JDBC Reporting.");
             }
             try {
-                dataSource = InitialContext.doLookup(dataSourceName);
+                jdbcDataSource = InitialContext.doLookup(dataSourceName);
             } catch (NamingException e) {
                 throw new ReporterBuildException(
                         String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
@@ -123,7 +104,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                 logger.debug("Creating Metrics Datasource");
             }
             HikariConfig hikariConfig = new HikariConfig(properties);
-            dataSource = new HikariDataSource(hikariConfig);
+            jdbcDataSource = new HikariDataSource(hikariConfig);
         }
 
         if (logger.isInfoEnabled()) {
@@ -133,7 +114,8 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                     source, dataSourceName, pollingPeriod));
         }
 
-        return Optional.of(new JdbcReporter(name, metricRegistry, metricFilter, source, dataSource, pollingPeriod,
+        JdbcScheduledCleanupConfig scheduledCleanup = dataSource.getScheduledCleanup();
+        return Optional.of(new JdbcReporter(name, metricRegistry, metricFilter, source, jdbcDataSource, pollingPeriod,
                 scheduledCleanup.isEnabled(), scheduledCleanup.getDaysToKeep(),
                 scheduledCleanup.getScheduledCleanupPeriod()));
     }

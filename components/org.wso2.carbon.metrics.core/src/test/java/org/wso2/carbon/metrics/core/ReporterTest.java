@@ -21,7 +21,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DasConfig;
 import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DataSourceConfig;
 import org.wso2.carbon.metrics.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
@@ -471,16 +473,18 @@ public class ReporterTest extends BaseReporterTest {
     public void testJDBCReporterValidations() {
         System.setProperty("metrics.datasource.conf", "invalid");
         JdbcReporterConfig jdbcReporterConfig = new JdbcReporterConfig();
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        jdbcReporterConfig.setDataSource(dataSourceConfig);
         jdbcReporterConfig.setEnabled(true);
-        jdbcReporterConfig.setLookupDataSource(true);
+        dataSourceConfig.setLookupDataSource(true);
         addReporter(jdbcReporterConfig);
-        jdbcReporterConfig.setDataSourceName("");
-        addReporter(jdbcReporterConfig);
-
-        jdbcReporterConfig.setDataSourceName("jdbc/Invalid");
+        dataSourceConfig.setDataSourceName("");
         addReporter(jdbcReporterConfig);
 
-        jdbcReporterConfig.setLookupDataSource(false);
+        dataSourceConfig.setDataSourceName("jdbc/Invalid");
+        addReporter(jdbcReporterConfig);
+
+        dataSourceConfig.setLookupDataSource(false);
         addReporter(jdbcReporterConfig);
     }
 
@@ -488,37 +492,39 @@ public class ReporterTest extends BaseReporterTest {
     public void testDasReporterValidations() {
         String name = "DAS-TEST";
         DasReporterConfig dasReporterConfig = new DasReporterConfig();
+        DasConfig dasConfig = new DasConfig();
+        dasReporterConfig.setDas(dasConfig);
         dasReporterConfig.setName(name);
         dasReporterConfig.setEnabled(true);
-        dasReporterConfig.setAuthURL("ssl://localhost:7711");
-        dasReporterConfig.setType(null);
-        dasReporterConfig.setReceiverURL(null);
-        dasReporterConfig.setUsername(null);
-        dasReporterConfig.setPassword(null);
+        dasConfig.setAuthURL("ssl://localhost:7711");
+        dasConfig.setType(null);
+        dasConfig.setReceiverURL(null);
+        dasConfig.setUsername(null);
+        dasConfig.setPassword(null);
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setType("");
+        dasConfig.setType("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setType("thrift");
+        dasConfig.setType("thrift");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setReceiverURL("");
+        dasConfig.setReceiverURL("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setReceiverURL("tcp://localhost:7611");
+        dasConfig.setReceiverURL("tcp://localhost:7611");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setUsername("");
+        dasConfig.setUsername("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setUsername("admin");
+        dasConfig.setUsername("admin");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setPassword("");
+        dasConfig.setPassword("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setPassword("admin");
+        dasConfig.setPassword("admin");
         System.setProperty("metrics.dataagent.conf", "invalid.xml");
         try {
             metricManagementService.addReporter(dasReporterConfig);

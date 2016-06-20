@@ -21,7 +21,9 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DasConfig;
 import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DataSourceConfig;
 import org.wso2.carbon.metrics.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
@@ -34,7 +36,7 @@ import static org.wso2.carbon.metrics.core.BaseReporterTest.RESOURCES_DIR;
 /**
  * Test Cases for {@link MetricsConfig}
  */
-public class MetricsConfigTest {
+public class MetricsConfigTest extends BaseMetricTest {
 
     private static MetricsConfig metricsConfig;
 
@@ -98,11 +100,19 @@ public class MetricsConfigTest {
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getSource(), "Carbon-jdbc");
+    }
+
+    @Test
+    public void testDataSourceConfigLoad() {
+        DataSourceConfig config = metricsConfig.getDataSource().get(0);
         Assert.assertEquals(config.isLookupDataSource(), true);
         Assert.assertEquals(config.getDataSourceName(), "jdbc/WSO2MetricsDB");
         Assert.assertEquals(config.getScheduledCleanup().isEnabled(), true);
         Assert.assertEquals(config.getScheduledCleanup().getDaysToKeep(), 2);
         Assert.assertEquals(config.getScheduledCleanup().getScheduledCleanupPeriod(), 10000L);
+
+        JdbcReporterConfig jdbcReporterConfig = metricsConfig.getReporting().getJdbc();
+        Assert.assertEquals(jdbcReporterConfig.getDataSource(), config);
     }
 
     @Test
@@ -112,12 +122,20 @@ public class MetricsConfigTest {
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getSource(), "Carbon-das");
+    }
+
+    @Test
+    public void testDasConfigLoad() {
+        DasConfig config = metricsConfig.getDas().get(0);
         Assert.assertEquals(config.getReceiverURL(), "tcp://localhost:51840");
         Assert.assertNull(config.getAuthURL());
         Assert.assertEquals(config.getType(), "thrift");
         Assert.assertEquals(config.getUsername(), "admin");
         Assert.assertEquals(config.getPassword(), "admin");
         Assert.assertEquals(config.getDataAgentConfigPath(), "data-agent-config.xml");
+
+        DasReporterConfig dasReporterConfig = metricsConfig.getReporting().getDas();
+        Assert.assertEquals(dasReporterConfig.getDas(), config);
     }
 
     @Test

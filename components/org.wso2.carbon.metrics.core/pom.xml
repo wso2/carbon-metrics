@@ -206,7 +206,7 @@
             com.codahale.metrics;version="${metrics.version.range}",
             com.codahale.metrics.jvm;version="${metrics.version.range}",
             org.slf4j;version="${slf4j.version.range}",
-            org.yaml.snakeyaml.*;version="${snakeyaml.version.range}",
+            org.yaml.snakeyaml;version="${snakeyaml.version.range}",
             org.wso2.carbon.datasource.core.*;version="${carbon.datasources.version.range}",
             org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}"
         </import.package>

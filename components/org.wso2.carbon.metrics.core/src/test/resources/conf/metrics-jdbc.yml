@@ -12,9 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Common test configuration file for metrics
+# Configuration file to test Metrics JDBC Reporter
 
 enabled: true
+
+dataSource:
+  - &JDBC01
+    lookupDataSource: false
+    # dataSourceName:
+    scheduledCleanup:
+      enabled: true
+      daysToKeep: 2
+      scheduledCleanupPeriod: 10000
 
 reporting:
   jmx:
@@ -25,9 +34,5 @@ reporting:
     enabled: true
     # Use default source
     # source:
-    lookupDataSource: false
+    dataSource: *JDBC01
     pollingPeriod: 90
-    scheduledCleanup:
-      enabled: true
-      daysToKeep: 2
-      scheduledCleanupPeriod: 10000

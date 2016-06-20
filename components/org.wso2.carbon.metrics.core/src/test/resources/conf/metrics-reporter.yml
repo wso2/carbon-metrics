@@ -12,13 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Common test configuration file for metrics
+# Configuration file to test metrics with all reporters
 
 enabled: true
 
 jmx:
   registerMBean: true
   name: org.wso2.carbon:type=MetricsTest
+
+dataSource:
+  - &JDBC01
+    lookupDataSource: true
+    dataSourceName: jdbc/WSO2MetricsDB
+    scheduledCleanup:
+      enabled: true
+      daysToKeep: 2
+      scheduledCleanupPeriod: 10000
+
+das:
+  - &DAS01
+    receiverURL: tcp://localhost:51840
+    # authURL: ssl://localhost:7711
+    type: thrift
+    username: admin
+    password: admin
+    dataAgentConfigPath: data-agent-config.xml
 
 reporting:
   jmx:
@@ -44,26 +62,16 @@ reporting:
     markerName: metrics
     pollingPeriod: 600
 
-  das:
-    name: DAS
-    enabled: true
-    source: Carbon-das
-    receiverURL: tcp://localhost:51840
-    # authURL: ssl://localhost:7711
-    type: thrift
-    username: admin
-    password: admin
-    pollingPeriod: 600
-    dataAgentConfigPath: data-agent-config.xml
-
   jdbc:
     name: JDBC
     enabled: true
     source: Carbon-jdbc
-    lookupDataSource: true
-    dataSourceName: jdbc/WSO2MetricsDB
+    dataSource: *JDBC01
     pollingPeriod: 600
-    scheduledCleanup:
-      enabled: true
-      daysToKeep: 2
-      scheduledCleanupPeriod: 10000
+
+  das:
+    name: DAS
+    enabled: true
+    source: Carbon-das
+    das: *DAS01
+    pollingPeriod: 600

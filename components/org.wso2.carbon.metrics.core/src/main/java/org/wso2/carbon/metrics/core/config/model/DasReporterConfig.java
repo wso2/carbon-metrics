@@ -36,17 +36,7 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
 
     private String source = Utils.getDefaultSource();
 
-    private String type = "thrift";
-
-    private String receiverURL = "tcp://localhost:7611";
-
-    private String authURL;
-
-    private String username = "admin";
-
-    private String password = "admin";
-
-    private String dataAgentConfigPath = null;
+    private DasConfig das;
 
     public DasReporterConfig() {
         name = "DAS";
@@ -60,52 +50,12 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
         this.source = source;
     }
 
-    public String getType() {
-        return type;
+    public DasConfig getDas() {
+        return das;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getReceiverURL() {
-        return receiverURL;
-    }
-
-    public void setReceiverURL(String receiverURL) {
-        this.receiverURL = receiverURL;
-    }
-
-    public String getAuthURL() {
-        return authURL;
-    }
-
-    public void setAuthURL(String authURL) {
-        this.authURL = authURL;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getDataAgentConfigPath() {
-        return dataAgentConfigPath;
-    }
-
-    public void setDataAgentConfigPath(String dataAgentConfigPath) {
-        this.dataAgentConfigPath = dataAgentConfigPath;
+    public void setDas(DasConfig das) {
+        this.das = das;
     }
 
     /**
@@ -123,6 +73,14 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
         if (!enabled) {
             return Optional.empty();
         }
+
+        String type = das.getType();
+        String receiverURL = das.getReceiverURL();
+        String authURL = das.getAuthURL();
+        String username = das.getUsername();
+        String password = das.getPassword();
+        String dataAgentConfigPath = das.getDataAgentConfigPath();
+
         if (type == null || type.trim().length() == 0) {
             throw new ReporterBuildException("Type is not specified for DAS Reporting.");
         }

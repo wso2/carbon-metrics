@@ -18,7 +18,6 @@ package org.wso2.carbon.metrics.core.config;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.internal.Utils;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.parser.ParserException;
 
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ public class MetricsConfigBuilder {
             try {
                 Yaml yaml = new Yaml();
                 metricsConfig = yaml.loadAs(metricsConfigFileContent.get(), MetricsConfig.class);
-            } catch (ParserException e) {
+            } catch (RuntimeException e) {
                 throw new RuntimeException("Failed to populate Metrics Configuration", e);
             }
         } else {
