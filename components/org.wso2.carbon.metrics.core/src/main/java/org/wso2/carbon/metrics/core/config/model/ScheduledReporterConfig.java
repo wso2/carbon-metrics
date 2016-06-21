@@ -21,7 +21,11 @@ package org.wso2.carbon.metrics.core.config.model;
 public abstract class ScheduledReporterConfig extends ReporterConfig {
 
     // Default polling period is 60 seconds
-    protected long pollingPeriod = 60;
+    private long pollingPeriod = 60;
+
+    public ScheduledReporterConfig(String name) {
+        super(name);
+    }
 
     public long getPollingPeriod() {
         return pollingPeriod;

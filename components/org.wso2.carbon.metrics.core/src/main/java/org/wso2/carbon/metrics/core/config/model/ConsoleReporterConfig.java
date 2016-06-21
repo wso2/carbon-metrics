@@ -33,7 +33,7 @@ public class ConsoleReporterConfig extends ScheduledReporterConfig implements Re
     private static final Logger logger = LoggerFactory.getLogger(ConsoleReporterConfig.class);
 
     public ConsoleReporterConfig() {
-        name = "Console";
+        super("Console");
     }
 
     /**
@@ -48,14 +48,14 @@ public class ConsoleReporterConfig extends ScheduledReporterConfig implements Re
     @Override
     public Optional<ConsoleReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
         if (logger.isInfoEnabled()) {
             logger.info(String.format("Creating Console Reporter for Metrics with %d seconds polling period",
-                    pollingPeriod));
+                    getPollingPeriod()));
         }
 
-        return Optional.of(new ConsoleReporter(name, metricRegistry, metricFilter, pollingPeriod));
+        return Optional.of(new ConsoleReporter(getName(), metricRegistry, getFilter(metricFilter), getPollingPeriod()));
     }
 }

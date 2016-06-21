@@ -74,85 +74,85 @@ das:
 # Metrics reporting configurations
 reporting:
   jmx:
-    # The name for the JMX Reporter
-    name: JMX
+    - # The name for the JMX Reporter
+      name: JMX
 
-    # Enable JMX Reporter
-    enabled: true
+      # Enable JMX Reporter
+      enabled: true
 
   console:
-    # The name for the Console Reporter
-    name: Console
+    - # The name for the Console Reporter
+      name: Console
 
-    # Enable Console Reporter
-    enabled: false
+      # Enable Console Reporter
+      enabled: false
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and printing in the console
-    pollingPeriod: 60
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and printing in the console
+      pollingPeriod: 60
 
   csv:
-    # The name for the CSV Reporter
-    name: CSV
+    - # The name for the CSV Reporter
+      name: CSV
 
-    # Enable CSV Reporter
-    enabled: false
+      # Enable CSV Reporter
+      enabled: false
 
-    # The location for CSV files. There is a CSV file for each metric.
-    location: ${carbon.home}/logs/metrics/
+      # The location for CSV files. There is a CSV file for each metric.
+      location: ${carbon.home}/logs/metrics/
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and update CSV files in the given location
-    pollingPeriod: 60
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and update CSV files in the given location
+      pollingPeriod: 60
 
   slf4j:
-    # The name for the SLF4J Reporter
-    name: SLF4J
+    - # The name for the SLF4J Reporter
+      name: SLF4J
 
-    # Enable SLF4J Reporter
-    enabled: false
+      # Enable SLF4J Reporter
+      enabled: false
 
-    # The Logger name
-    loggerName: metrics
+      # The Logger name
+      loggerName: metrics
 
-    # The Marker name
-    # markerName: metrics
+      # The Marker name
+      # markerName: metrics
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and logging to the configured logger
-    pollingPeriod: 60
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and logging to the configured logger
+      pollingPeriod: 60
 
   jdbc:
-    # The name for the JDBC Reporter
-    name: JDBC
+    - # The name for the JDBC Reporter
+      name: JDBC
 
-    # Enable JDBC Reporter
-    enabled: true
+      # Enable JDBC Reporter
+      enabled: true
 
-    # Source of Metrics, which will be used to identify each metric in database -->
-    # Commented to use the hostname by default
-    # source: Carbon
+      # Source of Metrics, which will be used to identify each metric in database -->
+      # Commented to use the hostname by default
+      # source: Carbon
 
-    # Alias referring to the Data Source configuration
-    dataSource: *JDBC01
+      # Alias referring to the Data Source configuration
+      dataSource: *JDBC01
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and updating the database with the values
-    pollingPeriod: 60
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and updating the database with the values
+      pollingPeriod: 60
 
   das:
-    # The name for the Data Analytics Server (DAS) Reporter
-    name: DAS
-    # Enable DAS Reporter
-    enabled: false
+    - # The name for the Data Analytics Server (DAS) Reporter
+      name: DAS
+      # Enable DAS Reporter
+      enabled: false
 
-    # Source of Metrics, which will be used to identify each metric sent in the streams
-    # Commented to use the hostname by default
-    # source: Carbon
+      # Source of Metrics, which will be used to identify each metric sent in the streams
+      # Commented to use the hostname by default
+      # source: Carbon
 
-    # Alias referring to the DAS configuration
-    das: *DAS01
+      # Alias referring to the DAS configuration
+      das: *DAS01
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and sending events via the Data Publisher
-    pollingPeriod: 60
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and sending events via the Data Publisher
+      pollingPeriod: 60

@@ -44,7 +44,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
     private DataSourceConfig dataSource;
 
     public JdbcReporterConfig() {
-        name = "JDBC";
+        super("JDBC");
     }
 
     public String getSource() {
@@ -75,7 +75,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
     @Override
     public Optional<JdbcReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
 
@@ -111,12 +111,12 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
             logger.info(String.format(
                     "Creating JDBC reporter for Metrics with source '%s', data source '%s'" +
                             " and %d seconds polling period",
-                    source, dataSourceName, pollingPeriod));
+                    source, dataSourceName, getPollingPeriod()));
         }
 
         JdbcScheduledCleanupConfig scheduledCleanup = dataSource.getScheduledCleanup();
-        return Optional.of(new JdbcReporter(name, metricRegistry, metricFilter, source, jdbcDataSource, pollingPeriod,
-                scheduledCleanup.isEnabled(), scheduledCleanup.getDaysToKeep(),
+        return Optional.of(new JdbcReporter(getName(), metricRegistry, getFilter(metricFilter), source, jdbcDataSource,
+                getPollingPeriod(), scheduledCleanup.isEnabled(), scheduledCleanup.getDaysToKeep(),
                 scheduledCleanup.getScheduledCleanupPeriod()));
     }
 

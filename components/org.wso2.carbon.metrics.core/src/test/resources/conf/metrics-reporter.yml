@@ -40,38 +40,43 @@ das:
 
 reporting:
   jmx:
-    name: JMX
-    enabled: true
-    domain: org.wso2.carbon.metrics.test
+    - name: JMX
+      enabled: true
+      domain: org.wso2.carbon.metrics.test
+
+    # Define another reporter to check whether only one reporter is added with same name
+    - name: JMX
+      enabled: true
+      domain: org.wso2.carbon.metrics.test
 
   console:
-    name: Console
-    enabled: true
-    pollingPeriod: 600
+    - name: Console
+      enabled: true
+      pollingPeriod: 600
 
   csv:
-    name: CSV
-    enabled: true
-    location: ${metrics.target}/metrics
-    pollingPeriod: 600
+    - name: CSV
+      enabled: true
+      location: ${metrics.target}/metrics
+      pollingPeriod: 600
 
   slf4j:
-    name: SLF4J
-    enabled: true
-    loggerName: metrics.test
-    markerName: metrics
-    pollingPeriod: 600
+    - name: SLF4J
+      enabled: true
+      loggerName: metrics.test
+      markerName: metrics
+      pollingPeriod: 600
 
   jdbc:
-    name: JDBC
-    enabled: true
-    source: Carbon-jdbc
-    dataSource: *JDBC01
-    pollingPeriod: 600
+    - name: JDBC
+      enabled: true
+      source: Carbon-jdbc
+      dataSource: *JDBC01
+      pollingPeriod: 600
 
   das:
-    name: DAS
-    enabled: true
-    source: Carbon-das
-    das: *DAS01
-    pollingPeriod: 600
+    - name: DAS
+      enabled: true
+      source: Carbon-das
+      das: *DAS01
+      pollingPeriod: 600

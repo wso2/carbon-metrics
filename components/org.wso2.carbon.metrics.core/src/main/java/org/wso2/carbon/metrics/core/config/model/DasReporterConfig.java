@@ -39,7 +39,7 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
     private DasConfig das;
 
     public DasReporterConfig() {
-        name = "DAS";
+        super("DAS");
     }
 
     public String getSource() {
@@ -70,7 +70,7 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
     @Override
     public Optional<DasReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
 
@@ -105,10 +105,10 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
         if (logger.isInfoEnabled()) {
             logger.info(String.format(
                     "Creating DAS reporter for Metrics with source '%s', protocol '%s' and %d seconds polling period",
-                    source, type, pollingPeriod));
+                    source, type, getPollingPeriod()));
         }
 
-        return Optional.of(new DasReporter(name, metricRegistry, metricFilter, source, type, receiverURL, authURL,
-                username, password, dataAgentConfigPath, pollingPeriod));
+        return Optional.of(new DasReporter(getName(), metricRegistry, getFilter(metricFilter), source, type,
+                receiverURL, authURL, username, password, dataAgentConfigPath, getPollingPeriod()));
     }
 }

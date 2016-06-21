@@ -15,6 +15,8 @@
  */
 package org.wso2.carbon.metrics.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -31,6 +33,9 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -48,6 +53,8 @@ import javax.management.ReflectionException;
  * Test Cases for Reporters
  */
 public class ReporterTest extends BaseReporterTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReporterTest.class);
 
     private final Gauge<Integer> gauge = () -> 1;
 
@@ -377,6 +384,8 @@ public class ReporterTest extends BaseReporterTest {
                 + "metrics-datasource.properties");
 
         Metrics metrics = new Metrics.Builder().build();
+        // Cover MBean Registration
+        metrics.activate();
         MetricService metricService = metrics.getMetricService();
         MetricManagementService metricManagementService = metrics.getMetricManagementService();
         metricManagementService.startReporter("JDBC");
@@ -394,6 +403,8 @@ public class ReporterTest extends BaseReporterTest {
         Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L);
         metricManagementService.stopReporter("JDBC");
         Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
+        // Cover MBean Unregistration
+        metrics.deactivate();
     }
 
     @Test
@@ -443,10 +454,19 @@ public class ReporterTest extends BaseReporterTest {
     }
 
     @Test
-    public void testJmxReporterValidations() {
+    public void testJmxReporterValidationsAndRegex() {
         JmxReporterConfig jmxReporterConfig = new JmxReporterConfig();
         jmxReporterConfig.setEnabled(true);
         jmxReporterConfig.setDomain("");
+        addReporter(jmxReporterConfig);
+
+        jmxReporterConfig.setDomain("org.wso2.carbon.metrics.valid");
+        jmxReporterConfig.setUseRegexFilters(true);
+        jmxReporterConfig.setIncludes(new HashSet<>(Arrays.asList("(include")));
+        addReporter(jmxReporterConfig);
+
+        jmxReporterConfig.setIncludes(Collections.emptySet());
+        jmxReporterConfig.setExcludes(new HashSet<>(Arrays.asList("(exclude")));
         addReporter(jmxReporterConfig);
     }
 
@@ -542,6 +562,7 @@ public class ReporterTest extends BaseReporterTest {
             metricManagementService.addReporter(reporterBuilder);
             Assert.fail("Add Reporter should fail.");
         } catch (ReporterBuildException e) {
+            logger.info("Exception message from Add Reporter: {}", e.getMessage());
         }
     }
 }

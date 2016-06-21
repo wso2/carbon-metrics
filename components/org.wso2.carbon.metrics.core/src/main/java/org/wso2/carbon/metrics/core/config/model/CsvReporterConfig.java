@@ -36,7 +36,7 @@ public class CsvReporterConfig extends ScheduledReporterConfig implements Report
     private String location;
 
     public CsvReporterConfig() {
-        name = "CSV";
+        super("CSV");
     }
 
     public String getLocation() {
@@ -59,7 +59,7 @@ public class CsvReporterConfig extends ScheduledReporterConfig implements Report
     @Override
     public Optional<CsvReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
         if (location == null || location.trim().isEmpty()) {
@@ -80,9 +80,10 @@ public class CsvReporterConfig extends ScheduledReporterConfig implements Report
         if (logger.isInfoEnabled()) {
             logger.info(
                     String.format("Creating CSV reporter for Metrics with location '%s' and %d seconds polling period",
-                            location, pollingPeriod));
+                            location, getPollingPeriod()));
         }
 
-        return Optional.of(new CsvReporter(name, metricRegistry, metricFilter, csvLocation, pollingPeriod));
+        return Optional.of(new CsvReporter(getName(), metricRegistry, getFilter(metricFilter), csvLocation,
+                getPollingPeriod()));
     }
 }

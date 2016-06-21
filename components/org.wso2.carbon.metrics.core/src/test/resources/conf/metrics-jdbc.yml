@@ -16,6 +16,10 @@
 
 enabled: true
 
+# Do not register MBean
+jmx:
+  registerMBean: false
+
 dataSource:
   - &JDBC01
     lookupDataSource: false
@@ -25,14 +29,27 @@ dataSource:
       daysToKeep: 2
       scheduledCleanupPeriod: 10000
 
+# All reporters are disabled except for the JDBC reporter. Only JDBC reporter should be added to MetricManagementService
 reporting:
   jmx:
-    enabled: false
+    - enabled: false
 
   jdbc:
-    name: JDBC
-    enabled: true
-    # Use default source
-    # source:
-    dataSource: *JDBC01
-    pollingPeriod: 90
+    - name: JDBC
+      enabled: true
+      # Use default source
+      # source:
+      dataSource: *JDBC01
+      pollingPeriod: 90
+
+  console:
+    - enabled: false
+
+  csv:
+    - enabled: false
+
+  slf4j:
+    - enabled: false
+
+  das:
+    - enabled: false

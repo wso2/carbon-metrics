@@ -70,7 +70,7 @@ public class MetricsMXBeanTest extends BaseReporterTest {
         System.setProperty("metrics.conf", "src/test/resources/conf/metrics-jdbc.yml");
         System.setProperty("metrics.datasource.conf", "src/test/resources/conf/metrics-datasource.properties");
         MetricsConfig metricsConfig = MetricsConfigBuilder.build();
-        metricManagementService.addReporter(metricsConfig.getReporting().getJdbc());
+        metricManagementService.addReporter(metricsConfig.getReporting().getJdbc().iterator().next());
         // Test start/stop reporters
         metricsMXBean.startReporters();
         Assert.assertTrue(metricsMXBean.isReporterRunning("JDBC"));
