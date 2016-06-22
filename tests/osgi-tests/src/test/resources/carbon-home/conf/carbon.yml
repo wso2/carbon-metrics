@@ -14,9 +14,9 @@
 #   limitations under the License.
 ################################################################################
 
-id: carbon-kernel
-name: WSO2 Carbon Kernel
-version: 5.0.0
+id: ${server.key}
+name: ${server.name}
+version: ${server.version}
 
 # Ports used by this server
 ports:

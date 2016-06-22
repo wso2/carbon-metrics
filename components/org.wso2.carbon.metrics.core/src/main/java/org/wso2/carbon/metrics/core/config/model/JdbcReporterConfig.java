@@ -26,8 +26,8 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.reporter.impl.JdbcReporter;
 
-import java.io.File;
 import java.util.Optional;
+import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -41,14 +41,10 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
     private String source = Utils.getDefaultSource();
 
-    private boolean lookupDataSource;
-
-    private String dataSourceName;
-
-    private JdbcScheduledCleanupConfig scheduledCleanup = new JdbcScheduledCleanupConfig();
+    private DataSourceConfig dataSource;
 
     public JdbcReporterConfig() {
-        name = "JDBC";
+        super("JDBC");
     }
 
     public String getSource() {
@@ -59,28 +55,12 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
         this.source = source;
     }
 
-    public boolean isLookupDataSource() {
-        return lookupDataSource;
+    public DataSourceConfig getDataSource() {
+        return dataSource;
     }
 
-    public void setLookupDataSource(boolean lookupDataSource) {
-        this.lookupDataSource = lookupDataSource;
-    }
-
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
-
-    public JdbcScheduledCleanupConfig getScheduledCleanup() {
-        return scheduledCleanup;
-    }
-
-    public void setScheduledCleanup(JdbcScheduledCleanupConfig scheduledCleanup) {
-        this.scheduledCleanup = scheduledCleanup;
+    public void setDataSource(DataSourceConfig dataSource) {
+        this.dataSource = dataSource;
     }
 
     /**
@@ -95,46 +75,48 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
     @Override
     public Optional<JdbcReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
 
-        final DataSource dataSource;
+        DataSource jdbcDataSource;
+        String dataSourceName = dataSource.getDataSourceName();
 
-        if (lookupDataSource) {
+        if (dataSource.isLookupDataSource()) {
             if (dataSourceName == null || dataSourceName.trim().isEmpty()) {
                 throw new ReporterBuildException("Data Source Name is not specified for JDBC Reporting.");
             }
             try {
-                dataSource = InitialContext.doLookup(dataSourceName);
+                jdbcDataSource = InitialContext.doLookup(dataSourceName);
             } catch (NamingException e) {
                 throw new ReporterBuildException(
                         String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
             }
         } else {
-            Optional<File> metricsLevelConfigFile = Utils.getConfigFile("metrics.datasource.conf",
+            Optional<Properties> propertiesOptional = Utils.loadProperties("metrics.datasource.conf",
                     "metrics-datasource.properties");
-            if (!metricsLevelConfigFile.isPresent()) {
+            if (!propertiesOptional.isPresent()) {
                 throw new ReporterBuildException("Metrics Datasource configuration file not found!");
             }
 
-            File file = metricsLevelConfigFile.get();
+            Properties properties = propertiesOptional.get();
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Creating Metrics Datasource. Config file: %s", file.getAbsolutePath()));
+                logger.debug("Creating Metrics Datasource");
             }
-            HikariConfig hikariConfig = new HikariConfig(file.getPath());
-            dataSource = new HikariDataSource(hikariConfig);
+            HikariConfig hikariConfig = new HikariConfig(properties);
+            jdbcDataSource = new HikariDataSource(hikariConfig);
         }
 
         if (logger.isInfoEnabled()) {
             logger.info(String.format(
                     "Creating JDBC reporter for Metrics with source '%s', data source '%s'" +
                             " and %d seconds polling period",
-                    source, dataSourceName, pollingPeriod));
+                    source, dataSourceName, getPollingPeriod()));
         }
 
-        return Optional.of(new JdbcReporter(name, metricRegistry, metricFilter, source, dataSource, pollingPeriod,
-                scheduledCleanup.isEnabled(), scheduledCleanup.getDaysToKeep(),
+        JdbcScheduledCleanupConfig scheduledCleanup = dataSource.getScheduledCleanup();
+        return Optional.of(new JdbcReporter(getName(), metricRegistry, getFilter(metricFilter), source, jdbcDataSource,
+                getPollingPeriod(), scheduledCleanup.isEnabled(), scheduledCleanup.getDaysToKeep(),
                 scheduledCleanup.getScheduledCleanupPeriod()));
     }
 

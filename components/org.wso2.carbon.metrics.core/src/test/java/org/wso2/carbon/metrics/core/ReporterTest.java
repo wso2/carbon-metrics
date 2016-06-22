@@ -15,13 +15,17 @@
  */
 package org.wso2.carbon.metrics.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DasConfig;
 import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DataSourceConfig;
 import org.wso2.carbon.metrics.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
@@ -29,10 +33,15 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
@@ -44,6 +53,8 @@ import javax.management.ReflectionException;
  * Test Cases for Reporters
  */
 public class ReporterTest extends BaseReporterTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReporterTest.class);
 
     private final Gauge<Integer> gauge = () -> 1;
 
@@ -87,8 +98,8 @@ public class ReporterTest extends BaseReporterTest {
         metricManagementService.stopReporter("JMX");
     }
 
-    @Test
-    public void testDisabledGauge() {
+    @Test(expectedExceptions = MetricNotFoundException.class)
+    public void testDisabledGauge() throws MetricNotFoundException {
         metricManagementService.startReporter("JMX");
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX"));
         String gaugeName = MetricService.name(this.getClass(), "test-disabled-gauge");
@@ -98,10 +109,50 @@ public class ReporterTest extends BaseReporterTest {
         try {
             getAttributes(gaugeName, "Value");
             Assert.fail("Gauge should not be available");
-        } catch (MetricNotFoundException e) {
-            // This is expected
+        } finally {
+            metricManagementService.stopReporter("JMX");
         }
+    }
+
+    @Test
+    public void testMetricRemove() {
+        metricManagementService.startReporter("JMX");
+        Assert.assertTrue(metricManagementService.isReporterRunning("JMX"));
+        String counterName = MetricService.name(this.getClass(), "remove[+].sub.counter");
+        String subName = MetricService.name(this.getClass(), "remove.sub.counter");
+        String mainName = MetricService.name(this.getClass(), "remove.counter");
+        metricService.counter(counterName, Level.INFO, Level.INFO);
+
+        // Test sub counter remove
+        testCounterRemove(subName);
+
+        // Test main counter remove
+        testCounterRemove(mainName);
+
+        Assert.assertTrue(metricService.remove(counterName));
+        Assert.assertFalse(metricService.remove(counterName));
+
         metricManagementService.stopReporter("JMX");
+    }
+
+    private void testCounterRemove(String name) {
+        try {
+            AttributeList gaugeAttributes = getAttributes(name, "Count");
+            SortedMap<String, Object> gaugeMap = values(gaugeAttributes);
+            Assert.assertTrue(gaugeMap.containsKey("Count"), "Counter should be available");
+        } catch (MetricNotFoundException e) {
+            Assert.fail("Counter should be available");
+        }
+
+        Assert.assertTrue(metricService.remove(name));
+        Assert.assertFalse(metricService.remove(name));
+
+        try {
+            getAttributes(name, "Count");
+            Assert.fail("Counter should not be available");
+        } catch (MetricNotFoundException e) {
+            // Ignore. Cannot throw as there are more asserts
+        }
     }
 
     @Test
@@ -247,12 +298,49 @@ public class ReporterTest extends BaseReporterTest {
         Assert.assertEquals(meterResult.size(), 1);
         Assert.assertEquals(meterResult.get(0).get("NAME"), meterName);
         Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L);
+        Assert.assertEquals(meterResult.get(0).get("SOURCE"), "Carbon-jdbc");
 
         List<Map<String, Object>> gaugeResult =
                 template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
         Assert.assertEquals(gaugeResult.size(), 1);
         Assert.assertEquals(gaugeResult.get(0).get("NAME"), gaugeName);
         Assert.assertEquals(gaugeResult.get(0).get("VALUE"), "1");
+        Assert.assertEquals(gaugeResult.get(0).get("SOURCE"), "Carbon-jdbc");
+        metricManagementService.stopReporter("JDBC");
+        Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
+    }
+
+    @Test
+    public void testJDBCReporterCachedGauge() {
+        metricManagementService.startReporter("JDBC");
+        Assert.assertTrue(metricManagementService.isReporterRunning("JDBC"));
+        String gaugeName = MetricService.name(this.getClass(), "test-jdbc-cached-gauge");
+        LongAdder adder = new LongAdder();
+        adder.increment();
+        Assert.assertEquals(adder.longValue(), 1L);
+
+        Gauge<Long> gauge = () -> adder.longValue();
+        metricService.cachedGauge(gaugeName, Level.INFO, 1, TimeUnit.HOURS, gauge);
+
+        metricManagementService.report();
+        List<Map<String, Object>> gaugeResult =
+                template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
+        Assert.assertEquals(gaugeResult.size(), 1);
+        Assert.assertEquals(gaugeResult.get(0).get("NAME"), gaugeName);
+        Assert.assertEquals(gaugeResult.get(0).get("VALUE"), "1");
+        Assert.assertEquals(gaugeResult.get(0).get("SOURCE"), "Carbon-jdbc");
+
+        adder.increment();
+        Assert.assertEquals(adder.longValue(), 2L);
+
+        metricManagementService.report();
+        List<Map<String, Object>> gaugeResult2 =
+                template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ? ORDER BY TIMESTAMP", gaugeName);
+        Assert.assertEquals(gaugeResult2.size(), 2);
+        Assert.assertEquals(gaugeResult2.get(1).get("NAME"), gaugeResult2.get(0).get("NAME"));
+        Assert.assertEquals(gaugeResult2.get(1).get("VALUE"), gaugeResult2.get(0).get("VALUE"));
+        Assert.assertEquals(gaugeResult2.get(1).get("SOURCE"), gaugeResult2.get(0).get("SOURCE"));
+
         metricManagementService.stopReporter("JDBC");
         Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
     }
@@ -296,6 +384,8 @@ public class ReporterTest extends BaseReporterTest {
                 + "metrics-datasource.properties");
 
         Metrics metrics = new Metrics.Builder().build();
+        // Cover MBean Registration
+        metrics.activate();
         MetricService metricService = metrics.getMetricService();
         MetricManagementService metricManagementService = metrics.getMetricManagementService();
         metricManagementService.startReporter("JDBC");
@@ -313,6 +403,8 @@ public class ReporterTest extends BaseReporterTest {
         Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L);
         metricManagementService.stopReporter("JDBC");
         Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
+        // Cover MBean Unregistration
+        metrics.deactivate();
     }
 
     @Test
@@ -362,10 +454,19 @@ public class ReporterTest extends BaseReporterTest {
     }
 
     @Test
-    public void testJmxReporterValidations() {
+    public void testJmxReporterValidationsAndRegex() {
         JmxReporterConfig jmxReporterConfig = new JmxReporterConfig();
         jmxReporterConfig.setEnabled(true);
         jmxReporterConfig.setDomain("");
+        addReporter(jmxReporterConfig);
+
+        jmxReporterConfig.setDomain("org.wso2.carbon.metrics.valid");
+        jmxReporterConfig.setUseRegexFilters(true);
+        jmxReporterConfig.setIncludes(new HashSet<>(Arrays.asList("(include")));
+        addReporter(jmxReporterConfig);
+
+        jmxReporterConfig.setIncludes(Collections.emptySet());
+        jmxReporterConfig.setExcludes(new HashSet<>(Arrays.asList("(exclude")));
         addReporter(jmxReporterConfig);
     }
 
@@ -392,16 +493,18 @@ public class ReporterTest extends BaseReporterTest {
     public void testJDBCReporterValidations() {
         System.setProperty("metrics.datasource.conf", "invalid");
         JdbcReporterConfig jdbcReporterConfig = new JdbcReporterConfig();
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        jdbcReporterConfig.setDataSource(dataSourceConfig);
         jdbcReporterConfig.setEnabled(true);
-        jdbcReporterConfig.setLookupDataSource(true);
+        dataSourceConfig.setLookupDataSource(true);
         addReporter(jdbcReporterConfig);
-        jdbcReporterConfig.setDataSourceName("");
-        addReporter(jdbcReporterConfig);
-
-        jdbcReporterConfig.setDataSourceName("jdbc/Invalid");
+        dataSourceConfig.setDataSourceName("");
         addReporter(jdbcReporterConfig);
 
-        jdbcReporterConfig.setLookupDataSource(false);
+        dataSourceConfig.setDataSourceName("jdbc/Invalid");
+        addReporter(jdbcReporterConfig);
+
+        dataSourceConfig.setLookupDataSource(false);
         addReporter(jdbcReporterConfig);
     }
 
@@ -409,37 +512,39 @@ public class ReporterTest extends BaseReporterTest {
     public void testDasReporterValidations() {
         String name = "DAS-TEST";
         DasReporterConfig dasReporterConfig = new DasReporterConfig();
+        DasConfig dasConfig = new DasConfig();
+        dasReporterConfig.setDas(dasConfig);
         dasReporterConfig.setName(name);
         dasReporterConfig.setEnabled(true);
-        dasReporterConfig.setAuthURL("ssl://localhost:7711");
-        dasReporterConfig.setType(null);
-        dasReporterConfig.setReceiverURL(null);
-        dasReporterConfig.setUsername(null);
-        dasReporterConfig.setPassword(null);
+        dasConfig.setAuthURL("ssl://localhost:7711");
+        dasConfig.setType(null);
+        dasConfig.setReceiverURL(null);
+        dasConfig.setUsername(null);
+        dasConfig.setPassword(null);
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setType("");
+        dasConfig.setType("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setType("thrift");
+        dasConfig.setType("thrift");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setReceiverURL("");
+        dasConfig.setReceiverURL("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setReceiverURL("tcp://localhost:7611");
+        dasConfig.setReceiverURL("tcp://localhost:7611");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setUsername("");
+        dasConfig.setUsername("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setUsername("admin");
+        dasConfig.setUsername("admin");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setPassword("");
+        dasConfig.setPassword("");
         addReporter(dasReporterConfig);
 
-        dasReporterConfig.setPassword("admin");
+        dasConfig.setPassword("admin");
         System.setProperty("metrics.dataagent.conf", "invalid.xml");
         try {
             metricManagementService.addReporter(dasReporterConfig);
@@ -457,6 +562,7 @@ public class ReporterTest extends BaseReporterTest {
             metricManagementService.addReporter(reporterBuilder);
             Assert.fail("Add Reporter should fail.");
         } catch (ReporterBuildException e) {
+            logger.info("Exception message from Add Reporter: {}", e.getMessage());
         }
     }
 }

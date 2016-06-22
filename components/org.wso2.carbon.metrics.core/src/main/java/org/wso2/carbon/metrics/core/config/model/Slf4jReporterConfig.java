@@ -37,7 +37,7 @@ public class Slf4jReporterConfig extends ScheduledReporterConfig implements Repo
     private String markerName;
 
     public Slf4jReporterConfig() {
-        name = "SLF4J";
+        super("SLF4J");
     }
 
     public String getLoggerName() {
@@ -68,7 +68,7 @@ public class Slf4jReporterConfig extends ScheduledReporterConfig implements Repo
     @Override
     public Optional<Slf4jReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
         if (loggerName == null || loggerName.trim().isEmpty()) {
@@ -78,11 +78,11 @@ public class Slf4jReporterConfig extends ScheduledReporterConfig implements Repo
         if (logger.isInfoEnabled()) {
             logger.info(String.format(
                     "Creating SLF4J reporter for Metrics with logger name '%s' and %d seconds polling period",
-                    loggerName, pollingPeriod));
+                    loggerName, getPollingPeriod()));
         }
 
-        return Optional.of(new Slf4jReporter(name, metricRegistry, metricFilter, loggerName, markerName,
-                pollingPeriod));
+        return Optional.of(new Slf4jReporter(getName(), metricRegistry, getFilter(metricFilter), loggerName, markerName,
+                getPollingPeriod()));
     }
 
 }

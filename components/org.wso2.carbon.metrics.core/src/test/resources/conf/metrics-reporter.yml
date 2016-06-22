@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Common test configuration file for metrics
+# Configuration file to test metrics with all reporters
 
 enabled: true
 
@@ -20,50 +20,63 @@ jmx:
   registerMBean: true
   name: org.wso2.carbon:type=MetricsTest
 
-reporting:
-  jmx:
-    name: JMX
-    enabled: true
-    domain: org.wso2.carbon.metrics.test
+dataSource:
+  - &JDBC01
+    lookupDataSource: true
+    dataSourceName: jdbc/WSO2MetricsDB
+    scheduledCleanup:
+      enabled: true
+      daysToKeep: 2
+      scheduledCleanupPeriod: 10000
 
-  console:
-    name: Console
-    enabled: true
-    pollingPeriod: 600
-
-  csv:
-    name: CSV
-    enabled: true
-    location: ${metrics.target}/metrics
-    pollingPeriod: 600
-
-  slf4j:
-    name: SLF4J
-    enabled: true
-    loggerName: metrics.test
-    markerName: metrics
-    pollingPeriod: 600
-
-  das:
-    name: DAS
-    enabled: true
-    source: Carbon-das
+das:
+  - &DAS01
     receiverURL: tcp://localhost:51840
     # authURL: ssl://localhost:7711
     type: thrift
     username: admin
     password: admin
-    pollingPeriod: 600
     dataAgentConfigPath: data-agent-config.xml
 
-  jdbc:
-    name: JDBC
-    enabled: true
-    source: Carbon-jdbc
-    lookupDataSource: true
-    dataSourceName: jdbc/WSO2MetricsDB
-    pollingPeriod: 600
-    scheduledCleanup:
+reporting:
+  jmx:
+    - name: JMX
       enabled: true
-      daysToKeep: 2
-      scheduledCleanupPeriod: 10000
+      domain: org.wso2.carbon.metrics.test
+
+    # Define another reporter to check whether only one reporter is added with same name
+    - name: JMX
+      enabled: true
+      domain: org.wso2.carbon.metrics.test
+
+  console:
+    - name: Console
+      enabled: true
+      pollingPeriod: 600
+
+  csv:
+    - name: CSV
+      enabled: true
+      location: ${metrics.target}/metrics
+      pollingPeriod: 600
+
+  slf4j:
+    - name: SLF4J
+      enabled: true
+      loggerName: metrics.test
+      markerName: metrics
+      pollingPeriod: 600
+
+  jdbc:
+    - name: JDBC
+      enabled: true
+      source: Carbon-jdbc
+      dataSource: *JDBC01
+      pollingPeriod: 600
+
+  das:
+    - name: DAS
+      enabled: true
+      source: Carbon-das
+      das: *DAS01
+      pollingPeriod: 600

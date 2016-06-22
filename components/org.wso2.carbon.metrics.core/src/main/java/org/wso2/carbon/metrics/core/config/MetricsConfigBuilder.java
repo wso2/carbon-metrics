@@ -15,51 +15,33 @@
  */
 package org.wso2.carbon.metrics.core.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.internal.Utils;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.parser.ParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Build {@link MetricsConfig} from the YAML file
  */
 public class MetricsConfigBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(MetricsConfigBuilder.class);
-
     private MetricsConfigBuilder() {
     }
 
     public static MetricsConfig build() {
         MetricsConfig metricsConfig;
-        Optional<File> metricsConfigFile = Utils.getConfigFile("metrics.conf", "metrics.yml");
-        if (metricsConfigFile.isPresent()) {
-            File file = metricsConfigFile.get();
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Loading Metrics Configuration from %s", file.getAbsolutePath()));
-            }
-            try (Stream<String> stream = Files.lines(file.toPath())) {
-                String fileContent = stream.map(org.wso2.carbon.kernel.utils.Utils::substituteVariables)
-                        .collect(Collectors.joining(System.lineSeparator()));
+        Optional<String> metricsConfigFileContent = Utils.readFile("metrics.conf", "metrics.yml");
+        if (metricsConfigFileContent.isPresent()) {
+            try {
                 Yaml yaml = new Yaml();
-                metricsConfig = yaml.loadAs(fileContent, MetricsConfig.class);
-            } catch (IOException | ParserException e) {
-                throw new RuntimeException("Failed to populate Metrics Configuration from "
-                        + file.getAbsolutePath(), e);
+                metricsConfig = yaml.loadAs(metricsConfigFileContent.get(), MetricsConfig.class);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Failed to populate Metrics Configuration", e);
             }
         } else {
             metricsConfig = new MetricsConfig();
         }
-
         return metricsConfig;
     }
 

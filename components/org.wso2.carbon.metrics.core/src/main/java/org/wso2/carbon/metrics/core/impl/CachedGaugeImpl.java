@@ -47,10 +47,7 @@ public class CachedGaugeImpl<T> extends AbstractMetric implements com.codahale.m
      */
     @Override
     public T getValue() {
-        if (isEnabled()) {
-            return gauge.getValue();
-        }
-        return null;
+        return gauge.getValue();
     }
 
 }

@@ -140,7 +140,7 @@
 
     <properties>
         <export.package>
-            org.wso2.carbon.metrics.das.reporter.*,
+            org.wso2.carbon.metrics.das.reporter.*;version="${carbon.metrics.package.export.version}"
         </export.package>
         <!-- The Databridge dependencies are marked as optional as there is no Carbon 5 compatible feature with
         Databridge components -->

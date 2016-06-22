@@ -21,7 +21,9 @@ import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DasConfig;
 import org.wso2.carbon.metrics.core.config.model.DasReporterConfig;
+import org.wso2.carbon.metrics.core.config.model.DataSourceConfig;
 import org.wso2.carbon.metrics.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
@@ -34,7 +36,7 @@ import static org.wso2.carbon.metrics.core.BaseReporterTest.RESOURCES_DIR;
 /**
  * Test Cases for {@link MetricsConfig}
  */
-public class MetricsConfigTest {
+public class MetricsConfigTest extends BaseMetricTest {
 
     private static MetricsConfig metricsConfig;
 
@@ -58,15 +60,16 @@ public class MetricsConfigTest {
 
     @Test
     public void testJmxReporterConfigLoad() {
-        JmxReporterConfig config = metricsConfig.getReporting().getJmx();
+        JmxReporterConfig config = metricsConfig.getReporting().getJmx().iterator().next();
         Assert.assertEquals(config.getName(), "JMX");
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getDomain(), "org.wso2.carbon.metrics.test");
+        Assert.assertEquals(config.isUseRegexFilters(), false);
     }
 
     @Test
     public void testConsoleReporterConfigLoad() {
-        ConsoleReporterConfig config = metricsConfig.getReporting().getConsole();
+        ConsoleReporterConfig config = metricsConfig.getReporting().getConsole().iterator().next();
         Assert.assertEquals(config.getName(), "Console");
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
@@ -74,7 +77,7 @@ public class MetricsConfigTest {
 
     @Test
     public void testCsvReporterConfigLoad() {
-        CsvReporterConfig config = metricsConfig.getReporting().getCsv();
+        CsvReporterConfig config = metricsConfig.getReporting().getCsv().iterator().next();
         Assert.assertEquals(config.getName(), "CSV");
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
@@ -83,7 +86,7 @@ public class MetricsConfigTest {
 
     @Test
     public void testSlf4jReporterConfigLoad() {
-        Slf4jReporterConfig config = metricsConfig.getReporting().getSlf4j();
+        Slf4jReporterConfig config = metricsConfig.getReporting().getSlf4j().iterator().next();
         Assert.assertEquals(config.getName(), "SLF4J");
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
@@ -93,31 +96,47 @@ public class MetricsConfigTest {
 
     @Test
     public void testJdbcReporterConfigLoad() {
-        JdbcReporterConfig config = metricsConfig.getReporting().getJdbc();
+        JdbcReporterConfig config = metricsConfig.getReporting().getJdbc().iterator().next();
         Assert.assertEquals(config.getName(), "JDBC");
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getSource(), "Carbon-jdbc");
+    }
+
+    @Test
+    public void testDataSourceConfigLoad() {
+        DataSourceConfig config = metricsConfig.getDataSource().iterator().next();
         Assert.assertEquals(config.isLookupDataSource(), true);
         Assert.assertEquals(config.getDataSourceName(), "jdbc/WSO2MetricsDB");
         Assert.assertEquals(config.getScheduledCleanup().isEnabled(), true);
         Assert.assertEquals(config.getScheduledCleanup().getDaysToKeep(), 2);
         Assert.assertEquals(config.getScheduledCleanup().getScheduledCleanupPeriod(), 10000L);
+
+        JdbcReporterConfig jdbcReporterConfig = metricsConfig.getReporting().getJdbc().iterator().next();
+        Assert.assertEquals(jdbcReporterConfig.getDataSource(), config);
     }
 
     @Test
     public void testDasReporterConfigLoad() {
-        DasReporterConfig config = metricsConfig.getReporting().getDas();
+        DasReporterConfig config = metricsConfig.getReporting().getDas().iterator().next();
         Assert.assertEquals(config.getName(), "DAS");
         Assert.assertEquals(config.isEnabled(), true);
         Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getSource(), "Carbon-das");
+    }
+
+    @Test
+    public void testDasConfigLoad() {
+        DasConfig config = metricsConfig.getDas().iterator().next();
         Assert.assertEquals(config.getReceiverURL(), "tcp://localhost:51840");
         Assert.assertNull(config.getAuthURL());
         Assert.assertEquals(config.getType(), "thrift");
         Assert.assertEquals(config.getUsername(), "admin");
         Assert.assertEquals(config.getPassword(), "admin");
         Assert.assertEquals(config.getDataAgentConfigPath(), "data-agent-config.xml");
+
+        DasReporterConfig dasReporterConfig = metricsConfig.getReporting().getDas().iterator().next();
+        Assert.assertEquals(dasReporterConfig.getDas(), config);
     }
 
     @Test

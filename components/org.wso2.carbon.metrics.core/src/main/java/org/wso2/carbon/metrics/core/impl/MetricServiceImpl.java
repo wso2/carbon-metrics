@@ -91,4 +91,11 @@ public class MetricServiceImpl implements MetricService {
     public <T> void cachedGauge(String name, Level level, long timeout, Gauge<T> gauge) {
         metricManager.cachedGauge(name, level, timeout, TimeUnit.SECONDS, gauge);
     }
+
+    @Override
+    public boolean remove(String name) {
+        return metricManager.remove(name);
+    }
+
+
 }

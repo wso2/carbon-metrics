@@ -104,7 +104,7 @@
 
     <properties>
         <export.package>
-            org.wso2.carbon.metrics.jdbc.reporter.*,
+            org.wso2.carbon.metrics.jdbc.reporter.*;version="${carbon.metrics.package.export.version}"
         </export.package>
         <import.package>
             com.codahale.metrics;version="${metrics.version.range}",

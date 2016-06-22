@@ -84,6 +84,14 @@ public class MetricAnnotationTest extends BaseMetricTest {
     }
 
     @Test
+    public void testCounterDefaultLevel() throws NoSuchMethodException {
+        Method method = this.getClass().getMethod("counter1");
+        Counted annotation = method.getAnnotation(Counted.class);
+        // Test default Level and Level.valueOf() method
+        Assert.assertEquals(annotation.level(), Level.valueOf("INFO"));
+    }
+
+    @Test
     public void testCounter1() throws NoSuchMethodException, MetricNotFoundException {
         Method method = this.getClass().getMethod("counter1");
         checkName(method, MetricService.name(method.getDeclaringClass().getName(), method.getName()));

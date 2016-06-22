@@ -44,8 +44,6 @@ public abstract class BaseMetricTest {
         // Set Carbon Home to load configs
         System.setProperty("carbon.home", "target");
         System.setProperty("metrics.target", "target");
-        System.setProperty("metrics.enabled", "true");
-        System.setProperty("metrics.rootLevel", "INFO");
         // Initialize the Metrics
         metrics = new Metrics.Builder().build();
         metricService = metrics.getMetricService();

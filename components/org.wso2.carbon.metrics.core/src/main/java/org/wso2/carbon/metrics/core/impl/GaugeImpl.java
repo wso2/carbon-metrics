@@ -39,10 +39,7 @@ public class GaugeImpl<T> extends AbstractMetric implements com.codahale.metrics
      */
     @Override
     public T getValue() {
-        if (isEnabled()) {
-            return gauge.getValue();
-        }
-        return null;
+        return gauge.getValue();
     }
 
 }

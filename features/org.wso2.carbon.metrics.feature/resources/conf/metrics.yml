@@ -24,66 +24,36 @@ jmx:
   # MBean Name
   name: org.wso2.carbon:type=Metrics
 
-# Metrics reporting configurations
-reporting:
-  jmx:
-    # The name for the JMX Reporter
-    name: JMX
+# Data Source Configurations for JDBC Reporters
+dataSource:
+  # Default Data Source Configuration
+  - &JDBC01
+    # This flag specifies whether the datasource should be looked up via JNDI. If this is set to true, the data source
+    # should be configured. If this is set to false, the datasource will be created by the properties defined in
+    # metrics-datasource.properties file.
+    lookupDataSource: true
 
-    # Enable JMX Reporter
-    enabled: true
+    # JNDI name of the data source to be used by the JDBC Reporter.
+    # This data source should be defined in a *-datasources.xml file in conf/datasources directory.
+    dataSourceName: java:comp/env/jdbc/WSO2MetricsDB
 
-  console:
-    # The name for the Console Reporter
-    name: Console
+    # Schedule regular deletion of metrics data older than a set number of days.
+    # It is recommended that you enable this job to ensure your metrics tables do not get extremely large.
+    # Deleting data older than seven days should be sufficient.
+    scheduledCleanup:
+      # Enable scheduled cleanup to delete Metrics data in the database.
+      enabled: true
 
-    # Enable Console Reporter
-    enabled: false
+      # The scheduled job will cleanup all data older than the specified days
+      daysToKeep: 7
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and printing in the console
-    pollingPeriod: 60
+      # This is the period for each cleanup operation in seconds.
+      scheduledCleanupPeriod: 86400
 
-  csv:
-    # The name for the CSV Reporter
-    name: CSV
-
-    # Enable CSV Reporter
-    enabled: false
-
-    # The location for CSV files. There is a CSV file for each metric.
-    location: ${carbon.home}/logs/metrics/
-
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and update CSV files in the given location
-    pollingPeriod: 60
-
-  slf4j:
-    # The name for the SLF4J Reporter
-    name: SLF4J
-
-    # Enable SLF4J Reporter
-    enabled: false
-
-    # The Logger name
-    loggerName: metrics
-
-    # The Marker name
-    # markerName: metrics
-
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and logging to the configured logger
-    pollingPeriod: 60
-
-  das:
-    # The name for the Data Analytics Server (DAS) Reporter
-    name: DAS
-    # Enable DAS Reporter
-    enabled: false
-
-    # Source of Metrics, which will be used to identify each metric sent in the streams
-    # Commented to use the hostname by default
-    # source: Carbon
+# Data Analytics Server (DAS) configurations for DAS Reporters
+das:
+  # Default DAS Configuration
+  - &DAS01
 
     # Data Receiver URL used by the Data Publisher
     receiverURL: tcp://localhost:7611
@@ -101,43 +71,88 @@ reporting:
     # The path for Data Bridge Agent configuration
     # dataAgentConfigPath: ${carbon.home}/conf/data-agent-config.xml
 
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and sending events via the Data Publisher
-    pollingPeriod: 60
+# Metrics reporting configurations
+reporting:
+  jmx:
+    - # The name for the JMX Reporter
+      name: JMX
 
-  jdbc:
-    # The name for the JDBC Reporter
-    name: JDBC
-
-    # Enable JDBC Reporter
-    enabled: true
-
-    # This flag specifies whether the datasource should be looked up via JNDI. If this is set to true, the data source
-    # should be configured. If this is set to false, the datasource will be created by the properties defined in
-    # metrics-datasource.properties file.
-    lookupDataSource: true
-
-    # JNDI name of the data source to be used by the JDBC Reporter.
-    # This data source should be defined in a *-datasources.xml file in conf/datasources directory.
-    dataSourceName: java:comp/env/jdbc/WSO2MetricsDB
-
-    # Source of Metrics, which will be used to identify each metric in database -->
-    # Commented to use the hostname by default
-    # source: Carbon
-
-    # Polling Period in seconds.
-    # This is the period for polling metrics from the metric registry and updating the database with the values
-    pollingPeriod: 60
-
-    # Schedule regular deletion of metrics data older than a set number of days.
-    # It is recommended that you enable this job to ensure your metrics tables do not get extremely large.
-    # Deleting data older than seven days should be sufficient.
-    scheduledCleanup:
-      # Enable scheduled cleanup to delete Metrics data in the database.
+      # Enable JMX Reporter
       enabled: true
 
-      # The scheduled job will cleanup all data older than the specified days
-      daysToKeep: 7
+  console:
+    - # The name for the Console Reporter
+      name: Console
 
-      # This is the period for each cleanup operation in seconds.
-      scheduledCleanupPeriod: 86400
+      # Enable Console Reporter
+      enabled: false
+
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and printing in the console
+      pollingPeriod: 60
+
+  csv:
+    - # The name for the CSV Reporter
+      name: CSV
+
+      # Enable CSV Reporter
+      enabled: false
+
+      # The location for CSV files. There is a CSV file for each metric.
+      location: ${carbon.home}/logs/metrics/
+
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and update CSV files in the given location
+      pollingPeriod: 60
+
+  slf4j:
+    - # The name for the SLF4J Reporter
+      name: SLF4J
+
+      # Enable SLF4J Reporter
+      enabled: false
+
+      # The Logger name
+      loggerName: metrics
+
+      # The Marker name
+      # markerName: metrics
+
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and logging to the configured logger
+      pollingPeriod: 60
+
+  jdbc:
+    - # The name for the JDBC Reporter
+      name: JDBC
+
+      # Enable JDBC Reporter
+      enabled: true
+
+      # Source of Metrics, which will be used to identify each metric in database -->
+      # Commented to use the hostname by default
+      # source: Carbon
+
+      # Alias referring to the Data Source configuration
+      dataSource: *JDBC01
+
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and updating the database with the values
+      pollingPeriod: 60
+
+  das:
+    - # The name for the Data Analytics Server (DAS) Reporter
+      name: DAS
+      # Enable DAS Reporter
+      enabled: false
+
+      # Source of Metrics, which will be used to identify each metric sent in the streams
+      # Commented to use the hostname by default
+      # source: Carbon
+
+      # Alias referring to the DAS configuration
+      das: *DAS01
+
+      # Polling Period in seconds.
+      # This is the period for polling metrics from the metric registry and sending events via the Data Publisher
+      pollingPeriod: 60

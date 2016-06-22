@@ -12,21 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Common test configuration file for metrics
+# Configuration file to test Metrics JDBC Reporter
 
 enabled: true
 
-reporting:
-  jmx:
-    enabled: false
+# Do not register MBean
+jmx:
+  registerMBean: false
 
-  jdbc:
-    name: JDBC
-    enabled: true
-    source: Carbon-jdbc
+dataSource:
+  - &JDBC01
     lookupDataSource: false
-    pollingPeriod: 90
+    # dataSourceName:
     scheduledCleanup:
       enabled: true
       daysToKeep: 2
       scheduledCleanupPeriod: 10000
+
+# All reporters are disabled except for the JDBC reporter. Only JDBC reporter should be added to MetricManagementService
+reporting:
+  jmx:
+    - enabled: false
+
+  jdbc:
+    - name: JDBC
+      enabled: true
+      # Use default source
+      # source:
+      dataSource: *JDBC01
+      pollingPeriod: 90
+
+  console:
+    - enabled: false
+
+  csv:
+    - enabled: false
+
+  slf4j:
+    - enabled: false
+
+  das:
+    - enabled: false

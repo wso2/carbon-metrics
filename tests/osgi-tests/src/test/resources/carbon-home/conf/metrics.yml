@@ -18,18 +18,18 @@ enabled: true
 
 reporting:
   jmx:
-    name: JMX
-    enabled: true
-    domain: org.wso2.carbon.metrics.test
+    - name: JMX
+      enabled: true
+      domain: org.wso2.carbon.metrics.test
 
   console:
-    name: Console
-    enabled: true
-    pollingPeriod: 600
+    - name: Console
+      enabled: true
+      pollingPeriod: 600
 
   slf4j:
-    name: SLF4J
-    enabled: true
-    loggerName: metrics.test
-    markerName: metrics
-    pollingPeriod: 600
+    - name: SLF4J
+      enabled: true
+      loggerName: metrics.test
+      markerName: metrics
+      pollingPeriod: 600

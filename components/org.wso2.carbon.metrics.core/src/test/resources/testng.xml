@@ -30,6 +30,7 @@
             <class name="org.wso2.carbon.metrics.core.MetricManagementServiceTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricServiceTest"/>
             <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
+            <class name="org.wso2.carbon.metrics.core.ReporterFilterTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricsMXBeanTest"/>
             <class name="org.wso2.carbon.metrics.core.JdbcCleanupTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricAnnotationTest"/>

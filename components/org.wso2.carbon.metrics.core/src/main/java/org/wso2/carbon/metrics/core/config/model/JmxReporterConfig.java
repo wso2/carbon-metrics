@@ -38,9 +38,9 @@ public class JmxReporterConfig extends ReporterConfig implements ReporterBuilder
     private String domain = "org.wso2.carbon.metrics";
 
     public JmxReporterConfig() {
+        super("JMX");
         // Enable JMX by default
-        enabled = true;
-        name = "JMX";
+        setEnabled(true);
     }
 
     public String getDomain() {
@@ -63,7 +63,7 @@ public class JmxReporterConfig extends ReporterConfig implements ReporterBuilder
     @Override
     public Optional<JmxReporter> build(MetricRegistry metricRegistry, MetricFilter metricFilter)
             throws ReporterBuildException {
-        if (!enabled) {
+        if (!isEnabled()) {
             return Optional.empty();
         }
         if (domain == null || domain.trim().isEmpty()) {
@@ -74,6 +74,6 @@ public class JmxReporterConfig extends ReporterConfig implements ReporterBuilder
             logger.info(String.format("Creating JMX reporter for Metrics with domain '%s'", domain));
         }
 
-        return Optional.of(new JmxReporter(name, metricRegistry, metricFilter, domain));
+        return Optional.of(new JmxReporter(getName(), metricRegistry, getFilter(metricFilter), domain));
     }
 }
