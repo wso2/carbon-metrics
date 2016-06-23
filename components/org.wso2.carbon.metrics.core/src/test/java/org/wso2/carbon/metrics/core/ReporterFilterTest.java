@@ -18,6 +18,7 @@ package org.wso2.carbon.metrics.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -52,7 +53,13 @@ public class ReporterFilterTest {
                 + "metrics.properties");
         // Initialize the Metrics
         metrics = new Metrics.Builder().build();
+        metrics.activate();
         metricManagementService = metrics.getMetricManagementService();
+    }
+
+    @AfterSuite
+    protected void destroy() {
+        metrics.deactivate();
     }
 
     @Test

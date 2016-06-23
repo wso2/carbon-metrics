@@ -46,6 +46,7 @@ public abstract class BaseMetricTest {
         System.setProperty("metrics.target", "target");
         // Initialize the Metrics
         metrics = new Metrics.Builder().build();
+        metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();
         // Stop reporters
