@@ -41,28 +41,13 @@ public class ClassLoadingGaugeSet implements MetricSet {
 
     @Override
     public Map<String, Metric> getMetrics() {
-        final Map<String, Metric> gauges = new HashMap<String, Metric>();
+        final Map<String, Metric> gauges = new HashMap<>();
 
-        gauges.put("loaded.total", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return mxBean.getTotalLoadedClassCount();
-            }
-        });
+        gauges.put("loaded.total", (Gauge<Long>) mxBean::getTotalLoadedClassCount);
 
-        gauges.put("loaded.current", new Gauge<Integer>() {
-            @Override
-            public Integer getValue() {
-                return mxBean.getLoadedClassCount();
-            }
-        });
+        gauges.put("loaded.current", (Gauge<Integer>) mxBean::getLoadedClassCount);
 
-        gauges.put("unloaded.total", new Gauge<Long>() {
-            @Override
-            public Long getValue() {
-                return mxBean.getUnloadedClassCount();
-            }
-        });
+        gauges.put("unloaded.total", (Gauge<Long>) mxBean::getUnloadedClassCount);
 
         return gauges;
     }

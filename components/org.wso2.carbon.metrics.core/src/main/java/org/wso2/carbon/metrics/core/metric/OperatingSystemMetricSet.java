@@ -48,16 +48,11 @@ public class OperatingSystemMetricSet implements MetricSet {
 
     @Override
     public Map<String, Metric> getMetrics() {
-        final Map<String, Metric> gauges = new HashMap<String, Metric>();
+        final Map<String, Metric> gauges = new HashMap<>();
 
         double loadAverage = mxBean.getSystemLoadAverage();
         if (Double.compare(loadAverage, 0.0d) >= 0) {
-            gauges.put("system.load.average", new Gauge<Double>() {
-                @Override
-                public Double getValue() {
-                    return mxBean.getSystemLoadAverage();
-                }
-            });
+            gauges.put("system.load.average", (Gauge<Double>) mxBean::getSystemLoadAverage);
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("System Load Average is not available as an Operating System Metric");
@@ -113,53 +108,38 @@ public class OperatingSystemMetricSet implements MetricSet {
     }
 
     private Gauge<Long> getLongGauge(final String methodName) {
-        Object value = null;
-        try {
-            value = invokeMethod(methodName);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
-            // Ignore
-            if (logger.isTraceEnabled()) {
-                logger.trace(String.format("Error when invoking %s", methodName), e);
-            }
-        }
-        if (value != null) {
+        Object value = getValue(methodName);
+        if (value != null && value instanceof Long) {
             // Method is working
-            return new Gauge<Long>() {
-                @Override
-                public Long getValue() {
-                    return invokeLong(methodName);
-                }
-            };
+            return () -> invokeLong(methodName);
         }
         return null;
     }
 
     private Gauge<Double> getDoubleGauge(final String methodName) {
+        Object value = getValue(methodName);
+        if (value != null && value instanceof Double) {
+            // Method is working
+            return () -> invokeDouble(methodName);
+        }
+        return null;
+    }
+
+    private Object getValue(final String methodName) {
         Object value = null;
         try {
             value = invokeMethod(methodName);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        } catch (Throwable e) {
             // Ignore
             if (logger.isTraceEnabled()) {
                 logger.trace(String.format("Error when invoking %s", methodName), e);
             }
         }
-        if (value != null) {
-            // Method is working
-            return new Gauge<Double>() {
-                @Override
-                public Double getValue() {
-                    return invokeDouble(methodName);
-                }
-            };
-        }
-        return null;
+        return value;
     }
 
-    private Object invokeMethod(String methodName) throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private Object invokeMethod(String methodName) throws NoSuchMethodException, InvocationTargetException,
+            IllegalAccessException {
         final Method method = mxBean.getClass().getDeclaredMethod(methodName);
         method.setAccessible(true);
         return method.invoke(mxBean);
@@ -168,7 +148,7 @@ public class OperatingSystemMetricSet implements MetricSet {
     private long invokeLong(String methodName) {
         try {
             return (Long) invokeMethod(methodName);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (Throwable e) {
             return 0L;
         }
     }
@@ -176,7 +156,7 @@ public class OperatingSystemMetricSet implements MetricSet {
     private double invokeDouble(String methodName) {
         try {
             return (Double) invokeMethod(methodName);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (Throwable e) {
             return -1.0;
         }
     }
