@@ -27,6 +27,7 @@ import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import javax.management.JMX;
@@ -67,8 +68,10 @@ public class MetricsMXBeanTest extends BaseReporterTest {
     public void testReporterJMXOperations() throws ReporterBuildException {
         template.execute("DELETE FROM METRIC_METER;");
         // reload with custom jdbc config
-        System.setProperty("metrics.conf", "src/test/resources/conf/metrics-jdbc.yml");
-        System.setProperty("metrics.datasource.conf", "src/test/resources/conf/metrics-datasource.properties");
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics-jdbc.yml");
+        System.setProperty("metrics.datasource.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
+                + "metrics-datasource.properties");
         MetricsConfig metricsConfig = MetricsConfigBuilder.build();
         metricManagementService.addReporter(metricsConfig.getReporting().getJdbc().iterator().next());
         // Test start/stop reporters
@@ -160,7 +163,10 @@ public class MetricsMXBeanTest extends BaseReporterTest {
 
     @Test
     public void testMetricsCount() {
-        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0, "Metrics count should be greater than zero");
+        Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
+        Assert.assertTrue(metricsMXBean.getEnabledMetricsCount() > 0);
+        Assert.assertTrue(metricsMXBean.getEnabledMetricsCount() <= metricsMXBean.getMetricsCount());
+        Assert.assertTrue(metricsMXBean.getMetricCollectionsCount() >= 0);
     }
 
     @Test

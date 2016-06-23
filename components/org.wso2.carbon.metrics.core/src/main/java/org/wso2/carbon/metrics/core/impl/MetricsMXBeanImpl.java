@@ -47,8 +47,18 @@ public class MetricsMXBeanImpl implements MetricsMXBean {
     }
 
     @Override
-    public int getMetricsCount() {
+    public long getMetricsCount() {
         return metricManagementService.getMetricsCount();
+    }
+
+    @Override
+    public long getEnabledMetricsCount() {
+        return metricManagementService.getEnabledMetricsCount();
+    }
+
+    @Override
+    public long getMetricCollectionsCount() {
+        return metricManagementService.getMetricCollectionsCount();
     }
 
     public String getRootLevel() {

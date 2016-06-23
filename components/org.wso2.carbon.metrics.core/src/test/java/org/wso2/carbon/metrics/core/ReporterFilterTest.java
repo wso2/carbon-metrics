@@ -58,7 +58,8 @@ public class ReporterFilterTest {
     @Test
     public void testJMX() {
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX"));
-        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test").size(), 33);
+        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test").size(),
+                metricManagementService.getEnabledMetricsCount());
     }
 
     @Test
@@ -88,7 +89,8 @@ public class ReporterFilterTest {
     @Test
     public void testJMX5() {
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX5"));
-        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test5").size(), 31);
+        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test5").size(),
+                metricManagementService.getEnabledMetricsCount() - 2);
     }
 
     @Test

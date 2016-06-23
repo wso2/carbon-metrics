@@ -81,8 +81,18 @@ public class MetricManagementServiceImpl implements MetricManagementService {
     }
 
     @Override
-    public int getMetricsCount() {
+    public long getMetricsCount() {
         return metricManager.getMetricsCount();
+    }
+
+    @Override
+    public long getEnabledMetricsCount() {
+        return metricManager.getEnabledMetricsCount();
+    }
+
+    @Override
+    public long getMetricCollectionsCount() {
+        return metricManager.getMetricCollectionsCount();
     }
 
     @Override

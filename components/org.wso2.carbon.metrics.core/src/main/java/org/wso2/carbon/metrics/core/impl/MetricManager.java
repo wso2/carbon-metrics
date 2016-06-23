@@ -942,8 +942,26 @@ public final class MetricManager {
      *
      * @return The metrics count
      */
-    public int getMetricsCount() {
+    public long getMetricsCount() {
         return metricsMap.size();
+    }
+
+    /**
+     * Return the number of enabled metrics used
+     *
+     * @return The enabled metrics count
+     */
+    public long getEnabledMetricsCount() {
+        return metricsMap.values().stream().filter(metricWrapper -> metricWrapper.enabled).count();
+    }
+
+    /**
+     * Return the number of metric collections used
+     *
+     * @return The metric collections count
+     */
+    public long getMetricCollectionsCount() {
+        return metricCollectionsMap.size();
     }
 
     private void registerJVMMetrics() {

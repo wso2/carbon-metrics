@@ -59,7 +59,21 @@ public interface MetricManagementService {
      *
      * @return The metrics count
      */
-    int getMetricsCount();
+    long getMetricsCount();
+
+    /**
+     * Return the number of enabled metrics used
+     *
+     * @return The enabled metrics count
+     */
+    long getEnabledMetricsCount();
+
+    /**
+     * Return the number of metric collections used
+     *
+     * @return The metric collections count
+     */
+    long getMetricCollectionsCount();
 
     /**
      * Set a new level to the given metric

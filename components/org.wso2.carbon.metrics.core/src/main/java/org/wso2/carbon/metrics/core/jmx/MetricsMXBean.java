@@ -38,9 +38,25 @@ public interface MetricsMXBean {
     boolean isEnabled();
 
     /**
-     * @return The number of metrics used
+     * Return the number of metrics used
+     *
+     * @return The metrics count
      */
-    int getMetricsCount();
+    long getMetricsCount();
+
+    /**
+     * Return the number of enabled metrics used
+     *
+     * @return The enabled metrics count
+     */
+    long getEnabledMetricsCount();
+
+    /**
+     * Return the number of metric collections used
+     *
+     * @return The metric collections count
+     */
+    long getMetricCollectionsCount();
 
     /**
      * @param name The name of the Metric
