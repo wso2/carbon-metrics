@@ -146,8 +146,7 @@ public class MetricsConfigTest extends BaseMetricTest {
 
     @Test(expectedExceptions = RuntimeException.class)
     public void testInvalidFile() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
-                + "metrics.properties");
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "log4j.properties");
         MetricsConfigBuilder.build();
     }
 
