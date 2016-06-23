@@ -43,23 +43,23 @@
       "type": "DOUBLE"
     },
     {
-      "name": "75th_percentile",
+      "name": "percentile_75th",
       "type": "DOUBLE"
     },
     {
-      "name": "95th_percentile",
+      "name": "percentile_95th",
       "type": "DOUBLE"
     },
     {
-      "name": "98th_percentile",
+      "name": "percentile_98th",
       "type": "DOUBLE"
     },
     {
-      "name": "99th_percentile",
+      "name": "percentile_99th",
       "type": "DOUBLE"
     },
     {
-      "name": "999th_percentile",
+      "name": "percentile_999th",
       "type": "DOUBLE"
     },
     {

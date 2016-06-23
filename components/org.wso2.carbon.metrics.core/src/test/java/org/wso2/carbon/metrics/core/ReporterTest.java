@@ -382,20 +382,17 @@ public class ReporterTest extends BaseReporterTest {
                 + "metrics-jdbc.yml");
         System.setProperty("metrics.datasource.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
                 + "metrics-datasource.properties");
-
         Metrics metrics = new Metrics.Builder().build();
-        // Cover MBean Registration
         metrics.activate();
         MetricService metricService = metrics.getMetricService();
         MetricManagementService metricManagementService = metrics.getMetricManagementService();
-        metricManagementService.startReporter("JDBC");
         Assert.assertTrue(metricManagementService.isReporterRunning("JDBC"));
 
         String meterName = MetricService.name(this.getClass(), "test-jdbc-datasource");
         Meter meter = metricService.meter(meterName, Level.INFO);
         meter.mark();
 
-        metricManagementService.report();
+        metricManagementService.report("JDBC");
         List<Map<String, Object>> meterResult =
                 template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
         Assert.assertEquals(meterResult.size(), 1);
@@ -403,7 +400,6 @@ public class ReporterTest extends BaseReporterTest {
         Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L);
         metricManagementService.stopReporter("JDBC");
         Assert.assertFalse(metricManagementService.isReporterRunning("JDBC"));
-        // Cover MBean Unregistration
         metrics.deactivate();
     }
 

@@ -92,6 +92,13 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                 throw new ReporterBuildException(
                         String.format("Error when looking up the Data Source: '%s'.", dataSourceName), e);
             }
+
+            if (logger.isInfoEnabled()) {
+                logger.info(String.format(
+                        "Creating JDBC reporter for Metrics with source '%s', data source '%s'" +
+                                " and %d seconds polling period",
+                        source, dataSourceName, getPollingPeriod()));
+            }
         } else {
             Optional<Properties> propertiesOptional = Utils.loadProperties("metrics.datasource.conf",
                     "metrics-datasource.properties");
@@ -105,13 +112,12 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
             }
             HikariConfig hikariConfig = new HikariConfig(properties);
             jdbcDataSource = new HikariDataSource(hikariConfig);
-        }
 
-        if (logger.isInfoEnabled()) {
-            logger.info(String.format(
-                    "Creating JDBC reporter for Metrics with source '%s', data source '%s'" +
-                            " and %d seconds polling period",
-                    source, dataSourceName, getPollingPeriod()));
+            if (logger.isInfoEnabled()) {
+                logger.info(String.format(
+                        "Creating JDBC reporter for Metrics with source '%s' and %d seconds polling period",
+                        source, getPollingPeriod()));
+            }
         }
 
         JdbcScheduledCleanupConfig scheduledCleanup = dataSource.getScheduledCleanup();

@@ -27,7 +27,7 @@ import org.testng.ITestResult;
  */
 public class TestMethodListener implements IInvokedMethodListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseReporterTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestMethodListener.class);
 
     @Override
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {

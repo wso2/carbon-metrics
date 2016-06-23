@@ -68,6 +68,30 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-core-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.metrics</groupId>
+                                    <artifactId>org.wso2.carbon.metrics.core</artifactId>
+                                    <classifier>sources</classifier>
+                                    <outputDirectory>${project.build.directory}/core-resources/conf</outputDirectory>
+                                    <includes>metrics.yml,metrics.properties</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -144,6 +168,10 @@
                                         <include>p2.inf</include>
                                     </includes>
                                 </resource>
+                                <resource>
+                                    <directory>${project.build.directory}/core-resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -217,4 +245,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <properties>
+        <jdbc.reporter.enabled>true</jdbc.reporter.enabled>
+    </properties>
 </project>

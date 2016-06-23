@@ -42,6 +42,8 @@ public class Metrics {
 
     private static final Logger logger = LoggerFactory.getLogger(Metrics.class);
 
+    private final boolean enabled;
+
     private final boolean registerMBean;
 
     private final String mBeanName;
@@ -50,8 +52,9 @@ public class Metrics {
 
     private final MetricManagementService metricManagementService;
 
-    private Metrics(boolean registerMBean, String mBeanName, MetricService metricService,
+    private Metrics(boolean enabled, boolean registerMBean, String mBeanName, MetricService metricService,
                     MetricManagementService metricManagementService) {
+        this.enabled = enabled;
         this.registerMBean = registerMBean;
         this.mBeanName = mBeanName;
         this.metricService = metricService;
@@ -99,6 +102,10 @@ public class Metrics {
      * metrics can also be enabled later from the Metrics MBean.
      */
     public void activate() {
+        // Enable Metrics. The change listeners should start the reporters
+        if (enabled) {
+            metricManagementService.enable();
+        }
         if (registerMBean) {
             MetricsMXBean metricsMXBean = new MetricsMXBeanImpl(metricManagementService);
             registerMXBean(metricsMXBean);
@@ -162,14 +169,9 @@ public class Metrics {
                 }
             });
 
-            // Enable Metric Manager after adding reporters. The change listeners should start the reporters
-            if (metricsConfig.isEnabled()) {
-                metricManager.enable();
-            }
-
             JmxConfig jmxConfig = metricsConfig.getJmx();
-            return new Metrics(jmxConfig.isRegisterMBean(), jmxConfig.getName(), metricService,
-                    metricManagementService);
+            return new Metrics(metricsConfig.isEnabled(), jmxConfig.isRegisterMBean(), jmxConfig.getName(),
+                    metricService, metricManagementService);
         }
     }
 

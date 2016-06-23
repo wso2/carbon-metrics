@@ -7,16 +7,15 @@ WSO2 Carbon Metrics
 | master  | [![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=carbon-metrics)](https://wso2.org/jenkins/job/carbon-metrics/) |
 ---
 
-"WSO2 Carbon Metrics" provides an API for WSO2 Carbon Components to use [Metrics library](https://dropwizard.github.io/metrics/).
+"WSO2 Carbon Metrics" provides an API for WSO2 Carbon Components to use the [Metrics library](http://metrics.dropwizard.io).
 
-For more information see JIRA [CARBON-15115](https://wso2.org/jira/browse/CARBON-15115)
+## Configuring Metrics
 
-## Enabling Metrics
+The metrics is configured via a [YAML](components/org.wso2.carbon.metrics.core/src/main/resources/metrics.yml) file. The Metrics is enabled by default and it can be disabled from the configuration. The Metrics is also configured to register a standard Java MBean for management operations.
 
-The metrics feature can be enabled from `$CARBON_HOME/repository/conf/metrics.xml` and the reporters can also be configured from the same configuration file. 
+All reporters are also configured using the same configuration file. By default, the JMX Reporter will be enabled. In WSO2 products, the JDBC Reporter will be enabled by default.
 
-The System Property `metrics.enabled` can be used to set the enabled status at startup. For example, use `-Dmetrics.enabled=true` to enable Metrics feature without editing the `metrics.xml` configuration file.
-
+When using Metrics in a WSO2 product, the configuration file is available at `$CARBON_HOME/conf/metrics.yml`. If the Metrics is used in a standalone application, the configuration file can be given using the `metrics.conf` system property.  By default, the Metrics will look for metrics.yml file in the root directory (of the Java application) or in the classpath. This approach is also used for other configurations, such as the Metrics Level configuration and the JDBC Datasource Configuration.
 
 ## Metric Levels
 
@@ -30,53 +29,22 @@ Metrics Levels are organized from most specific to least:
   - TRACE (least specific, a lot of data)
   - ALL (least specific, all data)
 
-The levels are configured in `$CARBON_HOME/repository/conf/metrics.properties` file.
+The levels are configured in `$CARBON_HOME/conf/metrics.properties` file. In a standalone application, the properties file can be specified using the `metrics.level.conf` system property.
 
-Similar to [Apache Log4j](https://logging.apache.org/log4j/1.2/), the WSO2 Carbon Metrics implementation uses a Metric Hierarchy. The hierarchy is maintained via the Metric names.
+Similar to [Apache Log4j](http://logging.apache.org/log4j), the WSO2 Carbon Metrics implementation uses a Metric Hierarchy. The hierarchy is maintained via the Metric names.
 
-The levels in `metrics.properties` can be configured to any hierarchy. For example, if we use `metric.level.jvm.memory.heap=INFO` in  `metrics.properties`, all metrics under `jvm.memory.heap` memory will have `INFO` as the configured level.
+The levels in `metrics.properties` can be configured to any hierarchy. For example, if we use `metric.level.jvm.memory.heap=INFO` in `metrics.properties`, all metrics under `jvm.memory.heap` memory will have `INFO` as the configured level.
 
-If there is no configured level for specific metric name hierarachy, the level in "`metrics.rootLevel`" will be used. The  System Property `metrics.rootLevel` can be used to override the configured root level in `metrics.properties` file. For example, use `-Dmetrics.rootLevel=INFO` to change the root level to `INFO`.
-
+If there is no configured level for specific metric name hierarachy, the level in "`metrics.rootLevel`" will be used.
 
 ## Components
 
 This repository has multiple components.
 
-  - org.wso2.carbon.metrics.core - The public API for WSO2 Metrics. See Usage.
-  - org.wso2.carbon.metrics.impl - Main implementation of Metric Service, which uses the [Metrics library](https://dropwizard.github.io/metrics/).
+  - org.wso2.carbon.metrics.core - Provides the core Metrics and Management APIs. The main Metric Manager implementation uses the [Metrics library](http://metrics.dropwizard.io).
   - org.wso2.carbon.metrics.jdbc.reporter - A JDBC Reporter for Metrics Library.
-  - org.wso2.carbon.metrics.common - A common component to read configurations.
-  - org.wso2.carbon.metrics.data.service - A Web Service to get data reported by the JDBC Reporter.
-  - org.wso2.carbon.metrics.view.ui - A Carbon UI component to display JMX Stats.
-
-## Usage
-
-All APIs are exposed via `org.wso2.carbon.metrics.core.MetricManager` class.
-
-```
-Meter meter = MetricManager.meter(Level.INFO, MetricManager.name(this.getClass(), "test-meter"));
-meter.mark();
-
-Timer timer = MetricManager.timer(Level.INFO, MetricManager.name(this.getClass(), "test-timer"));
-Context context = timer.start();
-
-Counter counter = MetricManager.counter(Level.INFO, MetricManager.name(this.getClass(), "test-counter"));
-counter.inc();
-
-Histogram histogram = MetricManager.histogram(Level.INFO, MetricManager.name(this.getClass(), "test-histogram"));
-histogram.update(value);
-
-Gauge<Integer> gauge = new Gauge<Integer>() {
-    @Override
-    public Integer getValue() {
-        // Return a value
-        return 1;
-    }
-};
-
-MetricManager.gauge(Level.INFO, MetricManager.name(this.getClass(), "test-gauge"), gauge);
-```
+  - org.wso2.carbon.metrics.das.reporter - A reporter to send metrics events to WSO2 Data Analytics Server (WSO2 DAS).
+  - org.wso2.carbon.metrics.das.capp - The artifacts used to create the main Carbon Application (C-App). This C-App is required by the DAS Reporter. The artifacts in this C-App are the event streams, event receivers and the event stores for all Metric types.
 
 ## Maven Dependency
 
@@ -90,70 +58,61 @@ In order to use WSO2 Carbon Metrics in your components, you need to add followin
 </dependency>
 ```
 
-## Adding Metrics to your products (based on WSO2 Carbon)
+## Usage
 
-In your `p2-profile` module's `pom.xml`, add following under `<featureArtifacts>` in `p2-repo-gen` goal
+The APIs to create Metrics are defined in `org.wso2.carbon.metrics.core.MetricService`. The APIs to manage Metrics, such as setting metric levels and adding reporters are defined in `org.wso2.carbon.metrics.core.MetricManagementService`.
 
-```
-<featureArtifactDef>
-    org.wso2.carbon.metrics:org.wso2.carbon.metrics.feature:${carbon.metrics.version}
-</featureArtifactDef>
-```
+In Carbon (OSGi) environment, these APIs are available as OSGi services.
 
-Add following under `<features>` in `p2-profile-gen` goal
+See the sample [ServiceComponent](samples/org.wso2.carbon.metrics.sample.service/src/main/java/org/wso2/carbon/metrics/sample/service/internal/ServiceComponent.java).
+
+When using Metrics in standalone application, the Metrics can be initialized as follows.
 
 ```
-<feature>
-    <id>org.wso2.carbon.metrics.feature.group</id>
-    <version>${carbon.metrics.version}</version>
-</feature>
-```
+Metrics metrics = new Metrics.Builder().build();
+metrics.activate();
 
-## Copying required configuration files
-
-You will have to copy following files to your product by adding relevant instructions in distribution module's `src/main/assembly/bin.xml`
-
-For example:
+MetricService metricService = metrics.getMetricService();
+MetricManagementService metricManagementService = metrics.getMetricManagementService();
 
 ```
-<fileSets>
-    <fileSet>
-        <directory>
-            ../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/dbscripts/metrics/
-        </directory>
-        <outputDirectory>${project.artifactId}-${project.version}/dbscripts/metrics</outputDirectory>
-        <includes>
-            <include>**/*.sql</include>
-        </includes>
-    </fileSet>
-</fileSets>
 
-<files>
-    <file>
-        <source>../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/metrics.xml</source>
-        <outputDirectory>${project.artifactId}-${project.version}/repository/conf/</outputDirectory>
-        <filtered>false</filtered>
-    </file>
-    <file>
-        <source>../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/metrics.properties</source>
-        <outputDirectory>${project.artifactId}-${project.version}/repository/conf/</outputDirectory>
-        <filtered>false</filtered>
-    </file>
-    <file>
-        <source>../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/repository/conf/datasources/metrics-datasources.xml</source>
-        <outputDirectory>${project.artifactId}-${project.version}/repository/conf/datasources/</outputDirectory>
-        <fileMode>644</fileMode>
-    </file>
-    <file>
-        <source>../p2-profile/target/wso2carbon-core-${carbon.kernel.version}/repository/database/WSO2METRICS_DB.h2.db</source>
-        <outputDirectory>${project.artifactId}-${project.version}/repository/database/</outputDirectory>
-        <fileMode>644</fileMode>
-    </file>
-</files>
+After getting a reference to the MetricService, the Metrics can be created as follows.
+
 ```
+// Create a Gauge
+metricService.gauge(MetricService.name("test", "gauge"), Level.INFO, () -> number);
+
+// Create a Counter
+Counter counter = metricService.counter(MetricService.name("test", "count"), Level.INFO);
+// Increment
+counter.inc();
+// Decrement
+counter.dec();
+
+// Create a Meter
+Meter meter = metricService.meter(MetricService.name("test", "meter"), Level.INFO);
+// Mark an event
+meter.mark();
+
+// Create a Histogram
+Histogram histogram = metricService.histogram(MetricService.name("test", "histogram"), Level.INFO);
+// Update the histogram
+histogram.update(value);
+
+// Create a Timer
+Timer timer = metricService.timer(MetricService.name("test", "timer"), Level.INFO);
+// Start the timer
+Timer.Context context = timer.start();
+// Stop the timer
+context.stop();
+```
+
+See the sample [RandomNumberServiceImpl](samples/org.wso2.carbon.metrics.sample.service/src/main/java/org/wso2/carbon/metrics/sample/service/internal/RandomNumberServiceImpl.java).
+
 
 ## License
 
-Copyright (C) 2014 WSO2 Inc
+Copyright (C) 2014-2016 WSO2 Inc.
 
 Licensed under the Apache License, Version 2.0

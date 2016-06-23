@@ -40,8 +40,15 @@ public class MetricManagementServiceTest extends BaseMetricTest {
     public void testMeterInitialCount() {
         Meter meter = metricService.meter(MetricService.name(this.getClass(), "test-initial-count"), Level.INFO);
         Assert.assertEquals(meter.getCount(), 0);
-        Assert.assertTrue(metricManagementService.getMetricsCount() > 0,
-                "Metrics count should be greater than zero");
+    }
+
+    @Test
+    public void testMetricsCount() {
+        Assert.assertTrue(metricManagementService.getMetricsCount() > 0);
+        Assert.assertTrue(metricManagementService.getEnabledMetricsCount() > 0);
+        Assert.assertTrue(metricManagementService.getEnabledMetricsCount()
+                <= metricManagementService.getMetricsCount());
+        Assert.assertTrue(metricManagementService.getMetricCollectionsCount() >= 0);
     }
 
     @Test
