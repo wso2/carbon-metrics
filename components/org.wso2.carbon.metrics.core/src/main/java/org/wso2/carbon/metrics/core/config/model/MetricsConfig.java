@@ -15,8 +15,6 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
-import java.util.List;
-
 /**
  * Configuration for Metrics
  */
@@ -25,10 +23,6 @@ public class MetricsConfig {
     private boolean enabled = true;
 
     private JmxConfig jmx = new JmxConfig();
-
-    private List<DataSourceConfig> dataSource;
-
-    private List<DasConfig> das;
 
     private ReportingConfig reporting = new ReportingConfig();
 
@@ -46,22 +40,6 @@ public class MetricsConfig {
 
     public void setJmx(JmxConfig jmx) {
         this.jmx = jmx;
-    }
-
-    public List<DataSourceConfig> getDataSource() {
-        return dataSource;
-    }
-
-    public void setDataSource(List<DataSourceConfig> dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public List<DasConfig> getDas() {
-        return das;
-    }
-
-    public void setDas(List<DasConfig> das) {
-        this.das = das;
     }
 
     public ReportingConfig getReporting() {

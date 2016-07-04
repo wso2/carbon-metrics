@@ -23,13 +23,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
-import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
+import org.wso2.carbon.metrics.core.utils.Utils;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 import javax.management.JMX;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -62,48 +60,6 @@ public class MetricsMXBeanTest extends BaseReporterTest {
             logger.info("Resetting Root Level to {}", Level.INFO);
         }
         metricsMXBean.setRootLevel(Level.INFO.name());
-    }
-
-    @Test
-    public void testReporterJMXOperations() throws ReporterBuildException {
-        template.execute("DELETE FROM METRIC_METER;");
-        // reload with custom jdbc config
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
-                + "metrics-jdbc.yml");
-        System.setProperty("metrics.datasource.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
-                + "metrics-datasource.properties");
-        MetricsConfig metricsConfig = MetricsConfigBuilder.build();
-        metricManagementService.addReporter(metricsConfig.getReporting().getJdbc().iterator().next());
-        // Test start/stop reporters
-        metricsMXBean.startReporters();
-        Assert.assertTrue(metricsMXBean.isReporterRunning("JDBC"));
-        metricsMXBean.stopReporters();
-        Assert.assertFalse(metricsMXBean.isReporterRunning("JDBC"));
-        metricsMXBean.startReporter("JDBC");
-        Assert.assertTrue(metricsMXBean.isReporterRunning("JDBC"));
-        String meterName = MetricService.name(this.getClass(), "test-jmx-report-meter");
-        Meter meter = metricService.meter(meterName, Level.INFO);
-        meter.mark();
-        Assert.assertEquals(meter.getCount(), 1);
-
-        metricsMXBean.report("JDBC");
-        List<Map<String, Object>> meterResult =
-                template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ?", meterName);
-        Assert.assertEquals(meterResult.size(), 1);
-        Assert.assertEquals(meterResult.get(0).get("NAME"), meterName, "Meter should be available");
-        Assert.assertEquals(meterResult.get(0).get("COUNT"), 1L, "Meter count should be one");
-
-        meter.mark();
-        metricsMXBean.report();
-        List<Map<String, Object>> meterResult2 =
-                template.queryForList("SELECT * FROM METRIC_METER WHERE NAME = ? ORDER BY TIMESTAMP DESC", meterName);
-        Assert.assertEquals(meterResult2.size(), 2);
-        Assert.assertEquals(meterResult2.get(0).get("NAME"), meterName, "Meter should be available");
-        Assert.assertEquals(meterResult2.get(0).get("COUNT"), 2L, "Meter count should be two");
-        Assert.assertEquals(meterResult2.get(1).get("COUNT"), 1L, "Meter count should be one");
-
-        metricsMXBean.stopReporter("JDBC");
-        Assert.assertFalse(metricsMXBean.isReporterRunning("JDBC"));
     }
 
     @Test
@@ -172,6 +128,40 @@ public class MetricsMXBeanTest extends BaseReporterTest {
     @Test
     public void testDefaultSource() {
         Assert.assertEquals(metricsMXBean.getDefaultSource(), Utils.getDefaultSource());
+    }
+
+    @Test
+    public void testReporterJMXOperations() throws ReporterBuildException {
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-reporter.yml");
+        MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+        metricManagementService.addReporter(metricsConfig.getReporting().getCsv().iterator().next());
+
+        // Test start/stop reporters
+        metricsMXBean.startReporters();
+        Assert.assertTrue(metricsMXBean.isReporterRunning("CSV"));
+        metricsMXBean.stopReporters();
+        Assert.assertFalse(metricsMXBean.isReporterRunning("CSV"));
+        metricsMXBean.startReporter("CSV");
+        Assert.assertTrue(metricsMXBean.isReporterRunning("CSV"));
+
+        String meterName1 = MetricService.name(this.getClass(), "test-jmx-report-meter1");
+        Meter meter1 = metricService.meter(meterName1, Level.INFO);
+        meter1.mark();
+        Assert.assertEquals(meter1.getCount(), 1);
+
+        metricsMXBean.report("CSV");
+        Assert.assertTrue(new File("target/metrics", meterName1 + ".csv").exists(), "Meter CSV file should be created");
+
+        String meterName2 = MetricService.name(this.getClass(), "test-jmx-report-meter2");
+        Meter meter2 = metricService.meter(meterName2, Level.INFO);
+        meter2.mark();
+        Assert.assertEquals(meter2.getCount(), 1);
+
+        metricsMXBean.report();
+        Assert.assertTrue(new File("target/metrics", meterName2 + ".csv").exists(), "Meter CSV file should be created");
+
+        metricsMXBean.stopReporter("CSV");
+        Assert.assertFalse(metricsMXBean.isReporterRunning("CSV"));
     }
 
 }

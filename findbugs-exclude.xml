@@ -17,7 +17,7 @@
 <FindBugsFilter>
     <Match>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
-        <Class name="org.wso2.carbon.metrics.core.reporter.impl.ScheduledJdbcMetricsCleanupTask"/>
+        <Class name="org.wso2.carbon.metrics.jdbc.core.reporter.impl.ScheduledJdbcMetricsCleanupTask"/>
         <Method name="cleanMetricsTable"/>
     </Match>
 

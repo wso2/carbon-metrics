@@ -34,6 +34,9 @@ public abstract class AbstractReporter implements Reporter {
     private final String name;
 
     public AbstractReporter(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("The reporter name cannot be null");
+        }
         this.name = name;
     }
 

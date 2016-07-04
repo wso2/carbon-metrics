@@ -16,11 +16,11 @@
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Metrics-Core-Test-Suite" parallel="false">
-    <!-- Server port for internal server -->
-    <parameter name="server-port" value="51840"/>
     <test name="Metrics-Core-Unit-Test">
         <classes>
             <class name="org.wso2.carbon.metrics.core.MetricsConfigTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricsTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricsExtensionTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricManagerTest"/>
             <class name="org.wso2.carbon.metrics.core.GaugeTest"/>
             <class name="org.wso2.carbon.metrics.core.CounterTest"/>
@@ -32,8 +32,8 @@
             <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
             <class name="org.wso2.carbon.metrics.core.ReporterFilterTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricsMXBeanTest"/>
-            <class name="org.wso2.carbon.metrics.core.JdbcCleanupTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricAnnotationTest"/>
+            <class name="org.wso2.carbon.metrics.core.ScheduledTaskTest"/>
         </classes>
     </test>
     <listeners>

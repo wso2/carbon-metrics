@@ -25,7 +25,7 @@ import org.testng.annotations.BeforeSuite;
 import java.util.Random;
 
 /**
- * Base Class for all Metric Test Cases
+ * Base Class for Metric Test Cases
  */
 public abstract class BaseMetricTest {
 
@@ -45,7 +45,7 @@ public abstract class BaseMetricTest {
         System.setProperty("carbon.home", "target");
         System.setProperty("metrics.target", "target");
         // Initialize the Metrics
-        metrics = new Metrics.Builder().build();
+        metrics = new Metrics();
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

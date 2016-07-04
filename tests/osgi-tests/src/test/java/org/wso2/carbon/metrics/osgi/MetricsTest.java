@@ -80,6 +80,10 @@ public class MetricsTest {
                 .artifactId("org.wso2.carbon.metrics.jdbc.reporter").versionAsInProject());
         optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
                 .artifactId("org.wso2.carbon.metrics.core").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.jdbc.core").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
+                .artifactId("org.wso2.carbon.metrics.das.core").versionAsInProject());
         optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
                 .artifactId("metrics-core").versionAsInProject());
         optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
@@ -88,6 +92,13 @@ public class MetricsTest {
                 .artifactId("org.wso2.carbon.jndi").versionAsInProject());
         optionList.add(mavenBundle().groupId("org.wso2.carbon.datasources")
                 .artifactId("org.wso2.carbon.datasource.core").versionAsInProject());
+        optionList.add(mavenBundle().groupId("commons-io.wso2")
+                .artifactId("commons-io").versionAsInProject());
+        optionList.add(mavenBundle().groupId("com.zaxxer")
+                .artifactId("HikariCP").versionAsInProject());
+        optionList.add(mavenBundle().groupId("com.h2database")
+                .artifactId("h2").versionAsInProject());
+
         optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
                 .artifactId("org.wso2.carbon.metrics.das.reporter").versionAsInProject());
         optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
@@ -96,8 +107,12 @@ public class MetricsTest {
                 .artifactId("org.wso2.carbon.databridge.commons").versionAsInProject());
         optionList.add(mavenBundle().groupId("org.wso2.orbit.com.lmax")
                 .artifactId("disruptor").versionAsInProject());
+        optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
+                .artifactId("org.wso2.carbon.databridge.commons.thrift").versionAsInProject());
         optionList.add(mavenBundle().groupId("libthrift.wso2")
                 .artifactId("libthrift").versionAsInProject());
+        optionList.add(mavenBundle().groupId("commons-pool.wso2")
+                .artifactId("commons-pool").versionAsInProject());
 
         // Sample bundles
         optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
@@ -144,8 +159,20 @@ public class MetricsTest {
     }
 
     @Test
+    public void testMetricsJdbcCoreBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.jdbc.core");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
     public void testMetricsDasReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.reporter");
+        Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
+    }
+
+    @Test
+    public void testMetricsDasCoreBundle() {
+        Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.core");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
@@ -203,6 +230,7 @@ public class MetricsTest {
         Assert.assertTrue(metricsMXBean.isEnabled());
         // Check whether the reporters are started at the startup
         Assert.assertTrue(metricsMXBean.isReporterRunning("JMX"));
+        Assert.assertTrue(metricsMXBean.isReporterRunning("JDBC"));
         Assert.assertTrue(metricsMXBean.getMetricsCount() > 0);
         Assert.assertEquals(metricsMXBean.getRootLevel(), Level.INFO.name());
         Assert.assertEquals(metricsMXBean.getDefaultSource(), "carbon-metrics");

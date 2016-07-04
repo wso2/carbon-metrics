@@ -54,7 +54,7 @@ public class MetricManagerTest {
 
     @Test
     public void testRootLevelChangeListener() {
-        Assert.assertEquals(metricManager.getRootLevel(), Level.OFF);
+        Assert.assertEquals(metricManager.getRootLevel(), Level.INFO);
         RootLevelChangeListener listener1 = (oldLevel, newLevel) -> {
             Assert.assertEquals(oldLevel, Level.OFF);
             Assert.assertEquals(newLevel, Level.INFO);

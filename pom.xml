@@ -57,10 +57,15 @@
         <module>components/org.wso2.carbon.metrics.das.capp</module>
         <module>components/org.wso2.carbon.metrics.das.reporter</module>
         <module>components/org.wso2.carbon.metrics.core</module>
+        <module>components/org.wso2.carbon.metrics.jdbc.core</module>
+        <module>components/org.wso2.carbon.metrics.das.core</module>
+        <module>components/org.wso2.carbon.metrics.config</module>
         <module>samples/org.wso2.carbon.metrics.sample.service</module>
         <module>samples/org.wso2.carbon.metrics.sample.consumer</module>
         <module>tests/osgi-tests</module>
-        <module>features/org.wso2.carbon.metrics.feature</module>
+        <module>features/org.wso2.carbon.metrics.core.feature</module>
+        <module>features/org.wso2.carbon.metrics.jdbc.core.feature</module>
+        <module>features/org.wso2.carbon.metrics.das.core.feature</module>
         <module>distribution</module>
     </modules>
 
@@ -79,6 +84,21 @@
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.das.reporter</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.jdbc.core</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.das.core</artifactId>
+                <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.config</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>
@@ -283,6 +303,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam-spi</artifactId>
+                <version>${pax.exam.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.ops4j.pax.url</groupId>
                 <artifactId>pax-url-aether</artifactId>
                 <version>${pax.url.version}</version>
@@ -316,7 +342,19 @@
             <!-- Distribution Dependencies - Start -->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
-                <artifactId>org.wso2.carbon.metrics.feature</artifactId>
+                <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
+                <version>${carbon.metrics.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.jdbc.core.feature</artifactId>
+                <version>${carbon.metrics.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>org.wso2.carbon.metrics.das.core.feature</artifactId>
                 <version>${carbon.metrics.version}</version>
                 <type>zip</type>
             </dependency>
@@ -350,6 +388,33 @@
                 <type>zip</type>
             </dependency>
             <!-- Distribution Dependencies - End -->
+            <!-- Metrics DAS Core Feature Dependencies - Start -->
+            <dependency>
+                <groupId>org.wso2.carbon.analytics-common</groupId>
+                <artifactId>org.wso2.carbon.databridge.commons.thrift</artifactId>
+                <version>${carbon.analytics.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.orbit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>libthrift.wso2</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${libthrift.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io.wso2</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.wso2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-pool.wso2</groupId>
+                <artifactId>commons-pool</artifactId>
+                <version>${commons.pool.version}</version>
+            </dependency>
+            <!-- Metrics DAS Core Feature Dependencies - End -->
         </dependencies>
     </dependencyManagement>
 
@@ -494,6 +559,7 @@
                                 <exclude>**/*.json</exclude>
                                 <exclude>**/images/*</exclude>
                                 <exclude>**/plugins/**</exclude>
+                                <exclude>**/META-INF/services/**</exclude>
                             </excludes>
                         </configuration>
                         <executions>
@@ -545,5 +611,9 @@
         <carbon.jndi.version>1.0.0</carbon.jndi.version>
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon.datasources.version.range>[1.0.0, 2.0.0)</carbon.datasources.version.range>
+        <disruptor.orbit.version>3.3.2.wso2v2</disruptor.orbit.version>
+        <libthrift.wso2.version>0.8.0.wso2v1</libthrift.wso2.version>
+        <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
+        <commons.pool.version>1.5.6.wso2v1</commons.pool.version>
     </properties>
 </project>

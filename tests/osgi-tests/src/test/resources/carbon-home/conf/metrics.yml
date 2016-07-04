@@ -16,6 +16,21 @@
 
 enabled: true
 
+dataSource:
+  - &JDBC01
+    dataSourceName: java:comp/env/jdbc/WSO2MetricsDB
+    scheduledCleanup:
+      enabled: false
+
+das:
+  - &DAS01
+    receiverURL: tcp://localhost:51840
+    # authURL: ssl://localhost:7711
+    type: thrift
+    username: admin
+    password: admin
+    dataAgentConfigPath: ${carbon.home}/conf/data-bridge/data-agent-config.xml
+
 reporting:
   jmx:
     - name: JMX
@@ -32,4 +47,19 @@ reporting:
       enabled: true
       loggerName: metrics.test
       markerName: metrics
+      pollingPeriod: 600
+
+  jdbc:
+    - name: JDBC
+      enabled: true
+      dataSource: *JDBC01
+      pollingPeriod: 600
+
+  das:
+    - name: DAS
+      # Cannot test DAS Reporter in OSGi mode as we cannot start a test server.
+      # The test server has dependency issues with Carbon 5.1.0
+      enabled: false
+      source: Carbon-das
+      das: *DAS01
       pollingPeriod: 600

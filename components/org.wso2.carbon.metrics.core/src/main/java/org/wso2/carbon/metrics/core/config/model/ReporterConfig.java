@@ -159,7 +159,7 @@ public abstract class ReporterConfig {
         public boolean containsMatch(Set<String> matchExpressions, String metricName) {
             for (String regex : matchExpressions) {
                 Pattern pattern = patternMap.get(regex);
-                if (pattern != null && pattern.matcher(metricName).matches()) {
+                if (pattern.matcher(metricName).matches()) {
                     // match a single value and return
                     return true;
                 }

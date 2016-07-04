@@ -111,8 +111,11 @@ public class MetricManagementServiceImpl implements MetricManagementService {
             throws ReporterBuildException {
         Optional<? extends Reporter> reporter = reporterBuilder.build(metricManager.getMetricRegistry(),
                 metricManager.getEnabledMetricFilter());
-        reporter.ifPresent(r -> {
-            Reporter previousReporter = reporterMap.put(r.getName(), r);
+        reporter.ifPresent(newReporter -> {
+            if (isEnabled()) {
+                newReporter.start();
+            }
+            Reporter previousReporter = reporterMap.put(newReporter.getName(), newReporter);
             if (previousReporter != null) {
                 previousReporter.stop();
             }
