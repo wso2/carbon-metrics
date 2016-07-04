@@ -25,11 +25,12 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.kernel.CarbonRuntime;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Metrics;
+import org.wso2.carbon.metrics.core.spi.MetricsExtension;
+import org.wso2.carbon.metrics.core.utils.Utils;
 
 /**
  * Metrics OSGi Component
@@ -53,7 +54,7 @@ public class MetricsComponent {
             logger.debug("Metrics Component activated");
         }
         Utils.setCarbonEnvironment(true);
-        metrics = new Metrics.Builder().build();
+        metrics = new Metrics();
         metrics.activate();
         metricServiceRegistration = bundleContext.registerService(MetricService.class, metrics.getMetricService(),
                 null);
@@ -69,26 +70,6 @@ public class MetricsComponent {
         metrics.deactivate();
         metricServiceRegistration.unregister();
         metricManagementServiceRegistration.unregister();
-    }
-
-    @Reference(
-            name = "org.wso2.carbon.datasource.DataSourceService",
-            service = DataSourceService.class,
-            cardinality = ReferenceCardinality.MANDATORY,
-            policy = ReferencePolicy.DYNAMIC,
-            unbind = "unregisterDataSourceService"
-    )
-    protected void onDataSourceServiceReady(DataSourceService service) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("The JNDI datasource lookup for JDBC Reporter should work now");
-        }
-    }
-
-
-    protected void unregisterDataSourceService(DataSourceService dataSourceService) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("The JNDI datasource is unregistered");
-        }
     }
 
     /**
@@ -119,6 +100,37 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("The Carbon Runtime is unregistered");
         }
+    }
+
+    /**
+     * This bind method will be called when MetricsExtension OSGi service is registered.
+     *
+     * @param metricsExtension The MetricsExtension instance registered by the components extending Metrics
+     */
+    @Reference(
+            name = "carbon.metrics.extension",
+            service = MetricsExtension.class,
+            cardinality = ReferenceCardinality.MULTIPLE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetMetricsExtension"
+    )
+    protected void setMetricsExtension(MetricsExtension metricsExtension) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Activating Metrics Extension {}", metricsExtension.getClass().getName());
+        }
+        metricsExtension.activate(metrics.getMetricService(), metrics.getMetricManagementService());
+    }
+
+    /**
+     * This is the unbind method which gets called at the un-registration of MetricsExtension OSGi service.
+     *
+     * @param metricsExtension The MetricsExtension instance registered by the components extending Metrics
+     */
+    protected void unsetMetricsExtension(MetricsExtension metricsExtension) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Deactivating Metrics Extension {}", metricsExtension.getClass().getName());
+        }
+        metricsExtension.deactivate(metrics.getMetricService(), metrics.getMetricManagementService());
     }
 }
 

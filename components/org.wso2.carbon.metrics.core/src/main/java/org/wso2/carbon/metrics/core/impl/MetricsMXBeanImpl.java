@@ -17,8 +17,8 @@ package org.wso2.carbon.metrics.core.impl;
 
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.MetricManagementService;
-import org.wso2.carbon.metrics.core.internal.Utils;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
+import org.wso2.carbon.metrics.core.utils.Utils;
 
 /**
  * MBean for {@link MetricManagementService}

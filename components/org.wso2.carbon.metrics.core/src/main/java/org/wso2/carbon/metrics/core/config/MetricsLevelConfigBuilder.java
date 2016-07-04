@@ -17,7 +17,7 @@ package org.wso2.carbon.metrics.core.config;
 
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
-import org.wso2.carbon.metrics.core.internal.Utils;
+import org.wso2.carbon.metrics.core.utils.Utils;
 
 import java.util.Enumeration;
 import java.util.Optional;
@@ -26,14 +26,11 @@ import java.util.Properties;
 /**
  * Build Metrics Level Configuration from a properties file
  */
-public class MetricsLevelConfigBuilder {
+public final class MetricsLevelConfigBuilder {
 
     private static final String METRICS_ROOT_LEVEL = "metrics.rootLevel";
 
     private static final String METRIC_LEVEL_PREFIX = "metric.level.";
-
-    private MetricsLevelConfigBuilder() {
-    }
 
     public static MetricsLevelConfig build() {
         MetricsLevelConfig metricsLevelConfig = new MetricsLevelConfig();
@@ -48,10 +45,7 @@ public class MetricsLevelConfigBuilder {
                 String key = (String) enumeration.nextElement();
                 if (key.startsWith(METRIC_LEVEL_PREFIX)) {
                     String metricName = key.substring(METRIC_LEVEL_PREFIX.length());
-                    String value = properties.getProperty(key);
-                    if (value != null) {
-                        metricsLevelConfig.setLevel(metricName, Level.toLevel(value.trim(), Level.OFF));
-                    }
+                    metricsLevelConfig.setLevel(metricName, Level.toLevel(properties.getProperty(key), Level.OFF));
                 }
             }
         });

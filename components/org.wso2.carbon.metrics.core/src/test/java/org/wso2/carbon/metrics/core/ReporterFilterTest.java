@@ -18,8 +18,8 @@ package org.wso2.carbon.metrics.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -45,19 +45,17 @@ public class ReporterFilterTest {
 
     private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
-    @BeforeSuite
+    @BeforeClass
     protected void init() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
-                + "metrics-filter.yml");
-        System.setProperty("metrics.level.conf", RESOURCES_DIR + File.separator + "conf" + File.separator
-                + "metrics.properties");
+        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-filter.yml");
         // Initialize the Metrics
-        metrics = new Metrics.Builder().build();
+        metrics = new Metrics();
         metrics.activate();
         metricManagementService = metrics.getMetricManagementService();
+        metricManagementService.setRootLevel(Level.TRACE);
     }
 
-    @AfterSuite
+    @AfterClass
     protected void destroy() {
         metrics.deactivate();
     }
@@ -72,19 +70,19 @@ public class ReporterFilterTest {
     @Test
     public void testJMX1() {
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX1"));
-        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test1").size(), 6);
+        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test1").size(), 13);
     }
 
     @Test
     public void testJMX2() {
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX2"));
-        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test2").size(), 9);
+        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test2").size(), 33);
     }
 
     @Test
     public void testJMX3() {
         Assert.assertTrue(metricManagementService.isReporterRunning("JMX3"));
-        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test3").size(), 9);
+        Assert.assertEquals(findObjects("org.wso2.carbon.metrics.filter.test3").size(), 27);
     }
 
     @Test

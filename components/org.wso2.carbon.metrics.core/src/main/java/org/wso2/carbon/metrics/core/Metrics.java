@@ -29,8 +29,13 @@ import org.wso2.carbon.metrics.core.impl.MetricServiceImpl;
 import org.wso2.carbon.metrics.core.impl.MetricsMXBeanImpl;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
+import org.wso2.carbon.metrics.core.spi.MetricsExtension;
+import org.wso2.carbon.metrics.core.utils.Utils;
 
 import java.lang.management.ManagementFactory;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -52,13 +57,39 @@ public class Metrics {
 
     private final MetricManagementService metricManagementService;
 
-    private Metrics(boolean enabled, boolean registerMBean, String mBeanName, MetricService metricService,
-                    MetricManagementService metricManagementService) {
-        this.enabled = enabled;
-        this.registerMBean = registerMBean;
-        this.mBeanName = mBeanName;
-        this.metricService = metricService;
-        this.metricManagementService = metricManagementService;
+    private final List<MetricsExtension> metricsExtensions;
+
+    /**
+     * Create a {@link Metrics} instance with a {@link MetricService} and a {@link MetricManagementService}
+     */
+    public Metrics() {
+        metricsExtensions = new CopyOnWriteArrayList<>();
+        MetricRegistry metricRegistry = new MetricRegistry();
+        MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+        MetricsLevelConfig metricsLevelConfig = MetricsLevelConfigBuilder.build();
+
+        MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig);
+
+        metricService = new MetricServiceImpl(metricManager);
+        metricManagementService = new MetricManagementServiceImpl(metricManager);
+
+        // Build all reporters
+        metricsConfig.getReporting().getReporterBuilders().forEach(reporterBuilder -> {
+            try {
+                metricManagementService.addReporter(reporterBuilder);
+            } catch (ReporterBuildException e) {
+                logger.warn("Reporter build failed", e);
+            }
+        });
+
+        JmxConfig jmxConfig = metricsConfig.getJmx();
+        this.enabled = metricsConfig.isEnabled();
+        this.registerMBean = jmxConfig.isRegisterMBean();
+        this.mBeanName = jmxConfig.getName();
+
+        if (!Utils.isCarbonEnvironment()) {
+            ServiceLoader.load(MetricsExtension.class).forEach(this::addMetricsExtension);
+        }
     }
 
     private void registerMXBean(MetricsMXBean metricsMXBean) {
@@ -110,6 +141,9 @@ public class Metrics {
             MetricsMXBean metricsMXBean = new MetricsMXBeanImpl(metricManagementService);
             registerMXBean(metricsMXBean);
         }
+        if (!Utils.isCarbonEnvironment()) {
+            metricsExtensions.forEach(extension -> extension.activate(metricService, metricManagementService));
+        }
     }
 
     /**
@@ -120,6 +154,19 @@ public class Metrics {
             unregisterMXBean();
         }
         metricManagementService.disable();
+        if (!Utils.isCarbonEnvironment()) {
+            metricsExtensions.forEach(extension -> extension.deactivate(metricService, metricManagementService));
+        }
+    }
+
+    /**
+     * Adds a {@link MetricsExtension} to a collection of extensions that will be notified if the Metrics is activated
+     * or deactivated.
+     *
+     * @param extension the metrics extension
+     */
+    private void addMetricsExtension(MetricsExtension extension) {
+        metricsExtensions.add(extension);
     }
 
     /**
@@ -139,41 +186,5 @@ public class Metrics {
     public MetricManagementService getMetricManagementService() {
         return metricManagementService;
     }
-
-    /**
-     * A builder for {@link Metrics} instances.
-     */
-    public static class Builder {
-
-        /**
-         * Builds a {@link Metrics} instance with a {@link MetricService} and a {@link MetricManagementService}
-         *
-         * @return A {@link Metrics} instance
-         */
-        public Metrics build() {
-            MetricRegistry metricRegistry = new MetricRegistry();
-            MetricsConfig metricsConfig = MetricsConfigBuilder.build();
-            MetricsLevelConfig metricsLevelConfig = MetricsLevelConfigBuilder.build();
-
-            MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig);
-
-            MetricService metricService = new MetricServiceImpl(metricManager);
-            MetricManagementService metricManagementService = new MetricManagementServiceImpl(metricManager);
-
-            // Build all reporters
-            metricsConfig.getReporting().getReporterBuilders().forEach(reporterBuilder -> {
-                try {
-                    metricManagementService.addReporter(reporterBuilder);
-                } catch (ReporterBuildException e) {
-                    logger.warn("Reporter build failed", e);
-                }
-            });
-
-            JmxConfig jmxConfig = metricsConfig.getJmx();
-            return new Metrics(metricsConfig.isEnabled(), jmxConfig.isRegisterMBean(), jmxConfig.getName(),
-                    metricService, metricManagementService);
-        }
-    }
-
 
 }

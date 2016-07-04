@@ -15,32 +15,32 @@
  */
 package org.wso2.carbon.metrics.core.config;
 
-import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
-import org.wso2.carbon.metrics.core.internal.Utils;
+import org.wso2.carbon.metrics.core.utils.Utils;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
- * Build {@link MetricsConfig} from the YAML file
+ * Build Metrics Configuration from the YAML file
  */
-public class MetricsConfigBuilder {
+public final class MetricsConfigBuilder {
 
-    private MetricsConfigBuilder() {
-    }
-
-    public static MetricsConfig build() {
-        MetricsConfig metricsConfig;
+    public static <T> T build(Class<T> clazz, Supplier<T> defaultConfig) {
+        T metricsConfig;
         Optional<String> metricsConfigFileContent = Utils.readFile("metrics.conf", "metrics.yml");
         if (metricsConfigFileContent.isPresent()) {
             try {
-                Yaml yaml = new Yaml();
-                metricsConfig = yaml.loadAs(metricsConfigFileContent.get(), MetricsConfig.class);
+                Representer representer = new Representer();
+                representer.getPropertyUtils().setSkipMissingProperties(true);
+                Yaml yaml = new Yaml(representer);
+                metricsConfig = yaml.loadAs(metricsConfigFileContent.get(), clazz);
             } catch (RuntimeException e) {
                 throw new RuntimeException("Failed to populate Metrics Configuration", e);
             }
         } else {
-            metricsConfig = new MetricsConfig();
+            return defaultConfig.get();
         }
         return metricsConfig;
     }

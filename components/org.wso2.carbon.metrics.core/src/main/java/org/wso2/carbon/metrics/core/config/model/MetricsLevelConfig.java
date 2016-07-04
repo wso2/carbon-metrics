@@ -27,9 +27,9 @@ import java.util.Map;
 public class MetricsLevelConfig {
 
     /**
-     * The root level configured for Metrics collection
+     * The root level configured for Metrics
      */
-    private Level rootLevel = Level.OFF;
+    private Level rootLevel = Level.INFO;
 
     private final Map<String, Level> levelMap = Collections.synchronizedMap(new HashMap<String, Level>());
 

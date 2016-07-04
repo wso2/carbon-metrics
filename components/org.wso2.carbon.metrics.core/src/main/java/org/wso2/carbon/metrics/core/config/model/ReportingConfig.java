@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Configuration for all reporters
+ * Configuration for all reporters in Metrics Core
  */
 public class ReportingConfig {
 
@@ -32,10 +32,6 @@ public class ReportingConfig {
     private Set<CsvReporterConfig> csv;
 
     private Set<Slf4jReporterConfig> slf4j;
-
-    private Set<JdbcReporterConfig> jdbc;
-
-    private Set<DasReporterConfig> das;
 
     public Set<JmxReporterConfig> getJmx() {
         return jmx;
@@ -69,22 +65,6 @@ public class ReportingConfig {
         this.slf4j = slf4j;
     }
 
-    public Set<JdbcReporterConfig> getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(Set<JdbcReporterConfig> jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public Set<DasReporterConfig> getDas() {
-        return das;
-    }
-
-    public void setDas(Set<DasReporterConfig> das) {
-        this.das = das;
-    }
-
     public Set<? extends ReporterBuilder> getReporterBuilders() {
         Set<ReporterBuilder> reporterBuilders = new HashSet<>();
         if (jmx != null) {
@@ -98,12 +78,6 @@ public class ReportingConfig {
         }
         if (slf4j != null) {
             reporterBuilders.addAll(slf4j);
-        }
-        if (jdbc != null) {
-            reporterBuilders.addAll(jdbc);
-        }
-        if (das != null) {
-            reporterBuilders.addAll(das);
         }
         return reporterBuilders;
     }
