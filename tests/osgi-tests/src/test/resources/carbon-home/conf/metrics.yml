@@ -18,6 +18,7 @@ enabled: true
 
 dataSource:
   - &JDBC01
+    lookupDataSource: true
     dataSourceName: java:comp/env/jdbc/WSO2MetricsDB
     scheduledCleanup:
       enabled: false

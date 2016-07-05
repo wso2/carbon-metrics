@@ -30,8 +30,8 @@ dataSource:
   - &JDBC01
     # The "lookupDataSource" flag specifies whether the datasource should be looked up via JNDI. If this is set to true,
     # the data source should be configured. If this is set to false, the datasource will be created by the properties
-    # defined in metrics-datasource.properties file. This is "true" by default in Carbon (OSGi) environment.
-    # lookupDataSource: true
+    # defined in metrics-datasource.properties file.
+    lookupDataSource: ${dataSource.lookupDataSource}
 
     # JNDI name of the data source to be used by the JDBC Reporter.
     # This data source should be defined in a *-datasources.xml file in conf/datasources directory.

@@ -15,14 +15,12 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
-import org.wso2.carbon.metrics.core.utils.Utils;
-
 /**
  * Configuration for data source
  */
 public class DataSourceConfig {
 
-    private boolean lookupDataSource = Utils.isCarbonEnvironment();
+    private boolean lookupDataSource;
 
     private String dataSourceName;
 
