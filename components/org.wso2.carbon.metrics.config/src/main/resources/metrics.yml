@@ -69,9 +69,12 @@ das:
     password: admin
 
     # The path for Data Bridge Agent configuration
-    dataAgentConfigPath: ${carbon.home}/conf/data-bridge/data-agent-config.xml
+    dataAgentConfigPath: ${metrics.das.config.path}
 
 # Metrics reporting configurations
+# The JMX, Console, CSV and SLF4J reporters are in the Metrics Core feature.
+# The JDBC Reporter is in the Metrics JDBC Core feature and the Data Analytics Server (DAS) Reporter is in Metrics
+# DAS Core feature
 reporting:
   jmx:
     - # The name for the JMX Reporter
@@ -99,7 +102,7 @@ reporting:
       enabled: false
 
       # The location for CSV files. There is a CSV file for each metric.
-      location: ${carbon.home}/logs/metrics/
+      location: ${metrics.reporting.csv.location}
 
       # Polling Period in seconds.
       # This is the period for polling metrics from the metric registry and update CSV files in the given location
@@ -122,12 +125,13 @@ reporting:
       # This is the period for polling metrics from the metric registry and logging to the configured logger
       pollingPeriod: 60
 
+  # The JDBC Reporter configurations will be ignored if the Metrics JDBC Core feature is not available in runtime
   jdbc:
     - # The name for the JDBC Reporter
       name: JDBC
 
       # Enable JDBC Reporter
-      enabled: ${jdbc.reporter.enabled}
+      enabled: ${metrics.reporting.jdbc.enabled}
 
       # Source of Metrics, which will be used to identify each metric in database -->
       # Commented to use the hostname by default
@@ -140,11 +144,13 @@ reporting:
       # This is the period for polling metrics from the metric registry and updating the database with the values
       pollingPeriod: 60
 
+  # The Data Analytics Server (DAS) Reporter configurations will be ignored if the Metrics DAS Core feature is not
+  # available in runtime
   das:
     - # The name for the Data Analytics Server (DAS) Reporter
       name: DAS
       # Enable DAS Reporter
-      enabled: false
+      enabled: ${metrics.reporting.das.enabled}
 
       # Source of Metrics, which will be used to identify each metric sent in the streams
       # Commented to use the hostname by default

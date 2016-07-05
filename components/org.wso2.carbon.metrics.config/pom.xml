@@ -35,10 +35,10 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <filters>
+            <filter>filter-values.properties</filter>
+        </filters>
     </build>
 
-    <properties>
-        <jdbc.reporter.enabled>false</jdbc.reporter.enabled>
-    </properties>
 </project>
 
