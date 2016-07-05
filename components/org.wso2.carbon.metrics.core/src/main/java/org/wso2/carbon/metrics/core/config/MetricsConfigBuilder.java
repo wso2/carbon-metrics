@@ -28,21 +28,19 @@ import java.util.function.Supplier;
 public final class MetricsConfigBuilder {
 
     public static <T> T build(Class<T> clazz, Supplier<T> defaultConfig) {
-        T metricsConfig;
         Optional<String> metricsConfigFileContent = Utils.readFile("metrics.conf", "metrics.yml");
         if (metricsConfigFileContent.isPresent()) {
             try {
                 Representer representer = new Representer();
                 representer.getPropertyUtils().setSkipMissingProperties(true);
                 Yaml yaml = new Yaml(representer);
-                metricsConfig = yaml.loadAs(metricsConfigFileContent.get(), clazz);
+                return yaml.loadAs(metricsConfigFileContent.get(), clazz);
             } catch (RuntimeException e) {
                 throw new RuntimeException("Failed to populate Metrics Configuration", e);
             }
         } else {
             return defaultConfig.get();
         }
-        return metricsConfig;
     }
 
 }
