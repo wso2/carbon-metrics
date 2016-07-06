@@ -150,12 +150,34 @@
                         <groupId>slf4j.wso2</groupId>
                         <artifactId>slf4j</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.osgi</groupId>
+                        <artifactId>org.eclipse.osgi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.osgi</groupId>
+                        <artifactId>org.eclipse.osgi.services</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.thrift</groupId>
+                        <artifactId>libthrift</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.databridge.commons</artifactId>
                 <version>${carbon.analytics.common.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.wso2.carbon</groupId>
+                        <artifactId>org.wso2.carbon.logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.osgi</groupId>
+                        <artifactId>org.eclipse.osgi</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -393,6 +415,12 @@
                 <groupId>org.wso2.carbon.analytics-common</groupId>
                 <artifactId>org.wso2.carbon.databridge.commons.thrift</artifactId>
                 <version>${carbon.analytics.common.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>slf4j.wso2</groupId>
+                        <artifactId>slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.wso2.orbit.com.lmax</groupId>

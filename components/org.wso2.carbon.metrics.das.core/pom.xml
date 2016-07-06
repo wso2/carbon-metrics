@@ -44,6 +44,7 @@
         <dependency>
             <groupId>org.wso2.eclipse.osgi</groupId>
             <artifactId>org.eclipse.osgi.services</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.analytics-common</groupId>

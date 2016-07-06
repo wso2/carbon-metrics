@@ -46,6 +46,9 @@
     </dependencies>
 
     <build>
+        <filters>
+            <filter>filter-values.properties</filter>
+        </filters>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -174,8 +177,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <jdbc.reporter.enabled>false</jdbc.reporter.enabled>
-    </properties>
 </project>
