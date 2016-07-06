@@ -45,6 +45,8 @@ This repository has multiple components.
   - org.wso2.carbon.metrics.jdbc.reporter - A JDBC Reporter for Metrics Library.
   - org.wso2.carbon.metrics.das.reporter - A reporter to send metrics events to WSO2 Data Analytics Server (WSO2 DAS).
   - org.wso2.carbon.metrics.das.capp - The artifacts used to create the main Carbon Application (C-App). This C-App is required by the DAS Reporter. The artifacts in this C-App are the event streams, event receivers and the event stores for all Metric types.
+  - org.wso2.carbon.metrics.jdbc.core - Extending Metrics Core to support the JDBC Reporter.
+  - org.wso2.carbon.metrics.das.core - Extending Metrics Core to support the DAS Reporter.
 
 ## Maven Dependency
 
