@@ -45,43 +45,78 @@
             <Type>LONG</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>mean_rate</Name>
+            <Name>max</Name>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>one_minute_rate</Name>
+            <Name>mean</Name>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>five_minute_rate</Name>
+            <Name>min</Name>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>fifteen_minute_rate</Name>
+            <Name>stddev</Name>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
             <Type>DOUBLE</Type>
         </ColumnDefinition>
         <ColumnDefinition>
-            <Name>rate_unit</Name>
+            <Name>median</Name>
             <EnableIndexing>false</EnableIndexing>
             <IsPrimaryKey>false</IsPrimaryKey>
             <EnableScoreParam>false</EnableScoreParam>
-            <Type>STRING</Type>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>percentile_75th</Name>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>percentile_95th</Name>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>percentile_98th</Name>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>percentile_99th</Name>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
+        </ColumnDefinition>
+        <ColumnDefinition>
+            <Name>percentile_999th</Name>
+            <EnableIndexing>false</EnableIndexing>
+            <IsPrimaryKey>false</IsPrimaryKey>
+            <EnableScoreParam>false</EnableScoreParam>
+            <Type>DOUBLE</Type>
         </ColumnDefinition>
     </TableSchema>
     <Source>
-        <StreamId>org.wso2.carbon.metrics.meter:1.0.0</StreamId>
+        <StreamId>org.wso2.metrics.stream.Histogram:1.0.0</StreamId>
     </Source>
     <RecordStoreName>EVENT_STORE</RecordStoreName>
 </EventStoreConfiguration>

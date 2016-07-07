@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="meter_stream" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
-	<file>org.wso2.carbon.metrics.meter_1.0.0.json</file>
+    <file>org.wso2.metrics.stream.Meter_1.0.0.json</file>
 </artifact>

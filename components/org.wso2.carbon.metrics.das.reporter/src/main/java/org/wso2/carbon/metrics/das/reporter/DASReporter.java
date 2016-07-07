@@ -153,11 +153,11 @@ public class DASReporter extends ScheduledReporter {
     private final String source;
     private final DataPublisher dataPublisher;
 
-    private static final String GAUGE_STREAM = "org.wso2.carbon.metrics.gauge";
-    private static final String COUNTER_STREAM = "org.wso2.carbon.metrics.counter";
-    private static final String METER_STREAM = "org.wso2.carbon.metrics.meter";
-    private static final String HISTOGRAM_STREAM = "org.wso2.carbon.metrics.histogram";
-    private static final String TIMER_STREAM = "org.wso2.carbon.metrics.timer";
+    private static final String GAUGE_STREAM = "org.wso2.metrics.stream.Gauge";
+    private static final String COUNTER_STREAM = "org.wso2.metrics.stream.Counter";
+    private static final String METER_STREAM = "org.wso2.metrics.stream.Meter";
+    private static final String HISTOGRAM_STREAM = "org.wso2.metrics.stream.Histogram";
+    private static final String TIMER_STREAM = "org.wso2.metrics.stream.Timer";
 
     private static final String VERSION = "1.0.0";
 

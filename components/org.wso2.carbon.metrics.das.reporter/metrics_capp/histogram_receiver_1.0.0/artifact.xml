@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="histogram_receiver" version="1.0.0" type="event/receiver" serverRole="DataAnalyticsServer">
-    <file>histogram_metrics_receiver.xml</file>
+    <file>Metrics-Receiver-Wso2event-Histogram.xml</file>
 </artifact>

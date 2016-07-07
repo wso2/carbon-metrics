@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="timer_stream" version="1.0.0" type="event/stream" serverRole="DataAnalyticsServer">
-    <file>org.wso2.carbon.metrics.timer_1.0.0.json</file>
+    <file>org.wso2.metrics.stream.Timer_1.0.0.json</file>
 </artifact>

@@ -18,9 +18,10 @@
 
     <property name="target_dir" value="target" />
     <property name="metrics_capp_dir" value="metrics_capp" />
+    <property name="metrics_capp_name" value="org_wso2_carbon_metrics-1.0.0"/>
 
     <target name="zip">
-        <zip destfile="${target_dir}/${metrics_capp_dir}.car">
+        <zip destfile="${target_dir}/${metrics_capp_name}.car">
             <zipfileset dir="${metrics_capp_dir}" />
         </zip>
     </target>

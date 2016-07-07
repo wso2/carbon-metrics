@@ -1,8 +1,8 @@
 {
-  "name": "org.wso2.carbon.metrics.histogram",
+  "name": "org.wso2.metrics.stream.Timer",
   "version": "1.0.0",
-  "nickName": "histogram_metrics",
-  "description": "Histogram Metrics",
+  "nickName": "Timer",
+  "description": "Timer Metrics",
   "metaData": [
     {
       "name": "timestamp",
@@ -43,24 +43,48 @@
       "type": "DOUBLE"
     },
     {
-      "name": "75th_percentile",
+      "name": "percentile_75th",
       "type": "DOUBLE"
     },
     {
-      "name": "95th_percentile",
+      "name": "percentile_95th",
       "type": "DOUBLE"
     },
     {
-      "name": "98th_percentile",
+      "name": "percentile_98th",
       "type": "DOUBLE"
     },
     {
-      "name": "99th_percentile",
+      "name": "percentile_99th",
       "type": "DOUBLE"
     },
     {
-      "name": "999th_percentile",
+      "name": "percentile_999th",
       "type": "DOUBLE"
+    },
+    {
+      "name": "mean_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "one_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "five_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "fifteen_minute_rate",
+      "type": "DOUBLE"
+    },
+    {
+      "name": "rate_unit",
+      "type": "STRING"
+    },
+    {
+      "name": "duration_unit",
+      "type": "STRING"
     }
   ]
 }

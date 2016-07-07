@@ -15,5 +15,5 @@
     # limitations under the License.
 -->
 <artifact name="counter_receiver" version="1.0.0" type="event/receiver" serverRole="DataAnalyticsServer">
-    <file>counter_metrics_receiver.xml</file>
+    <file>Metrics-Receiver-Wso2event-Counter.xml</file>
 </artifact>

@@ -14,8 +14,9 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<eventReceiver name="counter_metrics_receiver" statistics="disable" trace="disable" xmlns="http://wso2.org/carbon/eventreceiver">
+<eventReceiver name="Metrics-Receiver-Wso2event-Counter" statistics="disable" trace="disable"
+               xmlns="http://wso2.org/carbon/eventreceiver">
     <from eventAdapterType="wso2event"/>
     <mapping customMapping="disable" type="wso2event"/>
-    <to streamName="org.wso2.carbon.metrics.counter" version="1.0.0"/>
+    <to streamName="org.wso2.metrics.stream.Counter" version="1.0.0"/>
 </eventReceiver>

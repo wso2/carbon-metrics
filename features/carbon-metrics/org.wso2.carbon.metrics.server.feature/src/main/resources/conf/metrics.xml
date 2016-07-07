@@ -96,6 +96,8 @@
             <!-- <AuthURL>ssl://localhost:7711</AuthURL> -->
             <Username>admin</Username>
             <Password>admin</Password>
+            <!-- Path for Data Agent Configuration -->
+            <DataAgentConfigPath>repository/conf/data-bridge/data-agent-config.xml</DataAgentConfigPath>
         </DAS>
     </Reporting>
 </Metrics>
