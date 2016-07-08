@@ -48,6 +48,10 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.org.owasp.encoder</groupId>
+            <artifactId>encoder</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -67,6 +71,7 @@
                             org.wso2.carbon.metrics.data.service.stub.*,
                             org.wso2.carbon.metrics.data.common.*,
                             com.google.gson;version="${gson.version.range}",
+                            org.owasp.encoder;version="${encoder.version.range}",
                             org.slf4j;version="${slf4j.version.range}",
                             org.apache.axis2;version="${axis2.wso2.version.range}",
                             org.apache.axis2.client;version="${axis2.wso2.version.range}",

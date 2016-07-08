@@ -18,6 +18,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.ChartView" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricHierarchyDataWrapper" %>
@@ -118,7 +119,8 @@
                                                 <%
                                                     for (String s : sources) {
                                                 %>
-                                                <option value="<%=s%>"><%=s%>
+                                                <option value="<%=Encode.forHtmlAttribute(s)%>">
+                                                    <%=Encode.forHtmlContent(s)%>
                                                 </option>
                                                 <%
                                                     }
@@ -179,7 +181,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    <input type="hidden" id="path" name="path" value="<%=path%>"/>
+                    <input type="hidden" id="path" name="path" value="<%=Encode.forHtmlAttribute(path)%>"/>
                 </form>
 
                 <br/>
@@ -193,13 +195,13 @@
                             title = (lastIndex != -1) ? path.substring(lastIndex + 1) + " Metrics" : path + " Metrics";
                         }
                     %>
-                    <%=title%>
+                    <%=Encode.forHtmlContent(title)%>
                 </h3>
 
                 <%
                     if (!"".equals(path)) {
                 %>
-                <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>">
+                <a href="hierarchy.jsp?region=<%=Encode.forHtmlAttribute(region)%>&item=<%=Encode.forHtmlAttribute(item)%>&source=<%=Encode.forHtmlAttribute(source)%>">
                     <fmt:message key="metrics.hierarchy.root.level"/>
                 </a>
                 <%
@@ -211,7 +213,7 @@
                         if (!breadcrumb.isEmpty()) {
                 %>
                 &nbsp;>&nbsp;
-                <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>&path=<%=breadCrumbBuilder.toString().replaceAll(" ","%20")%>"><%=breadcrumb%>
+                <a href="hierarchy.jsp?region=<%=Encode.forHtmlAttribute(region)%>&item=<%=Encode.forHtmlAttribute(item)%>&source=<%=Encode.forHtmlAttribute(source)%>&path=<%=Encode.forHtmlAttribute(breadCrumbBuilder.toString())%>"><%=Encode.forHtmlContent(breadcrumb)%>
                 </a>
                 <%
                         }
@@ -240,7 +242,7 @@
                     <% for (String subLevel : subLevels) { %>
                     <tr>
                         <td>
-                            <a href="hierarchy.jsp?region=<%=region.replaceAll(" ","%20")%>&item=<%=item.replaceAll(" ","%20")%>&source=<%=source.replaceAll(" ","%20")%>&path=<%=subLevel.replaceAll(" ","%20")%>"><%=subLevel.substring(subLevel.lastIndexOf('.') + 1)%>
+                            <a href="hierarchy.jsp?region=<%=Encode.forHtmlAttribute(region)%>&item=<%=Encode.forHtmlAttribute(item)%>&source=<%=Encode.forHtmlAttribute(source)%>&path=<%=Encode.forHtmlAttribute(subLevel)%>"><%=Encode.forHtmlContent(subLevel.substring(subLevel.lastIndexOf('.') + 1))%>
                             </a>
                         </td>
                     </tr>
@@ -292,8 +294,8 @@
         %>
         chartNames = [];
         chartTitles = [];
-        chartViewName = "<%=key%>";
-        views["<%=key%>"] = {
+        chartViewName = "<%=Encode.forJavaScriptBlock(key)%>";
+        views["<%=Encode.forJavaScriptBlock(key)%>"] = {
             name: chartViewName,
             charts: chartNames,
             titles: chartTitles,
@@ -303,8 +305,8 @@
             String[] charts = chartView.getCharts();
             for (String chart : charts) {
         %>
-        chartNames.push('<%=chart%>');
-        chartTitles.push('<%=chart%>');
+        chartNames.push('<%=Encode.forJavaScriptBlock(chart)%>');
+        chartTitles.push('<%=Encode.forJavaScriptBlock(chart)%>');
         <%
             }
         }

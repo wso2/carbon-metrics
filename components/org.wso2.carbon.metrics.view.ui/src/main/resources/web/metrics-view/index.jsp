@@ -17,6 +17,7 @@
 %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.wso2.carbon.metrics.view.ui.MetricsViewClient"%>
 <%@ page import="org.wso2.carbon.metrics.view.ui.ChartView"%>
 <%@ page import="org.apache.axis2.context.ConfigurationContext"%>
@@ -24,9 +25,9 @@
 <%@ page import="org.wso2.carbon.utils.ServerConstants"%>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil"%>
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage"%>
-<%@ page import="org.wso2.carbon.ui.util.CharacterEncoder"%>
 <%@ page import="java.util.Map"%>
 <%@ page import="java.util.LinkedHashMap"%>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 
 <div>
@@ -112,7 +113,9 @@
                                                     <%
                                                         for (String source : sources) {
                                                     %>
-                                                    <option value="<%=source%>"><%=source%></option>
+                                                    <option value="<%=Encode.forHtmlAttribute(source)%>">
+                                                        <%=Encode.forHtmlContent(source)%>
+                                                    </option>
                                                     <%
                                                         }
                                                     %>
@@ -215,8 +218,8 @@
         <%
         } else {
         %>
-            <jsp:include page='<%=item+"_ajaxprocessor.jsp"%>' />
-            dataPageUrl = '<%=item+"_data_ajaxprocessor.jsp"%>';
+            <jsp:include page='<%=Encode.forHtml(item)+"_ajaxprocessor.jsp"%>' />
+            dataPageUrl = '<%=Encode.forHtml(item)+"_data_ajaxprocessor.jsp"%>';
         <%
         }
 
@@ -232,13 +235,13 @@
             chartNames = [];
             chartTitles = [];
             chartViewName = '<fmt:message key="<%=viewKey%>" />';
-            views["<%=key%>"] = {name: chartViewName, charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
+            views["<%=Encode.forJavaScriptBlock(key)%>"] = {name: chartViewName, charts: chartNames, titles: chartTitles, visible: <%=chartView.isVisible()%>};
             <%
             String[] charts = chartView.getCharts();
             for (String chart : charts) {
                 String chartKey = "metrics.chart." + chart;
             %>
-                chartNames.push('<%=chart%>');
+                chartNames.push('<%=Encode.forJavaScriptBlock(chart)%>');
                 chartTitles.push('<fmt:message key="<%=chartKey%>" />');
             <%
             }
