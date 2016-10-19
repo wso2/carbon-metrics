@@ -17,6 +17,7 @@ package org.wso2.carbon.metrics.core.config;
 
 import org.wso2.carbon.metrics.core.utils.Utils;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.util.Optional;
@@ -33,7 +34,7 @@ public final class MetricsConfigBuilder {
             try {
                 Representer representer = new Representer();
                 representer.getPropertyUtils().setSkipMissingProperties(true);
-                Yaml yaml = new Yaml(representer);
+                Yaml yaml = new Yaml(new CustomClassLoaderConstructor(clazz, clazz.getClassLoader()), representer);
                 return yaml.loadAs(metricsConfigFileContent.get(), clazz);
             } catch (RuntimeException e) {
                 throw new RuntimeException("Failed to populate Metrics Configuration", e);

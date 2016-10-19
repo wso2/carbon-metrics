@@ -136,7 +136,7 @@
                 <version>${hdrhistogram.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.orbit.org.yaml</groupId>
+                <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
             </dependency>
@@ -626,7 +626,9 @@
         <slf4j.version>1.7.21</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.7</log4j.version>
-        <snakeyaml.version>1.16.0.wso2v1</snakeyaml.version>
+        <snakeyaml.version>1.17</snakeyaml.version>
+        <!-- SnakeYAML version 1.16 is available from Carbon Kernel 5.1.0 as an orbit bundle.
+             Update version range when Carbon Kernel upgrades SnakeYAML -->
         <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
         <hikaricp.version>2.5.1</hikaricp.version>
         <h2.version>1.4.192</h2.version>
