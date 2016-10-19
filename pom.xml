@@ -131,6 +131,11 @@
                 <version>${metrics.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.hdrhistogram</groupId>
+                <artifactId>HdrHistogram</artifactId>
+                <version>${hdrhistogram.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.orbit.org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
@@ -610,6 +615,7 @@
         <testng.version>6.9.10</testng.version>
         <metrics.version>3.1.2</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
+        <hdrhistogram.version>2.1.9</hdrhistogram.version>
         <equinox.osgi.version>3.11.0.v20160603-1336</equinox.osgi.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <carbon.kernel.version>5.1.0</carbon.kernel.version>
