@@ -31,9 +31,11 @@ import org.wso2.carbon.metrics.core.Metric;
 import org.wso2.carbon.metrics.core.MetricNotFoundException;
 import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirParametersConfig;
 import org.wso2.carbon.metrics.core.impl.listener.EnabledStatusChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.MetricLevelChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.RootLevelChangeListener;
+import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 import org.wso2.carbon.metrics.core.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.core.metric.OperatingSystemMetricSet;
 
@@ -100,6 +102,10 @@ public final class MetricManager {
 
     private final List<MetricLevelChangeListener> metricLevelChangeListeners;
 
+    private final ReservoirType reservoirType;
+
+    private final ReservoirParametersConfig reservoirParametersConfig;
+
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
      * for a metric. The main reason to keep the enabled status separately is that EnabledMetricFilter gets called as
@@ -125,16 +131,22 @@ public final class MetricManager {
     /**
      * Constructs a Metric Service with given {@link MetricRegistry} and other configurations.
      *
-     * @param metricRegistry     The main {@link MetricRegistry} used by the MetricService.
-     * @param metricsLevelConfig The {@link MetricsLevelConfig} with root level configuration and level configurations
-     *                           for each metric.
+     * @param metricRegistry            The main {@link MetricRegistry} used by the MetricService.
+     * @param metricsLevelConfig        The {@link MetricsLevelConfig} with root level configuration and level
+     *                                  configurations for each metric.
+     * @param reservoirType             The {@link ReservoirType} to determine the reservoir implementation used in
+     *                                  {@link Histogram} and {@link Timer}
+     * @param reservoirParametersConfig The parameters for reservoir implementations
      */
-    public MetricManager(MetricRegistry metricRegistry, MetricsLevelConfig metricsLevelConfig) {
+    public MetricManager(MetricRegistry metricRegistry, MetricsLevelConfig metricsLevelConfig,
+                         ReservoirType reservoirType, ReservoirParametersConfig reservoirParametersConfig) {
         this.metricRegistry = metricRegistry;
         this.metricsLevelConfig = metricsLevelConfig;
         this.enabledStatusChangeListeners = new CopyOnWriteArrayList<>();
         this.rootLevelChangeListeners = new CopyOnWriteArrayList<>();
         this.metricLevelChangeListeners = new CopyOnWriteArrayList<>();
+        this.reservoirType = reservoirType;
+        this.reservoirParametersConfig = reservoirParametersConfig;
 
         // Register JVM Metrics
         // This should be the done when other initializations are completed
@@ -569,7 +581,8 @@ public final class MetricManager {
     private final MetricBuilder<TimerImpl> timerBuilder = new MetricBuilder<TimerImpl>() {
         @Override
         public TimerImpl createMetric(String name, Level level) {
-            return new TimerImpl(name, level, metricRegistry.timer(name));
+            return new TimerImpl(name, level, metricRegistry.register(name,
+                    new com.codahale.metrics.Timer(reservoirType.getReservoir(reservoirParametersConfig))));
         }
 
         @Override
@@ -584,7 +597,8 @@ public final class MetricManager {
     private final MetricBuilder<HistogramImpl> histogramBuilder = new MetricBuilder<HistogramImpl>() {
         @Override
         public HistogramImpl createMetric(String name, Level level) {
-            return new HistogramImpl(name, level, metricRegistry.histogram(name));
+            return new HistogramImpl(name, level, metricRegistry.register(name,
+                    new com.codahale.metrics.Histogram(reservoirType.getReservoir(reservoirParametersConfig))));
         }
 
         @Override

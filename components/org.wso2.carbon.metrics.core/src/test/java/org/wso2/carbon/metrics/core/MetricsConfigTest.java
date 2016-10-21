@@ -23,9 +23,13 @@ import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirParametersConfig;
 import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
+import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import static org.wso2.carbon.metrics.core.BaseReporterTest.RESOURCES_DIR;
 
@@ -87,6 +91,19 @@ public class MetricsConfigTest extends BaseMetricTest {
         Assert.assertEquals(config.getPollingPeriod(), 600L);
         Assert.assertEquals(config.getLoggerName(), "metrics.test");
         Assert.assertEquals(config.getMarkerName(), "metrics");
+    }
+
+    @Test
+    public void testReservoirConfigLoad() {
+        ReservoirConfig config = metricsConfig.getReservoir();
+        Assert.assertEquals(config.getType(), ReservoirType.UNIFORM);
+
+        ReservoirParametersConfig parametersConfig = config.getParameters();
+        Assert.assertEquals(parametersConfig.getSize(), 2048);
+        Assert.assertEquals(parametersConfig.getWindow(), 30);
+        Assert.assertEquals(parametersConfig.getWindowUnit(), TimeUnit.MINUTES);
+        Assert.assertEquals(parametersConfig.getNumberOfSignificantValueDigits(), 3);
+        Assert.assertTrue(parametersConfig.isResetOnSnapshot());
     }
 
     @Test

@@ -23,6 +23,7 @@ import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
 import org.wso2.carbon.metrics.core.config.model.JmxConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirConfig;
 import org.wso2.carbon.metrics.core.impl.MetricManagementServiceImpl;
 import org.wso2.carbon.metrics.core.impl.MetricManager;
 import org.wso2.carbon.metrics.core.impl.MetricServiceImpl;
@@ -67,8 +68,10 @@ public class Metrics {
         MetricRegistry metricRegistry = new MetricRegistry();
         MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
         MetricsLevelConfig metricsLevelConfig = MetricsLevelConfigBuilder.build();
+        ReservoirConfig reservoirConfig = metricsConfig.getReservoir();
 
-        MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig);
+        MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig,
+                reservoirConfig.getType(), reservoirConfig.getParameters());
 
         metricService = new MetricServiceImpl(metricManager);
         metricManagementService = new MetricManagementServiceImpl(metricManager);

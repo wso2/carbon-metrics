@@ -20,10 +20,12 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirParametersConfig;
 import org.wso2.carbon.metrics.core.impl.MetricManager;
 import org.wso2.carbon.metrics.core.impl.listener.EnabledStatusChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.MetricLevelChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.RootLevelChangeListener;
+import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
 /**
  * Test Cases for {@link MetricManager} listeners
@@ -34,7 +36,8 @@ public class MetricManagerTest {
 
     @BeforeClass
     private void load() {
-        metricManager = new MetricManager(new MetricRegistry(), new MetricsLevelConfig());
+        metricManager = new MetricManager(new MetricRegistry(), new MetricsLevelConfig(),
+                ReservoirType.EXPONENTIALLY_DECAYING, new ReservoirParametersConfig());
     }
 
     @Test

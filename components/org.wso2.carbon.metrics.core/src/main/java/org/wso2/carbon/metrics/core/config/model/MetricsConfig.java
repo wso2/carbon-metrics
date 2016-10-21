@@ -24,6 +24,8 @@ public class MetricsConfig {
 
     private JmxConfig jmx = new JmxConfig();
 
+    private ReservoirConfig reservoir = new ReservoirConfig();
+
     private ReportingConfig reporting = new ReportingConfig();
 
     public boolean isEnabled() {
@@ -40,6 +42,14 @@ public class MetricsConfig {
 
     public void setJmx(JmxConfig jmx) {
         this.jmx = jmx;
+    }
+
+    public ReservoirConfig getReservoir() {
+        return reservoir;
+    }
+
+    public void setReservoir(ReservoirConfig reservoir) {
+        this.reservoir = reservoir;
     }
 
     public ReportingConfig getReporting() {

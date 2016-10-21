@@ -12,48 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Configuration file to test metrics with all reporters
+# Configuration file to test metrics with UNIFORM reservoir
 
 enabled: true
 
 jmx:
-  registerMBean: true
-  name: org.wso2.carbon:type=MetricsTest
+  registerMBean: false
 
 reservoir:
   type: UNIFORM
   parameters:
-    size: 2048
-    window: 30
-    windowUnit: MINUTES
-    numberOfSignificantValueDigits: 3
-    resetOnSnapshot: true
+    size: 50
+
 
 reporting:
-  jmx:
-    - name: JMX
-      enabled: true
-      domain: org.wso2.carbon.metrics.test
-
-    # Define another reporter to check whether only one reporter is added with same name
-    - name: JMX
-      enabled: true
-      domain: org.wso2.carbon.metrics.test
-
-  console:
-    - name: Console
-      enabled: true
-      pollingPeriod: 600
-
-  csv:
-    - name: CSV
-      enabled: true
-      location: ${metrics.target}/metrics
-      pollingPeriod: 600
-
   slf4j:
     - name: SLF4J
       enabled: true
-      loggerName: metrics.test
+      loggerName: metrics.reservoir
       markerName: metrics
       pollingPeriod: 600
+      useRegexFilters: true
+      excludes:
+        - ^jvm\..*
