@@ -621,10 +621,10 @@
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <carbon.kernel.version>5.1.0</carbon.kernel.version>
         <carbon.kernel.version.range>[5.1.0, 6.0.0)</carbon.kernel.version.range>
-        <carbon.analytics.common.version>5.1.4</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.1.8</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.1.0, 6.0.0)</carbon.analytics.common.version.range>
         <xerces.impl.version>2.11.0.SP5</xerces.impl.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.7</log4j.version>
         <snakeyaml.version>1.17</snakeyaml.version>
@@ -632,21 +632,21 @@
              Update version range when Carbon Kernel upgrades SnakeYAML -->
         <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
         <hikaricp.version>2.5.1</hikaricp.version>
-        <h2.version>1.4.192</h2.version>
-        <spring.version>4.3.3.RELEASE</spring.version>
-        <mockito.version>2.2.7</mockito.version>
-        <tomcat.version>8.0.38</tomcat.version>
+        <h2.version>1.4.193</h2.version>
+        <spring.version>4.3.5.RELEASE</spring.version>
+        <mockito.version>2.5.6</mockito.version>
+        <tomcat.version>8.0.39</tomcat.version>
         <jacoco.version>0.7.7.201606060606</jacoco.version>
         <carbon.feature.plugin.version>2.1.0</carbon.feature.plugin.version>
         <pax.logging.version>1.8.4</pax.logging.version>
         <pax.exam.version>4.9.2</pax.exam.version>
-        <pax.url.version>2.5.1</pax.url.version>
+        <pax.url.version>2.5.2</pax.url.version>
         <ow2.jta.spec.version>1.0.13</ow2.jta.spec.version>
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
         <javax.inject.version>1</javax.inject.version>
         <carbon.jndi.version>1.0.1</carbon.jndi.version>
-        <carbon.datasources.version>1.0.0</carbon.datasources.version>
-        <carbon.datasources.version.range>[1.0.0, 2.0.0)</carbon.datasources.version.range>
+        <carbon.datasources.version>1.1.0</carbon.datasources.version>
+        <carbon.datasources.version.range>[1.1.0, 2.0.0)</carbon.datasources.version.range>
         <disruptor.orbit.version>3.3.2.wso2v2</disruptor.orbit.version>
         <libthrift.wso2.version>0.9.2.wso2v1</libthrift.wso2.version>
         <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
