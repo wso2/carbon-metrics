@@ -59,14 +59,13 @@
         <module>components/org.wso2.carbon.metrics.core</module>
         <module>components/org.wso2.carbon.metrics.jdbc.core</module>
         <module>components/org.wso2.carbon.metrics.das.core</module>
-        <module>components/org.wso2.carbon.metrics.config</module>
         <module>samples/org.wso2.carbon.metrics.sample.service</module>
         <module>samples/org.wso2.carbon.metrics.sample.consumer</module>
-        <module>tests/osgi-tests</module>
         <module>features/org.wso2.carbon.metrics.core.feature</module>
         <module>features/org.wso2.carbon.metrics.jdbc.core.feature</module>
         <module>features/org.wso2.carbon.metrics.das.core.feature</module>
         <module>distribution</module>
+        <module>tests</module>
     </modules>
 
     <dependencyManagement>
@@ -98,11 +97,6 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
-                <artifactId>org.wso2.carbon.metrics.config</artifactId>
-                <version>${carbon.metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.sample.service</artifactId>
                 <version>${carbon.metrics.version}</version>
             </dependency>
@@ -110,6 +104,12 @@
                 <groupId>org.wso2.carbon.metrics</groupId>
                 <artifactId>org.wso2.carbon.metrics.sample.consumer</artifactId>
                 <version>${carbon.metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>wso2carbon-metrics</artifactId>
+                <version>${carbon.metrics.version}</version>
+                <type>zip</type>
             </dependency>
             <dependency>
                 <groupId>org.wso2.eclipse.osgi</groupId>
@@ -135,11 +135,6 @@
                 <groupId>org.hdrhistogram</groupId>
                 <artifactId>HdrHistogram</artifactId>
                 <version>${hdrhistogram.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
@@ -221,6 +216,12 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -306,6 +307,19 @@
             </dependency>
             <!-- OSGi Test Dependencies - Start -->
             <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>wso2carbon-metrics-test</artifactId>
+                <version>${carbon.metrics.version}</version>
+                <scope>test</scope>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.container</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.ops4j.pax.exam</groupId>
                 <artifactId>pax-exam</artifactId>
                 <version>${pax.exam.version}</version>
@@ -342,15 +356,21 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.ow2.spec.ee</groupId>
-                <artifactId>ow2-jta-1.1-spec</artifactId>
-                <version>${ow2.jta.spec.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>osgi-test-util</artifactId>
-                <version>${carbon.kernel.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-log4j2</artifactId>
+                <version>${pax.logging.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.spec.ee</groupId>
+                <artifactId>ow2-jta-1.1-spec</artifactId>
+                <version>${ow2.jta.spec.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -399,6 +419,12 @@
             <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.runtime.feature</artifactId>
+                <version>${carbon.kernel.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.pax.exam.feature</artifactId>
                 <version>${carbon.kernel.version}</version>
                 <type>zip</type>
             </dependency>
@@ -537,10 +563,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -553,6 +581,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven.javadoc.plugin.version}</version>
                     <executions>
                         <execution>
                             <id>docs</id>
@@ -573,6 +602,11 @@
                     <artifactId>maven-paxexam-plugin</artifactId>
                     <version>${maven.paxexam.plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.wso2.carbon</groupId>
+                    <artifactId>org.wso2.carbon.extensions.configuration.maven.plugin</artifactId>
+                    <version>${carbon.kernel.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -585,6 +619,7 @@
                     <plugin>
                         <groupId>org.apache.rat</groupId>
                         <artifactId>apache-rat-plugin</artifactId>
+                        <version>${apache.rat.plugin.version}</version>
                         <configuration>
                             <excludes>
                                 <exclude>README.md</exclude>
@@ -617,29 +652,30 @@
         <metrics.version>3.1.2</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <hdrhistogram.version>2.1.9</hdrhistogram.version>
+        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
+        <apache.rat.plugin.version>0.12</apache.rat.plugin.version>
         <equinox.osgi.version>3.11.0.v20160603-1336</equinox.osgi.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
-        <carbon.kernel.version>5.1.0</carbon.kernel.version>
-        <carbon.kernel.version.range>[5.1.0, 6.0.0)</carbon.kernel.version.range>
-        <carbon.analytics.common.version>5.1.8</carbon.analytics.common.version>
+        <carbon.kernel.version>5.2.0-m3</carbon.kernel.version>
+        <carbon.kernel.version.range>[5.2.0, 6.0.0)</carbon.kernel.version.range>
+        <carbon.analytics.common.version>5.1.14</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.1.0, 6.0.0)</carbon.analytics.common.version.range>
         <xerces.impl.version>2.11.0.SP5</xerces.impl.version>
-        <slf4j.version>1.7.22</slf4j.version>
+        <slf4j.version>1.7.23</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
-        <log4j.version>2.7</log4j.version>
-        <snakeyaml.version>1.17</snakeyaml.version>
-        <!-- SnakeYAML version 1.16 is available from Carbon Kernel 5.1.0 as an orbit bundle.
-             Update version range when Carbon Kernel upgrades SnakeYAML -->
-        <snakeyaml.version.range>[1.16, 2.0.0)</snakeyaml.version.range>
-        <hikaricp.version>2.5.1</hikaricp.version>
+        <log4j.version>2.8</log4j.version>
+        <snakeyaml.version>1.18</snakeyaml.version>
+        <hikaricp.version>2.6.0</hikaricp.version>
         <h2.version>1.4.193</h2.version>
-        <spring.version>4.3.5.RELEASE</spring.version>
-        <mockito.version>2.5.6</mockito.version>
-        <tomcat.version>8.0.39</tomcat.version>
-        <jacoco.version>0.7.7.201606060606</jacoco.version>
-        <carbon.feature.plugin.version>2.1.0</carbon.feature.plugin.version>
-        <pax.logging.version>1.8.4</pax.logging.version>
-        <pax.exam.version>4.9.2</pax.exam.version>
+        <spring.version>4.3.6.RELEASE</spring.version>
+        <mockito.version>2.7.11</mockito.version>
+        <tomcat.version>8.0.41</tomcat.version>
+        <jacoco.version>0.7.8</jacoco.version>
+        <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
+        <pax.logging.version>1.9.1</pax.logging.version>
+        <pax.exam.version>4.10.0</pax.exam.version>
         <pax.url.version>2.5.2</pax.url.version>
         <ow2.jta.spec.version>1.0.13</ow2.jta.spec.version>
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>

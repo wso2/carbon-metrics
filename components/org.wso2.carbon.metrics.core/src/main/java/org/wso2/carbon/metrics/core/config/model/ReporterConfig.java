@@ -16,6 +16,7 @@
 package org.wso2.carbon.metrics.core.config.model;
 
 import com.codahale.metrics.MetricFilter;
+import org.wso2.carbon.kernel.annotations.Element;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 
 import java.util.HashSet;
@@ -30,8 +31,10 @@ import java.util.regex.PatternSyntaxException;
  */
 public abstract class ReporterConfig {
 
+    @Element(description = "The name of the reporter")
     private String name;
 
+    @Element(description = "Enable the reporter")
     private boolean enabled = false;
 
     private boolean useRegexFilters = false;

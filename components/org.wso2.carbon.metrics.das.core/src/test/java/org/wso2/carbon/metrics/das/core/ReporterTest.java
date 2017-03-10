@@ -71,7 +71,7 @@ public class ReporterTest {
             logger.info("Creating MetricService");
         }
         System.setProperty("metrics.dataagent.conf", TEST_RESOURCES_DIR + File.separator + "data-agent-config.xml");
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics.yaml"));
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

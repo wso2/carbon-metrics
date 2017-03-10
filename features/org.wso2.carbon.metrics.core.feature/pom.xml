@@ -47,12 +47,13 @@
             <groupId>org.hdrhistogram</groupId>
             <artifactId>HdrHistogram</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
-        <filters>
-            <filter>filter-values.properties</filter>
-        </filters>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -60,31 +61,6 @@
                 <configuration>
                     <skipSource>true</skipSource>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-core-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.metrics</groupId>
-                                    <artifactId>org.wso2.carbon.metrics.config</artifactId>
-                                    <version>${carbon.metrics.version}</version>
-                                    <classifier>sources</classifier>
-                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
-                                    <includes>metrics.yml,metrics.properties</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -103,33 +79,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>prefilter-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>src/main/resources</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>resources</directory>
-                                    <includes>
-                                        <include>p2.inf</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>${project.build.directory}/main-resources</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

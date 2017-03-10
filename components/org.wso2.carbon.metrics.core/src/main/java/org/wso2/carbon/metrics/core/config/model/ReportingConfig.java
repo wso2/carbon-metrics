@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 
 import java.util.HashSet;
@@ -23,15 +24,23 @@ import java.util.Set;
 /**
  * Configuration for all reporters in Metrics Core
  */
+@Configuration(description = "Metrics reporting configurations")
 public class ReportingConfig {
 
-    private Set<JmxReporterConfig> jmx;
+    private Set<JmxReporterConfig> jmx = new HashSet<>();
 
-    private Set<ConsoleReporterConfig> console;
+    private Set<ConsoleReporterConfig> console = new HashSet<>();
 
-    private Set<CsvReporterConfig> csv;
+    private Set<CsvReporterConfig> csv = new HashSet<>();
 
-    private Set<Slf4jReporterConfig> slf4j;
+    private Set<Slf4jReporterConfig> slf4j = new HashSet<>();
+
+    public ReportingConfig() {
+        jmx.add(new JmxReporterConfig());
+        console.add(new ConsoleReporterConfig());
+        csv.add(new CsvReporterConfig());
+        slf4j.add(new Slf4jReporterConfig());
+    }
 
     public Set<JmxReporterConfig> getJmx() {
         return jmx;

@@ -12,26 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Configuration file to test metrics with UNIFORM reservoir
+# Configuration file to test metrics with SLIDING_TIME_WINDOW reservoir
 
-enabled: true
+# Carbon Metrics Configuration Parameters
+wso2.metrics:
+  enabled: true
 
-jmx:
-  registerMBean: false
+  jmx:
+    registerMBean: false
 
-reservoir:
-  type: UNIFORM
-  parameters:
-    size: 50
+  reservoir:
+    type: SLIDING_TIME_WINDOW
+    parameters:
+      window: 30
+      windowUnit: MINUTES
 
-
-reporting:
-  slf4j:
-    - name: SLF4J
-      enabled: true
-      loggerName: metrics.reservoir
-      markerName: metrics
-      pollingPeriod: 600
-      useRegexFilters: true
-      excludes:
-        - ^jvm\..*
+  reporting:
+    slf4j:
+      - name: SLF4J
+        enabled: true
+        loggerName: metrics.reservoir
+        markerName: metrics
+        pollingPeriod: 600
+        useRegexFilters: true
+        excludes:
+          - ^jvm\..*

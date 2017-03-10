@@ -15,16 +15,30 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Configuration for data source
  */
+@Configuration(description = "Data Source Configuration")
 public class DataSourceConfig {
 
-    private boolean lookupDataSource;
+    @Element(description = "The \"lookupDataSource\" flag specifies whether the datasource should be looked up via " +
+            "JNDI. If this is set to true, the data source should be configured. " +
+            "If this is set to false, the datasource will be created by the properties " +
+            "defined in dataSourceProperties.")
+    private boolean lookupDataSource = true;
 
-    private String dataSourceName;
+    @Element(description = "JNDI name of the data source to be used by the JDBC Reporter.")
+    private String dataSourceName = "java:comp/env/jdbc/WSO2MetricsDB";
 
     private JdbcScheduledCleanupConfig scheduledCleanup = new JdbcScheduledCleanupConfig();
+
+    private Map<String, String> dataSourceProperties = new HashMap<>();
 
     public boolean isLookupDataSource() {
         return lookupDataSource;
@@ -48,5 +62,13 @@ public class DataSourceConfig {
 
     public void setScheduledCleanup(JdbcScheduledCleanupConfig scheduledCleanup) {
         this.scheduledCleanup = scheduledCleanup;
+    }
+
+    public Map<String, String> getDataSourceProperties() {
+        return dataSourceProperties;
+    }
+
+    public void setDataSourceProperties(Map<String, String> dataSourceProperties) {
+        this.dataSourceProperties = dataSourceProperties;
     }
 }

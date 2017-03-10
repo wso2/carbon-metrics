@@ -15,38 +15,48 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
+
 import java.util.concurrent.TimeUnit;
 
 /**
  * Configuration for keeping parameters for different reservoir implementations
  */
+@Configuration(description = "Parameters for reservoir implementations")
 public class ReservoirParametersConfig {
 
     /**
      * The number of measurements to store in {@code SlidingWindowReservoir}
      * or number of samples to keep in {@code UniformReservoir}
      */
+    @Element(description = "The number of measurements to store in SLIDING_WINDOW reservoir " +
+            "or number of samples to keep in UNIFORM reservoir")
     private int size = 1028;
 
     /**
      * The window of time in {@code SlidingTimeWindowReservoir}
      */
+    @Element(description = "The window of time in SLIDING_TIME_WINDOW reservoir")
     private long window = 1;
 
     /**
      * The unit of {@code window} in {@code SlidingTimeWindowReservoir}
      */
+    @Element(description = "The unit of window in SLIDING_TIME_WINDOW reservoir. See java.util.concurrent.TimeUnit")
     private TimeUnit windowUnit = TimeUnit.HOURS;
 
     /**
      * The precision to use in the {@code Recorder} to be used in {@code HdrHistogramReservoir} and
      * {@code HdrHistogramResetOnSnapshotReservoir}
      */
+    @Element(description = "The precision to use in the Recorder to be used in HDR_HISTOGRAM reservoir")
     private int numberOfSignificantValueDigits = 2;
 
     /**
      * Reset the {@code HdrHistogram} when taking a snapshot
      */
+    @Element(description = "Reset the HdrHistogram when taking a snapshot")
     private boolean resetOnSnapshot;
 
     public int getSize() {

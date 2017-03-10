@@ -15,7 +15,7 @@
     # limitations under the License.
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Metrics-JDBC-Core-Test-Suite" parallel="false">
+<suite name="Metrics-JDBC-Core-Test-Suite">
     <test name="Metrics-JDBC-Core-Unit-Test">
         <classes>
             <class name="org.wso2.carbon.metrics.jdbc.core.MetricsConfigTest"/>

@@ -73,7 +73,7 @@ public abstract class BaseReporterTest {
         if (logger.isInfoEnabled()) {
             logger.info("Creating Metrics");
         }
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics.yaml"));
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

@@ -22,9 +22,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.spi.MetricsExtension;
 import org.wso2.carbon.metrics.jdbc.core.config.model.JdbcReporterConfig;
@@ -51,8 +52,15 @@ public class JdbcMetricsExtension implements MetricsExtension {
      * Add JDBC Reporters
      */
     @Override
-    public void activate(MetricService metricService, MetricManagementService metricManagementService) {
-        MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    public void activate(ConfigProvider configProvider, MetricService metricService,
+                         MetricManagementService metricManagementService) {
+        MetricsConfig metricsConfig;
+        try {
+            metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+        } catch (CarbonConfigurationException e) {
+            logger.error("Error loading Metrics Configuration", e);
+            metricsConfig = new MetricsConfig();
+        }
         Set<JdbcReporterConfig> jdbcReporterConfigs = metricsConfig.getReporting().getJdbc();
         if (jdbcReporterConfigs != null) {
             jdbcReporterConfigs.forEach(reporterBuilder -> {

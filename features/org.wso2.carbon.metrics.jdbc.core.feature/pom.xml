@@ -46,9 +46,6 @@
     </dependencies>
 
     <build>
-        <filters>
-            <filter>filter-values.properties</filter>
-        </filters>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -56,31 +53,6 @@
                 <configuration>
                     <skipSource>true</skipSource>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-core-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.wso2.carbon.metrics</groupId>
-                                    <artifactId>org.wso2.carbon.metrics.config</artifactId>
-                                    <version>${carbon.metrics.version}</version>
-                                    <classifier>sources</classifier>
-                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
-                                    <includes>metrics.yml</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -159,10 +131,6 @@
                                         <include>database/**</include>
                                         <include>p2.inf</include>
                                     </includes>
-                                </resource>
-                                <resource>
-                                    <directory>${project.build.directory}/main-resources</directory>
-                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>

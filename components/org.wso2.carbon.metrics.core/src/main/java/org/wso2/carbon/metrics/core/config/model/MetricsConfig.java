@@ -15,14 +15,22 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
+
 /**
  * Configuration for Metrics
  */
+@Configuration(namespace = "wso2.metrics", description = "Carbon Metrics Configuration Parameters")
 public class MetricsConfig {
 
+    @Element(description = "Enable Metrics")
     private boolean enabled = true;
 
+    @Element(description = "Metrics JMX Configuration")
     private JmxConfig jmx = new JmxConfig();
+
+    private MetricsLevelConfig levels = new MetricsLevelConfig();
 
     private ReservoirConfig reservoir = new ReservoirConfig();
 
@@ -42,6 +50,14 @@ public class MetricsConfig {
 
     public void setJmx(JmxConfig jmx) {
         this.jmx = jmx;
+    }
+
+    public MetricsLevelConfig getLevels() {
+        return levels;
+    }
+
+    public void setLevels(MetricsLevelConfig levels) {
+        this.levels = levels;
     }
 
     public ReservoirConfig getReservoir() {

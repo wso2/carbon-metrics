@@ -24,7 +24,6 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,30 +36,23 @@ public class ReservoirTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ReservoirTest.class);
 
-    private static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
-
     private Metrics metrics;
 
     private MetricService metricService;
 
     private MetricManagementService metricManagementService;
 
-    private ReservoirType reservoirType;
-
     @Parameters("metrics-conf")
     @BeforeClass()
     protected void init(String file) {
-        Pattern pattern = Pattern.compile("metrics-([a-z\\-]*)\\d?\\.yml");
+        Pattern pattern = Pattern.compile("metrics-([a-z\\-]*)\\d?\\.yaml");
         Matcher matcher = pattern.matcher(file);
         Assert.assertTrue(matcher.find());
         Assert.assertNotNull(ReservoirType.valueOf(matcher.group(1).toUpperCase().replaceAll("-", "_")));
-        String configFile = RESOURCES_DIR + File.separator + "reservoirs" + File.separator + file;
-        Assert.assertTrue(new File(configFile).exists());
-        System.setProperty("metrics.conf", configFile);
         if (logger.isInfoEnabled()) {
-            logger.info("Creating Metrics with Configuration File: {}", configFile);
+            logger.info("Creating Metrics with Configuration File: {}", file);
         }
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider(file));
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

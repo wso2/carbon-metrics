@@ -115,6 +115,11 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,6 +132,30 @@
                         <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.extensions.configuration.maven.plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-doc</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.dropwizard.metrics</groupId>
+                        <artifactId>metrics-core</artifactId>
+                        <version>${metrics.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.wso2.carbon.metrics</groupId>
+                        <artifactId>org.wso2.carbon.metrics.core</artifactId>
+                        <version>${carbon.metrics.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -146,7 +175,8 @@
             org.wso2.carbon.metrics.core.*,
             org.wso2.carbon.metrics.jdbc.reporter.*,
             org.slf4j;version="${slf4j.version.range}",
-            org.wso2.carbon.datasource.core.*;version="${carbon.datasources.version.range}"
+            org.wso2.carbon.datasource.core.*;version="${carbon.datasources.version.range}",
+            org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}"
         </import.package>
     </properties>
 </project>

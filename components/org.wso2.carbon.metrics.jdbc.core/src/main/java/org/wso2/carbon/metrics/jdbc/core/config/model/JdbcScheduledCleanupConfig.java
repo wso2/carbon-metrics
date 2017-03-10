@@ -15,16 +15,25 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
+
 /**
  * Configuration for JDBC Scheduled Cleanup
  */
+@Configuration(description = "Schedule regular deletion of metrics data older than a set number of days.\n" +
+        "It is recommended that you enable this job to ensure your metrics tables do not get extremely large.\n" +
+        "Deleting data older than seven days should be sufficient.")
 public class JdbcScheduledCleanupConfig {
 
+    @Element(description = "Enable scheduled cleanup to delete Metrics data in the database.")
     private boolean enabled = true;
 
+    @Element(description = "This is the period for each cleanup operation in seconds.")
     // Default cleanup period for JDBC is 86400 seconds
     private long scheduledCleanupPeriod = 86400;
 
+    @Element(description = "The scheduled job will cleanup all data older than the specified days")
     // Default days to keep is 7 days
     private int daysToKeep = 7;
 

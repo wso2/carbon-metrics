@@ -101,6 +101,11 @@
             <type>zip</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -139,6 +144,30 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.extensions.configuration.maven.plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-doc</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.dropwizard.metrics</groupId>
+                        <artifactId>metrics-core</artifactId>
+                        <version>${metrics.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.wso2.carbon.metrics</groupId>
+                        <artifactId>org.wso2.carbon.metrics.core</artifactId>
+                        <version>${carbon.metrics.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 
@@ -153,7 +182,8 @@
             org.wso2.carbon.metrics.core.*,
             org.wso2.carbon.metrics.das.reporter.*;resolution:=optional,
             com.codahale.metrics;version="${metrics.version.range}",
-            org.slf4j;version="${slf4j.version.range}"
+            org.slf4j;version="${slf4j.version.range}",
+            org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}"
         </import.package>
     </properties>
 </project>

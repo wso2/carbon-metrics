@@ -12,21 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Configuration file to test Metrics JDBC Reporter
+# Configuration file to test metrics with HDR_HISTOGRAM reservoir
 
-dataSource:
-  - &JDBC01
-    lookupDataSource: false
-    # dataSourceName:
-    scheduledCleanup:
-      enabled: false
+# Carbon Metrics Configuration Parameters
+wso2.metrics:
+  enabled: true
 
-# All reporters are disabled except for the JDBC reporter. Only JDBC reporter should be added to MetricManagementService
-reporting:
-  jdbc:
-    - name: JDBC
-      enabled: true
-      # Use default source
-      # source:
-      dataSource: *JDBC01
-      pollingPeriod: 90
+  jmx:
+    registerMBean: false
+
+  reservoir:
+    type: HDR_HISTOGRAM
+    parameters:
+      numberOfSignificantValueDigits: 2
+      resetOnSnapshot: true
+
+  reporting:
+    slf4j:
+      - name: SLF4J
+        enabled: true
+        loggerName: metrics.reservoir
+        markerName: metrics
+        pollingPeriod: 600
+        useRegexFilters: true
+        excludes:
+          - ^jvm\..*

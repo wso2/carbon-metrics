@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
 import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
@@ -28,10 +28,7 @@ import org.wso2.carbon.metrics.core.config.model.ReservoirParametersConfig;
 import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
 import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
-
-import static org.wso2.carbon.metrics.core.BaseReporterTest.RESOURCES_DIR;
 
 /**
  * Test Cases for {@link MetricsConfig}
@@ -41,9 +38,9 @@ public class MetricsConfigTest extends BaseMetricTest {
     private static MetricsConfig metricsConfig;
 
     @BeforeClass
-    private void load() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-reporter.yml");
-        metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    private void load() throws CarbonConfigurationException {
+        metricsConfig = TestUtils.getConfigProvider("metrics-reporter.yaml")
+                .getConfigurationObject(MetricsConfig.class);
     }
 
     @Test
@@ -109,12 +106,6 @@ public class MetricsConfigTest extends BaseMetricTest {
     @Test
     public void testReporterCount() {
         Assert.assertEquals(metricsConfig.getReporting().getReporterBuilders().size(), 4);
-    }
-
-    @Test(expectedExceptions = RuntimeException.class)
-    public void testInvalidFile() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "log4j2.xml");
-        MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
     }
 
 }

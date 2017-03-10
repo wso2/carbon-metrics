@@ -15,16 +15,28 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Configuration for Metrics
  */
+@Configuration(namespace = "wso2.metrics.jdbc", description = "Carbon Metrics Configuration Parameters " +
+        "for JDBC Reporters")
 public class MetricsConfig {
 
+    @Element(description = "Data Source Configurations for JDBC Reporters")
     private List<DataSourceConfig> dataSource;
 
     private ReportingConfig reporting = new ReportingConfig();
+
+    public MetricsConfig() {
+        dataSource = new ArrayList<>();
+        dataSource.add(new DataSourceConfig());
+    }
 
     public List<DataSourceConfig> getDataSource() {
         return dataSource;

@@ -22,7 +22,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
 import java.util.Set;
@@ -37,8 +36,6 @@ public class ReporterFilterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ReporterFilterTest.class);
 
-    private static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
-
     private Metrics metrics;
 
     private MetricManagementService metricManagementService;
@@ -47,9 +44,8 @@ public class ReporterFilterTest {
 
     @BeforeClass
     protected void init() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-filter.yml");
         // Initialize the Metrics
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics-filter.yaml"));
         metrics.activate();
         metricManagementService = metrics.getMetricManagementService();
         metricManagementService.setRootLevel(Level.TRACE);

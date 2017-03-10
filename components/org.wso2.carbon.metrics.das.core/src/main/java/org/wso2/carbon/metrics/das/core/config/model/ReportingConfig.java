@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.das.core.config.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,6 +24,11 @@ import java.util.Set;
 public class ReportingConfig {
 
     private Set<DasReporterConfig> das;
+
+    public ReportingConfig() {
+        das = new HashSet<>();
+        das.add(new DasReporterConfig());
+    }
 
     public Set<DasReporterConfig> getDas() {
         return das;

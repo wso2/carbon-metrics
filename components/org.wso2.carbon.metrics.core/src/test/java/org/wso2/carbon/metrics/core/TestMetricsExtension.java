@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.core;
 
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.spi.MetricsExtension;
 
 /**
@@ -27,7 +28,8 @@ public class TestMetricsExtension implements MetricsExtension {
     public static volatile int deactivated;
 
     @Override
-    public void activate(MetricService metricService, MetricManagementService metricManagementService) {
+    public void activate(ConfigProvider configProvider, MetricService metricService,
+                         MetricManagementService metricManagementService) {
         activated++;
     }
 

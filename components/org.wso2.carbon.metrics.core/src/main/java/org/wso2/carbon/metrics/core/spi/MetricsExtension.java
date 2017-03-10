@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.core.spi;
 
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 
@@ -23,7 +24,8 @@ import org.wso2.carbon.metrics.core.MetricService;
  */
 public interface MetricsExtension {
 
-    void activate(MetricService metricService, MetricManagementService metricManagementService);
+    void activate(ConfigProvider configProvider, MetricService metricService,
+                  MetricManagementService metricManagementService);
 
     void deactivate(MetricService metricService, MetricManagementService metricManagementService);
 

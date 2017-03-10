@@ -18,9 +18,10 @@ package org.wso2.carbon.metrics.das.core;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.spi.MetricsExtension;
 import org.wso2.carbon.metrics.das.core.config.model.DasReporterConfig;
@@ -47,8 +48,15 @@ public class DasMetricsExtension implements MetricsExtension {
      * Add DAS Reporters
      */
     @Override
-    public void activate(MetricService metricService, MetricManagementService metricManagementService) {
-        MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    public void activate(ConfigProvider configProvider, MetricService metricService,
+                         MetricManagementService metricManagementService) {
+        MetricsConfig metricsConfig;
+        try {
+            metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+        } catch (CarbonConfigurationException e) {
+            logger.error("Error loading Metrics Configuration", e);
+            metricsConfig = new MetricsConfig();
+        }
         Set<DasReporterConfig> dasReporterConfigs = metricsConfig.getReporting().getDas();
         if (dasReporterConfigs != null) {
             dasReporterConfigs.forEach(reporterBuilder -> {

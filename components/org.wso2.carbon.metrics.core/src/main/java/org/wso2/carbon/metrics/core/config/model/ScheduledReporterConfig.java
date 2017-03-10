@@ -15,12 +15,16 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Element;
+
 /**
  * Configuration for scheduled reporters
  */
 public abstract class ScheduledReporterConfig extends ReporterConfig {
 
     // Default polling period is 60 seconds
+    @Element(description = "Polling Period in seconds.\n" +
+            "This is the period for polling metrics from the metric registry and reporting")
     private long pollingPeriod = 60;
 
     public ScheduledReporterConfig(String name) {

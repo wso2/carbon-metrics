@@ -19,13 +19,13 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.kernel.annotations.Element;
 import org.wso2.carbon.metrics.core.config.model.ScheduledReporterConfig;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.utils.Utils;
 import org.wso2.carbon.metrics.das.core.reporter.impl.DasReporter;
 
-import java.io.File;
 import java.util.Optional;
 
 /**
@@ -35,8 +35,10 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
 
     private static final Logger logger = LoggerFactory.getLogger(DasReporterConfig.class);
 
-    private String source = Utils.getDefaultSource();
+    @Element(description = "Source of Metrics, which will be used to identify each metric sent in the streams")
+    private String source;
 
+    @Element(description = "Alias referring to the DAS configuration")
     private DasConfig das;
 
     public DasReporterConfig() {
@@ -95,12 +97,8 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
             throw new ReporterBuildException("Password is not specified for DAS Reporting.");
         }
 
-        Optional<File> dataAgentConfigFile = Utils.getConfigFile("metrics.dataagent.conf", "data-agent-config.xml");
-
-        if (dataAgentConfigFile.isPresent()) {
-            dataAgentConfigPath = dataAgentConfigFile.get().getPath();
-        } else if (logger.isDebugEnabled()) {
-            logger.debug("Data Agent config was not found for DAS Reporting.");
+        if (source == null) {
+            source = Utils.getDefaultSource();
         }
 
         if (logger.isInfoEnabled()) {

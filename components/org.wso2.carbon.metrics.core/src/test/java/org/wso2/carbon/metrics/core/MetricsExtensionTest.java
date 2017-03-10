@@ -28,8 +28,7 @@ public class MetricsExtensionTest {
 
     @BeforeMethod
     private void initialize() {
-        System.setProperty("metrics.conf", "");
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics.yaml"));
     }
 
     @Test

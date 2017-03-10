@@ -15,6 +15,6 @@
 ################################################################################
 
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../conf); \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../conf/data-bridge); \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.das.core_${feature.version}/conf/data-bridge/,target:${installFolder}/../../../conf/data-bridge,overwrite:false);\
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf); \
+org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf/data-bridge); \
+org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.metrics.das.core_${feature.version}/conf/data-bridge/,target:${installFolder}/../../conf/data-bridge,overwrite:false);\

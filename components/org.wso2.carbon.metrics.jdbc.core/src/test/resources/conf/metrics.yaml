@@ -14,28 +14,33 @@
 
 # Configuration file to test Metrics JDBC Reporter
 
-enabled: true
+# Carbon Metrics Configuration Parameters
+wso2.metrics:
+  enabled: true
 
-# Do not register MBean
-jmx:
-  registerMBean: false
-
-dataSource:
-  - &JDBC01
-    lookupDataSource: true
-    dataSourceName: jdbc/WSO2MetricsDB
-    scheduledCleanup:
-      enabled: true
-      daysToKeep: 2
-      scheduledCleanupPeriod: 10000
-
-reporting:
+  # Do not register MBean
   jmx:
-    - enabled: false
+    registerMBean: false
 
-  jdbc:
-    - name: JDBC
-      enabled: true
-      source: Carbon-jdbc
-      dataSource: *JDBC01
-      pollingPeriod: 600
+  reporting:
+    jmx:
+      - enabled: false
+
+# Carbon Metrics Configuration Parameters for JDBC Reporters
+wso2.metrics.jdbc:
+  dataSource:
+    - &JDBC01
+      lookupDataSource: true
+      dataSourceName: jdbc/WSO2MetricsDB
+      scheduledCleanup:
+        enabled: true
+        daysToKeep: 2
+        scheduledCleanupPeriod: 10000
+
+  reporting:
+    jdbc:
+      - name: JDBC
+        enabled: true
+        source: Carbon-jdbc
+        dataSource: *JDBC01
+        pollingPeriod: 600

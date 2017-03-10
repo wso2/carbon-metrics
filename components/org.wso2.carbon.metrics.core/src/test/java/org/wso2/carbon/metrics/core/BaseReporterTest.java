@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 
@@ -30,8 +29,6 @@ import javax.management.MBeanServer;
 public abstract class BaseReporterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseReporterTest.class);
-
-    protected static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
 
     protected static MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
@@ -46,8 +43,8 @@ public abstract class BaseReporterTest {
         if (logger.isInfoEnabled()) {
             logger.info("Creating Metrics");
         }
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-reporter.yml");
-        metrics = new Metrics();
+        System.setProperty("metrics.target", "target");
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics-reporter.yaml"));
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

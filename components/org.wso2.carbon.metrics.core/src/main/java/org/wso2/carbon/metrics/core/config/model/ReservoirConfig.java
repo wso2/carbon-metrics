@@ -15,13 +15,18 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
 import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
 /**
  * Configuration for Reservoir
  */
+@Configuration(description = "Reservoir Configuration")
 public class ReservoirConfig {
 
+    @Element(description = "Reservoir Type used for Histogram and Timer\n" +
+            "Available types are EXPONENTIALLY_DECAYING, UNIFORM, SLIDING_WINDOW, SLIDING_TIME_WINDOW & HDR_HISTOGRAM")
     private ReservoirType type = ReservoirType.EXPONENTIALLY_DECAYING;
 
     private ReservoirParametersConfig parameters = new ReservoirParametersConfig();
