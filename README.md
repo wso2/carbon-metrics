@@ -11,11 +11,9 @@ WSO2 Carbon Metrics
 
 ## Configuring Metrics
 
-The metrics is configured via a [YAML](components/org.wso2.carbon.metrics.core/src/main/resources/metrics.yml) file. The Metrics is enabled by default and it can be disabled from the configuration. The Metrics is also configured to register a standard Java MBean for management operations.
+The metrics is configured via a YAML file. The Metrics is enabled by default and it can be disabled from the configuration. The Metrics is also configured to register a standard Java MBean for management operations.
 
-All reporters are also configured using the same configuration file. By default, the JMX Reporter will be enabled. In WSO2 products, the JDBC Reporter will be enabled by default.
-
-When using Metrics in a WSO2 product, the configuration file is available at `$CARBON_HOME/conf/metrics.yml`. If the Metrics is used in a standalone application, the configuration file can be given using the `metrics.conf` system property.  By default, the Metrics will look for metrics.yml file in the root directory (of the Java application) or in the classpath. This approach is also used for other configurations, such as the Metrics Level configuration and the JDBC Datasource Configuration.
+All reporters are also configured using the same configuration file. By default, the JMX Reporter will be enabled.
 
 ## Metric Levels
 
@@ -29,13 +27,13 @@ Metrics Levels are organized from most specific to least:
   - TRACE (least specific, a lot of data)
   - ALL (least specific, all data)
 
-The levels are configured in `$CARBON_HOME/conf/metrics.properties` file. In a standalone application, the properties file can be specified using the `metrics.level.conf` system property.
+The levels are configured in YAML file.
 
 Similar to [Apache Log4j](http://logging.apache.org/log4j), the WSO2 Carbon Metrics implementation uses a Metric Hierarchy. The hierarchy is maintained via the Metric names.
 
-The levels in `metrics.properties` can be configured to any hierarchy. For example, if we use `metric.level.jvm.memory.heap=INFO` in `metrics.properties`, all metrics under `jvm.memory.heap` memory will have `INFO` as the configured level.
+The levels in Metrics configuration can be configured to any hierarchy. For example, if we use `jvm.memory.heap=INFO`, all metrics under `jvm.memory.heap` memory will have `INFO` as the configured level.
 
-If there is no configured level for specific metric name hierarachy, the level in "`metrics.rootLevel`" will be used.
+If there is no configured level for specific metric name hierarachy, the level configured in "`rootLevel`" will be used.
 
 ## Components
 
@@ -71,7 +69,7 @@ See the sample [ServiceComponent](samples/org.wso2.carbon.metrics.sample.service
 When using Metrics in standalone application, the Metrics can be initialized as follows.
 
 ```
-Metrics metrics = new Metrics.Builder().build();
+Metrics metrics = new Metrics(<ConfigProvider>);
 metrics.activate();
 
 MetricService metricService = metrics.getMetricService();
@@ -115,6 +113,6 @@ See the sample [RandomNumberServiceImpl](samples/org.wso2.carbon.metrics.sample.
 
 ## License
 
-Copyright (C) 2014-2016 WSO2 Inc.
+Copyright (C) 2014-2017 WSO2 Inc.
 
 Licensed under the Apache License, Version 2.0
