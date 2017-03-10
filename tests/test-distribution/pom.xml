@@ -117,12 +117,12 @@
                     <execution>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <replace dir="target/wso2carbon-metrics-${carbon.metrics.version}/wso2" token="false"
                                          value="true">
                                     <include name="**/bundles.info"/>
                                 </replace>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
