@@ -265,7 +265,7 @@
                                 <phase>prepare-package</phase>
                                 <configuration>
                                     <target xmlns:jacoco="antlib:org.jacoco.ant">
-                                        //this task is to provide class/src files locations for jacoco report generation
+                                        <!-- this task is to provide class/src files locations for jacoco report generation -->
                                         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
                                             <classpath path="${project.build.directory}"/>
                                         </taskdef>
@@ -273,7 +273,7 @@
                                             <executiondata>
                                                 <file file="${project.build.directory}/jacoco.exec"/>
                                             </executiondata>
-                                            <structure name="Carbon Core OSGi Tests">
+                                            <structure name="Metrics OSGi Tests">
                                                 <classfiles>
                                                     <fileset
                                                             dir="../../components/org.wso2.carbon.metrics.core/target/classes"/>
