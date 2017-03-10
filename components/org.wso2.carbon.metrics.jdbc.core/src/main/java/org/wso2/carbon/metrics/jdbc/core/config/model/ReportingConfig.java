@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,6 +24,11 @@ import java.util.Set;
 public class ReportingConfig {
 
     private Set<JdbcReporterConfig> jdbc;
+
+    public ReportingConfig() {
+        jdbc = new HashSet<>();
+        jdbc.add(new JdbcReporterConfig());
+    }
 
     public Set<JdbcReporterConfig> getJdbc() {
         return jdbc;

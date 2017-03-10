@@ -41,11 +41,8 @@ public abstract class BaseMetricTest {
 
     @BeforeSuite
     protected void init() throws Exception {
-        // Set Carbon Home to load configs
-        System.setProperty("carbon.home", "target");
-        System.setProperty("metrics.target", "target");
         // Initialize the Metrics
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics.yaml"));
         metrics.activate();
         metricService = metrics.getMetricService();
         metricManagementService = metrics.getMetricManagementService();

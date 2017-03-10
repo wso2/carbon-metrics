@@ -27,6 +27,7 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.core.utils.Utils;
 import org.wso2.carbon.metrics.jdbc.core.reporter.impl.JdbcReporter;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import javax.naming.InitialContext;
@@ -42,7 +43,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
 
     private String source = Utils.getDefaultSource();
 
-    private DataSourceConfig dataSource;
+    private DataSourceConfig dataSource = new DataSourceConfig();
 
     public JdbcReporterConfig() {
         super("JDBC");
@@ -101,13 +102,13 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
                         source, dataSourceName, getPollingPeriod()));
             }
         } else {
-            Optional<Properties> propertiesOptional = Utils.loadProperties("metrics.datasource.conf",
-                    "metrics-datasource.properties");
-            if (!propertiesOptional.isPresent()) {
-                throw new ReporterBuildException("Metrics Datasource configuration file not found!");
+            Map<String, String> dataSourcePropertiesMap = dataSource.getDataSourceProperties();
+            if (dataSourcePropertiesMap.isEmpty()) {
+                throw new ReporterBuildException("Metrics Datasource Properties not found!");
             }
 
-            Properties properties = propertiesOptional.get();
+            Properties properties = new Properties();
+            properties.putAll(dataSourcePropertiesMap);
             if (logger.isDebugEnabled()) {
                 logger.debug("Creating Metrics Datasource");
             }

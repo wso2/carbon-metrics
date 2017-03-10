@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.kernel.CarbonRuntime;
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Metrics;
@@ -48,13 +49,16 @@ public class MetricsComponent {
 
     private ServiceRegistration metricManagementServiceRegistration;
 
+    private ConfigProvider configProvider;
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component activated");
         }
         Utils.setCarbonEnvironment(true);
-        metrics = new Metrics();
+
+        metrics = new Metrics(configProvider);
         metrics.activate();
         metricServiceRegistration = bundleContext.registerService(MetricService.class, metrics.getMetricService(),
                 null);
@@ -70,6 +74,31 @@ public class MetricsComponent {
         metrics.deactivate();
         metricServiceRegistration.unregister();
         metricManagementServiceRegistration.unregister();
+    }
+
+    /**
+     * Get the ConfigProvider service.
+     *
+     * @param configProvider the ConfigProvider service that is registered as a service.
+     */
+    @Reference(
+            name = "carbon.config.provider",
+            service = ConfigProvider.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterConfigProvider"
+    )
+    protected void registerConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = configProvider;
+    }
+
+    /**
+     * This is the unbind method, which gets called for ConfigProvider instance un-registrations.
+     *
+     * @param configProvider the ConfigProvider service that get unregistered.
+     */
+    protected void unregisterConfigProvider(ConfigProvider configProvider) {
+        this.configProvider = null;
     }
 
     /**
@@ -118,7 +147,7 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Activating Metrics Extension {}", metricsExtension.getClass().getName());
         }
-        metricsExtension.activate(metrics.getMetricService(), metrics.getMetricManagementService());
+        metricsExtension.activate(configProvider, metrics.getMetricService(), metrics.getMetricManagementService());
     }
 
     /**

@@ -21,8 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
-import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
+import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.utils.Utils;
@@ -132,9 +131,12 @@ public class MetricsMXBeanTest extends BaseReporterTest {
 
     @Test
     public void testReporterJMXOperations() throws ReporterBuildException {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-reporter.yml");
-        MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
-        metricManagementService.addReporter(metricsConfig.getReporting().getCsv().iterator().next());
+        CsvReporterConfig csvReporterConfig = new CsvReporterConfig();
+        csvReporterConfig.setName("CSV");
+        csvReporterConfig.setEnabled(true);
+        csvReporterConfig.setLocation("target/metrics");
+        csvReporterConfig.setPollingPeriod(600);
+        metricManagementService.addReporter(csvReporterConfig);
 
         // Test start/stop reporters
         metricsMXBean.startReporters();

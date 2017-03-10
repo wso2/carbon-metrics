@@ -24,7 +24,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>target/wso2carbon-kernel-${carbon.kernel.version}</directory>
+            <directory>target/WSO2Carbon</directory>
             <outputDirectory>.</outputDirectory>
             <excludes>
                 <exclude>README.txt</exclude>
@@ -34,9 +34,17 @@
         </fileSet>
     </fileSets>
 
+    <files>
+        <file>
+            <source>deployment.yaml</source>
+            <outputDirectory>conf</outputDirectory>
+            <fileMode>644</fileMode>
+        </file>
+    </files>
+
     <dependencySets>
         <dependencySet>
-            <outputDirectory>./osgi/dropins</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <useStrictFiltering>true</useStrictFiltering>
             <includes>

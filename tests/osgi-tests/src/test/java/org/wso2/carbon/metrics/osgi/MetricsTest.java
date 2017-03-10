@@ -16,8 +16,7 @@
 
 package org.wso2.carbon.metrics.osgi;
 
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.ops4j.pax.exam.testng.listener.PaxExam;
@@ -26,6 +25,7 @@ import org.osgi.framework.BundleContext;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import org.wso2.carbon.container.CarbonContainerFactory;
 import org.wso2.carbon.kernel.utils.CarbonServerInfo;
 import org.wso2.carbon.metrics.core.Counter;
 import org.wso2.carbon.metrics.core.Histogram;
@@ -36,30 +36,23 @@ import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.sample.service.RandomNumberService;
-import org.wso2.carbon.osgi.test.util.CarbonSysPropConfiguration;
-import org.wso2.carbon.osgi.test.util.OSGiTestConfigurationUtils;
 
 import java.lang.management.ManagementFactory;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.management.JMX;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-
 @Listeners(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
+@ExamFactory(CarbonContainerFactory.class)
 public class MetricsTest {
 
     private static final String MBEAN_NAME = "org.wso2.carbon:type=Metrics";
 
     @Inject
-    private BundleContext bundleContext;
+    protected BundleContext bundleContext;
 
     @Inject
     private CarbonServerInfo carbonServerInfo;
@@ -72,67 +65,6 @@ public class MetricsTest {
 
     @Inject
     private RandomNumberService randomNumberService;
-
-    @Configuration
-    public Option[] createConfiguration() {
-        List<Option> optionList = new ArrayList<>();
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.jdbc.reporter").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.core").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.jdbc.core").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.das.core").versionAsInProject());
-        optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
-                .artifactId("metrics-core").versionAsInProject());
-        optionList.add(mavenBundle().groupId("io.dropwizard.metrics")
-                .artifactId("metrics-jvm").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.jndi")
-                .artifactId("org.wso2.carbon.jndi").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.datasources")
-                .artifactId("org.wso2.carbon.datasource.core").versionAsInProject());
-        optionList.add(mavenBundle().groupId("commons-io.wso2")
-                .artifactId("commons-io").versionAsInProject());
-        optionList.add(mavenBundle().groupId("com.zaxxer")
-                .artifactId("HikariCP").versionAsInProject());
-        optionList.add(mavenBundle().groupId("com.h2database")
-                .artifactId("h2").versionAsInProject());
-
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.das.reporter").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
-                .artifactId("org.wso2.carbon.databridge.agent").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
-                .artifactId("org.wso2.carbon.databridge.commons").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.orbit.com.lmax")
-                .artifactId("disruptor").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.analytics-common")
-                .artifactId("org.wso2.carbon.databridge.commons.thrift").versionAsInProject());
-        optionList.add(mavenBundle().groupId("libthrift.wso2")
-                .artifactId("libthrift").versionAsInProject());
-        optionList.add(mavenBundle().groupId("commons-pool.wso2")
-                .artifactId("commons-pool").versionAsInProject());
-
-        // Sample bundles
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.sample.service").versionAsInProject());
-        optionList.add(mavenBundle().groupId("org.wso2.carbon.metrics")
-                .artifactId("org.wso2.carbon.metrics.sample.consumer").versionAsInProject());
-
-        String currentDir = Paths.get("").toAbsolutePath().toString();
-        Path carbonHome = Paths.get(currentDir, "target", "carbon-home");
-
-        CarbonSysPropConfiguration sysPropConfiguration = new CarbonSysPropConfiguration();
-        sysPropConfiguration.setCarbonHome(carbonHome.toString());
-        sysPropConfiguration.setServerKey("carbon-metrics");
-        sysPropConfiguration.setServerName("WSO2 Carbon Metrics Server");
-        sysPropConfiguration.setServerVersion("1.0.0");
-
-        optionList = OSGiTestConfigurationUtils.getConfiguration(optionList, sysPropConfiguration);
-
-        return optionList.toArray(new Option[optionList.size()]);
-    }
 
     private Bundle getBundle(String name) {
         Bundle bundle = null;

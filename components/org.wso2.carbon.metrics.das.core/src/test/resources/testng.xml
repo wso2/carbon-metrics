@@ -15,7 +15,7 @@
     # limitations under the License.
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Metrics-DAS-Core-Test-Suite" parallel="false">
+<suite name="Metrics-DAS-Core-Test-Suite">
     <!-- Server port for internal server -->
     <parameter name="server-port" value="51840"/>
     <test name="Metrics-DAS-Core-Unit-Test">

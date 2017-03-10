@@ -378,7 +378,8 @@ public class ReporterTest extends BaseReporterTest {
         csvReporterConfig.setLocation("");
         addReporter(csvReporterConfig);
 
-        csvReporterConfig.setLocation(RESOURCES_DIR + File.separator + "log4j2.xml");
+        csvReporterConfig.setLocation("src" + File.separator + "test" + File.separator + "resources" + File.separator
+                + "log4j2.xml");
         addReporter(csvReporterConfig);
     }
 

@@ -18,16 +18,17 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
 import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirParametersConfig;
 import org.wso2.carbon.metrics.core.config.model.Slf4jReporterConfig;
+import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
-import java.io.File;
-
-import static org.wso2.carbon.metrics.core.BaseReporterTest.RESOURCES_DIR;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Test Cases for {@link MetricsConfig}
@@ -37,9 +38,9 @@ public class MetricsConfigTest extends BaseMetricTest {
     private static MetricsConfig metricsConfig;
 
     @BeforeClass
-    private void load() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-reporter.yml");
-        metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    private void load() throws CarbonConfigurationException {
+        metricsConfig = TestUtils.getConfigProvider("metrics-reporter.yaml")
+                .getConfigurationObject(MetricsConfig.class);
     }
 
     @Test
@@ -90,14 +91,21 @@ public class MetricsConfigTest extends BaseMetricTest {
     }
 
     @Test
-    public void testReporterCount() {
-        Assert.assertEquals(metricsConfig.getReporting().getReporterBuilders().size(), 4);
+    public void testReservoirConfigLoad() {
+        ReservoirConfig config = metricsConfig.getReservoir();
+        Assert.assertEquals(config.getType(), ReservoirType.UNIFORM);
+
+        ReservoirParametersConfig parametersConfig = config.getParameters();
+        Assert.assertEquals(parametersConfig.getSize(), 2048);
+        Assert.assertEquals(parametersConfig.getWindow(), 30);
+        Assert.assertEquals(parametersConfig.getWindowUnit(), TimeUnit.MINUTES);
+        Assert.assertEquals(parametersConfig.getNumberOfSignificantValueDigits(), 3);
+        Assert.assertTrue(parametersConfig.isResetOnSnapshot());
     }
 
-    @Test(expectedExceptions = RuntimeException.class)
-    public void testInvalidFile() {
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "log4j2.xml");
-        MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    @Test
+    public void testReporterCount() {
+        Assert.assertEquals(metricsConfig.getReporting().getReporterBuilders().size(), 4);
     }
 
 }

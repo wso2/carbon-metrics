@@ -20,6 +20,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirConfig;
 import org.wso2.carbon.metrics.core.impl.MetricManager;
 import org.wso2.carbon.metrics.core.impl.listener.EnabledStatusChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.MetricLevelChangeListener;
@@ -34,7 +35,7 @@ public class MetricManagerTest {
 
     @BeforeClass
     private void load() {
-        metricManager = new MetricManager(new MetricRegistry(), new MetricsLevelConfig());
+        metricManager = new MetricManager(new MetricRegistry(), new MetricsLevelConfig(), new ReservoirConfig());
     }
 
     @Test

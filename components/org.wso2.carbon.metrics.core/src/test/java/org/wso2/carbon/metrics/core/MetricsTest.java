@@ -21,14 +21,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.carbon.metrics.core.utils.Utils;
 
-import java.io.File;
-
 /**
  * Test Disabled Metrics in Carbon Environment
  */
 public class MetricsTest {
-
-    protected static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
 
     private Metrics metrics;
 
@@ -37,14 +33,14 @@ public class MetricsTest {
     @BeforeMethod
     private void activate() {
         Utils.setCarbonEnvironment(true);
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-disabled.yml");
-        metrics = new Metrics();
+        metrics = new Metrics(TestUtils.getConfigProvider("metrics-disabled.yaml"));
         metrics.activate();
         metricManagementService = metrics.getMetricManagementService();
     }
 
     @AfterMethod
     private void deactivate() {
+        metricManagementService.stopReporters();
         metrics.deactivate();
         Utils.setCarbonEnvironment(false);
     }

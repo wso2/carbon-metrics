@@ -15,13 +15,19 @@
  */
 package org.wso2.carbon.metrics.core.impl;
 
+import com.codahale.metrics.ExponentiallyDecayingReservoir;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
+import com.codahale.metrics.Reservoir;
+import com.codahale.metrics.SlidingTimeWindowReservoir;
+import com.codahale.metrics.SlidingWindowReservoir;
+import com.codahale.metrics.UniformReservoir;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import org.HdrHistogram.Recorder;
 import org.wso2.carbon.metrics.core.Counter;
 import org.wso2.carbon.metrics.core.Gauge;
 import org.wso2.carbon.metrics.core.Histogram;
@@ -31,15 +37,23 @@ import org.wso2.carbon.metrics.core.Metric;
 import org.wso2.carbon.metrics.core.MetricNotFoundException;
 import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirParametersConfig;
 import org.wso2.carbon.metrics.core.impl.listener.EnabledStatusChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.MetricLevelChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.RootLevelChangeListener;
+import org.wso2.carbon.metrics.core.impl.reservoir.HdrHistogramReservoir;
+import org.wso2.carbon.metrics.core.impl.reservoir.HdrHistogramResetOnSnapshotReservoir;
+import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 import org.wso2.carbon.metrics.core.metric.ClassLoadingGaugeSet;
 import org.wso2.carbon.metrics.core.metric.OperatingSystemMetricSet;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -88,17 +102,26 @@ public final class MetricManager {
      */
     private static final String METRIC_PATH_DELIMITER_REGEX = "\\.";
 
-    private final MetricsLevelConfig metricsLevelConfig;
+    /**
+     * The root level configured for Metrics
+     */
+    private Level rootLevel = Level.INFO;
+
+    private final Map<String, Level> levelMap = Collections.synchronizedMap(new HashMap<String, Level>());
 
     private final MetricFilter enabledMetricFilter = new EnabledMetricFilter();
 
-    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN = Pattern.compile("^(.+)\\[\\+\\]$");
+    private static final Pattern METRIC_AGGREGATE_ANNOTATION_PATTERN = Pattern.compile("^(.+)\\[\\+]$");
 
     private final List<EnabledStatusChangeListener> enabledStatusChangeListeners;
 
     private final List<RootLevelChangeListener> rootLevelChangeListeners;
 
     private final List<MetricLevelChangeListener> metricLevelChangeListeners;
+
+    private final ReservoirType reservoirType;
+
+    private final ReservoirParametersConfig reservoirParametersConfig;
 
     /**
      * MetricWrapper class is used for the metrics map. This class keeps the associated {@link Level} and enabled status
@@ -126,15 +149,25 @@ public final class MetricManager {
      * Constructs a Metric Service with given {@link MetricRegistry} and other configurations.
      *
      * @param metricRegistry     The main {@link MetricRegistry} used by the MetricService.
-     * @param metricsLevelConfig The {@link MetricsLevelConfig} with root level configuration and level configurations
-     *                           for each metric.
+     * @param metricsLevelConfig The {@link MetricsLevelConfig} with root level configuration and level
+     *                           configurations for each metric.
+     * @param reservoirConfig    The {@link ReservoirConfig} with the {@link ReservoirType} to determine the
+     *                           reservoir implementation used in {@link Histogram} and {@link Timer} and the
+     *                           parameters for reservoir implementations
      */
-    public MetricManager(MetricRegistry metricRegistry, MetricsLevelConfig metricsLevelConfig) {
+    public MetricManager(MetricRegistry metricRegistry, MetricsLevelConfig metricsLevelConfig,
+                         ReservoirConfig reservoirConfig) {
         this.metricRegistry = metricRegistry;
-        this.metricsLevelConfig = metricsLevelConfig;
         this.enabledStatusChangeListeners = new CopyOnWriteArrayList<>();
         this.rootLevelChangeListeners = new CopyOnWriteArrayList<>();
         this.metricLevelChangeListeners = new CopyOnWriteArrayList<>();
+        this.reservoirType = reservoirConfig.getType();
+        this.reservoirParametersConfig = reservoirConfig.getParameters();
+        this.rootLevel = Level.toLevel(metricsLevelConfig.getRootLevel(), Level.INFO);
+
+        for (Map.Entry<String, String> levelEntry : metricsLevelConfig.getLevels().entrySet()) {
+            levelMap.put(levelEntry.getKey(), Level.valueOf(levelEntry.getValue()));
+        }
 
         // Register JVM Metrics
         // This should be the done when other initializations are completed
@@ -267,7 +300,7 @@ public final class MetricManager {
         metricsMap.values().forEach(metricWrapper -> {
             AbstractMetric metric = metricWrapper.metric;
             metric.setEnabled(isMetricEnabled(metricWrapper.name, metric.getLevel(),
-                    metricsLevelConfig.getLevel(metric.getName()), false));
+                    levelMap.get(metric.getName()), false));
         });
     }
 
@@ -281,7 +314,7 @@ public final class MetricManager {
         if (!metricsMap.containsKey(name)) {
             throw new IllegalArgumentException("Invalid Metric Name");
         }
-        return metricsLevelConfig.getLevel(name);
+        return levelMap.get(name);
     }
 
     /**
@@ -295,10 +328,10 @@ public final class MetricManager {
         if (metricWrapper == null) {
             throw new IllegalArgumentException("Invalid Metric Name");
         }
-        Level currentLevel = metricsLevelConfig.getLevel(name);
+        Level currentLevel = levelMap.get(name);
         if (currentLevel == null || !currentLevel.equals(level)) {
             // Set new level only if there is no existing level or the new level is different from existing level
-            metricsLevelConfig.setLevel(name, level);
+            levelMap.put(name, level);
             AbstractMetric metric = metricWrapper.metric;
             metricLevelChangeListeners.forEach(listener -> listener.levelChanged(metric, currentLevel, level));
         }
@@ -310,7 +343,7 @@ public final class MetricManager {
      * @return The Root {@link Level}
      */
     public Level getRootLevel() {
-        return metricsLevelConfig.getRootLevel();
+        return rootLevel;
     }
 
     /**
@@ -319,9 +352,9 @@ public final class MetricManager {
      * @param level New Root {@link Level}
      */
     public void setRootLevel(Level level) {
-        Level oldLevel = metricsLevelConfig.getRootLevel();
+        Level oldLevel = rootLevel;
         boolean changed = !oldLevel.equals(level);
-        metricsLevelConfig.setRootLevel(level);
+        rootLevel = level;
         if (changed) {
             rootLevelChangeListeners.forEach(listener -> listener.levelChanged(oldLevel, level));
         }
@@ -364,10 +397,10 @@ public final class MetricManager {
             int index = name.lastIndexOf(METRIC_PATH_DELIMITER);
             if (index != -1) {
                 parentName = name.substring(0, index);
-                configLevel = metricsLevelConfig.getLevel(parentName);
+                configLevel = levelMap.get(parentName);
             } else {
                 parentName = ROOT_METRIC_NAME;
-                configLevel = metricsLevelConfig.getRootLevel();
+                configLevel = rootLevel;
             }
             return isMetricEnabledBasedOnHierarchyLevel(parentName, metricLevel, configLevel);
         }
@@ -426,7 +459,7 @@ public final class MetricManager {
                 throw new IllegalArgumentException(name + " is already used for a different type of metric");
             }
         } else {
-            boolean enabled = isMetricEnabledBasedOnHierarchyLevel(name, level, metricsLevelConfig.getLevel(name));
+            boolean enabled = isMetricEnabledBasedOnHierarchyLevel(name, level, levelMap.get(name));
             metricWrapper = new MetricWrapper(name, level, enabled);
             metricsMap.put(name, metricWrapper);
             T newMetric = metricBuilder.createMetric(name, level);
@@ -525,6 +558,40 @@ public final class MetricManager {
     }
 
     /**
+     * Get reservoir implementation based on the reservoir type
+     *
+     * @return The {@link Reservoir} implementation
+     */
+    private Reservoir getReservoir() {
+        // The Reservoir implementation is selected using a switch statement.
+        // The ReservoirType enum is a part of YAML configuration
+        // and foreign imports are not supported by Carbon Configuration Maven Plugin.
+        // Therefore, the Reservoir class cannot be imported and the Reservoir
+        // creation logic cannot be written inside ReservoirType enum.
+        switch (reservoirType) {
+            case EXPONENTIALLY_DECAYING:
+                return new ExponentiallyDecayingReservoir();
+            case UNIFORM:
+                return new UniformReservoir(reservoirParametersConfig.getSize());
+            case SLIDING_WINDOW:
+                return new SlidingWindowReservoir(reservoirParametersConfig.getSize());
+            case SLIDING_TIME_WINDOW:
+                return new SlidingTimeWindowReservoir(reservoirParametersConfig.getWindow(),
+                        reservoirParametersConfig.getWindowUnit());
+            case HDR_HISTOGRAM:
+                Recorder recorder = new Recorder(reservoirParametersConfig.getNumberOfSignificantValueDigits());
+                if (reservoirParametersConfig.isResetOnSnapshot()) {
+                    return new HdrHistogramResetOnSnapshotReservoir(recorder);
+                } else {
+                    return new HdrHistogramReservoir(recorder);
+                }
+            default:
+                throw new RuntimeException("Invalid Reservoir Type");
+
+        }
+    }
+
+    /**
      * An interface for creating a new metric
      */
     private interface MetricBuilder<T extends AbstractMetric> {
@@ -569,7 +636,8 @@ public final class MetricManager {
     private final MetricBuilder<TimerImpl> timerBuilder = new MetricBuilder<TimerImpl>() {
         @Override
         public TimerImpl createMetric(String name, Level level) {
-            return new TimerImpl(name, level, metricRegistry.timer(name));
+            return new TimerImpl(name, level, metricRegistry.register(name,
+                    new com.codahale.metrics.Timer(getReservoir())));
         }
 
         @Override
@@ -584,7 +652,8 @@ public final class MetricManager {
     private final MetricBuilder<HistogramImpl> histogramBuilder = new MetricBuilder<HistogramImpl>() {
         @Override
         public HistogramImpl createMetric(String name, Level level) {
-            return new HistogramImpl(name, level, metricRegistry.histogram(name));
+            return new HistogramImpl(name, level, metricRegistry.register(name,
+                    new com.codahale.metrics.Histogram(getReservoir())));
         }
 
         @Override
@@ -1010,7 +1079,7 @@ public final class MetricManager {
         @Override
         public boolean matches(String name, com.codahale.metrics.Metric metric) {
             MetricWrapper metricWrapper = metricsMap.get(name);
-            return isMetricEnabled(metricWrapper.name, metricWrapper.level, metricsLevelConfig.getLevel(name), true);
+            return isMetricEnabled(metricWrapper.name, metricWrapper.level, levelMap.get(name), true);
         }
     }
 

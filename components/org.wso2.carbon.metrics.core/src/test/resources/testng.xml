@@ -15,13 +15,9 @@
     # limitations under the License.
 -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Metrics-Core-Test-Suite" parallel="false">
+<suite name="Metrics-Core-Test-Suite">
     <test name="Metrics-Core-Unit-Test">
         <classes>
-            <class name="org.wso2.carbon.metrics.core.MetricsConfigTest"/>
-            <class name="org.wso2.carbon.metrics.core.MetricsTest"/>
-            <class name="org.wso2.carbon.metrics.core.MetricsExtensionTest"/>
-            <class name="org.wso2.carbon.metrics.core.MetricManagerTest"/>
             <class name="org.wso2.carbon.metrics.core.GaugeTest"/>
             <class name="org.wso2.carbon.metrics.core.CounterTest"/>
             <class name="org.wso2.carbon.metrics.core.MeterTest"/>
@@ -29,11 +25,53 @@
             <class name="org.wso2.carbon.metrics.core.TimerTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricManagementServiceTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricServiceTest"/>
-            <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
-            <class name="org.wso2.carbon.metrics.core.ReporterFilterTest"/>
-            <class name="org.wso2.carbon.metrics.core.MetricsMXBeanTest"/>
             <class name="org.wso2.carbon.metrics.core.MetricAnnotationTest"/>
+            <class name="org.wso2.carbon.metrics.core.HdrHistogramReservoirTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-Reporter-Unit-Test">
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.ReporterTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricsMXBeanTest"/>
+            <class name="org.wso2.carbon.metrics.core.ReporterFilterTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-Feature-Unit-Test">
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.MetricsTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricsExtensionTest"/>
+            <class name="org.wso2.carbon.metrics.core.MetricManagerTest"/>
             <class name="org.wso2.carbon.metrics.core.ScheduledTaskTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-HdrHistogramReservoir-Unit-Test">
+        <parameter name="metrics-conf" value="metrics-hdr-histogram1.yaml"/>
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.ReservoirTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-HdrHistogramResetOnSnapshotReservoir-Unit-Test">
+        <parameter name="metrics-conf" value="metrics-hdr-histogram2.yaml"/>
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.ReservoirTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-UniformReservoir-Unit-Test">
+        <parameter name="metrics-conf" value="metrics-uniform.yaml"/>
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.ReservoirTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-SlidingWindowReservoir-Unit-Test">
+        <parameter name="metrics-conf" value="metrics-sliding-window.yaml"/>
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.ReservoirTest"/>
+        </classes>
+    </test>
+    <test name="Metrics-SlidingTimeWindowReservoir-Unit-Test">
+        <parameter name="metrics-conf" value="metrics-sliding-time-window.yaml"/>
+        <classes>
+            <class name="org.wso2.carbon.metrics.core.ReservoirTest"/>
         </classes>
     </test>
     <listeners>

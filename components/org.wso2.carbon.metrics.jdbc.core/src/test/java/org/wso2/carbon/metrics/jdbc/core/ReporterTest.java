@@ -31,7 +31,6 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 import org.wso2.carbon.metrics.jdbc.core.config.model.DataSourceConfig;
 import org.wso2.carbon.metrics.jdbc.core.config.model.JdbcReporterConfig;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +56,6 @@ public class ReporterTest extends BaseReporterTest {
 
     @Test
     public void testJDBCReporterValidations() {
-        System.setProperty("metrics.datasource.conf", "invalid");
         JdbcReporterConfig jdbcReporterConfig = new JdbcReporterConfig();
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         jdbcReporterConfig.setDataSource(dataSourceConfig);
@@ -180,9 +178,7 @@ public class ReporterTest extends BaseReporterTest {
     @Test
     public void testJDBCReporterCustomDatasource() {
         // reload with custom jdbc config
-        System.setProperty("metrics.conf", RESOURCES_DIR + File.separator + "metrics-jdbc.yml");
-        System.setProperty("metrics.datasource.conf", RESOURCES_DIR + File.separator + "datasource.properties");
-        Metrics metrics = new Metrics();
+        Metrics metrics = new Metrics(TestUtils.getConfigProvider("metrics-jdbc.yaml"));
         metrics.activate();
         MetricService metricService = metrics.getMetricService();
         MetricManagementService metricManagementService = metrics.getMetricManagementService();

@@ -18,11 +18,12 @@ package org.wso2.carbon.metrics.core;
 import com.codahale.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
-import org.wso2.carbon.metrics.core.config.MetricsLevelConfigBuilder;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
+import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.config.model.JmxConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
+import org.wso2.carbon.metrics.core.config.model.ReservoirConfig;
 import org.wso2.carbon.metrics.core.impl.MetricManagementServiceImpl;
 import org.wso2.carbon.metrics.core.impl.MetricManager;
 import org.wso2.carbon.metrics.core.impl.MetricServiceImpl;
@@ -59,16 +60,30 @@ public class Metrics {
 
     private final List<MetricsExtension> metricsExtensions;
 
+    private final ConfigProvider configProvider;
+
     /**
      * Create a {@link Metrics} instance with a {@link MetricService} and a {@link MetricManagementService}
+     *
+     * @param configProvider Configuration Provider Service
      */
-    public Metrics() {
+    public Metrics(ConfigProvider configProvider) {
         metricsExtensions = new CopyOnWriteArrayList<>();
-        MetricRegistry metricRegistry = new MetricRegistry();
-        MetricsConfig metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
-        MetricsLevelConfig metricsLevelConfig = MetricsLevelConfigBuilder.build();
+        this.configProvider = configProvider;
 
-        MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig);
+        MetricRegistry metricRegistry = new MetricRegistry();
+
+        MetricsConfig metricsConfig;
+        try {
+            metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+        } catch (CarbonConfigurationException e) {
+            logger.error("Error loading Metrics Configuration", e);
+            metricsConfig = new MetricsConfig();
+        }
+        MetricsLevelConfig metricsLevelConfig = metricsConfig.getLevels();
+        ReservoirConfig reservoirConfig = metricsConfig.getReservoir();
+
+        MetricManager metricManager = new MetricManager(metricRegistry, metricsLevelConfig, reservoirConfig);
 
         metricService = new MetricServiceImpl(metricManager);
         metricManagementService = new MetricManagementServiceImpl(metricManager);
@@ -142,7 +157,8 @@ public class Metrics {
             registerMXBean(metricsMXBean);
         }
         if (!Utils.isCarbonEnvironment()) {
-            metricsExtensions.forEach(extension -> extension.activate(metricService, metricManagementService));
+            metricsExtensions.forEach(extension -> extension.activate(configProvider, metricService,
+                    metricManagementService));
         }
     }
 

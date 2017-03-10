@@ -18,12 +18,10 @@ package org.wso2.carbon.metrics.jdbc.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
 import org.wso2.carbon.metrics.jdbc.core.config.model.DataSourceConfig;
 import org.wso2.carbon.metrics.jdbc.core.config.model.JdbcReporterConfig;
 import org.wso2.carbon.metrics.jdbc.core.config.model.MetricsConfig;
-
-import java.io.File;
 
 /**
  * Test Cases for {@link MetricsConfig}
@@ -32,11 +30,9 @@ public class MetricsConfigTest {
 
     private static MetricsConfig metricsConfig;
 
-    protected static final String RESOURCES_DIR = "src" + File.separator + "test" + File.separator + "resources";
-
     @BeforeClass
-    private void load() {
-        metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    private void load() throws CarbonConfigurationException {
+        metricsConfig = TestUtils.getConfigProvider("metrics.yaml").getConfigurationObject(MetricsConfig.class);
     }
 
     @Test

@@ -15,22 +15,28 @@
  */
 package org.wso2.carbon.metrics.das.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Element;
+
 /**
  * Configuration for connecting with Data Analytics Server (DAS)
  */
 public class DasConfig {
 
+    @Element(description = "The type used with Data Publisher")
     private String type = "thrift";
 
+    @Element(description = "Data Receiver URL used by the Data Publisher")
     private String receiverURL = "tcp://localhost:7611";
 
+    @Element(description = "Authentication URL for the Data Publisher. eg: ssl://localhost:7711")
     private String authURL;
 
     private String username = "admin";
 
     private String password = "admin";
 
-    private String dataAgentConfigPath = null;
+    @Element(description = "The path for Data Bridge Agent configuration")
+    private String dataAgentConfigPath = "${carbon.home}/conf/data-bridge/data-agent-config.xml";
 
     public String getType() {
         return type;

@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.das.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.metrics.core.config.MetricsConfigBuilder;
+import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
 import org.wso2.carbon.metrics.das.core.config.model.DasConfig;
 import org.wso2.carbon.metrics.das.core.config.model.DasReporterConfig;
 import org.wso2.carbon.metrics.das.core.config.model.MetricsConfig;
@@ -31,8 +31,9 @@ public class MetricsConfigTest {
     private static MetricsConfig metricsConfig;
 
     @BeforeClass
-    private void load() {
-        metricsConfig = MetricsConfigBuilder.build(MetricsConfig.class, MetricsConfig::new);
+    private void load() throws CarbonConfigurationException {
+        System.setProperty("metrics.dataagent.conf", "data-agent-config.xml");
+        metricsConfig = TestUtils.getConfigProvider("metrics.yaml").getConfigurationObject(MetricsConfig.class);
     }
 
     @Test

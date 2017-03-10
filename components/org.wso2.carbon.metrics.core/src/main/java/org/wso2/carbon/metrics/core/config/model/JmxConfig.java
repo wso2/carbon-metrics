@@ -15,13 +15,19 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
+import org.wso2.carbon.kernel.annotations.Configuration;
+import org.wso2.carbon.kernel.annotations.Element;
+
 /**
  * JMX Configuration for Metrics
  */
+@Configuration(description = "Metrics JMX Configuration")
 public class JmxConfig {
 
+    @Element(description = "Register MBean when initializing Metrics")
     private boolean registerMBean = true;
 
+    @Element(description = "MBean Name")
     private String name = "org.wso2.carbon:type=Metrics";
 
     public boolean isRegisterMBean() {
