@@ -100,21 +100,6 @@
             <plugin>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.extensions.configuration.maven.plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>create-doc</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.dropwizard.metrics</groupId>
-                        <artifactId>metrics-core</artifactId>
-                        <version>${metrics.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
