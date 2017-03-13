@@ -668,7 +668,7 @@
         <carbon.metrics.version>2.1.1-SNAPSHOT</carbon.metrics.version>
         <carbon.metrics.package.export.version>2.0.0</carbon.metrics.package.export.version>
         <testng.version>6.11</testng.version>
-        <metrics.version>3.2.0</metrics.version>
+        <metrics.version>3.2.1</metrics.version>
         <metrics.version.range>[3.2.0, 4.0.0)</metrics.version.range>
         <hdrhistogram.version>2.1.9</hdrhistogram.version>
         <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
@@ -689,10 +689,10 @@
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.8.1</log4j.version>
         <snakeyaml.version>1.18</snakeyaml.version>
-        <hikaricp.version>2.6.0</hikaricp.version>
+        <hikaricp.version>2.6.1</hikaricp.version>
         <h2.version>1.4.193</h2.version>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <mockito.version>2.7.15</mockito.version>
+        <mockito.version>2.7.17</mockito.version>
         <tomcat.version>8.0.41</tomcat.version>
         <jacoco.version>0.7.9</jacoco.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
