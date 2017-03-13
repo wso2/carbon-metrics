@@ -4,7 +4,7 @@ WSO2 Carbon Metrics
 ---
 |  Branch | Build Status |
 | :------ |:------------ | 
-| master  | [![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=carbon-metrics)](https://wso2.org/jenkins/job/carbon-metrics/) |
+| master  | [![Build Status](https://wso2.org/jenkins/buildStatus/icon?job=platform-builds/carbon-metrics)](https://wso2.org/jenkins/job/platform-builds/job/carbon-metrics/) |
 ---
 
 "WSO2 Carbon Metrics" provides an API for WSO2 Carbon Components to use the [Metrics library](http://metrics.dropwizard.io).
