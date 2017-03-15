@@ -32,6 +32,18 @@
                 <exclude>release-notes.html</exclude>
             </excludes>
         </fileSet>
+        <fileSet>
+            <directory>target/main-resources/conf/features/org.wso2.carbon.metrics.core_${project.version}</directory>
+            <outputDirectory>.</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>target/main-resources/conf/features/org.wso2.carbon.metrics.jdbc.core_${project.version}</directory>
+            <outputDirectory>.</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>target/main-resources/conf/features/org.wso2.carbon.metrics.das.core_${project.version}</directory>
+            <outputDirectory>.</outputDirectory>
+        </fileSet>
     </fileSets>
 
     <dependencySets>

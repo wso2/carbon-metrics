@@ -14,7 +14,7 @@
 # limitations under the License.
 ################################################################################
 
-instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../conf); \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics.yml/,target:${installFolder}/../../../conf/metrics.yml,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics.properties/,target:${installFolder}/../../../conf/metrics.properties,overwrite:true);\
+#instructions.configure = \
+#org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../../conf); \
+#org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics.yml/,target:${installFolder}/../../../conf/metrics.yml,overwrite:true);\
+#org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../../features/org.wso2.carbon.metrics.core_${feature.version}/conf/metrics.properties/,target:${installFolder}/../../../conf/metrics.properties,overwrite:true);\

@@ -111,6 +111,42 @@
                             </artifactItems>
                         </configuration>
                     </execution>
+                    <!-- Following configuration was added after commenting instructions in p2.inf -->
+                    <execution>
+                        <id>unpack-core-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.metrics</groupId>
+                                    <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
+                                    <version>${carbon.metrics.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
+                                    <includes>**/conf/*</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.metrics</groupId>
+                                    <artifactId>org.wso2.carbon.metrics.jdbc.core.feature</artifactId>
+                                    <version>${carbon.metrics.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
+                                    <includes>**/conf/*,**/sql/*,**/database/*</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.wso2.carbon.metrics</groupId>
+                                    <artifactId>org.wso2.carbon.metrics.das.core.feature</artifactId>
+                                    <version>${carbon.metrics.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
+                                    <includes>**/conf/**</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
