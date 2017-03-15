@@ -666,7 +666,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <carbon.metrics.version>2.1.1-SNAPSHOT</carbon.metrics.version>
-        <carbon.metrics.package.export.version>2.0.0</carbon.metrics.package.export.version>
+        <!-- NOTE: Update package export version when updating the project version -->
+        <carbon.metrics.package.export.version>2.1.1</carbon.metrics.package.export.version>
         <testng.version>6.11</testng.version>
         <metrics.version>3.2.1</metrics.version>
         <metrics.version.range>[3.2.0, 4.0.0)</metrics.version.range>
