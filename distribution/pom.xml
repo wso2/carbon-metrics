@@ -125,15 +125,15 @@
                                     <artifactId>org.wso2.carbon.metrics.core.feature</artifactId>
                                     <version>${carbon.metrics.version}</version>
                                     <type>zip</type>
-                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
-                                    <includes>**/conf/*</includes>
+                                    <outputDirectory>${project.build.directory}/feature-resources</outputDirectory>
+                                    <includes>**/conf/*.properties</includes>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.wso2.carbon.metrics</groupId>
                                     <artifactId>org.wso2.carbon.metrics.jdbc.core.feature</artifactId>
                                     <version>${carbon.metrics.version}</version>
                                     <type>zip</type>
-                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/feature-resources</outputDirectory>
                                     <includes>**/conf/*,**/sql/*,**/database/*</includes>
                                 </artifactItem>
                                 <artifactItem>
@@ -141,7 +141,7 @@
                                     <artifactId>org.wso2.carbon.metrics.das.core.feature</artifactId>
                                     <version>${carbon.metrics.version}</version>
                                     <type>zip</type>
-                                    <outputDirectory>${project.build.directory}/main-resources/conf</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/feature-resources</outputDirectory>
                                     <includes>**/conf/**</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -194,7 +194,6 @@
                             </features>
                         </configuration>
                     </execution>
-
                     <execution>
                         <id>publishing products</id>
                         <phase>package</phase>
@@ -286,6 +285,44 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
+                    </execution>
+                    <!-- Create config directory structure to package -->
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/product/conf" flatten="true">
+                                    <fileset dir="${project.build.directory}/feature-resources">
+                                        <include name="**/conf/metrics.yml"/>
+                                        <include name="**/conf/metrics.properties"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/product/conf/datasources" flatten="true">
+                                    <fileset dir="${project.build.directory}/feature-resources">
+                                        <include name="**/metrics-datasources.xml"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/product/conf/data-bridge" flatten="true">
+                                    <fileset dir="${project.build.directory}/feature-resources">
+                                        <include name="**/data-bridge/*"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/product/dbscripts/metrics" flatten="true">
+                                    <fileset dir="${project.build.directory}/feature-resources">
+                                        <include name="**/sql/*.sql"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/product/database" flatten="true">
+                                    <fileset dir="${project.build.directory}/feature-resources">
+                                        <include name="**/database/*.db"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
