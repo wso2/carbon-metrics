@@ -686,14 +686,14 @@
         <carbon.analytics.common.version>5.1.14</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.1.0, 6.0.0)</carbon.analytics.common.version.range>
         <xerces.impl.version>2.11.0.SP5</xerces.impl.version>
-        <slf4j.version>1.7.24</slf4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>2.8.1</log4j.version>
         <snakeyaml.version>1.18</snakeyaml.version>
         <hikaricp.version>2.6.1</hikaricp.version>
         <h2.version>1.4.194</h2.version>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <mockito.version>2.7.17</mockito.version>
+        <mockito.version>2.7.19</mockito.version>
         <tomcat.version>8.0.41</tomcat.version>
         <jacoco.version>0.7.9</jacoco.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
