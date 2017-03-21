@@ -669,7 +669,7 @@
         <!-- NOTE: Update package export version when updating the project version -->
         <carbon.metrics.package.export.version>2.1.1</carbon.metrics.package.export.version>
         <testng.version>6.11</testng.version>
-        <metrics.version>3.2.1</metrics.version>
+        <metrics.version>3.2.2</metrics.version>
         <metrics.version.range>[3.2.0, 4.0.0)</metrics.version.range>
         <hdrhistogram.version>2.1.9</hdrhistogram.version>
         <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
@@ -694,7 +694,7 @@
         <h2.version>1.4.194</h2.version>
         <spring.version>4.3.7.RELEASE</spring.version>
         <mockito.version>2.7.19</mockito.version>
-        <tomcat.version>8.0.41</tomcat.version>
+        <tomcat.version>8.0.42</tomcat.version>
         <jacoco.version>0.7.9</jacoco.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <pax.logging.version>1.9.1</pax.logging.version>
