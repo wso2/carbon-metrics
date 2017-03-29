@@ -53,17 +53,17 @@ public class JdbcCleanupTest extends BaseReporterTest {
 
     private static final int DAYS = 7;
 
-    // Timestamp in database is in seconds. There are 86400 seconds for a day (24 hours).
+    // Timestamp in database is in milliseconds. There are 86,400,000 milliseconds for a day (24 hours).
     // Adding one more second to satisfy the condition in cleanup task
-    private static final int SUBTRACT_MILLIS = (DAYS * 86400 * 1000) + 1000;
+    private static final int SUBTRACT_MILLIS = (DAYS * 86_400_000) + 1000;
 
     @BeforeMethod
     private void setUp() {
         when(clock.getTime()).thenReturn(System.currentTimeMillis());
 
         this.reporter = JdbcReporter.forRegistry(registry).convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.NANOSECONDS).withClock(clock).filter(MetricFilter.ALL)
-                .build(SOURCE, dataSource);
+                .convertDurationsTo(TimeUnit.MILLISECONDS).convertTimestampTo(TimeUnit.MILLISECONDS).withClock(clock)
+                .filter(MetricFilter.ALL).build(SOURCE, dataSource);
 
         template.execute("DELETE FROM METRIC_GAUGE;");
         template.execute("DELETE FROM METRIC_TIMER;");
