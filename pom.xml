@@ -105,12 +105,6 @@
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.carbon.metrics</groupId>
-                <artifactId>wso2carbon-metrics</artifactId>
-                <version>${carbon.metrics.version}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
                 <groupId>org.wso2.eclipse.osgi</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
                 <version>${equinox.osgi.version}</version>
@@ -473,6 +467,18 @@
                 <version>${commons.pool.version}</version>
             </dependency>
             <!-- Metrics DAS Core Feature Dependencies - End -->
+            <!-- Metrics Test Distribution Dependencies - Start -->
+            <dependency>
+                <groupId>org.wso2.carbon.metrics</groupId>
+                <artifactId>wso2carbon-metrics</artifactId>
+                <version>${carbon.metrics.version}</version>
+                <type>zip</type>
+                <!-- This must be in the test scope.
+                Otherwise, the build fails in offline mode when there are no artifacts in the Maven Repository for
+                the Group ID: "org.wso2.carbon.metrics" -->
+                <scope>test</scope>
+            </dependency>
+            <!-- Metrics Test Distribution Dependencies - End -->
         </dependencies>
     </dependencyManagement>
 
