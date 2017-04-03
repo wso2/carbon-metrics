@@ -157,9 +157,8 @@
                 <version>${maven.assembly.plugin.version}</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>${basedir}/src/assembly/bin.xml</descriptor>
+                        <descriptor>${basedir}/bin.xml</descriptor>
                     </descriptors>
-                    <finalName>wso2carbon-metrics-test-${carbon.metrics.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
