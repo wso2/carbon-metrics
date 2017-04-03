@@ -699,8 +699,8 @@
         <hikaricp.version>2.6.1</hikaricp.version>
         <h2.version>1.4.194</h2.version>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <mockito.version>2.7.19</mockito.version>
-        <tomcat.version>8.0.42</tomcat.version>
+        <mockito.version>2.7.21</mockito.version>
+        <tomcat.version>8.5.13</tomcat.version>
         <jacoco.version>0.7.9</jacoco.version>
         <carbon.feature.plugin.version>3.0.0</carbon.feature.plugin.version>
         <pax.logging.version>1.9.1</pax.logging.version>
