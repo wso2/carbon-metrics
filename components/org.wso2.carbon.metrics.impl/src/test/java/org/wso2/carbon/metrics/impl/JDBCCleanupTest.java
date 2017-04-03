@@ -67,9 +67,9 @@ public class JDBCCleanupTest {
 
     private final int DAYS = 7;
 
-    // Timestamp in database is in seconds. There are 86400 seconds for a day (24 hours).
+    // Timestamp in database is in milliseconds. There are 86,400,000 milliseconds for a day (24 hours).
     // Adding one more second to satisfy the condition in cleanup task
-    private final int SUBSTRACT_MILLIS = (DAYS * 86400 * 1000) + 1000;
+    private final int SUBSTRACT_MILLIS = (DAYS * 86_400_000) + 1000;
 
     @BeforeClass
     public static void setupDatasource() throws ScriptException, SQLException {
@@ -85,7 +85,8 @@ public class JDBCCleanupTest {
         when(clock.getTime()).thenReturn(System.currentTimeMillis());
 
         this.reporter = JDBCReporter.forRegistry(registry).convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.NANOSECONDS).withClock(clock).filter(MetricFilter.ALL)
+                .convertDurationsTo(TimeUnit.MILLISECONDS).convertTimestampTo(TimeUnit.MILLISECONDS)
+                .withClock(clock).filter(MetricFilter.ALL)
                 .build(SOURCE, dataSource);
 
         template.execute("DELETE FROM METRIC_GAUGE;");
