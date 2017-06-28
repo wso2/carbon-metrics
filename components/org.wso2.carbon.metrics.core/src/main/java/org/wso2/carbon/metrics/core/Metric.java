@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core;
 
 /**
- * A tag interface to indicate a metric class
+ * A tag interface to indicate a metric class.
  */
 public interface Metric {
 

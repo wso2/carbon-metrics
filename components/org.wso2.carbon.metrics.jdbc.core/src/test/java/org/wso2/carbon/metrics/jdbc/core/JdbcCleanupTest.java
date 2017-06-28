@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link ScheduledJdbcMetricsCleanupTask}
+ * Tests for {@link ScheduledJdbcMetricsCleanupTask}.
  */
 public class JdbcCleanupTest extends BaseReporterTest {
 

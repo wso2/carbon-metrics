@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.LongStream;
 
 /**
- * Test Cases for {@link Timer}
+ * Test Cases for {@link Timer}.
  */
 public class TimerTest extends BaseMetricTest {
 

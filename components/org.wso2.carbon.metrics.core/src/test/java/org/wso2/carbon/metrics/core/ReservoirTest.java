@@ -22,6 +22,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 
 import java.util.concurrent.TimeUnit;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 /**
- * Testing different reservoir implementations
+ * Testing different reservoir implementations.
  */
 public class ReservoirTest {
 
@@ -44,7 +45,7 @@ public class ReservoirTest {
 
     @Parameters("metrics-conf")
     @BeforeClass()
-    protected void init(String file) {
+    protected void init(String file) throws ConfigurationException {
         Pattern pattern = Pattern.compile("metrics-([a-z\\-]*)\\d?\\.yaml");
         Matcher matcher = pattern.matcher(file);
         Assert.assertTrue(matcher.find());

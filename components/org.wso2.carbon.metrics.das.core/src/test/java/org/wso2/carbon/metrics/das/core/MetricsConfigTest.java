@@ -18,20 +18,20 @@ package org.wso2.carbon.metrics.das.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.metrics.das.core.config.model.DasConfig;
 import org.wso2.carbon.metrics.das.core.config.model.DasReporterConfig;
 import org.wso2.carbon.metrics.das.core.config.model.MetricsConfig;
 
 /**
- * Test Cases for {@link MetricsConfig}
+ * Test Cases for {@link MetricsConfig}.
  */
 public class MetricsConfigTest {
 
     private static MetricsConfig metricsConfig;
 
     @BeforeClass
-    private void load() throws CarbonConfigurationException {
+    private void load() throws ConfigurationException {
         System.setProperty("metrics.dataagent.conf", "data-agent-config.xml");
         metricsConfig = TestUtils.getConfigProvider("metrics.yaml").getConfigurationObject(MetricsConfig.class);
     }

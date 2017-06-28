@@ -174,7 +174,7 @@ wso2.metrics.das:
       password: admin
 
       # The path for Data Bridge Agent configuration
-      dataAgentConfigPath: ${carbon.home}/conf/data-bridge/data-agent-config.xml
+      dataAgentConfigPath: ${carbon.home}/conf/default/data-bridge/data-agent-config.xml
 
   # The Data Analytics Server (DAS) Reporter is in Metrics DAS Core feature
   reporting:
@@ -216,6 +216,7 @@ wso2.datasources:
   dataSources:
   - name: WSO2_CARBON_DB
     description: The datasource used for registry and user manager
+
       # data source definition
     definition:
         # data source type
@@ -235,9 +236,10 @@ wso2.datasources:
 
   - name: WSO2_METRICS_DB
     description: The default datasource used for WSO2 Carbon Metrics
+
     jndiConfig:
       name: jdbc/WSO2MetricsDB
-      useJndiReference: true
+
       # data source definition
     definition:
         # data source type

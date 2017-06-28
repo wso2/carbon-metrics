@@ -23,7 +23,7 @@ import org.wso2.carbon.metrics.core.reporter.impl.AbstractReporter;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A scheduled reporter for Data Analytics Server (DAS)
+ * A scheduled reporter for Data Analytics Server (DAS).
  */
 public class DasReporter extends AbstractReporter implements ScheduledReporter {
 

@@ -24,7 +24,7 @@ import org.wso2.carbon.metrics.core.task.ScheduledTask;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Test {@link ScheduledTask}
+ * Test {@link ScheduledTask}.
  */
 public class ScheduledTaskTest {
 

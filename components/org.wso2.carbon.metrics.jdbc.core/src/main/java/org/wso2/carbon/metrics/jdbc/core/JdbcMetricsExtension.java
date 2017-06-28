@@ -21,9 +21,9 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * * Metrics Extension to support JDBC Reporter
+ * * Metrics Extension to support JDBC Reporter.
  */
 @Component(
         name = "org.wso2.carbon.metrics.jdbc.core.JdbcMetricsExtension",
@@ -49,7 +49,7 @@ public class JdbcMetricsExtension implements MetricsExtension {
     private String[] names;
 
     /**
-     * Add JDBC Reporters
+     * Add JDBC Reporters.
      */
     @Override
     public void activate(ConfigProvider configProvider, MetricService metricService,
@@ -57,7 +57,7 @@ public class JdbcMetricsExtension implements MetricsExtension {
         MetricsConfig metricsConfig;
         try {
             metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
-        } catch (CarbonConfigurationException e) {
+        } catch (ConfigurationException e) {
             logger.error("Error loading Metrics Configuration", e);
             metricsConfig = new MetricsConfig();
         }
@@ -77,7 +77,7 @@ public class JdbcMetricsExtension implements MetricsExtension {
     }
 
     /**
-     * Remove JDBC Reporters
+     * Remove JDBC Reporters.
      */
     @Override
     public void deactivate(MetricService metricService, MetricManagementService metricManagementService) {

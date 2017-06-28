@@ -15,14 +15,14 @@
  */
 package org.wso2.carbon.metrics.das.core.config.model;
 
-import org.wso2.carbon.kernel.annotations.Configuration;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Configuration;
+import org.wso2.carbon.config.annotation.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Configuration for Metrics
+ * Configuration for Metrics.
  */
 @Configuration(namespace = "wso2.metrics.das", description = "Carbon Metrics Configuration Parameters " +
         "for DAS Reporters")

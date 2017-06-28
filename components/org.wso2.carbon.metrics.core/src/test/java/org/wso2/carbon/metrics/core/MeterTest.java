@@ -19,7 +19,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test Cases for {@link Meter}
+ * Test Cases for {@link Meter}.
  */
 public class MeterTest extends BaseMetricTest {
 

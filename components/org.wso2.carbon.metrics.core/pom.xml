@@ -83,6 +83,10 @@
             <artifactId>snakeyaml</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.config</groupId>
+            <artifactId>org.wso2.carbon.config</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -97,8 +101,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.wso2.carbon</groupId>
-                <artifactId>org.wso2.carbon.extensions.configuration.maven.plugin</artifactId>
+                <groupId>org.wso2.carbon.config</groupId>
+                <artifactId>org.wso2.carbon.config.maven.plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -117,7 +121,8 @@
             com.codahale.metrics;version="${metrics.version.range}",
             com.codahale.metrics.jvm;version="${metrics.version.range}",
             org.slf4j;version="${slf4j.version.range}",
-            org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}"
+            org.wso2.carbon.kernel.*;version="${carbon.kernel.version.range}",
+            org.wso2.carbon.config.*;version="${carbon.config.version.range}"
         </import.package>
     </properties>
 </project>

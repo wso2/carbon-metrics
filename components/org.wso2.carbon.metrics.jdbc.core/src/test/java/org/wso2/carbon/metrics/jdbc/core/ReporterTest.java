@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.metrics.core.Gauge;
 import org.wso2.carbon.metrics.core.Level;
 import org.wso2.carbon.metrics.core.Meter;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * Test Cases for JDBC Reporter
+ * Test Cases for JDBC Reporter.
  */
 public class ReporterTest extends BaseReporterTest {
 
@@ -176,7 +177,7 @@ public class ReporterTest extends BaseReporterTest {
     }
 
     @Test
-    public void testJDBCReporterCustomDatasource() {
+    public void testJDBCReporterCustomDatasource() throws ConfigurationException {
         // reload with custom jdbc config
         Metrics metrics = new Metrics(TestUtils.getConfigProvider("metrics-jdbc.yaml"));
         metrics.activate();

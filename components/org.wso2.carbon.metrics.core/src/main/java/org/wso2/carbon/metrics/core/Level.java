@@ -49,7 +49,7 @@ public class Level implements Comparable<Level> {
     public static final Level DEBUG;
 
     /**
-     * A fine-grained metric
+     * A fine-grained metric.
      */
     public static final Level TRACE;
 

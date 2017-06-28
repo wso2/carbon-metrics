@@ -15,14 +15,14 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
-import org.wso2.carbon.kernel.annotations.Configuration;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Configuration;
+import org.wso2.carbon.config.annotation.Element;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Configuration for data source
+ * Configuration for data source.
  */
 @Configuration(description = "Data Source Configuration")
 public class DataSourceConfig {

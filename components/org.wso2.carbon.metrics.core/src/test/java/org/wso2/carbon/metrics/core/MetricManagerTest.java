@@ -27,7 +27,7 @@ import org.wso2.carbon.metrics.core.impl.listener.MetricLevelChangeListener;
 import org.wso2.carbon.metrics.core.impl.listener.RootLevelChangeListener;
 
 /**
- * Test Cases for {@link MetricManager} listeners
+ * Test Cases for {@link MetricManager} listeners.
  */
 public class MetricManagerTest {
 

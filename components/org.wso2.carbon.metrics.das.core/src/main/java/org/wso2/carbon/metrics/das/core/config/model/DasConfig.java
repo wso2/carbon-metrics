@@ -15,10 +15,10 @@
  */
 package org.wso2.carbon.metrics.das.core.config.model;
 
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Element;
 
 /**
- * Configuration for connecting with Data Analytics Server (DAS)
+ * Configuration for connecting with Data Analytics Server (DAS).
  */
 public class DasConfig {
 

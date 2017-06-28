@@ -37,8 +37,9 @@
     <files>
         <file>
             <source>deployment.yaml</source>
-            <outputDirectory>conf</outputDirectory>
+            <outputDirectory>conf/default</outputDirectory>
             <fileMode>644</fileMode>
+            <filtered>true</filtered>
         </file>
     </files>
 

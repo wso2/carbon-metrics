@@ -46,7 +46,7 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 /**
- * Test Cases for Reporters
+ * Test Cases for Reporters.
  */
 public class ReporterTest extends BaseReporterTest {
 

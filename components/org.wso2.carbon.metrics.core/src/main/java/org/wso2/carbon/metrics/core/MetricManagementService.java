@@ -19,64 +19,64 @@ import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
 
 /**
- * The APIs to manage metrics feature enabled status, root level, metric levels and reporters
+ * The APIs to manage metrics feature enabled status, root level, metric levels and reporters.
  */
 public interface MetricManagementService {
 
     /**
-     * Enables the Metrics Feature
+     * Enables the Metrics Feature.
      */
     void enable();
 
     /**
-     * Disables the Metrics Feature
+     * Disables the Metrics Feature.
      */
     void disable();
 
     /**
-     * Get the current enabled status of Metrics
+     * Get the current enabled status of Metrics.
      *
      * @return {@code true} if the Metrics feature is enabled
      */
     boolean isEnabled();
 
     /**
-     * Get the root level configured in the service
+     * Get the root level configured in the service.
      *
      * @return The Root {@link Level}
      */
     Level getRootLevel();
 
     /**
-     * Set a new root level to the Metric Service
+     * Set a new root level to the Metric Service.
      *
      * @param level New Root {@link Level}
      */
     void setRootLevel(Level level);
 
     /**
-     * Return the number of metrics used
+     * Return the number of metrics used.
      *
      * @return The metrics count
      */
     long getMetricsCount();
 
     /**
-     * Return the number of enabled metrics used
+     * Return the number of enabled metrics used.
      *
      * @return The enabled metrics count
      */
     long getEnabledMetricsCount();
 
     /**
-     * Return the number of metric collections used
+     * Return the number of metric collections used.
      *
      * @return The metric collections count
      */
     long getMetricCollectionsCount();
 
     /**
-     * Set a new level to the given metric
+     * Set a new level to the given metric.
      *
      * @param name  The name of the Metric
      * @param level New {@link Level} for the Metric
@@ -84,7 +84,7 @@ public interface MetricManagementService {
     void setMetricLevel(String name, Level level);
 
     /**
-     * Get the {@link Level} for a given metric
+     * Get the {@link Level} for a given metric.
      *
      * @param name The name of the Metric
      * @return {@link Level} for the given metric
@@ -101,7 +101,7 @@ public interface MetricManagementService {
     <T extends ReporterBuilder> void addReporter(T reporterBuilder) throws ReporterBuildException;
 
     /**
-     * Remove the reporter with given name
+     * Remove the reporter with given name.
      *
      * @param name The name of the reporter
      * @return {@code true} if the reporter is removed successfully, otherwise {@code false}
@@ -114,28 +114,28 @@ public interface MetricManagementService {
     void report();
 
     /**
-     * Invoke report method the scheduled reporter with given name
+     * Invoke report method the scheduled reporter with given name.
      *
      * @param name The name of the reporter
      */
     void report(String name);
 
     /**
-     * Start the reporter with the given name
+     * Start the reporter with the given name.
      *
      * @param name The name of the reporter
      */
     void startReporter(String name);
 
     /**
-     * Stop the reporter with the given name
+     * Stop the reporter with the given name.
      *
      * @param name The name of the reporter
      */
     void stopReporter(String name);
 
     /**
-     * Check whether the reporter with the given name is running
+     * Check whether the reporter with the given name is running.
      *
      * @param name The name of the reporter
      * @return {@code true} if the reporter is running
@@ -143,12 +143,12 @@ public interface MetricManagementService {
     boolean isReporterRunning(String name);
 
     /**
-     * Start all reporters
+     * Start all reporters.
      */
     void startReporters();
 
     /**
-     * Stop all reporters
+     * Stop all reporters.
      */
     void stopReporters();
 }

@@ -18,8 +18,8 @@ package org.wso2.carbon.metrics.das.core;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * Metrics Extension to support DAS Reporter
+ * Metrics Extension to support DAS Reporter.
  */
 @Component(
         name = "org.wso2.carbon.metrics.das.core.DasMetricsExtension",
@@ -45,7 +45,7 @@ public class DasMetricsExtension implements MetricsExtension {
     private String[] names;
 
     /**
-     * Add DAS Reporters
+     * Add DAS Reporters.
      */
     @Override
     public void activate(ConfigProvider configProvider, MetricService metricService,
@@ -53,7 +53,7 @@ public class DasMetricsExtension implements MetricsExtension {
         MetricsConfig metricsConfig;
         try {
             metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
-        } catch (CarbonConfigurationException e) {
+        } catch (ConfigurationException e) {
             logger.error("Error loading Metrics Configuration", e);
             metricsConfig = new MetricsConfig();
         }
@@ -73,7 +73,7 @@ public class DasMetricsExtension implements MetricsExtension {
     }
 
     /**
-     * Remove DAS Reporters
+     * Remove DAS Reporters.
      */
     @Override
     public void deactivate(MetricService metricService, MetricManagementService metricManagementService) {

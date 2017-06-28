@@ -22,7 +22,7 @@ import org.wso2.carbon.metrics.core.annotation.Timed;
 import java.lang.reflect.Method;
 
 /**
- * MetricAnnotation is a utility class to get or create metrics from the Metric Annotations
+ * MetricAnnotation is a utility class to get or create metrics from the Metric Annotations.
  */
 public final class MetricAnnotation {
 

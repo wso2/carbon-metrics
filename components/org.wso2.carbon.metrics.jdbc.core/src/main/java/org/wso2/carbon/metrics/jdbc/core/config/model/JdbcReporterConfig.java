@@ -35,7 +35,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
- * Configuration for JDBC Reporter. Implements {@link ReporterBuilder} to construct a {@link JdbcReporter}
+ * Configuration for JDBC Reporter. Implements {@link ReporterBuilder} to construct a {@link JdbcReporter}.
  */
 public class JdbcReporterConfig extends ScheduledReporterConfig implements ReporterBuilder<JdbcReporter> {
 
@@ -66,7 +66,7 @@ public class JdbcReporterConfig extends ScheduledReporterConfig implements Repor
     }
 
     /**
-     * Build the JDBC Reporter
+     * Build the JDBC Reporter.
      *
      * @param metricRegistry The {@link MetricRegistry} for the reporter
      * @param metricFilter   The {@link MetricFilter} for the reporter
