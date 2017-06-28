@@ -49,11 +49,9 @@ public class TestUtils {
         try {
             Field field = ConfigProviderImpl.class.getDeclaredField("deploymentConfigs");
             field.setAccessible(true);
-            //field.set(null, null);
         } catch (NoSuchFieldException e) {
             // Ignore
         }
-        //ConfigFileReader configFileReader = new YAMLBasedConfigFileReader(file);
         Path carbonHome = Paths.get("");
         carbonHome = Paths.get(carbonHome.toString(), "src", "test");
         System.setProperty("carbon.home", carbonHome.toString());
@@ -61,7 +59,6 @@ public class TestUtils {
                 .separator + file;
         Path configurationFilePath = Paths.get(URI.create("file:" + filePath));
         ConfigFileReader configFileReader = new YAMLBasedConfigFileReader(configurationFilePath);
-        //return new ConfigProviderImpl(configFileReader);
         return new ConfigProviderImpl(configFileReader, secureVault);
     }
 }

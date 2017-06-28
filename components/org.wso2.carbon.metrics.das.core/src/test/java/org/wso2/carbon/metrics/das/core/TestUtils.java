@@ -50,7 +50,6 @@ public class TestUtils {
         try {
             Field field = ConfigProviderImpl.class.getDeclaredField("deploymentConfigs");
             field.setAccessible(true);
-            //field.set(null, null);
         } catch (NoSuchFieldException e) {
             // Ignore
         }
@@ -61,7 +60,6 @@ public class TestUtils {
                 .separator + file;
         Path configurationFilePath = Paths.get(URI.create("file:" + filePath));
         ConfigFileReader configFileReader = new YAMLBasedConfigFileReader(configurationFilePath);
-        //return new ConfigProviderImpl(configFileReader);
         return new ConfigProviderImpl(configFileReader, secureVault);
     }
 }
