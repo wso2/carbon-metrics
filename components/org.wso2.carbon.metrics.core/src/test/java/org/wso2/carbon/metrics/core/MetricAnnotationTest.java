@@ -25,7 +25,7 @@ import org.wso2.carbon.metrics.core.annotation.Timed;
 import java.lang.reflect.Method;
 
 /**
- * Test Cases for {@link MetricAnnotation}
+ * Test Cases for {@link MetricAnnotation}.
  */
 public class MetricAnnotationTest extends BaseMetricTest {
 

@@ -146,6 +146,74 @@
             <artifactId>org.wso2.carbon.container</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.config</groupId>
+            <artifactId>org.wso2.carbon.config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.utils</groupId>
+            <artifactId>carbon-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.secvault</groupId>
+            <artifactId>org.wso2.carbon.secvault</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.extensions.touchpoint</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.app</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.concurrent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.console</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.ds</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.frameworkadmin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.frameworkadmin.equinox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.launcher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.preferences</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.registry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.simpleconfigurator.manipulator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.eclipse.equinox</groupId>
+            <artifactId>org.eclipse.equinox.cm</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

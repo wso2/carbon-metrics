@@ -1,0 +1,138 @@
+################################################################################
+#   Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved
+#
+#   Licensed under the Apache License, Version 2.0 (the \"License\");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an \"AS IS\" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+################################################################################
+
+  # Data Sources Configuration
+wso2.datasources:
+    # datasources
+  dataSources:
+    - name: WSO2_METRICS_DB
+      description: The default datasource used for WSO2 Carbon Metrics
+       # JNDI mapping of a data source
+      jndiConfig:
+        name: jdbc/WSO2MetricsDB
+        # JNDI Reference Flag
+        useJndiReference: true
+        # data source definition
+      definition:
+        # data source type
+        # THIS IS A MANDATORY FIELD
+        type: RDBMS
+        # data source configuration
+        configuration:
+            jdbcUrl: 'jdbc:h2:./database/metrics;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=60000'
+            username: root
+            password: root
+            driverClassName: org.h2.Driver
+            maxPoolSize: 50
+            idleTimeout: 60000
+            connectionTestQuery: SELECT 1
+            validationTimeout: 30000
+            isAutoCommit: false
+
+    - name: WSO2_METRICS_DB
+      description: The MySQL datasource used for WSO2 Carbon Metrics
+      # JNDI mapping of a data source
+      jndiConfig:
+        name: jdbc/WSO2MetricsDB
+        # JNDI Reference Flag
+        useJndiReference: true
+      # data source definition
+      definition:
+        # data source type
+        # THIS IS A MANDATORY FIELD
+        type: RDBMS
+        # data source configuration
+        configuration:
+            jdbcUrl: 'jdbc:mysql://localhost/wso2_metrics'
+            username: root
+            password: root
+            driverClassName: com.mysql.jdbc.Driver
+            maxPoolSize: 50
+            idleTimeout: 60000
+            connectionTestQuery: SELECT 1
+            validationTimeout: 30000
+            isAutoCommit: false
+
+    - name: WSO2_METRICS_DB
+      description: The MSSQL datasource used for WSO2 Carbon Metrics
+       # JNDI mapping of a data source
+      jndiConfig:
+        name: jdbc/WSO2MetricsDB
+        # JNDI Reference Flag
+        useJndiReference: true
+      # data source definition
+      definition:
+        # data source type
+        # THIS IS A MANDATORY FIELD
+        type: RDBMS
+         # data source configuration
+        configuration:
+            jdbcUrl: 'jdbc:jtds:sqlserver://localhost:1433/wso2_metrics'
+            username: sa
+            password: sa
+            driverClassName: net.sourceforge.jtds.jdbc.Driver
+            maxPoolSize: 50
+            idleTimeout: 60000
+            connectionTestQuery: SELECT 1
+            validationTimeout: 30000
+            isAutoCommit: false
+
+    - name: WSO2_METRICS_DB
+      description: The SQLServer XA datasource used for WSO2 Carbon Metrics
+         # JNDI mapping of a data source
+      jndiConfig:
+        name: jdbc/WSO2MetricsDB
+        # JNDI Reference Flag
+        useJndiReference: true
+      # data source definition
+      definition:
+        # data source type
+        # THIS IS A MANDATORY FIELD
+        type: RDBMS
+        # data source configuration
+        configuration:
+            jdbcUrl: 'jdbc:sqlserver://localhost/SQLExpress:1433'
+            username: sa
+            password: sa
+            driverClassName: com.microsoft.sqlserver.jdbc.SQLServerXADataSource
+            maxPoolSize: 50
+            idleTimeout: 60000
+            connectionTestQuery: SELECT 1
+            validationTimeout: 30000
+            isAutoCommit: false
+
+    - name: WSO2_METRICS_DB
+      description: The Oracle datasource used for WSO2 Carbon Metrics
+      jndiConfig:
+        name: jdbc/WSO2MetricsDB
+        # JNDI Reference Flag
+        useJndiReference: true
+        # data source definition
+      definition:
+        # data source type
+        # THIS IS A MANDATORY FIELD
+        type: RDBMS
+        # data source configuration
+        configuration:
+            jdbcUrl: 'jdbc:oracle:thin:@localhost:1521/wso2_metrics'
+            username: scott
+            password: tiger
+            driverClassName: oracle.jdbc.OracleDriver
+            maxPoolSize: 50
+            idleTimeout: 60000
+            connectionTestQuery: SELECT 1
+            validationTimeout: 30000
+            isAutoCommit: false

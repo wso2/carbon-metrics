@@ -19,7 +19,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Element;
 import org.wso2.carbon.metrics.core.config.model.ScheduledReporterConfig;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuilder;
@@ -29,7 +29,7 @@ import org.wso2.carbon.metrics.das.core.reporter.impl.DasReporter;
 import java.util.Optional;
 
 /**
- * Configuration for DAS Reporter. Implements {@link ReporterBuilder} to construct a {@link DasReporter}
+ * Configuration for DAS Reporter. Implements {@link ReporterBuilder} to construct a {@link DasReporter}.
  */
 public class DasReporterConfig extends ScheduledReporterConfig implements ReporterBuilder<DasReporter> {
 
@@ -62,7 +62,7 @@ public class DasReporterConfig extends ScheduledReporterConfig implements Report
     }
 
     /**
-     * Build the DAS Reporter
+     * Build the DAS Reporter.
      *
      * @param metricRegistry The {@link MetricRegistry} for the reporter
      * @param metricFilter   The {@link MetricFilter} for the reporter

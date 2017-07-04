@@ -25,6 +25,33 @@
         <fileSet>
             <directory>target/wso2carbon-metrics-${carbon.metrics.version}</directory>
             <outputDirectory></outputDirectory>
+            <fileMode>644</fileMode>
+            <excludes>
+                <exclude>**/*.lock</exclude>
+                <exclude>**/.data</exclude>
+                <exclude>**/.settings</exclude>
+                <exclude>libcairo-swt.so</exclude>
+                <exclude>eclipse</exclude>
+                <exclude>**/*.sh</exclude>
+                <exclude>**/native/*</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>target/wso2carbon-metrics-${carbon.metrics.version}</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*.sh</include>
+                <include>**/native/*</include>
+            </includes>
+            <fileMode>755</fileMode>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>carbon-home/conf/deployment.yaml</source>
+            <outputDirectory>conf/default</outputDirectory>
+            <fileMode>644</fileMode>
+            <filtered>true</filtered>
+        </file>
+    </files>
 </assembly>

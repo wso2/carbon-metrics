@@ -19,12 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+import org.wso2.carbon.config.ConfigurationException;
 
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 
 /**
- * Base Class for all Reporter Based Test Cases
+ * Base Class for all Reporter Based Test Cases.
  */
 public abstract class BaseReporterTest {
 
@@ -39,7 +40,7 @@ public abstract class BaseReporterTest {
     protected static MetricManagementService metricManagementService;
 
     @BeforeSuite
-    protected static void init() {
+    protected static void init() throws ConfigurationException {
         if (logger.isInfoEnabled()) {
             logger.info("Creating Metrics");
         }

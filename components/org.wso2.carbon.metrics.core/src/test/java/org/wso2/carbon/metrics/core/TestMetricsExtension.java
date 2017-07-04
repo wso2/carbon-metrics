@@ -15,11 +15,11 @@
  */
 package org.wso2.carbon.metrics.core;
 
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.metrics.core.spi.MetricsExtension;
 
 /**
- * A Metrics Extension for tests. Incrementing a counter for each activate and deactivate method calls
+ * A Metrics Extension for tests. Incrementing a counter for each activate and deactivate method calls.
  */
 public class TestMetricsExtension implements MetricsExtension {
 

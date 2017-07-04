@@ -15,11 +15,11 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
-import org.wso2.carbon.kernel.annotations.Configuration;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Configuration;
+import org.wso2.carbon.config.annotation.Element;
 
 /**
- * Configuration for JDBC Scheduled Cleanup
+ * Configuration for JDBC Scheduled Cleanup.
  */
 @Configuration(description = "Schedule regular deletion of metrics data older than a set number of days.\n" +
         "It is recommended that you enable this job to ensure your metrics tables do not get extremely large.\n" +

@@ -18,8 +18,8 @@ package org.wso2.carbon.metrics.core;
 import com.codahale.metrics.MetricRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.metrics.core.config.model.JmxConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsConfig;
 import org.wso2.carbon.metrics.core.config.model.MetricsLevelConfig;
@@ -42,7 +42,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 /**
- * Initialize the implementations of {@link MetricService} and {@link MetricManagementService}
+ * Initialize the implementations of {@link MetricService} and {@link MetricManagementService}.
  */
 public class Metrics {
 
@@ -63,7 +63,7 @@ public class Metrics {
     private final ConfigProvider configProvider;
 
     /**
-     * Create a {@link Metrics} instance with a {@link MetricService} and a {@link MetricManagementService}
+     * Create a {@link Metrics} instance with a {@link MetricService} and a {@link MetricManagementService}.
      *
      * @param configProvider Configuration Provider Service
      */
@@ -76,7 +76,7 @@ public class Metrics {
         MetricsConfig metricsConfig;
         try {
             metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
-        } catch (CarbonConfigurationException e) {
+        } catch (ConfigurationException e) {
             logger.error("Error loading Metrics Configuration", e);
             metricsConfig = new MetricsConfig();
         }
@@ -163,7 +163,7 @@ public class Metrics {
     }
 
     /**
-     * Unregister the MXBean for the MetricService and disable metrics
+     * Unregister the MXBean for the MetricService and disable metrics.
      */
     public void deactivate() {
         if (registerMBean) {

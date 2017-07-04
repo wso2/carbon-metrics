@@ -18,7 +18,7 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.wso2.carbon.kernel.configprovider.CarbonConfigurationException;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.metrics.core.config.model.ConsoleReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.CsvReporterConfig;
 import org.wso2.carbon.metrics.core.config.model.JmxReporterConfig;
@@ -31,14 +31,14 @@ import org.wso2.carbon.metrics.core.impl.reservoir.ReservoirType;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Test Cases for {@link MetricsConfig}
+ * Test Cases for {@link MetricsConfig}.
  */
 public class MetricsConfigTest extends BaseMetricTest {
 
     private static MetricsConfig metricsConfig;
 
     @BeforeClass
-    private void load() throws CarbonConfigurationException {
+    private void load() throws ConfigurationException {
         metricsConfig = TestUtils.getConfigProvider("metrics-reporter.yaml")
                 .getConfigurationObject(MetricsConfig.class);
     }

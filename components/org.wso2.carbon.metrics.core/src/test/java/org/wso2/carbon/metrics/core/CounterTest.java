@@ -19,7 +19,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test Cases for {@link Counter}
+ * Test Cases for {@link Counter}.
  */
 public class CounterTest extends BaseMetricTest {
 

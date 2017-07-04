@@ -19,10 +19,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.metrics.core.utils.Utils;
 
 /**
- * Test Disabled Metrics in Carbon Environment
+ * Test Disabled Metrics in Carbon Environment.
  */
 public class MetricsTest {
 
@@ -31,7 +32,7 @@ public class MetricsTest {
     private MetricManagementService metricManagementService;
 
     @BeforeMethod
-    private void activate() {
+    private void activate() throws ConfigurationException {
         Utils.setCarbonEnvironment(true);
         metrics = new Metrics(TestUtils.getConfigProvider("metrics-disabled.yaml"));
         metrics.activate();

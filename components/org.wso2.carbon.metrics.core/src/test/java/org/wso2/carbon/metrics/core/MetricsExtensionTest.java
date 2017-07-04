@@ -18,16 +18,17 @@ package org.wso2.carbon.metrics.core;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wso2.carbon.config.ConfigurationException;
 
 /**
- * Test the Metrics Extension
+ * Test the Metrics Extension.
  */
 public class MetricsExtensionTest {
 
     private Metrics metrics;
 
     @BeforeMethod
-    private void initialize() {
+    private void initialize() throws ConfigurationException {
         metrics = new Metrics(TestUtils.getConfigProvider("metrics.yaml"));
     }
 

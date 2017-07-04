@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core;
 
 /**
- * A metric to read a particular value
+ * A metric to read a particular value.
  *
  * @param <T> The type of the gauge value
  */

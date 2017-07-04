@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 import java.util.stream.IntStream;
 
 /**
- * Test Cases for {@link Histogram}
+ * Test Cases for {@link Histogram}.
  */
 public class HistogramTest extends BaseMetricTest {
 

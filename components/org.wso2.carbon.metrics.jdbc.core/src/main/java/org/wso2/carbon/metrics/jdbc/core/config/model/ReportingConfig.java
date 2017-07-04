@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Configuration for JDBC reporter
+ * Configuration for JDBC reporter.
  */
 public class ReportingConfig {
 

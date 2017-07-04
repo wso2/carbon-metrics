@@ -15,14 +15,14 @@
  */
 package org.wso2.carbon.metrics.jdbc.core.config.model;
 
-import org.wso2.carbon.kernel.annotations.Configuration;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Configuration;
+import org.wso2.carbon.config.annotation.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Configuration for Metrics
+ * Configuration for Metrics.
  */
 @Configuration(namespace = "wso2.metrics.jdbc", description = "Carbon Metrics Configuration Parameters " +
         "for JDBC Reporters")

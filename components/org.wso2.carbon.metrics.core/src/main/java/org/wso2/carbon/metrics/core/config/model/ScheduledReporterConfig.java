@@ -15,7 +15,7 @@
  */
 package org.wso2.carbon.metrics.core.config.model;
 
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Element;
 
 /**
  * Configuration for scheduled reporters

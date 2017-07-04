@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core.config.model;
 
 import com.codahale.metrics.MetricFilter;
-import org.wso2.carbon.kernel.annotations.Element;
+import org.wso2.carbon.config.annotation.Element;
 import org.wso2.carbon.metrics.core.reporter.ReporterBuildException;
 
 import java.util.HashSet;
