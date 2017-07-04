@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public interface MetricService {
 
     /**
-     * Concatenates elements to form a dotted name
+     * Concatenates elements to form a dotted name.
      *
      * @param name  the first element of the name
      * @param names the remaining elements of the name
@@ -39,7 +39,7 @@ public interface MetricService {
     }
 
     /**
-     * Concatenates a class name and elements to form a dotted name
+     * Concatenates a class name and elements to form a dotted name.
      *
      * @param klass the first element of the name
      * @param names the remaining elements of the name
@@ -166,7 +166,7 @@ public interface MetricService {
     Histogram histogram(String name, Level level, Level... levels);
 
     /**
-     * Register a {@link Gauge} instance under given name
+     * Register a {@link Gauge} instance under given name.
      *
      * @param <T>   The type of the value used in the {@link Gauge}
      * @param name  The name of the metric
@@ -178,7 +178,7 @@ public interface MetricService {
     <T> void gauge(String name, Level level, Gauge<T> gauge);
 
     /**
-     * Register a {@link Gauge} instance under given name with a configurable cache timeout
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout.
      *
      * @param <T>         The type of the value used in the {@link Gauge}
      * @param name        The name of the metric
@@ -192,7 +192,7 @@ public interface MetricService {
     <T> void cachedGauge(String name, Level level, long timeout, TimeUnit timeoutUnit, Gauge<T> gauge);
 
     /**
-     * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds
+     * Register a {@link Gauge} instance under given name with a configurable cache timeout in seconds.
      *
      * @param <T>     The type of the value used in the {@link Gauge}
      * @param name    The name of the metric

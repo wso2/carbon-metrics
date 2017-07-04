@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.sample.service;
 
 /**
- * Simple service to get some random numbers
+ * Simple service to get some random numbers.
  */
 public interface RandomNumberService {
 

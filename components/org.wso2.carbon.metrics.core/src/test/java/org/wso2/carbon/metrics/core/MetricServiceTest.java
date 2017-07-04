@@ -19,7 +19,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test Cases for MetricService
+ * Test Cases for MetricService.
  */
 public class MetricServiceTest extends BaseMetricTest {
 

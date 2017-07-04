@@ -33,7 +33,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 /**
- * Base Class for all Reporter Based Test Cases
+ * Base Class for all Reporter Based Test Cases.
  */
 public abstract class BaseReporterTest {
 

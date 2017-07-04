@@ -16,7 +16,7 @@
 package org.wso2.carbon.metrics.core;
 
 /**
- * A metric to measure the the rate of events over time
+ * A metric to measure the the rate of events over time.
  */
 public interface Meter extends Metric, Metered {
 

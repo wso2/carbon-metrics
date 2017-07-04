@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A metric for measuring the duration of a particular piece of code
+ * A metric for measuring the duration of a particular piece of code.
  */
 public interface Timer extends Metric, Metered, Sampling {
 
@@ -44,7 +44,7 @@ public interface Timer extends Metric, Metered, Sampling {
     <T> T time(Callable<T> event) throws Exception;
 
     /**
-     * Returns a new {@link Context}
+     * Returns a new {@link Context}.
      *
      * @return a new {@link Context}
      * @see Context

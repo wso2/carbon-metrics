@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Test Cases for {@link Gauge}
+ * Test Cases for {@link Gauge}.
  */
 public class GaugeTest extends BaseMetricTest {
 

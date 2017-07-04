@@ -22,7 +22,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * Test Cases for MetricManagementService
+ * Test Cases for MetricManagementService.
  */
 public class MetricManagementServiceTest extends BaseMetricTest {
 

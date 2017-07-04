@@ -25,7 +25,7 @@ import org.testng.annotations.BeforeSuite;
 import java.util.Random;
 
 /**
- * Base Class for Metric Test Cases
+ * Base Class for Metric Test Cases.
  */
 public abstract class BaseMetricTest {
 

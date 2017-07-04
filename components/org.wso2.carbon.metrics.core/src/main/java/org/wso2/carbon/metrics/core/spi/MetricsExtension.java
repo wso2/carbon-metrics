@@ -15,12 +15,12 @@
  */
 package org.wso2.carbon.metrics.core.spi;
 
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 
 /**
- * API for extending Metrics
+ * API for extending Metrics.
  */
 public interface MetricsExtension {
 

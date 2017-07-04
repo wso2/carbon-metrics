@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Configuration for DAS reporter
+ * Configuration for DAS reporter.
  */
 public class ReportingConfig {
 

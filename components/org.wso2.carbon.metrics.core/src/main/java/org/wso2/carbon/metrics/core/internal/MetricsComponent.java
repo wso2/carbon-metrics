@@ -25,16 +25,19 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.kernel.CarbonRuntime;
-import org.wso2.carbon.kernel.configprovider.ConfigProvider;
 import org.wso2.carbon.metrics.core.MetricManagementService;
 import org.wso2.carbon.metrics.core.MetricService;
 import org.wso2.carbon.metrics.core.Metrics;
 import org.wso2.carbon.metrics.core.spi.MetricsExtension;
 import org.wso2.carbon.metrics.core.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Metrics OSGi Component
+ * Metrics OSGi Component.
  */
 @Component(
         name = "org.wso2.carbon.metrics.core.internal.MetricsComponent",
@@ -51,15 +54,19 @@ public class MetricsComponent {
 
     private ConfigProvider configProvider;
 
+    private List<MetricsExtension> metricsExtensionList = new ArrayList<>();
+
     @Activate
     protected void activate(BundleContext bundleContext) {
         if (logger.isDebugEnabled()) {
             logger.debug("Metrics Component activated");
         }
         Utils.setCarbonEnvironment(true);
-
         metrics = new Metrics(configProvider);
         metrics.activate();
+        for (MetricsExtension metricsExtension : metricsExtensionList) {
+            metricsExtension.activate(configProvider, metrics.getMetricService(), metrics.getMetricManagementService());
+        }
         metricServiceRegistration = bundleContext.registerService(MetricService.class, metrics.getMetricService(),
                 null);
         metricManagementServiceRegistration = bundleContext.registerService(MetricManagementService.class,
@@ -147,7 +154,11 @@ public class MetricsComponent {
         if (logger.isDebugEnabled()) {
             logger.debug("Activating Metrics Extension {}", metricsExtension.getClass().getName());
         }
-        metricsExtension.activate(configProvider, metrics.getMetricService(), metrics.getMetricManagementService());
+        if (configProvider == null || metrics == null) {
+            metricsExtensionList.add(metricsExtension);
+        } else {
+            metricsExtension.activate(configProvider, metrics.getMetricService(), metrics.getMetricManagementService());
+        }
     }
 
     /**

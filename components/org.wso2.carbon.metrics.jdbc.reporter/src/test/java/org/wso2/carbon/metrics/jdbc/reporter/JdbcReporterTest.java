@@ -46,7 +46,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link JdbcReporter}
+ * Tests for {@link JdbcReporter}.
  */
 public class JdbcReporterTest {
 

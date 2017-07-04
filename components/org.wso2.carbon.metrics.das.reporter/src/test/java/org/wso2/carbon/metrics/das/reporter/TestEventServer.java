@@ -48,6 +48,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * TestEventServer.
+ */
 public class TestEventServer {
 
     private static Logger logger = LoggerFactory.getLogger(TestEventServer.class);

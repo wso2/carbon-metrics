@@ -32,7 +32,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 /**
- * Test cases for {@link MetricsMXBean}
+ * Test cases for {@link MetricsMXBean}.
  */
 public class MetricsMXBeanTest extends BaseReporterTest {
 

@@ -42,7 +42,7 @@ import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Reporting the measurements for each metric to Data Analytics Server (DAS)
+ * Reporting the measurements for each metric to Data Analytics Server (DAS).
  */
 public class DasReporter extends ScheduledReporter {
 
@@ -120,7 +120,7 @@ public class DasReporter extends ScheduledReporter {
         }
 
         /**
-         * Builds a {@link DasReporter} with the given properties to report metrics to DAS
+         * Builds a {@link DasReporter} with the given properties to report metrics to DAS.
          *
          * @param source              A value to identify the source of each metrics
          * @param type                The type for the Data Publisher. e.g. "thrift"

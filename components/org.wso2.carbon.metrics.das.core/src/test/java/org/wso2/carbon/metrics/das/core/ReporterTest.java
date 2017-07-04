@@ -22,6 +22,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.metrics.core.Gauge;
 import org.wso2.carbon.metrics.core.Level;
@@ -38,7 +39,7 @@ import org.wso2.carbon.metrics.das.reporter.TestEventServer;
 import java.io.File;
 
 /**
- * Test Cases for DAS Reporter
+ * Test Cases for DAS Reporter.
  */
 public class ReporterTest {
 
@@ -60,7 +61,7 @@ public class ReporterTest {
 
     @Parameters("server-port")
     @BeforeClass
-    private void init(String serverPort) {
+    private void init(String serverPort) throws ConfigurationException {
         if (logger.isInfoEnabled()) {
             logger.info("Creating the DAS Test Receiver");
         }

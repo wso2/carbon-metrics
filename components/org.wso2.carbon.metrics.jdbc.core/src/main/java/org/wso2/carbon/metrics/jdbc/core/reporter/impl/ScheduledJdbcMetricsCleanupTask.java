@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 /**
- * This task will cleanup all metrics older than the specified number of days
+ * This task will cleanup all metrics older than the specified number of days.
  */
 public class ScheduledJdbcMetricsCleanupTask extends ScheduledTask {
 

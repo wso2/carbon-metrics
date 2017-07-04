@@ -21,6 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.wso2.carbon.config.ConfigurationException;
 
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
@@ -30,7 +31,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 /**
- * Test Cases for Reporter Filters
+ * Test Cases for Reporter Filters.
  */
 public class ReporterFilterTest {
 
@@ -43,7 +44,7 @@ public class ReporterFilterTest {
     private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
     @BeforeClass
-    protected void init() {
+    protected void init() throws ConfigurationException {
         // Initialize the Metrics
         metrics = new Metrics(TestUtils.getConfigProvider("metrics-filter.yaml"));
         metrics.activate();
