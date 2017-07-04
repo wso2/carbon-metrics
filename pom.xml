@@ -794,13 +794,13 @@
         <!-- NOTE: Update package export version when updating the project version -->
         <carbon.metrics.package.export.version>2.1.1</carbon.metrics.package.export.version>
         <testng.version>6.11</testng.version>
-        <metrics.version>3.2.2</metrics.version>
+        <metrics.version>3.2.3</metrics.version>
         <metrics.version.range>[3.2.0, 4.0.0)</metrics.version.range>
         <hdrhistogram.version>2.1.9</hdrhistogram.version>
-        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>2.20</maven.surefire.plugin.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
-        <maven.dependency.plugin.version>3.0.0</maven.dependency.plugin.version>
+        <maven.dependency.plugin.version>3.0.1</maven.dependency.plugin.version>
         <maven.resources.plugin.version>3.0.2</maven.resources.plugin.version>
         <maven.assembly.plugin.version>3.0.0</maven.assembly.plugin.version>
         <apache.rat.plugin.version>0.12</apache.rat.plugin.version>
@@ -820,11 +820,11 @@
         <hikaricp.version>2.6.3</hikaricp.version>
         <h2.version>1.4.196</h2.version>
         <spring.version>4.3.9.RELEASE</spring.version>
-        <mockito.version>2.8.9</mockito.version>
-        <tomcat.version>8.5.15</tomcat.version>
+        <mockito.version>2.8.47</mockito.version>
+        <tomcat.version>8.5.16</tomcat.version>
         <jacoco.version>0.7.9</jacoco.version>
         <carbon.feature.plugin.version>3.1.0</carbon.feature.plugin.version>
-        <pax.logging.version>1.10.0</pax.logging.version>
+        <pax.logging.version>1.10.1</pax.logging.version>
         <pax.exam.version>4.11.0</pax.exam.version>
         <pax.url.version>2.5.2</pax.url.version>
         <ow2.jta.spec.version>1.0.13</ow2.jta.spec.version>
@@ -840,18 +840,18 @@
         <carbon.securevault.version>5.0.4</carbon.securevault.version>
         <carbon.utils.version>1.2.1</carbon.utils.version>
         <osgi.core.api.version>6.0.0</osgi.core.api.version>
-        <equinox.app.version>1.3.200.v20130910-1609</equinox.app.version>
-        <equinox.common.version>3.6.200.v20130402-1505</equinox.common.version>
+        <equinox.app.version>1.3.300.v20150423-1356</equinox.app.version>
+        <equinox.common.version>3.8.0.v20160509-1230</equinox.common.version>
         <equinox.concurrent.version>1.1.0.v20130327-1442</equinox.concurrent.version>
-        <equinox.console.version>1.1.0.v20140131-1639</equinox.console.version>
-        <equinox.ds.version>1.4.200.v20131126-2331</equinox.ds.version>
-        <equinox.frameworkadmin.version>2.0.100.v20131209-2144</equinox.frameworkadmin.version>
-        <equinox.frameworkadmin.equinox.version>1.0.500.v20131211-1531</equinox.frameworkadmin.equinox.version>
-        <equinox.launcher.version>1.3.0.v20140415-2008</equinox.launcher.version>
-        <equinox.preferences.version>3.5.200.v20140224-1527</equinox.preferences.version>
-        <equinox.registry.version>3.5.400.v20140428-1507</equinox.registry.version>
-        <equinox.simpleconfigurator.manipulator.version>2.0.0.v20131217-1203</equinox.simpleconfigurator.manipulator.version>
+        <equinox.console.version>1.1.200.v20150929-1405</equinox.console.version>
+        <equinox.ds.version>1.4.400.v20160226-2036</equinox.ds.version>
+        <equinox.frameworkadmin.version>2.0.300.v20160504-1450</equinox.frameworkadmin.version>
+        <equinox.frameworkadmin.equinox.version>1.0.700.v20160102-2223</equinox.frameworkadmin.equinox.version>
+        <equinox.launcher.version>1.3.200.v20160318-1642</equinox.launcher.version>
+        <equinox.preferences.version>3.6.0.v20160120-1756</equinox.preferences.version>
+        <equinox.registry.version>3.6.0.v20150318-1503</equinox.registry.version>
+        <equinox.simpleconfigurator.manipulator.version>2.0.200.v20160504-1450</equinox.simpleconfigurator.manipulator.version>
         <equinox.util.version>1.0.500.v20130404-1337</equinox.util.version>
-        <org.eclipse.equinox.cm.version>1.1.0.v20131021-1936</org.eclipse.equinox.cm.version>
+        <org.eclipse.equinox.cm.version>1.1.200.v20160324-1850</org.eclipse.equinox.cm.version>
     </properties>
 </project>
