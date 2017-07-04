@@ -66,6 +66,14 @@
             <groupId>commons-pool.wso2</groupId>
             <artifactId>commons-pool</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.json.wso2</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -207,6 +215,14 @@
                                 <bundle>
                                     <symbolicName>commons-pool</symbolicName>
                                     <version>${commons.pool.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>json</symbolicName>
+                                    <version>${org.wso2.json.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>com.google.gson</symbolicName>
+                                    <version>${gson.version}</version>
                                 </bundle>
                             </bundles>
                             <importFeatures>

@@ -36,7 +36,7 @@ public class DasConfig {
     private String password = "admin";
 
     @Element(description = "The path for Data Bridge Agent configuration")
-    private String dataAgentConfigPath = "${carbon.home}/conf/data-bridge/data-agent-config.xml";
+    private String dataAgentConfigPath = "${carbon.home}/conf/data-bridge/data.agent.config.yaml";
 
     public String getType() {
         return type;
