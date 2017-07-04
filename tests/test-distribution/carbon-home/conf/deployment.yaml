@@ -174,7 +174,7 @@ wso2.metrics.das:
       password: admin
 
       # The path for Data Bridge Agent configuration
-      dataAgentConfigPath: ${carbon.home}/conf/default/data-bridge/data-agent-config.xml
+      dataAgentConfigPath: ${carbon.home}/conf/default/data-bridge/data.agent.config.yaml
 
   # The Data Analytics Server (DAS) Reporter is in Metrics DAS Core feature
   reporting:

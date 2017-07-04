@@ -32,7 +32,7 @@ public class MetricsConfigTest {
 
     @BeforeClass
     private void load() throws ConfigurationException {
-        System.setProperty("metrics.dataagent.conf", "data-agent-config.xml");
+        System.setProperty("metrics.dataagent.conf", "data.agent.config.yaml");
         metricsConfig = TestUtils.getConfigProvider("metrics.yaml").getConfigurationObject(MetricsConfig.class);
     }
 
@@ -53,7 +53,7 @@ public class MetricsConfigTest {
         Assert.assertEquals(config.getType(), "thrift");
         Assert.assertEquals(config.getUsername(), "admin");
         Assert.assertEquals(config.getPassword(), "admin");
-        Assert.assertEquals(config.getDataAgentConfigPath(), "data-agent-config.xml");
+        Assert.assertEquals(config.getDataAgentConfigPath(), "data.agent.config.yaml");
 
         DasReporterConfig dasReporterConfig = metricsConfig.getReporting().getDas().iterator().next();
         Assert.assertEquals(dasReporterConfig.getDas(), config);
