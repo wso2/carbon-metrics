@@ -24,14 +24,14 @@ import org.wso2.carbon.databridge.commons.exception.MalformedStreamDefinitionExc
 import org.wso2.carbon.databridge.commons.utils.EventDefinitionConverterUtils;
 import org.wso2.carbon.databridge.core.AgentCallback;
 import org.wso2.carbon.databridge.core.DataBridge;
-import org.wso2.carbon.databridge.core.Utils.AgentSession;
 import org.wso2.carbon.databridge.core.definitionstore.AbstractStreamDefinitionStore;
 import org.wso2.carbon.databridge.core.definitionstore.InMemoryStreamDefinitionStore;
 import org.wso2.carbon.databridge.core.exception.DataBridgeException;
 import org.wso2.carbon.databridge.core.exception.StreamDefinitionStoreException;
 import org.wso2.carbon.databridge.core.internal.authentication.AuthenticationHandler;
+import org.wso2.carbon.databridge.core.utils.AgentSession;
 import org.wso2.carbon.databridge.receiver.thrift.ThriftDataReceiver;
-import org.wso2.carbon.user.api.UserStoreException;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -66,22 +66,12 @@ public class TestEventServer {
     public void start(String host, int receiverPort) {
         setKeyStore();
         setTrustStore();
-        String dataBridgePath = resourcesDir + File.separator + "data-bridge-config.xml";
+        String dataBridgePath = resourcesDir + File.separator + "databridge.config.yaml";
         AbstractStreamDefinitionStore streamDefinitionStore = new InMemoryStreamDefinitionStore();
         DataBridge databridge = new DataBridge(new AuthenticationHandler() {
             @Override
             public boolean authenticate(String userName, String password) {
                 return true;
-            }
-
-            @Override
-            public String getTenantDomain(String userName) {
-                return "admin";
-            }
-
-            @Override
-            public int getTenantId(String s) throws UserStoreException {
-                return -1234;
             }
 
             @Override
@@ -111,7 +101,7 @@ public class TestEventServer {
             }
         }).forEach(stream -> {
             try {
-                streamDefinitionStore.saveStreamDefinitionToStore(stream, -1234);
+                streamDefinitionStore.saveStreamDefinitionToStore(stream);
                 logger.info("Stream Definition: {} is added to store", stream.getStreamId());
             } catch (StreamDefinitionStoreException e) {
                 throw new RuntimeException(e);
@@ -119,24 +109,24 @@ public class TestEventServer {
         });
 
         databridge.subscribe(new AgentCallback() {
-
-            public void definedStream(StreamDefinition streamDefinition, int tenantID) {
+            @Override
+            public void definedStream(StreamDefinition streamDefinition) {
                 logger.info("Stream Definition: {}", streamDefinition);
             }
 
             @Override
-            public void removeStream(StreamDefinition streamDefinition, int tenantID) {
+            public void removeStream(StreamDefinition streamDefinition) {
+
             }
 
             @Override
-            public void receive(List<Event> eventList, Credentials credentials) {
-                logger.info("Received event count: {}, Username: {}, Events: {}", eventList.size(),
-                        credentials.getUsername(), eventList);
+            public void receive(List<Event> list, Credentials credentials) {
+                logger.info("Received event count: {}, Username: {}, Events: {}", list.size(),
+                        credentials.getUsername(), list);
                 synchronized (events) {
-                    events.addAll(eventList);
+                    events.addAll(list);
                 }
             }
-
 
         });
 

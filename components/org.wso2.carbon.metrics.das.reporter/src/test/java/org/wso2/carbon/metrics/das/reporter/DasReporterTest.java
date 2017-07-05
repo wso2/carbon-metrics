@@ -75,7 +75,7 @@ public class DasReporterTest {
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .withClock(clock)
                 .build(SOURCE, "thrift", "tcp://localhost:" + serverPort, null, "admin", "admin", RESOURCES_DIR +
-                        File.separator + "data-agent-config.xml");
+                        File.separator + "data.agent.config.yaml");
     }
 
     @AfterMethod

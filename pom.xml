@@ -585,6 +585,16 @@
                 <artifactId>commons-pool</artifactId>
                 <version>${commons.pool.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.json.wso2</groupId>
+                <artifactId>json</artifactId>
+                <version>${org.wso2.json.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
             <!-- Metrics DAS Core Feature Dependencies - End -->
             <!-- Metrics Test Distribution Dependencies - Start -->
             <dependency>
@@ -808,8 +818,8 @@
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
         <carbon.kernel.version>5.2.0-m4</carbon.kernel.version>
         <carbon.kernel.version.range>[5.2.0, 6.0.0)</carbon.kernel.version.range>
-        <carbon.analytics.common.version>5.1.19</carbon.analytics.common.version>
-        <carbon.analytics.common.version.range>[5.1.0, 6.0.0)</carbon.analytics.common.version.range>
+        <carbon.analytics.common.version>6.0.0</carbon.analytics.common.version>
+        <carbon.analytics.common.version.range>[6.0.0, 7.0.0)</carbon.analytics.common.version.range>
         <carbon.config.version>2.0.0</carbon.config.version>
         <carbon.config.version.range>[2.0.0, 3.0.0)</carbon.config.version.range>
         <xerces.impl.version>2.11.0.SP5</xerces.impl.version>
@@ -853,5 +863,7 @@
         <equinox.simpleconfigurator.manipulator.version>2.0.200.v20160504-1450</equinox.simpleconfigurator.manipulator.version>
         <equinox.util.version>1.0.500.v20130404-1337</equinox.util.version>
         <org.eclipse.equinox.cm.version>1.1.200.v20160324-1850</org.eclipse.equinox.cm.version>
+        <org.wso2.json.version>3.0.0.wso2v1</org.wso2.json.version>
+        <gson.version>2.5</gson.version>
     </properties>
 </project>
