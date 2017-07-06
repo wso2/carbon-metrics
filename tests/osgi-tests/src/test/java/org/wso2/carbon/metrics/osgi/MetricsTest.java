@@ -106,71 +106,71 @@ public class MetricsTest {
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsCoreBundle" })
+    @Test
     public void testMetricsJdbcReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.jdbc.reporter");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsJdbcReporterBundle" })
+    @Test
     public void testMetricsJdbcCoreBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.jdbc.core");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsJdbcCoreBundle" })
+    @Test
     public void testMetricsDasReporterBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.reporter");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsDasReporterBundle" })
+    @Test
     public void testMetricsDasCoreBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.das.core");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsDasCoreBundle" })
+    @Test
     public void testMetricsSampleServiceBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.sample.service");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsSampleServiceBundle" })
+    @Test
     public void testMetricsSampleConsumerBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.sample.consumer");
         Assert.assertEquals(coreBundle.getState(), Bundle.ACTIVE);
     }
 
-    @Test(dependsOnMethods = { "testMetricsSampleConsumerBundle" })
+    @Test
     public void testCounter() {
         Counter counter = metricService.counter("org.wso2.carbon.metrics.osgi.test.counter", Level.INFO);
         counter.inc();
         Assert.assertEquals(counter.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = { "testCounter" })
+    @Test
     public void testMeter() {
         Meter meter = metricService.meter("org.wso2.carbon.metrics.osgi.test.meter", Level.INFO);
         meter.mark();
         Assert.assertEquals(meter.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = { "testMeter" })
+    @Test
     public void testHistogram() {
         Histogram histogram = metricService.histogram("org.wso2.carbon.metrics.osgi.test.histogram", Level.INFO);
         histogram.update(1);
         Assert.assertEquals(histogram.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = { "testHistogram" })
+    @Test
     public void testTimer() {
         Timer timer = metricService.timer("org.wso2.carbon.metrics.osgi.test.timer", Level.INFO);
         timer.update(1, TimeUnit.SECONDS);
         Assert.assertEquals(timer.getCount(), 1);
     }
 
-    @Test(dependsOnMethods = { "testTimer" })
+    @Test
     public void testMBean() {
         MetricsMXBean metricsMXBean = null;
         try {
@@ -190,7 +190,7 @@ public class MetricsTest {
         Assert.assertEquals(metricsMXBean.getDefaultSource(), "carbon-metrics");
     }
 
-    @Test(dependsOnMethods = "testMBean")
+    @Test
     public void testEnableDisable() {
         // This method depends on the "testMBean" as the reporters will start if we disable and enable the Metrics
         Assert.assertTrue(metricManagementService.isEnabled(), "Metric Service should be enabled");
@@ -209,7 +209,7 @@ public class MetricsTest {
         Assert.assertEquals(counter.getCount(), 100);
     }
 
-    @Test(dependsOnMethods = { "testEnableDisable" })
+    @Test
     public void testMetricSetLevel() {
         String name = MetricService.name(this.getClass(), "test-metric-level");
         Counter counter = metricService.counter(name, Level.INFO);
@@ -230,7 +230,7 @@ public class MetricsTest {
         Assert.assertEquals(counter.getCount(), 20);
     }
 
-    @Test(dependsOnMethods = { "testMetricSetLevel" })
+    @Test
     public void testMetricServiceLevels() {
         Counter counter = metricService.counter(MetricService.name(this.getClass(), "test-levels"), Level.INFO);
         counter.inc(10);
@@ -253,7 +253,7 @@ public class MetricsTest {
         Assert.assertEquals(counter.getCount(), 30);
     }
 
-    @Test(dependsOnMethods = { "testMetricServiceLevels" })
+    @Test
     public void testSampleService() {
         Assert.assertTrue(randomNumberService.getRandomNumbers().length > 0);
     }
