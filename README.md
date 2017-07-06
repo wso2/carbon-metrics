@@ -113,6 +113,6 @@ See the sample [RandomNumberServiceImpl](samples/org.wso2.carbon.metrics.sample.
 
 ## License
 
-Copyright (C) 2014-2017 WSO2 Inc.
+Copyright 2014 WSO2 Inc.
 
 Licensed under the Apache License, Version 2.0
