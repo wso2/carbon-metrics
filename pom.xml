@@ -14,7 +14,8 @@
     # See the License for the specific language governing permissions and
     # limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
@@ -860,7 +861,8 @@
         <equinox.launcher.version>1.3.200.v20160318-1642</equinox.launcher.version>
         <equinox.preferences.version>3.6.0.v20160120-1756</equinox.preferences.version>
         <equinox.registry.version>3.6.0.v20150318-1503</equinox.registry.version>
-        <equinox.simpleconfigurator.manipulator.version>2.0.200.v20160504-1450</equinox.simpleconfigurator.manipulator.version>
+        <equinox.simpleconfigurator.manipulator.version>2.0.200.v20160504-1450
+        </equinox.simpleconfigurator.manipulator.version>
         <equinox.util.version>1.0.500.v20130404-1337</equinox.util.version>
         <org.eclipse.equinox.cm.version>1.1.200.v20160324-1850</org.eclipse.equinox.cm.version>
         <org.wso2.json.version>3.0.0.wso2v1</org.wso2.json.version>

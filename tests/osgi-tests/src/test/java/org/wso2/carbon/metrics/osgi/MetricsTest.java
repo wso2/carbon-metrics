@@ -39,7 +39,6 @@ import org.wso2.carbon.metrics.core.Timer;
 import org.wso2.carbon.metrics.core.jmx.MetricsMXBean;
 import org.wso2.carbon.metrics.sample.service.RandomNumberService;
 
-
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
@@ -100,6 +99,7 @@ public class MetricsTest {
                         .versionAsInProject())
         };
     }
+
     @Test
     public void testMetricsCoreBundle() {
         Bundle coreBundle = getBundle("org.wso2.carbon.metrics.core");

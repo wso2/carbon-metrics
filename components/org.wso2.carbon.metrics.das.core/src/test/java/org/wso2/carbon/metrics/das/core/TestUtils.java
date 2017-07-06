@@ -25,7 +25,6 @@ import org.wso2.carbon.config.reader.YAMLBasedConfigFileReader;
 import org.wso2.carbon.secvault.SecureVault;
 import org.wso2.carbon.secvault.exception.SecureVaultException;
 
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -56,7 +55,7 @@ public class TestUtils {
         Path carbonHome = Paths.get("");
         carbonHome = Paths.get(carbonHome.toString(), "src", "test");
         System.setProperty("carbon.home", carbonHome.toString());
-        String filePath = carbonHome.toAbsolutePath() + File.separator + "resources" +  File.separator + "conf" + File
+        String filePath = carbonHome.toAbsolutePath() + File.separator + "resources" + File.separator + "conf" + File
                 .separator + file;
         Path configurationFilePath = Paths.get(URI.create("file:" + filePath));
         ConfigFileReader configFileReader = new YAMLBasedConfigFileReader(configurationFilePath);

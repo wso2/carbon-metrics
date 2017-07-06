@@ -32,7 +32,6 @@ import org.wso2.carbon.databridge.core.internal.authentication.AuthenticationHan
 import org.wso2.carbon.databridge.core.utils.AgentSession;
 import org.wso2.carbon.databridge.receiver.thrift.ThriftDataReceiver;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
