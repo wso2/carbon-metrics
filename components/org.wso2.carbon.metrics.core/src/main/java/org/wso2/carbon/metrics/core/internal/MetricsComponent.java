@@ -36,9 +36,7 @@ import org.wso2.carbon.metrics.core.utils.Utils;
 /**
  * Metrics OSGi Component.
  */
-@Component(
-        name = "org.wso2.carbon.metrics.core.internal.MetricsComponent",
-        immediate = true)
+@Component(name = "org.wso2.carbon.metrics.core.internal.MetricsComponent")
 public class MetricsComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsComponent.class);
