@@ -13,11 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ################################################################################
-
+metaRequirements.0.namespace = org.eclipse.equinox.p2.iu
+metaRequirements.0.name = org.wso2.carbon.extensions.touchpoint
 instructions.configure = \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../conf); \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../dbscripts); \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../dbscripts/metrics); \
-org.eclipse.equinox.p2.touchpoint.natives.mkdir(path:${installFolder}/../../database); \
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.metrics.jdbc.core_${feature.version}/sql/,target:${installFolder}/../../dbscripts/metrics,overwrite:true);\
-org.eclipse.equinox.p2.touchpoint.natives.copy(source:${installFolder}/../lib/features/org.wso2.carbon.metrics.jdbc.core_${feature.version}/database/metrics.mv.db/,target:${installFolder}/../../database/metrics.mv.db,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.metrics.jdbc.core_${feature.version}/sql/,target:${installFolder}/../{runtime}/dbscripts/metrics,overwrite:true);\
+org.wso2.carbon.extensions.touchpoint.copy(source:${installFolder}/../lib/features/org.wso2.carbon.metrics.jdbc.core_${feature.version}/database/metrics.mv.db/,target:${installFolder}/../{runtime}/database/metrics.mv.db,overwrite:true);\

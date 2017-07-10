@@ -39,8 +39,7 @@ import java.util.Set;
  */
 @Component(
         name = "org.wso2.carbon.metrics.jdbc.core.JdbcMetricsExtension",
-        service = MetricsExtension.class,
-        immediate = true
+        service = MetricsExtension.class
 )
 public class JdbcMetricsExtension implements MetricsExtension {
 
@@ -104,6 +103,35 @@ public class JdbcMetricsExtension implements MetricsExtension {
         if (logger.isDebugEnabled()) {
             logger.debug("The JNDI datasource is unregistered");
         }
+    }
+
+    /**
+     * This bind method will be called when {@link MetricService} is registered.
+     *
+     * @param metricService The {@link MetricService} instance registered as an OSGi service
+     */
+    @Reference(
+            name = "carbon.metrics.service",
+            service = MetricService.class,
+            cardinality = ReferenceCardinality.MANDATORY,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unsetMetricService"
+    )
+    protected void setMetricService(MetricService metricService) {
+        // This extension should be activated only after getting MetricService.
+        // Metrics Component will activate this extension.
+        if (logger.isDebugEnabled()) {
+            logger.debug("Metric Service is available as an OSGi service.");
+        }
+    }
+
+    /**
+     * This is the unbind method which gets called at the un-registration of {@link MetricService}
+     *
+     * @param metricService The {@link MetricService} instance registered as an OSGi service
+     */
+    protected void unsetMetricService(MetricService metricService) {
+        // Ignore
     }
 
 }
