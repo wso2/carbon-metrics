@@ -114,6 +114,16 @@
             <artifactId>org.wso2.carbon.secvault</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-log4j2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
