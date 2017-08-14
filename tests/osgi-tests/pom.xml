@@ -152,14 +152,14 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.utils</groupId>
-            <artifactId>carbon-utils</artifactId>
+            <artifactId>org.wso2.carbon.utils</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.secvault</groupId>
             <artifactId>org.wso2.carbon.secvault</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.touchpoint</groupId>
             <artifactId>org.wso2.carbon.extensions.touchpoint</artifactId>
         </dependency>
         <dependency>
