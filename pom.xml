@@ -412,18 +412,6 @@
                 <type>zip</type>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.logging</groupId>
-                <artifactId>pax-logging-api</artifactId>
-                <version>${pax.logging.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.logging</groupId>
-                <artifactId>pax-logging-log4j2</artifactId>
-                <version>${pax.logging.version}</version>
-                <scope>test</scope>
-            </dependency>
             <!-- OSGi Test Dependencies - Start -->
             <dependency>
                 <groupId>org.wso2.carbon.metrics</groupId>
