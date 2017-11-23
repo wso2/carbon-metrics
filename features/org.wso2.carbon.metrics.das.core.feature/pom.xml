@@ -39,18 +39,6 @@
             <artifactId>org.wso2.carbon.metrics.das.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.databridge.agent</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.databridge.commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.analytics-common</groupId>
-            <artifactId>org.wso2.carbon.databridge.commons.thrift</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.orbit.com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
@@ -189,18 +177,6 @@
                                     <version>${carbon.metrics.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>org.wso2.carbon.databridge.agent</symbolicName>
-                                    <version>${carbon.analytics.common.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>org.wso2.carbon.databridge.commons</symbolicName>
-                                    <version>${carbon.analytics.common.version}</version>
-                                </bundle>
-                                <bundle>
-                                    <symbolicName>org.wso2.carbon.databridge.commons.thrift</symbolicName>
-                                    <version>${carbon.analytics.common.version}</version>
-                                </bundle>
-                                <bundle>
                                     <symbolicName>disruptor</symbolicName>
                                     <version>${disruptor.orbit.version}</version>
                                 </bundle>
@@ -229,6 +205,18 @@
                                 <feature>
                                     <id>org.wso2.carbon.metrics.core.feature</id>
                                     <version>${carbon.metrics.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.databridge.agent.feature</id>
+                                    <version>${carbon.analytics.common.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.databridge.commons.thrift.feature</id>
+                                    <version>${carbon.analytics.common.version}</version>
+                                </feature>
+                                <feature>
+                                    <id>org.wso2.carbon.databridge.commons.feature</id>
+                                    <version>${carbon.analytics.common.version}</version>
                                 </feature>
                             </importFeatures>
                         </configuration>
