@@ -88,6 +88,13 @@ public interface MetricService {
     Meter getMeter(String name) throws MetricNotFoundException;
 
     /**
+     * Remove an existing {@link Metric} instance or {@link Metric}s bundle registered under a given name.
+     *
+     * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
+     */
+    void removeMetric(String name);
+
+    /**
      * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
      * {@link #getMeter(String)}, this will create the metrics denoted by the annotated name if they do not exists.
      * Moreover, performing actions (i.e {@link Meter#mark()}) in the returned bundle will result in updating
