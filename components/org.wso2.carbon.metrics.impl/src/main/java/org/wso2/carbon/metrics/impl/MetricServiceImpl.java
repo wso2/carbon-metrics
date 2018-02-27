@@ -663,10 +663,10 @@ public class MetricServiceImpl implements MetricService {
     }
 
     @Override
-    public void removeMetric(String name) {
+    public boolean removeMetric(String name) {
         metricsMap.remove(name);
         metricsCollections.remove(name);
-        metricRegistry.remove(name);
+        return metricRegistry.remove(name);
     }
 
     /*

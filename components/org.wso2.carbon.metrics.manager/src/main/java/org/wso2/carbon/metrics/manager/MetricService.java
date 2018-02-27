@@ -92,7 +92,7 @@ public interface MetricService {
      *
      * @param name The name of the metric (This name can be annotated i.e org.wso2.cep[+].executionPlan.statName)
      */
-    void removeMetric(String name);
+    boolean removeMetric(String name);
 
     /**
      * Get or create a {@link Meter}s bundle registered under a given annotated name and {@link Level}s. Unlike
