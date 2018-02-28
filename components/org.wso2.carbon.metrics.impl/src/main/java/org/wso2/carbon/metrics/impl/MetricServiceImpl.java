@@ -664,9 +664,8 @@ public class MetricServiceImpl implements MetricService {
 
     @Override
     public boolean removeMetric(String name) {
-        metricsMap.remove(name);
-        metricsCollections.remove(name);
-        return metricRegistry.remove(name);
+        return metricRegistry.remove(name) && (metricsMap.remove(name) != null
+                || metricsCollections.remove(name) != null);
     }
 
     /*

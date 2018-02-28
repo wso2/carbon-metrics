@@ -134,15 +134,16 @@ public class MetricApiTest extends TestCase {
             assertTrue("Error occurred while deleting the metric from the registry",
                     metricService.removeMetric("org.wso2.main.throughput"));
         } catch (Exception e) {
-            Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+            fail("Metric should be removed");
         }
     }
 
     public void testDeleteMetricsWithAnnotatedName() {
         try {
             MetricManager.meter("org.wso2.main[+].sub.throughput", Level.INFO);
-            assertTrue("Error occurred while deleting annotated metric from the registry",
-                    metricService.removeMetric("org.wso2.main[+].sub.throughput"));
+            metricService.removeMetric("org.wso2.main.throughput");
+            fail("Should throw an exception, cannot delete metric when there's no sufficient Levels"
+                    + " to suite annotated name");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
         }
@@ -154,7 +155,7 @@ public class MetricApiTest extends TestCase {
             assertFalse("Error occurred while deleting annotated metric from the registry",
                     metricService.removeMetric("org.wso2.main[+].sub.throughput"));
         } catch (Exception e) {
-            Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+            fail("Should return false if cannot retrieve undefined metric");
         }
     }
 }
