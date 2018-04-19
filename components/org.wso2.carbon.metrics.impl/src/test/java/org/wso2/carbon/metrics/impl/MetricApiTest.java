@@ -15,6 +15,7 @@
  */
 package org.wso2.carbon.metrics.impl;
 
+import junit.framework.TestCase;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.wso2.carbon.metrics.common.MetricsConfiguration;
@@ -24,8 +25,6 @@ import org.wso2.carbon.metrics.manager.MetricManager;
 import org.wso2.carbon.metrics.manager.MetricService;
 import org.wso2.carbon.metrics.manager.ServiceReferenceHolder;
 import org.wso2.carbon.metrics.manager.exception.MetricNotFoundException;
-
-import junit.framework.TestCase;
 
 /**
  * Test Cases for Metric Manager API
@@ -126,6 +125,38 @@ public class MetricApiTest extends TestCase {
             fail("Should throw an exception, cannot retrieve metric when the metric level is different");
         } catch (Exception e) {
             Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+        }
+    }
+
+    public void testDeleteMetrics() {
+        try {
+            MetricManager.meter("org.wso2.main.throughput", Level.INFO);
+            assertTrue("Error occurred while deleting the metric from the registry",
+                    metricService.removeMetric("org.wso2.main.throughput"));
+        } catch (Exception e) {
+            fail("Metric should be removed");
+        }
+    }
+
+    public void testDeleteMetricsWithAnnotatedName() {
+        try {
+            MetricManager.meter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
+            assertTrue("Error occurred while deleting the metric from the registry",
+                    metricService.removeMetric("org.wso2.main.sub.throughput"));
+            assertTrue("Error occurred while deleting the metric from the registry",
+                    metricService.removeMetric("org.wso2.main.throughput"));
+        } catch (Exception e) {
+            fail("Metric should be removed");
+        }
+    }
+
+    public void testDeleteMetricsWithUndefinedName() {
+        try {
+            MetricManager.meter("org.wso2.main.sub.throughput", Level.INFO);
+            assertFalse("Error occurred while deleting annotated metric from the registry",
+                    metricService.removeMetric("org.wso2.main[+].sub.throughput"));
+        } catch (Exception e) {
+            fail("Should return false if cannot retrieve undefined metric");
         }
     }
 }

@@ -418,4 +418,14 @@ public final class MetricManager {
             }
         }
     }
+
+    /**
+     * Remove an existing {@link Metric} instance or {@link Metric}s bundle registered under a given name.
+     *
+     * @param name The name of the metric
+     * @return status of removing of metric
+     */
+    public static boolean removeMetric(String name) {
+        return ServiceReferenceHolder.getInstance().getMetricService().removeMetric(name);
+    }
 }
