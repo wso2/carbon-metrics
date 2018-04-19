@@ -140,12 +140,11 @@ public class MetricApiTest extends TestCase {
 
     public void testDeleteMetricsWithAnnotatedName() {
         try {
-            MetricManager.meter("org.wso2.main[+].sub.throughput", Level.INFO);
-            metricService.removeMetric("org.wso2.main.throughput");
-            fail("Should throw an exception, cannot delete metric when there's no sufficient Levels"
-                    + " to suite annotated name");
+            MetricManager.meter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
+            assertTrue("Error occurred while deleting the metric from the registry",
+                    metricService.removeMetric("org.wso2.main.sub.throughput"));
         } catch (Exception e) {
-            Assert.assertThat(e, IsInstanceOf.instanceOf(IllegalArgumentException.class));
+            fail("Metric should be removed");
         }
     }
 
