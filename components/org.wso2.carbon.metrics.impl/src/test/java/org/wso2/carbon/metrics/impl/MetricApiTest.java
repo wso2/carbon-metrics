@@ -143,6 +143,8 @@ public class MetricApiTest extends TestCase {
             MetricManager.meter("org.wso2.main[+].sub.throughput", Level.INFO, Level.INFO);
             assertTrue("Error occurred while deleting the metric from the registry",
                     metricService.removeMetric("org.wso2.main.sub.throughput"));
+            assertTrue("Error occurred while deleting the metric from the registry",
+                    metricService.removeMetric("org.wso2.main.throughput"));
         } catch (Exception e) {
             fail("Metric should be removed");
         }
