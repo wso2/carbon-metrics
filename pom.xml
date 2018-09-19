@@ -112,12 +112,12 @@
                 <version>${carbon.metrics.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.osgi</groupId>
+                <groupId>org.wso2.eclipse.osgi</groupId>
                 <artifactId>org.eclipse.osgi</artifactId>
                 <version>${eclipse.osgi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.osgi</groupId>
+                <groupId>org.wso2.eclipse.osgi</groupId>
                 <artifactId>org.eclipse.osgi.services</artifactId>
                 <version>${equinox.osgi.services.version}</version>
             </dependency>
@@ -462,15 +462,15 @@
         <junit.version>4.12</junit.version>
         <metrics.version>3.2.5</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
-        <eclipse.osgi.version>3.9.1.v20140110-1610</eclipse.osgi.version>
-        <equinox.osgi.services.version>3.3.100.v20130513-1956</equinox.osgi.services.version>
-        <carbon.kernel.version>4.4.38</carbon.kernel.version>
+        <eclipse.osgi.version>3.11.0.v20160603-1336</eclipse.osgi.version>
+        <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
+        <carbon.kernel.version>4.4.37-SNAPSHOT</carbon.kernel.version> <!-- carbon-kernel branch: 4.4.x_java10 -->
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
         <carbon.analytics.common.version>5.0.11</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
-        <carbon.p2.plugin.version>1.5.6</carbon.p2.plugin.version>
+        <carbon.p2.plugin.version>1.6.1-SNAPSHOT</carbon.p2.plugin.version> <!-- maven-tools branch: master_java10 -->
         <securevault.version>1.0.0-wso2v2</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>
         <axiom.version>1.2.19</axiom.version>
