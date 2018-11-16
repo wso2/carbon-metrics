@@ -55,7 +55,9 @@ public abstract class AbstractReporter implements Reporter {
         if (!running) {
             startReporter();
             running = true;
-            logger.debug("Started '{}' reporter for Metrics", name);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Started '{}' reporter for Metrics", name);
+            }
         }
     }
 
@@ -66,7 +68,9 @@ public abstract class AbstractReporter implements Reporter {
         if (running) {
             stopReporter();
             running = false;
-            logger.debug("Stopped '{}' reporter for Metrics", name);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Stopped '{}' reporter for Metrics", name);
+            }
         }
     }
 
