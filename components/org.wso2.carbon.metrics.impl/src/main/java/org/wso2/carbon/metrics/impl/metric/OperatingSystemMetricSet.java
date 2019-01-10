@@ -17,8 +17,6 @@ package org.wso2.carbon.metrics.impl.metric;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricSet;
+import com.sun.management.UnixOperatingSystemMXBean;
 
 /**
  * A set of gauges for Operating System usage, including stats on load average, cpu load, file descriptors etc
@@ -64,129 +63,132 @@ public class OperatingSystemMetricSet implements MetricSet {
                 logger.debug("System Load Average is not available as an Operating System Metric");
             }
         }
+        
+        Gauge<Long> openFileDescriptorCountGauge;
+        Gauge<Long> maxFileDescriptorCountGauge;
+        // openFileDescriptorCountGauge and maxFileDescriptorCountGauge are only supported in UNIX OS
+        try {
+            openFileDescriptorCountGauge = new Gauge<Long>() {
+                @Override
+                public Long getValue() {
+                    return ((UnixOperatingSystemMXBean) mxBean).getOpenFileDescriptorCount();
+                }
+            };
+            maxFileDescriptorCountGauge = new Gauge<Long>() {
+                @Override
+                public Long getValue() {
+                    return ((UnixOperatingSystemMXBean) mxBean).getMaxFileDescriptorCount();
+                }
+            };
 
-        Gauge<Long> openFileDescriptorCountGauge = getLongGauge("getOpenFileDescriptorCount");
-        if (openFileDescriptorCountGauge != null) {
-            gauges.put("file.descriptor.open.count", openFileDescriptorCountGauge);
+        } catch (ClassCastException e) {
+            // Since these two properties are supported only on unix os, set the value to 0 for other OS
+            openFileDescriptorCountGauge = new EmptyGaugeLong();
+            maxFileDescriptorCountGauge = new EmptyGaugeLong();
+
         }
 
-        Gauge<Long> maxFileDescriptorCountGauge = getLongGauge("getMaxFileDescriptorCount");
-        if (maxFileDescriptorCountGauge != null) {
-            gauges.put("file.descriptor.max.count", maxFileDescriptorCountGauge);
+        gauges.put("file.descriptor.open.count", openFileDescriptorCountGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("file.descriptor.open.count : " + openFileDescriptorCountGauge.getValue());
         }
 
-        Gauge<Double> processCpuLoadGauge = getDoubleGauge("getProcessCpuLoad");
-        if (processCpuLoadGauge != null) {
-            gauges.put("cpu.load.process", processCpuLoadGauge);
+        gauges.put("file.descriptor.max.count", maxFileDescriptorCountGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("file.descriptor.max.count : " + maxFileDescriptorCountGauge.getValue());
         }
 
-        Gauge<Double> systemCpuLoadGauge = getDoubleGauge("getSystemCpuLoad");
-        if (systemCpuLoadGauge != null) {
-            gauges.put("cpu.load.system", systemCpuLoadGauge);
+        Gauge<Double> processCpuLoadGauge = new Gauge<Double>() {
+            @Override
+            public Double getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getProcessCpuLoad();
+            }
+        };
+
+        gauges.put("cpu.load.process", processCpuLoadGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("cpu.load.process : " + processCpuLoadGauge.getValue());
         }
 
-        Gauge<Long> freePhysicalMemorySizeGauge = getLongGauge("getFreePhysicalMemorySize");
-        if (freePhysicalMemorySizeGauge != null) {
-            gauges.put("physical.memory.free.size", freePhysicalMemorySizeGauge);
+        Gauge<Double> systemCpuLoadGauge = new Gauge<Double>() {
+            @Override
+            public Double getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getSystemCpuLoad();
+            }
+        };
+
+        gauges.put("cpu.load.system", systemCpuLoadGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("cpu.load.system : " + systemCpuLoadGauge.getValue());
         }
 
-        Gauge<Long> totalPhysicalMemorySizeGauge = getLongGauge("getTotalPhysicalMemorySize");
-        if (totalPhysicalMemorySizeGauge != null) {
-            gauges.put("physical.memory.total.size", totalPhysicalMemorySizeGauge);
+        Gauge<Long> freePhysicalMemorySizeGauge = new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getFreePhysicalMemorySize();
+            }
+        };
+
+        gauges.put("physical.memory.free.size", freePhysicalMemorySizeGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("physical.memory.free.size : " + freePhysicalMemorySizeGauge.getValue());
         }
 
-        Gauge<Long> freeSwapSpaceSizeGauge = getLongGauge("getFreeSwapSpaceSize");
-        if (freeSwapSpaceSizeGauge != null) {
-            gauges.put("swap.space.free.size", freeSwapSpaceSizeGauge);
+        Gauge<Long> totalPhysicalMemorySizeGauge = new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getTotalPhysicalMemorySize();
+            }
+        };
+
+        gauges.put("physical.memory.total.size", totalPhysicalMemorySizeGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("physical.memory.total.size : " + totalPhysicalMemorySizeGauge.getValue());
         }
 
-        Gauge<Long> totalSwapSpaceSizeGauge = getLongGauge("getTotalSwapSpaceSize");
-        if (totalSwapSpaceSizeGauge != null) {
-            gauges.put("swap.space.total.size", totalSwapSpaceSizeGauge);
+        Gauge<Long> freeSwapSpaceSizeGauge = new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getFreeSwapSpaceSize();
+            }
+        };
+
+        gauges.put("swap.space.free.size", freeSwapSpaceSizeGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("swap.space.free.size : " + freeSwapSpaceSizeGauge.getValue());
         }
 
-        Gauge<Long> committedVirtualMemorySizeGauge = getLongGauge("getCommittedVirtualMemorySize");
-        if (committedVirtualMemorySizeGauge != null) {
-            gauges.put("virtual.memory.committed.size", committedVirtualMemorySizeGauge);
+        Gauge<Long> totalSwapSpaceSizeGauge = new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getTotalSwapSpaceSize();
+            }
+        };
+
+        gauges.put("swap.space.total.size", totalSwapSpaceSizeGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("swap.space.total.size : " + totalSwapSpaceSizeGauge.getValue());
+        }
+
+        Gauge<Long> committedVirtualMemorySizeGauge = new Gauge<Long>() {
+            @Override
+            public Long getValue() {
+                return ((com.sun.management.OperatingSystemMXBean) mxBean).getCommittedVirtualMemorySize();
+            }
+        };
+
+        gauges.put("virtual.memory.committed.size", committedVirtualMemorySizeGauge);
+        if (logger.isDebugEnabled()) {
+            logger.debug("virtual.memory.committed.size : " + committedVirtualMemorySizeGauge.getValue());
         }
 
         return Collections.unmodifiableMap(gauges);
     }
 
-    private Gauge<Long> getLongGauge(final String methodName) {
-        Object value = null;
-        try {
-            value = invokeMethod(methodName);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
-            // Ignore
-            if (logger.isTraceEnabled()) {
-                logger.trace(String.format("Error when invoking %s", methodName), e);
-            }
-        }
-        if (value != null) {
-            // Method is working
-            return new Gauge<Long>() {
-                @Override
-                public Long getValue() {
-                    return invokeLong(methodName);
-                }
-            };
-        }
-        return null;
-    }
-
-    private Gauge<Double> getDoubleGauge(final String methodName) {
-        Object value = null;
-        try {
-            value = invokeMethod(methodName);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
-            // Ignore
-            if (logger.isTraceEnabled()) {
-                logger.trace(String.format("Error when invoking %s", methodName), e);
-            }
-        }
-        if (value != null) {
-            // Method is working
-            return new Gauge<Double>() {
-                @Override
-                public Double getValue() {
-                    return invokeDouble(methodName);
-                }
-            };
-        }
-        return null;
-    }
-
-    private Object invokeMethod(String methodName) throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        final Method method = mxBean.getClass().getDeclaredMethod(methodName);
-        method.setAccessible(true);
-        return method.invoke(mxBean);
-    }
-
-    private long invokeLong(String methodName) {
-        try {
-            return (Long) invokeMethod(methodName);
-        } catch (NoSuchMethodException e) {
+    static class EmptyGaugeLong implements Gauge{
+        @Override
+        public Long getValue() {
             return 0L;
-        } catch (IllegalAccessException e) {
-            return 0L;
-        } catch (InvocationTargetException e) {
-            return 0L;
-        }
-    }
-
-    private double invokeDouble(String methodName) {
-        try {
-            return (Double) invokeMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            return -1.0;
-        } catch (IllegalAccessException e) {
-            return -1.0;
-        } catch (InvocationTargetException e) {
-            return -1.0;
-        }
+        }     
     }
 }
