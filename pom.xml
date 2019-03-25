@@ -464,7 +464,7 @@
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <eclipse.osgi.version>3.11.0.v20160603-1336</eclipse.osgi.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
-        <carbon.kernel.version>4.4.37-SNAPSHOT</carbon.kernel.version> <!-- carbon-kernel branch: 4.4.x_java10 -->
+        <carbon.kernel.version>4.4.7</carbon.kernel.version>
         <carbon.kernel.version.range>[4.0.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
