@@ -614,7 +614,7 @@
         <equinox.osgi.services.version>3.5.0.v20150519-2006</equinox.osgi.services.version>
         <carbon.kernel.version>5.1.0</carbon.kernel.version>
         <carbon.kernel.version.range>[5.1.0, 6.0.0)</carbon.kernel.version.range>
-        <carbon.analytics.common.version>5.0.11</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.1.52</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.0.0, 6.0.0)</carbon.analytics.common.version.range>
         <xerces.impl.version>2.11.0.SP4</xerces.impl.version>
         <slf4j.version>1.7.21</slf4j.version>
@@ -639,7 +639,7 @@
         <carbon.datasources.version>1.0.0</carbon.datasources.version>
         <carbon.datasources.version.range>[1.0.0, 2.0.0)</carbon.datasources.version.range>
         <disruptor.orbit.version>3.3.2.wso2v2</disruptor.orbit.version>
-        <libthrift.wso2.version>0.8.0.wso2v1</libthrift.wso2.version>
+        <libthrift.wso2.version>0.12.0.wso2v1</libthrift.wso2.version>
         <commons-io.wso2.version>2.4.0.wso2v1</commons-io.wso2.version>
         <commons.pool.version>1.5.6.wso2v1</commons.pool.version>
     </properties>
