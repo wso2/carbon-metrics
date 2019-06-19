@@ -19,6 +19,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -162,7 +163,9 @@ public class OperatingSystemMetricSet implements MetricSet {
     private Object invokeMethod(String methodName) throws NoSuchMethodException, SecurityException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final Method method = mxBean.getClass().getDeclaredMethod(methodName);
-        method.setAccessible(true);
+        if (!Modifier.isPublic(method.getModifiers())) {
+            method.setAccessible(true);
+        }
         return method.invoke(mxBean);
     }
 
