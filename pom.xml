@@ -502,7 +502,7 @@
         <slf4j.version.range>[1.7.0,1.8.0)</slf4j.version.range>
         <log4j.version>1.2.17</log4j.version>
         <!-- Cannot use a latest version (1.4.185). We need to use a compatible version with Carbon's H2 library -->
-        <h2.version>1.2.140</h2.version>
+        <h2.version>1.4.199</h2.version>
         <spring.version>4.3.1.RELEASE</spring.version>
         <mockito.version>1.10.19</mockito.version>
         <javax.ws.rs.version>2.0.1</javax.ws.rs.version>

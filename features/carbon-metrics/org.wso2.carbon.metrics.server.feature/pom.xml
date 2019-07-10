@@ -87,7 +87,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <delete file="src/main/resources/repository/database/WSO2METRICS_DB.h2.db" />
+                                <delete file="src/main/resources/repository/database/WSO2METRICS_DB.mv.db" />
                             </target>
                         </configuration>
                     </execution>
