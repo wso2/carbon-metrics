@@ -275,9 +275,9 @@
                 <version>${wsdl4j.wso2.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${commons.logging.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.schema.wso2</groupId>
@@ -514,6 +514,7 @@
         <neethi.wso2.version>2.0.4.wso2v4</neethi.wso2.version>
         <!-- Service Stubs - End -->
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
+        <pax.logging.api.version>1.10.1</pax.logging.api.version>
     </properties>
 
     <pluginRepositories>
