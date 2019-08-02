@@ -28,7 +28,7 @@ import org.wso2.carbon.metrics.das.core.config.model.MetricsConfig;
  */
 public class MetricsConfigTest {
 
-    private static MetricsConfig metricsConfig;
+    static MetricsConfig metricsConfig;
 
     @BeforeClass
     private void load() throws ConfigurationException {
