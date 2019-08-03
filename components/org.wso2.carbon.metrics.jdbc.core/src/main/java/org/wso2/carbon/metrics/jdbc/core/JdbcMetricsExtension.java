@@ -44,7 +44,7 @@ import java.util.Set;
 public class JdbcMetricsExtension implements MetricsExtension {
 
     private static final Logger logger = LoggerFactory.getLogger(JdbcMetricsExtension.class);
-
+    private static final String STREAMLINED_JDBC_NS = "metrics.jdbc";
     private String[] names;
 
     /**
@@ -55,7 +55,11 @@ public class JdbcMetricsExtension implements MetricsExtension {
                          MetricManagementService metricManagementService) {
         MetricsConfig metricsConfig;
         try {
-            metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+            if (configProvider.getConfigurationObject(STREAMLINED_JDBC_NS) != null) {
+                metricsConfig = configProvider.getConfigurationObject(STREAMLINED_JDBC_NS, MetricsConfig.class);
+            } else {
+                metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+            }
         } catch (ConfigurationException e) {
             logger.error("Error loading Metrics Configuration", e);
             metricsConfig = new MetricsConfig();

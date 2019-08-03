@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MetricsConfigTest extends BaseMetricTest {
 
-    private static MetricsConfig metricsConfig;
+    static MetricsConfig metricsConfig;
 
     @BeforeClass
     private void load() throws ConfigurationException {

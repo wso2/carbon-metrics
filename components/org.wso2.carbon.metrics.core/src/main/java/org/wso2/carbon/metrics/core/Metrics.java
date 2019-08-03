@@ -47,6 +47,7 @@ import javax.management.ObjectName;
 public class Metrics {
 
     private static final Logger logger = LoggerFactory.getLogger(Metrics.class);
+    private static final String STREAMLINED_METRICS_NAMESPACE = "metrics";
 
     private final boolean enabled;
 
@@ -75,7 +76,12 @@ public class Metrics {
 
         MetricsConfig metricsConfig;
         try {
-            metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+            if (configProvider.getConfigurationObject(STREAMLINED_METRICS_NAMESPACE) != null) {
+                metricsConfig = configProvider
+                            .getConfigurationObject(STREAMLINED_METRICS_NAMESPACE, MetricsConfig.class);
+            } else {
+                metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+            }
         } catch (ConfigurationException e) {
             logger.error("Error loading Metrics Configuration", e);
             metricsConfig = new MetricsConfig();

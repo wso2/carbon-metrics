@@ -43,7 +43,7 @@ import java.util.Set;
 public class DasMetricsExtension implements MetricsExtension {
 
     private static final Logger logger = LoggerFactory.getLogger(DasMetricsExtension.class);
-
+    private static final String STREAMLINED_DAS_REPORTER_NS = "metrics.das";
     private String[] names;
 
     /**
@@ -54,7 +54,11 @@ public class DasMetricsExtension implements MetricsExtension {
                          MetricManagementService metricManagementService) {
         MetricsConfig metricsConfig;
         try {
-            metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+            if (configProvider.getConfigurationObject(STREAMLINED_DAS_REPORTER_NS) != null) {
+                metricsConfig = configProvider.getConfigurationObject(STREAMLINED_DAS_REPORTER_NS, MetricsConfig.class);
+            } else {
+                metricsConfig = configProvider.getConfigurationObject(MetricsConfig.class);
+            }
         } catch (ConfigurationException e) {
             logger.error("Error loading Metrics Configuration", e);
             metricsConfig = new MetricsConfig();
