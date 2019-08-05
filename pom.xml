@@ -275,9 +275,9 @@
                 <version>${wsdl4j.wso2.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${commons.logging.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.schema.wso2</groupId>
@@ -427,19 +427,6 @@
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>${findbugs.maven.plugin.version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-scr-plugin</artifactId>
-                    <version>${maven.scr.plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>generate-scr-scrdescriptor</id>
-                            <goals>
-                                <goal>scr</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -508,7 +495,7 @@
         <javax.ws.rs.version>2.0.1</javax.ws.rs.version>
         <!-- scr plugin version 1.7.4 is required to recognize javadoc comments for scr components -->
         <maven.scr.plugin.version>1.26.0</maven.scr.plugin.version>
-        <maven.bundle.plugin.version>2.5.4</maven.bundle.plugin.version>
+        <maven.bundle.plugin.version>3.2.0</maven.bundle.plugin.version>
         <maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
         <maven.war.plugin.version>2.6</maven.war.plugin.version>
         <build.helper.maven.plugin.version>1.9.1</build.helper.maven.plugin.version>
@@ -527,6 +514,7 @@
         <neethi.wso2.version>2.0.4.wso2v4</neethi.wso2.version>
         <!-- Service Stubs - End -->
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
+        <pax.logging.api.version>1.10.1</pax.logging.api.version>
     </properties>
 
     <pluginRepositories>
