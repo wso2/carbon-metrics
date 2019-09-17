@@ -470,14 +470,14 @@
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
         <eclipse.osgi.version>3.11.0.v20160603-1336</eclipse.osgi.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
-        <carbon.kernel.version>4.5.0-m1</carbon.kernel.version>
+        <carbon.kernel.version>4.5.0</carbon.kernel.version>
         <carbon.kernel.version.range>[4.5.0, 5.0.0)</carbon.kernel.version.range>
         <!-- Registry Core exports version 1.0.1 -->
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
-        <carbon.analytics.common.version>5.2.0</carbon.analytics.common.version>
+        <carbon.analytics.common.version>5.2.10</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.2.0, 6.0.0)</carbon.analytics.common.version.range>
         <carbon.p2.plugin.version>5.1.2</carbon.p2.plugin.version>
-        <securevault.version>1.1.2</securevault.version>
+        <securevault.version>1.1.3</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>
         <axiom.version>1.2.19</axiom.version>
         <axiom.version.range>[1.2.0,1.3.0)</axiom.version.range>
@@ -506,11 +506,11 @@
 
         <!-- Service Stubs - Start -->
         <commons.logging.version>1.2</commons.logging.version>
-        <axis2.wso2.version>1.6.1-wso2v34</axis2.wso2.version>
+        <axis2.wso2.version>1.6.1-wso2v38</axis2.wso2.version>
         <axis2.wso2.version.range>[1.6.0, 1.7.0)</axis2.wso2.version.range>
         <wsdl4j.wso2.version>1.6.2.wso2v4</wsdl4j.wso2.version>
         <xmlschema.wso2.version>1.4.7.wso2v3</xmlschema.wso2.version>
-        <axiom.wso2.version>1.2.11.wso2v11</axiom.wso2.version>
+        <axiom.wso2.version>1.2.11-wso2v16</axiom.wso2.version>
         <neethi.wso2.version>2.0.4.wso2v4</neethi.wso2.version>
         <!-- Service Stubs - End -->
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
