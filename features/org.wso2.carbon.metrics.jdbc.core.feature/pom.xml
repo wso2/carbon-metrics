@@ -39,7 +39,7 @@
             <artifactId>org.wso2.carbon.metrics.jdbc.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
+            <groupId>org.wso2.orbit.com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
     </dependencies>
@@ -166,7 +166,7 @@
                                     <version>${carbon.metrics.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>org.h2</symbolicName>
+                                    <symbolicName>h2</symbolicName>
                                     <version>${h2.version}</version>
                                 </bundle>
                             </bundles>
