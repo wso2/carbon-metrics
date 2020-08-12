@@ -406,27 +406,35 @@ public class JdbcReporter extends ScheduledReporter {
 
     private void reportTimer(final long timestamp, PreparedStatement ps, String name, Timer timer) throws SQLException {
         final Snapshot snapshot = timer.getSnapshot();
-
-        ps.setString(1, source);
-        ps.setLong(2, timestamp);
-        ps.setString(3, name);
-        ps.setLong(4, timer.getCount());
-        ps.setDouble(5, convertDuration(snapshot.getMax()));
-        ps.setDouble(6, convertDuration(snapshot.getMean()));
-        ps.setDouble(7, convertDuration(snapshot.getMin()));
-        ps.setDouble(8, convertDuration(snapshot.getStdDev()));
-        ps.setDouble(9, convertDuration(snapshot.getMedian()));
-        ps.setDouble(10, convertDuration(snapshot.get75thPercentile()));
-        ps.setDouble(11, convertDuration(snapshot.get95thPercentile()));
-        ps.setDouble(12, convertDuration(snapshot.get98thPercentile()));
-        ps.setDouble(13, convertDuration(snapshot.get99thPercentile()));
-        ps.setDouble(14, convertDuration(snapshot.get999thPercentile()));
-        ps.setDouble(15, convertRate(timer.getMeanRate()));
-        ps.setDouble(16, convertRate(timer.getOneMinuteRate()));
-        ps.setDouble(17, convertRate(timer.getFiveMinuteRate()));
-        ps.setDouble(18, convertRate(timer.getFifteenMinuteRate()));
-        ps.setString(19, String.format("calls/%s", getRateUnit()));
-        ps.setString(20, getDurationUnit());
+        
+        try {
+            logger.info("Value for snapshot.getMean() is: " + snapshot.getMean());
+            logger.info("Value for convertDuration(snapshot.getMean()) is: " + convertDuration(snapshot.getMean()));
+            ps.setString(1, source);
+            ps.setLong(2, timestamp);
+            ps.setString(3, name);
+            ps.setLong(4, timer.getCount());
+            ps.setDouble(5, convertDuration(snapshot.getMax()));
+            ps.setDouble(6, convertDuration(snapshot.getMean()));
+            ps.setDouble(7, convertDuration(snapshot.getMin()));
+            ps.setDouble(8, convertDuration(snapshot.getStdDev()));
+            ps.setDouble(9, convertDuration(snapshot.getMedian()));
+            ps.setDouble(10, convertDuration(snapshot.get75thPercentile()));
+            ps.setDouble(11, convertDuration(snapshot.get95thPercentile()));
+            ps.setDouble(12, convertDuration(snapshot.get98thPercentile()));
+            ps.setDouble(13, convertDuration(snapshot.get99thPercentile()));
+            ps.setDouble(14, convertDuration(snapshot.get999thPercentile()));
+            ps.setDouble(15, convertRate(timer.getMeanRate()));
+            ps.setDouble(16, convertRate(timer.getOneMinuteRate()));
+            ps.setDouble(17, convertRate(timer.getFiveMinuteRate()));
+            ps.setDouble(18, convertRate(timer.getFifteenMinuteRate()));
+            ps.setString(19, String.format("calls/%s", getRateUnit()));
+            ps.setString(20, getDurationUnit());
+        } catch (SQLException e) {
+            logger.info("Value for snapshot.getMean() is: " + snapshot.getMean());
+            logger.info("Value for convertDuration(snapshot.getMean()) is: " + convertDuration(snapshot.getMean()));
+            throw new SQLException("Exception is thrown from new catch", e);
+        }
     }
 
     private void rollbackTransaction(Connection connection) {
