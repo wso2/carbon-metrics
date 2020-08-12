@@ -408,8 +408,6 @@ public class JdbcReporter extends ScheduledReporter {
         final Snapshot snapshot = timer.getSnapshot();
         
         try {
-            logger.info("Value for snapshot.getMean() is: " + snapshot.getMean());
-            logger.info("Value for convertDuration(snapshot.getMean()) is: " + convertDuration(snapshot.getMean()));
             ps.setString(1, source);
             ps.setLong(2, timestamp);
             ps.setString(3, name);
