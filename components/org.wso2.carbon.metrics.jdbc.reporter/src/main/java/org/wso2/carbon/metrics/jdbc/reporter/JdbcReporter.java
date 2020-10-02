@@ -413,7 +413,13 @@ public class JdbcReporter extends ScheduledReporter {
             ps.setString(3, name);
             ps.setLong(4, timer.getCount());
             ps.setDouble(5, convertDuration(snapshot.getMax()));
-            ps.setDouble(6, convertDuration(snapshot.getMean()));
+//            ps.setDouble(6, convertDuration(snapshot.getMean()));
+            if (Double.isNaN(snapshot.getMean())) {
+                logger.warn("The mean value become NaN. Hence setting it as 0.0");
+                ps.setDouble(6, convertDuration(0.0));
+            } else {
+                ps.setDouble(6, convertDuration(snapshot.getMean()));
+            }
             ps.setDouble(7, convertDuration(snapshot.getMin()));
             ps.setDouble(8, convertDuration(snapshot.getStdDev()));
             ps.setDouble(9, convertDuration(snapshot.getMedian()));
