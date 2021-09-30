@@ -255,7 +255,7 @@
     <script src="plugins/vega/vega.min.js"></script>
     <script src="plugins/igviz/igviz.js"></script>
     <!-- Script required for chart templates -->
-    <script src="plugins/handlebars/handlebars-v3.0.0.js"></script>
+    <script src="plugins/handlebars/handlebars.min-v4.7.7.js"></script>
     <!-- jQuery -->
     <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
     <!-- jQuery Cookie Plugin -->
