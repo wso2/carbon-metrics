@@ -321,7 +321,7 @@
     <!-- Script required for chart templates -->
     <script src="plugins/handlebars/handlebars.min-v4.7.7.js"></script>
     <!-- jQuery -->
-    <script src="plugins/jquery/jquery-2.1.4.min.js"></script>
+    <script src="plugins/jquery/jquery-3.6.0.min.js"></script>
     <!-- jQuery Cookie Plugin -->
     <script src="plugins/jquery-plugins/jquery.cookie.js"></script>
     <!-- jQuery UI Custom Download -->
