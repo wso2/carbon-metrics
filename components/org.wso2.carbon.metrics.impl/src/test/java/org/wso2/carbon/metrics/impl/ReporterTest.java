@@ -189,7 +189,7 @@ public class ReporterTest extends TestCase {
                 template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
         assertEquals("There should be one result", 1, gaugeResult.size());
         assertEquals("Gauge should be available", gaugeName, gaugeResult.get(0).get("NAME"));
-        assertEquals("Gauge value should be one", "1", gaugeResult.get(0).get("VALUE"));
+        assertEquals("Gauge value should be one", "1", gaugeResult.get(0).get("METRIC_GAUGE"));
     }
 
     public void testJDBCReporterRestart() {
