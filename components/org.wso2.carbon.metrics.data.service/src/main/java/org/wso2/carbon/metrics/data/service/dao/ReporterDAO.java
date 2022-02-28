@@ -313,7 +313,11 @@ public class ReporterDAO {
     }
 
     private String getColumnName(MetricAttribute metricAttribute) {
-        return metricAttribute.name();
+        if (metricAttribute.name().equals("VALUE")) {
+            return "METRIC_GAUGE";
+        } else {
+            return metricAttribute.name();
+        }
     }
 
     private void closeQuietly(Connection connection) {

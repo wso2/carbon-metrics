@@ -149,7 +149,7 @@ public class JDBCReporter extends ScheduledReporter {
     private final TimeUnit timestampUnit;
 
     private static final String INSERT_GAUGE_QUERY =
-            "INSERT INTO METRIC_GAUGE (SOURCE, TIMESTAMP, NAME, VALUE) VALUES (?,?,?,?)";
+            "INSERT INTO METRIC_GAUGE (SOURCE, TIMESTAMP, NAME, METRIC_GAUGE) VALUES (?,?,?,?)";
     private static final String INSERT_COUNTER_QUERY =
             "INSERT INTO METRIC_COUNTER (SOURCE, TIMESTAMP, NAME, COUNT) VALUES (?,?,?,?)";
     private static final String INSERT_METER_QUERY =
