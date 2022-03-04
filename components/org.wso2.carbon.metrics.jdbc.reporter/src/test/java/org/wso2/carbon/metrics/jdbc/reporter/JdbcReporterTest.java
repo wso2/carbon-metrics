@@ -105,7 +105,7 @@ public class JdbcReporterTest {
         List<Map<String, Object>> result = template.queryForList("SELECT * FROM METRIC_GAUGE");
         Assert.assertEquals(result.size(), 1);
         Assert.assertEquals(result.get(0).get("NAME"), "gauge");
-        Assert.assertEquals(result.get(0).get("VALUE"), "1");
+        Assert.assertEquals(result.get(0).get("METRIC_GAUGE"), "1");
         Assert.assertEquals(result.get(0).get("SOURCE"), SOURCE);
         Assert.assertEquals(result.get(0).get("TIMESTAMP"), timestamp);
     }

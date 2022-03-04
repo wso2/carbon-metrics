@@ -114,7 +114,7 @@ public class ReporterTest extends BaseReporterTest {
                 template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
         Assert.assertEquals(gaugeResult.size(), 1);
         Assert.assertEquals(gaugeResult.get(0).get("NAME"), gaugeName);
-        Assert.assertEquals(gaugeResult.get(0).get("VALUE"), "1");
+        Assert.assertEquals(gaugeResult.get(0).get("METRIC_GAUGE"), "1");
         Assert.assertEquals(gaugeResult.get(0).get("SOURCE"), "Carbon-jdbc");
     }
 
@@ -134,7 +134,7 @@ public class ReporterTest extends BaseReporterTest {
                 template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ?", gaugeName);
         Assert.assertEquals(gaugeResult.size(), 1);
         Assert.assertEquals(gaugeResult.get(0).get("NAME"), gaugeName);
-        Assert.assertEquals(gaugeResult.get(0).get("VALUE"), "1");
+        Assert.assertEquals(gaugeResult.get(0).get("METRIC_GAUGE"), "1");
         Assert.assertEquals(gaugeResult.get(0).get("SOURCE"), "Carbon-jdbc");
 
         adder.increment();
@@ -145,7 +145,7 @@ public class ReporterTest extends BaseReporterTest {
                 template.queryForList("SELECT * FROM METRIC_GAUGE WHERE NAME = ? ORDER BY TIMESTAMP", gaugeName);
         Assert.assertEquals(gaugeResult2.size(), 2);
         Assert.assertEquals(gaugeResult2.get(1).get("NAME"), gaugeResult2.get(0).get("NAME"));
-        Assert.assertEquals(gaugeResult2.get(1).get("VALUE"), gaugeResult2.get(0).get("VALUE"));
+        Assert.assertEquals(gaugeResult2.get(1).get("METRIC_GAUGE"), gaugeResult2.get(0).get("METRIC_GAUGE"));
         Assert.assertEquals(gaugeResult2.get(1).get("SOURCE"), gaugeResult2.get(0).get("SOURCE"));
     }
 

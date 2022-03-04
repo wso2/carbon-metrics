@@ -39,7 +39,7 @@
             <artifactId>org.wso2.carbon.metrics.jdbc.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.orbit.com.h2database</groupId>
+            <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
     </dependencies>
@@ -96,7 +96,7 @@
                                     <path refid="maven.compile.classpath" />
                                 </path>
                                 <echo message="########### Creating Carbon Metrics Database ##############" />
-                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/resources/database/metrics;create=true" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/resources/database/metrics" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
                                     <classpath>
                                         <path refid="h2.classpath" />
                                     </classpath>
@@ -166,7 +166,7 @@
                                     <version>${carbon.metrics.version}</version>
                                 </bundle>
                                 <bundle>
-                                    <symbolicName>h2</symbolicName>
+                                    <symbolicName>com.h2database</symbolicName>
                                     <version>${h2.version}</version>
                                 </bundle>
                             </bundles>
