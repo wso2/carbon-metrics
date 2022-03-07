@@ -144,8 +144,6 @@
                                 <bundleDef>org.wso2.carbon.metrics:org.wso2.carbon.metrics.data.service</bundleDef>
                                 <bundleDef>io.dropwizard.metrics:metrics-core</bundleDef>
                                 <bundleDef>io.dropwizard.metrics:metrics-jvm</bundleDef>
-                                <bundleDef>org.slf4j:slf4j-api</bundleDef>
-                                <bundleDef>org.slf4j:slf4j-log4j12</bundleDef>
                             </bundles>
                             <!--
                                 <importFeatures>
