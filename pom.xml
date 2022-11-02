@@ -843,10 +843,10 @@
         <apache.rat.plugin.version>0.12</apache.rat.plugin.version>
         <equinox.osgi.version>3.11.0.v20160603-1336</equinox.osgi.version>
         <equinox.osgi.services.version>3.5.100.v20160504-1419</equinox.osgi.services.version>
-        <carbon.kernel.version>5.2.0</carbon.kernel.version>
+        <carbon.kernel.version>5.3.0-alpha</carbon.kernel.version>
         <carbon.touchpoint.version>1.1.1</carbon.touchpoint.version>
         <carbon.kernel.version.range>[5.2.0, 6.0.0)</carbon.kernel.version.range>
-        <carbon.analytics.common.version>6.0.16</carbon.analytics.common.version>
+        <carbon.analytics.common.version>6.1.60</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[6.0.0, 7.0.0)</carbon.analytics.common.version.range>
         <carbon.config.version>2.1.13</carbon.config.version>
         <carbon.config.version.range>[2.1.0, 3.0.0)</carbon.config.version.range>
@@ -868,7 +868,7 @@
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
         <javax.inject.version>1</javax.inject.version>
         <carbon.jndi.version>1.0.5</carbon.jndi.version>
-        <carbon.datasources.version>1.1.4</carbon.datasources.version>
+        <carbon.datasources.version>1.1.13</carbon.datasources.version>
         <carbon.datasources.version.range>[1.1.0, 2.0.0)</carbon.datasources.version.range>
         <disruptor.orbit.version>3.3.2.wso2v2</disruptor.orbit.version>
         <libthrift.wso2.version>0.9.2.wso2v1</libthrift.wso2.version>
