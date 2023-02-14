@@ -871,7 +871,7 @@
         <carbon.datasources.version>1.1.14</carbon.datasources.version>
         <carbon.datasources.version.range>[1.1.0, 2.0.0)</carbon.datasources.version.range>
         <disruptor.orbit.version>3.4.2.wso2v1</disruptor.orbit.version>
-        <libthrift.wso2.version>0.9.2.wso2v1</libthrift.wso2.version>
+        <libthrift.wso2.version>0.16.0.wso2v1</libthrift.wso2.version>
         <commons-io.wso2.version>2.11.0.wso2v1</commons-io.wso2.version>
         <commons.pool.version>1.5.6.wso2v1</commons.pool.version>
         <carbon.securevault.version>5.0.14</carbon.securevault.version>
