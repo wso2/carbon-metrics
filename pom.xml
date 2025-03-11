@@ -868,7 +868,7 @@
         <maven.paxexam.plugin.version>1.2.4</maven.paxexam.plugin.version>
         <javax.inject.version>1</javax.inject.version>
         <carbon.jndi.version>1.0.5</carbon.jndi.version>
-        <carbon.datasources.version>1.1.14</carbon.datasources.version>
+        <carbon.datasources.version>1.1.18</carbon.datasources.version>
         <carbon.datasources.version.range>[1.1.0, 2.0.0)</carbon.datasources.version.range>
         <disruptor.orbit.version>3.4.2.wso2v1</disruptor.orbit.version>
         <libthrift.wso2.version>0.9.2.wso2v1</libthrift.wso2.version>
