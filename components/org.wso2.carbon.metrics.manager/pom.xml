@@ -29,7 +29,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.eclipse.osgi</groupId>
+            <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.osgi.services</artifactId>
         </dependency>
         <dependency>
@@ -61,6 +61,9 @@
                             org.osgi.service.component,
                             org.slf4j;version="${slf4j.version.range}"
                         </Import-Package>
+                        <Provide-Capability>
+                            osgi.service;objectClass=org.wso2.carbon.metrics.manager.MetricService
+                        </Provide-Capability>
                     </instructions>
                 </configuration>
             </plugin>

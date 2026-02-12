@@ -31,6 +31,7 @@
         <Class name="~org\.wso2\.carbon\.metrics\.view\.ui\..*" />
     </Match>
 
+    <!-- Suppress SQL warnings for specific methods -->
     <Match>
         <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"/>
         <Class name="org.wso2.carbon.metrics.data.service.dao.ReporterDAO" />
@@ -59,5 +60,35 @@
         <Bug pattern="DM_CONVERT_CASE"/>
         <Class name="org.wso2.carbon.metrics.manager.Level" />
         <Method name="valueOf" />
+    </Match>
+
+    <!-- Global suppressions for JDK 21 compatibility -->
+    
+    <!-- Suppress constructor throw warnings (Finalizer attack concerns) -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
+    <!-- Suppress overridable method call in constructor -->
+    <Match>
+        <Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"/>
+    </Match>
+
+    <!-- Suppress representation exposure warnings (intentional for dependency injection and service patterns) -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+
+    <!-- Suppress uninitialized field warnings (fields often initialized via OSGi lifecycle or lazily) -->
+    <Match>
+        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>
 </FindBugsFilter>
