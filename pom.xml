@@ -434,16 +434,8 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.3</version>
                     <configuration>
-                        <source>8</source>
-                        <detectJavaApiLink>false</detectJavaApiLink>
-                        <doclint>none</doclint>
-                        <additionalOptions>
-                            <additionalOption>-Xdoclint:none</additionalOption>
-                            <additionalOption>--ignore-source-errors</additionalOption>
-                        </additionalOptions>
-                        <failOnError>false</failOnError>
+                        <skip>true</skip>
                     </configuration>
                 </plugin>
             </plugins>
