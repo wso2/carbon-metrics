@@ -23,7 +23,7 @@
 
     <groupId>org.wso2.carbon.metrics</groupId>
     <artifactId>carbon-metrics</artifactId>
-    <version>1.3.14-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <name>Metrics</name>
@@ -475,7 +475,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <carbon.metrics.version>1.3.14-SNAPSHOT</carbon.metrics.version>
+        <carbon.metrics.version>1.4.0-SNAPSHOT</carbon.metrics.version>
         <junit.version>4.12</junit.version>
         <metrics.version>3.2.5</metrics.version>
         <metrics.version.range>[3.1.0, 4.0.0)</metrics.version.range>
@@ -487,7 +487,7 @@
         <carbon.registry.version.range>[1.0.0, 5.0.0)</carbon.registry.version.range>
         <carbon.analytics.common.version>5.2.18</carbon.analytics.common.version>
         <carbon.analytics.common.version.range>[5.2.0, 6.0.0)</carbon.analytics.common.version.range>
-        <carbon.p2.plugin.version>5.1.2</carbon.p2.plugin.version>
+        <carbon.p2.plugin.version>5.5.1</carbon.p2.plugin.version>
         <securevault.version>1.1.3</securevault.version>
         <stax.api.version>1.0.1</stax.api.version>
         <axiom.version>1.2.19</axiom.version>
